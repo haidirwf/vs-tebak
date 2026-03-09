@@ -1,65 +1,231 @@
-import Image from "next/image";
+import Link from 'next/link'
+import { Swords, BookOpen, Zap, Trophy, Users, ChevronRight, Star, Flame } from 'lucide-react'
 
-export default function Home() {
+const FEATURES = [
+  {
+    icon: <BookOpen size={24} />,
+    title: 'Modul Interaktif',
+    desc: 'Pelajari coding, desain, dan produktivitas lewat konten step-by-step yang engaging.',
+    color: 'var(--accent-cyan)',
+  },
+  {
+    icon: <Zap size={24} />,
+    title: 'Battle Quiz 1v1',
+    desc: 'Tantang temanmu atau cari lawan acak dalam quiz real-time yang seru dan kompetitif.',
+    color: 'var(--accent-red)',
+  },
+  {
+    icon: <Trophy size={24} />,
+    title: 'Leaderboard Nasional',
+    desc: 'Kompetisi seru antar pelajar dan antar sekolah se-Indonesia. Buktikan sekolahmu terbaik!',
+    color: 'var(--accent-gold)',
+  },
+  {
+    icon: <Star size={24} />,
+    title: 'Karakter RPG',
+    desc: 'Pilih kelas karaktermu (Warrior, Mage, Archer, Healer) dan naik level seiring belajarmu.',
+    color: 'var(--accent-green)',
+  },
+  {
+    icon: <Flame size={24} />,
+    title: 'Daily Streak',
+    desc: 'Jaga semangat belajar dengan sistem streak harian. Raih badge dan bonus XP khusus!',
+    color: 'var(--accent-red)',
+  },
+  {
+    icon: <Users size={24} />,
+    title: 'Komunitas Pelajar',
+    desc: 'Bergabung dengan ribuan pelajar SMK/SMA seluruh Indonesia dalam satu platform.',
+    color: 'var(--accent-cyan)',
+  },
+]
+
+const CLASSES = [
+  { name: 'Warrior', emoji: '⚔️', desc: 'Kuat dalam coding', color: 'var(--accent-red)' },
+  { name: 'Mage', emoji: '🔮', desc: 'Mahir desain', color: 'var(--accent-cyan)' },
+  { name: 'Archer', emoji: '🏹', desc: 'Cepat di battle', color: 'var(--accent-green)' },
+  { name: 'Healer', emoji: '✨', desc: 'Bijak & produktif', color: 'var(--accent-gold)' },
+]
+
+export default function LandingPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
+      {/* Navbar */}
+      <nav style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '16px 48px', borderBottom: '1px solid var(--border)',
+        backgroundColor: 'var(--bg-secondary)', position: 'sticky', top: 0, zIndex: 100,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Swords size={22} style={{ color: 'var(--accent-gold)' }} />
+          <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--accent-gold)' }}>
+            SkillQuest
+          </span>
+        </div>
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          <Link href="/login" style={{
+            padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
+            backgroundColor: 'transparent', border: '1px solid var(--border)',
+            color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500,
+          }}>
+            Masuk
+          </Link>
+          <Link href="/register" style={{
+            padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
+            backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+            fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+          }}>
+            Daftar Gratis
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero */}
+      <section style={{ padding: '80px 48px', textAlign: 'center', borderBottom: '1px solid var(--border)' }}>
+        <div style={{
+          display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '24px',
+          backgroundColor: 'rgba(245,197,66,0.1)', border: '1px solid rgba(245,197,66,0.3)',
+          borderRadius: '4px', padding: '6px 14px',
+        }}>
+          <Swords size={12} style={{ color: 'var(--accent-gold)' }} />
+          <span style={{ fontSize: '12px', color: 'var(--accent-gold)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+            FICPACT CUP 2026 · WEB DEVELOPMENT
+          </span>
+        </div>
+
+        <h1 style={{
+          fontFamily: 'var(--font-heading)', fontSize: '56px', fontWeight: 700,
+          lineHeight: 1.1, marginBottom: '16px', maxWidth: '800px', margin: '0 auto 16px',
+        }}>
+          Level Up Your Skills,<br />
+          <span style={{ color: 'var(--accent-gold)' }}>Conquer Your Future</span>
+        </h1>
+
+        <p style={{
+          color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '560px',
+          margin: '0 auto 32px', lineHeight: 1.7,
+        }}>
+          Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, battle quiz 1v1, dan kompetisi leaderboard antar sekolah!
+        </p>
+
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+          <Link href="/register" style={{
+            padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
+            backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+            fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700,
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
+          }}>
+            MULAI PETUALANGAN <ChevronRight size={16} />
+          </Link>
+          <Link href="/login" style={{
+            padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
+            backgroundColor: 'transparent', border: '1px solid var(--border)',
+            color: 'var(--text-primary)', fontSize: '15px',
+          }}>
+            Sudah punya akun
+          </Link>
+        </div>
+      </section>
+
+      {/* Character Class Preview */}
+      <section style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 700, marginBottom: '8px' }}>
+            Pilih Kelasmu
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+            Setiap kelas punya skill unik yang mendukung gaya belajarmu
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', maxWidth: '800px', margin: '0 auto' }}>
+          {CLASSES.map((cls) => (
+            <div key={cls.name} style={{
+              backgroundColor: 'var(--bg-secondary)', border: `1px solid ${cls.color}33`,
+              borderRadius: '4px', padding: '24px 16px', textAlign: 'center',
+            }}>
+              <div style={{ fontSize: '36px', marginBottom: '12px' }}>{cls.emoji}</div>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: cls.color, marginBottom: '4px' }}>
+                {cls.name}
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{cls.desc}</div>
+            </div>
+          ))}
         </div>
-      </main>
+      </section>
+
+      {/* Features */}
+      <section style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 700, marginBottom: '8px' }}>
+            Fitur Unggulan
+          </h2>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+            Semua yang kamu butuhkan untuk belajar menjadi menyenangkan
+          </p>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', maxWidth: '1000px', margin: '0 auto' }}>
+          {FEATURES.map((feature) => (
+            <div key={feature.title} style={{
+              backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border)',
+              borderRadius: '4px', padding: '24px',
+            }}>
+              <div style={{ color: feature.color, marginBottom: '12px' }}>{feature.icon}</div>
+              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, marginBottom: '6px' }}>
+                {feature.title}
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.6 }}>{feature.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Stats */}
+      <section style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+          {[
+            { value: '10+', label: 'Modul Belajar', color: 'var(--accent-cyan)' },
+            { value: '4', label: 'Kelas Karakter', color: 'var(--accent-gold)' },
+            { value: '1v1', label: 'Battle Real-time', color: 'var(--accent-red)' },
+            { value: '∞', label: 'Potensimu', color: 'var(--accent-green)' },
+          ].map((stat) => (
+            <div key={stat.label}>
+              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '40px', fontWeight: 700, color: stat.color, marginBottom: '4px' }}>
+                {stat.value}
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section style={{ padding: '80px 48px', textAlign: 'center' }}>
+        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '40px', fontWeight: 700, marginBottom: '12px' }}>
+          Siap Memulai Petualangan?
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px' }}>
+          Bergabunglah gratis dan mulai perjalanan belajarmu hari ini!
+        </p>
+        <Link href="/register" style={{
+          padding: '16px 48px', borderRadius: '4px', textDecoration: 'none',
+          backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+          fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700,
+          display: 'inline-flex', alignItems: 'center', gap: '10px',
+        }}>
+          <Swords size={20} /> DAFTAR SEKARANG — GRATIS!
+        </Link>
+      </section>
+
+      {/* Footer */}
+      <footer style={{ padding: '24px 48px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
+          <Swords size={16} style={{ color: 'var(--accent-gold)' }} />
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', fontSize: '16px' }}>SkillQuest</span>
+        </div>
+        <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+          © 2026 SkillQuest · FICPACT CUP 2026 · "Level Up Your Skills, Conquer Your Future"
+        </p>
+      </footer>
     </div>
-  );
+  )
 }
