@@ -2,21 +2,11 @@
 
 import { motion } from 'framer-motion'
 import { UserDailyQuest, DailyQuest } from '@/types'
-import { CheckCircle, Circle, Target, Sword, Flame, Zap } from 'lucide-react'
-import { createClient } from '@/lib/supabase/client'
-import { useState } from 'react'
+import { CheckCircle, Circle } from 'lucide-react'
 
 interface DailyQuestListProps {
     quests: DailyQuest[]
     userQuests: UserDailyQuest[]
-    userId: string
-}
-
-const QUEST_ICONS = {
-    complete_module: <Target size={14} />,
-    win_battle: <Sword size={14} />,
-    maintain_streak: <Flame size={14} />,
-    earn_xp: <Zap size={14} />,
 }
 
 const QUEST_COLORS = {
@@ -26,11 +16,9 @@ const QUEST_COLORS = {
     earn_xp: 'var(--accent-gold)',
 }
 
-export default function DailyQuestList({ quests, userQuests, userId }: DailyQuestListProps) {
-    const [localUserQuests, setLocalUserQuests] = useState(userQuests)
-
+export default function DailyQuestList({ quests, userQuests }: DailyQuestListProps) {
     const getProgress = (questId: string) => {
-        return localUserQuests.find(uq => uq.quest_id === questId)
+        return userQuests.find(uq => uq.quest_id === questId)
     }
 
     const completedCount = quests.filter(q => getProgress(q.id)?.is_completed).length

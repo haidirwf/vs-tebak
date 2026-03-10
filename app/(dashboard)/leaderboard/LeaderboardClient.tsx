@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { AVATAR_CLASS_STATS } from '@/lib/game/xp'
 
 const CLASS_EMOJIS: Record<string, string> = { warrior: '⚔️', mage: '🔮', archer: '🏹', healer: '✨' }
 const CLASS_COLORS: Record<string, string> = {
@@ -49,7 +48,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
     ]
 
     return (
-        <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>
                     🏆 Leaderboard
@@ -58,7 +57,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
                 {tabs.map(t => (
                     <button key={t.key} onClick={() => setTab(t.key)} style={{
                         padding: '8px 18px', borderRadius: '4px', cursor: 'pointer',

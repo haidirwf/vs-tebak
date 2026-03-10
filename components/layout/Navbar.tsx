@@ -21,17 +21,17 @@ export default function Navbar() {
     )?.[1] || 'SkillQuest'
 
     return (
-        <header style={{
+        <header className="dashboard-navbar" style={{
             height: '56px', backgroundColor: 'var(--bg-secondary)',
             borderBottom: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
             padding: '0 24px', position: 'sticky', top: 0, zIndex: 10,
         }}>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
+            <h2 className="dashboard-navbar-title" style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
                 {title}
             </h2>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <div className="dashboard-navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {/* Streak */}
                 {profile && profile.streak_count > 0 && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -44,7 +44,7 @@ export default function Navbar() {
 
                 {/* XP */}
                 {profile && (
-                    <div style={{
+                    <div className="dashboard-navbar-xp" style={{
                         backgroundColor: 'rgba(245,197,66,0.1)', border: '1px solid rgba(245,197,66,0.3)',
                         borderRadius: '4px', padding: '4px 10px',
                         fontSize: '12px', fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'var(--accent-gold)',

@@ -51,7 +51,7 @@ export default function LandingPage() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       {/* Navbar */}
-      <nav style={{
+      <nav className="landing-nav" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '16px 48px', borderBottom: '1px solid var(--border)',
         backgroundColor: 'var(--bg-secondary)', position: 'sticky', top: 0, zIndex: 100,
@@ -81,7 +81,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section style={{ padding: '80px 48px', textAlign: 'center', borderBottom: '1px solid var(--border)' }}>
+      <section className="landing-hero" style={{ padding: '80px 48px', textAlign: 'center', borderBottom: '1px solid var(--border)' }}>
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: '6px', marginBottom: '24px',
           backgroundColor: 'rgba(245,197,66,0.1)', border: '1px solid rgba(245,197,66,0.3)',
@@ -93,7 +93,7 @@ export default function LandingPage() {
           </span>
         </div>
 
-        <h1 style={{
+        <h1 className="landing-hero-title" style={{
           fontFamily: 'var(--font-heading)', fontSize: '56px', fontWeight: 700,
           lineHeight: 1.1, marginBottom: '16px', maxWidth: '800px', margin: '0 auto 16px',
         }}>
@@ -108,7 +108,7 @@ export default function LandingPage() {
           Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, battle quiz 1v1, dan kompetisi leaderboard antar sekolah!
         </p>
 
-        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+        <div className="landing-cta-row" style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
           <Link href="/register" style={{
             padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
             backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
@@ -128,7 +128,7 @@ export default function LandingPage() {
       </section>
 
       {/* Character Class Preview */}
-      <section style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
+      <section className="landing-section" style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 700, marginBottom: '8px' }}>
             Pilih Kelasmu
@@ -137,7 +137,7 @@ export default function LandingPage() {
             Setiap kelas punya skill unik yang mendukung gaya belajarmu
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', maxWidth: '800px', margin: '0 auto' }}>
+        <div className="landing-class-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', maxWidth: '800px', margin: '0 auto' }}>
           {CLASSES.map((cls) => (
             <div key={cls.name} style={{
               backgroundColor: 'var(--bg-secondary)', border: `1px solid ${cls.color}33`,
@@ -154,7 +154,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features */}
-      <section style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
+      <section className="landing-section" style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 700, marginBottom: '8px' }}>
             Fitur Unggulan
@@ -163,7 +163,7 @@ export default function LandingPage() {
             Semua yang kamu butuhkan untuk belajar menjadi menyenangkan
           </p>
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', maxWidth: '1000px', margin: '0 auto' }}>
+        <div className="landing-feature-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px', maxWidth: '1000px', margin: '0 auto' }}>
           {FEATURES.map((feature) => (
             <div key={feature.title} style={{
               backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border)',
@@ -180,8 +180,8 @@ export default function LandingPage() {
       </section>
 
       {/* Stats */}
-      <section style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
+      <section className="landing-section" style={{ padding: '60px 48px', borderBottom: '1px solid var(--border)' }}>
+        <div className="landing-stat-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px', maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
           {[
             { value: '10+', label: 'Modul Belajar', color: 'var(--accent-cyan)' },
             { value: '4', label: 'Kelas Karakter', color: 'var(--accent-gold)' },
@@ -199,8 +199,8 @@ export default function LandingPage() {
       </section>
 
       {/* CTA */}
-      <section style={{ padding: '80px 48px', textAlign: 'center' }}>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '40px', fontWeight: 700, marginBottom: '12px' }}>
+      <section className="landing-cta" style={{ padding: '80px 48px', textAlign: 'center' }}>
+        <h2 className="landing-cta-title" style={{ fontFamily: 'var(--font-heading)', fontSize: '40px', fontWeight: 700, marginBottom: '12px' }}>
           Siap Memulai Petualangan?
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px' }}>
@@ -217,13 +217,13 @@ export default function LandingPage() {
       </section>
 
       {/* Footer */}
-      <footer style={{ padding: '24px 48px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
+      <footer className="landing-footer" style={{ padding: '24px 48px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
           <Swords size={16} style={{ color: 'var(--accent-gold)' }} />
           <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', fontSize: '16px' }}>SkillQuest</span>
         </div>
         <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          © 2026 SkillQuest · FICPACT CUP 2026 · "Level Up Your Skills, Conquer Your Future"
+          © 2026 SkillQuest · FICPACT CUP 2026 · &quot;Level Up Your Skills, Conquer Your Future&quot;
         </p>
       </footer>
     </div>

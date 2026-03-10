@@ -1,6 +1,6 @@
 import { formatDistanceToNow } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
-import { BookOpen, Zap } from 'lucide-react'
+import { Zap } from 'lucide-react'
 
 interface RecentActivityProps {
     modules: Array<{
@@ -12,13 +12,6 @@ interface RecentActivityProps {
         reason: string | null
         created_at: string
     }>
-}
-
-const CATEGORY_COLORS: Record<string, string> = {
-    coding: 'var(--accent-cyan)',
-    design: 'var(--accent-gold)',
-    productivity: 'var(--accent-green)',
-    business: 'var(--accent-red)',
 }
 
 export default function RecentActivity({ modules, xpLogs }: RecentActivityProps) {

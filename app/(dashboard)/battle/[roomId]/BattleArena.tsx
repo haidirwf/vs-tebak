@@ -46,6 +46,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [timeLeft, setTimeLeft] = useState(15)
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
     const [showAnswer, setShowAnswer] = useState(false)
+    const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
 
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -603,11 +604,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             <div style={{ marginTop: '32px', textAlign: 'center' }}>
                 <motion.button
                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    onClick={() => {
-                        if (window.confirm("Yakin ingin menyerah? Kamu akan otomatis didiskualifikasi dan lawanmu menang.")) {
-                            handleSurrender()
-                        }
-                    }}
+                    onClick={() => setShowSurrenderConfirm(true)}
                     style={{
                         padding: '8px 16px', borderRadius: '4px', cursor: 'pointer',
                         backgroundColor: 'transparent', border: '1px solid var(--accent-red)',
@@ -617,6 +614,84 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     🚩 Menyerah
                 </motion.button>
             </div>
+
+            {showSurrenderConfirm && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000,
+                        padding: '16px',
+                    }}
+                    onClick={() => setShowSurrenderConfirm(false)}
+                >
+                    <div
+                        className="card"
+                        style={{
+                            width: '100%',
+                            maxWidth: '360px',
+                            padding: '20px',
+                            border: '1px solid var(--border)',
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '18px',
+                                fontWeight: 700,
+                                marginBottom: '8px',
+                            }}
+                        >
+                            Konfirmasi Menyerah
+                        </h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '16px' }}>
+                            Yakin ingin menyerah? Kamu akan otomatis didiskualifikasi dan lawanmu menang.
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button
+                                onClick={() => setShowSurrenderConfirm(false)}
+                                style={{
+                                    flex: 1,
+                                    padding: '10px',
+                                    borderRadius: '4px',
+                                    border: '1px solid var(--border)',
+                                    backgroundColor: 'transparent',
+                                    color: 'var(--text-secondary)',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Tidak
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setShowSurrenderConfirm(false)
+                                    handleSurrender()
+                                }}
+                                style={{
+                                    flex: 1,
+                                    padding: '10px',
+                                    borderRadius: '4px',
+                                    border: '1px solid rgba(232,64,64,0.45)',
+                                    backgroundColor: 'rgba(232,64,64,0.1)',
+                                    color: 'var(--accent-red)',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Ya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

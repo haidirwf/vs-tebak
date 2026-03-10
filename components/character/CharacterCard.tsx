@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
-import { Flame, Star, Sword } from 'lucide-react'
+import { Flame } from 'lucide-react'
 
 interface CharacterCardProps {
     profile: Profile
@@ -107,7 +107,7 @@ export default function CharacterCard({ profile, showStats = true }: CharacterCa
 
             {/* Stats */}
             {showStats && (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                     {[
                         { label: 'STR', value: classStat.str },
                         { label: 'INT', value: classStat.int },

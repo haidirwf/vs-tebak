@@ -1,9 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { checkStreakStatus } from '@/lib/game/streak'
 import { format } from 'date-fns'
 
-export async function POST(request: NextRequest) {
+export async function POST() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 

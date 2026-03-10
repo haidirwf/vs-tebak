@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
@@ -35,6 +36,7 @@ export default function Sidebar() {
     const pathname = usePathname()
     const router = useRouter()
     const { profile } = useUserStore()
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
     const xpProgress = profile
         ? getXpProgress(profile.xp - getTotalXpAtLevel(profile.level), profile.xp_to_next_level)
@@ -47,8 +49,12 @@ export default function Sidebar() {
         router.refresh()
     }
 
+    async function handleLogoutWithConfirm() {
+        await handleLogout()
+    }
+
     return (
-        <aside style={{
+        <aside className="dashboard-sidebar" style={{
             width: '220px', flexShrink: 0,
             backgroundColor: 'var(--bg-secondary)',
             borderRight: '1px solid var(--border)',
@@ -56,18 +62,74 @@ export default function Sidebar() {
             height: '100vh', position: 'sticky', top: 0,
         }}>
             {/* Logo */}
-            <div style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)' }}>
+            <div className="dashboard-logo-row" style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)' }}>
                 <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                     <Swords size={20} style={{ color: 'var(--accent-gold)' }} />
                     <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--accent-gold)' }}>
                         SkillQuest
                     </span>
                 </Link>
+
+                {profile && (
+                    <div className="dashboard-mobile-actions">
+                        <Link
+                            href="/profile"
+                            className="dashboard-mobile-profile"
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                textDecoration: 'none',
+                                borderRadius: '4px',
+                                padding: '5px 8px',
+                                border: '1px solid var(--border)',
+                                backgroundColor: 'var(--bg-tertiary)',
+                            }}
+                        >
+                            <span style={{ fontSize: '14px' }}>{CLASS_EMOJI[profile.avatar_class] || '🎮'}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                                <span style={{
+                                    fontFamily: 'var(--font-heading)',
+                                    fontSize: '12px',
+                                    color: 'var(--text-primary)',
+                                    fontWeight: 700,
+                                    lineHeight: 1,
+                                    whiteSpace: 'nowrap',
+                                    overflow: 'hidden',
+                                    textOverflow: 'ellipsis',
+                                    maxWidth: '90px',
+                                }}>
+                                    {profile.username}
+                                </span>
+                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 700, lineHeight: 1 }}>
+                                    Lv.{profile.level}
+                                </span>
+                            </span>
+                        </Link>
+
+                        <div
+                            className="dashboard-mobile-xp"
+                            style={{
+                                borderRadius: '4px',
+                                padding: '5px 8px',
+                                border: '1px solid rgba(245,197,66,0.45)',
+                                backgroundColor: 'rgba(245,197,66,0.1)',
+                                color: 'var(--accent-gold)',
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                whiteSpace: 'nowrap',
+                            }}
+                        >
+                            {profile.xp.toLocaleString()} XP
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Character Preview */}
             {profile && (
-                <div style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                <div className="dashboard-character-preview" style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                         <div style={{
                             width: '36px', height: '36px', borderRadius: '4px',
@@ -103,12 +165,18 @@ export default function Sidebar() {
             )}
 
             {/* Navigation */}
-            <nav style={{ flex: 1, padding: '8px 8px', overflow: 'auto' }}>
+            <nav className="dashboard-sidebar-nav" style={{ flex: 1, padding: '8px 8px', overflow: 'auto' }}>
                 {navItems.map((item) => {
                     const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
                     return (
-                        <Link key={item.href} href={item.href} style={{ textDecoration: 'none' }}>
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={item.href === '/profile' ? 'dashboard-profile-nav-link' : undefined}
+                            style={{ textDecoration: 'none' }}
+                        >
                             <motion.div
+                                className="dashboard-sidebar-item"
                                 whileHover={{ x: 2 }}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
@@ -130,23 +198,122 @@ export default function Sidebar() {
                         </Link>
                     )
                 })}
+
+                <motion.button
+                    className="dashboard-nav-logout"
+                    onClick={() => setShowLogoutConfirm(true)}
+                    whileHover={{ x: 2 }}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '10px 10px',
+                        borderRadius: '4px',
+                        cursor: 'pointer',
+                        backgroundColor: 'rgba(232,64,64,0.1)',
+                        border: '1px solid rgba(232,64,64,0.4)',
+                        color: 'var(--accent-red)',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    <LogOut size={16} />
+                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700 }}>Keluar</span>
+                </motion.button>
             </nav>
 
             {/* Logout */}
-            <div style={{ padding: '8px', borderTop: '1px solid var(--border)' }}>
+            <div className="dashboard-bottom-logout" style={{ padding: '8px', borderTop: '1px solid var(--border)' }}>
                 <motion.button
-                    onClick={handleLogout}
+                    className="dashboard-sidebar-logout"
+                    onClick={() => setShowLogoutConfirm(true)}
                     whileHover={{ x: 2 }}
                     style={{
                         width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
                         padding: '10px 10px', borderRadius: '4px', cursor: 'pointer',
-                        backgroundColor: 'transparent', border: 'none', color: 'var(--text-secondary)',
+                        backgroundColor: 'rgba(232,64,64,0.1)',
+                        border: '1px solid rgba(232,64,64,0.4)',
+                        color: 'var(--accent-red)',
                     }}
                 >
                     <LogOut size={16} />
-                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600 }}>Keluar</span>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700 }}>Keluar</span>
                 </motion.button>
             </div>
+
+            {showLogoutConfirm && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000,
+                        padding: '16px',
+                    }}
+                    onClick={() => setShowLogoutConfirm(false)}
+                >
+                    <div
+                        className="card"
+                        style={{
+                            width: '100%',
+                            maxWidth: '360px',
+                            padding: '20px',
+                            border: '1px solid var(--border)',
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <h3
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '18px',
+                                fontWeight: 700,
+                                marginBottom: '8px',
+                            }}
+                        >
+                            Konfirmasi Keluar
+                        </h3>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '16px' }}>
+                            Yakin ingin keluar dari akun ini?
+                        </p>
+                        <div style={{ display: 'flex', gap: '10px' }}>
+                            <button
+                                onClick={() => setShowLogoutConfirm(false)}
+                                style={{
+                                    flex: 1,
+                                    padding: '10px',
+                                    borderRadius: '4px',
+                                    border: '1px solid var(--border)',
+                                    backgroundColor: 'transparent',
+                                    color: 'var(--text-secondary)',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Tidak
+                            </button>
+                            <button
+                                onClick={handleLogoutWithConfirm}
+                                style={{
+                                    flex: 1,
+                                    padding: '10px',
+                                    borderRadius: '4px',
+                                    border: '1px solid rgba(232,64,64,0.45)',
+                                    backgroundColor: 'rgba(232,64,64,0.1)',
+                                    color: 'var(--accent-red)',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Ya
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </aside>
     )
 }

@@ -24,8 +24,8 @@ export default async function ProfilePage() {
     const battlesWon = battles.filter(b => b.winner_id === user.id).length
 
     return (
-        <div style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <CharacterCard profile={profile} showStats={true} />
 
                 {/* Detailed Stats */}

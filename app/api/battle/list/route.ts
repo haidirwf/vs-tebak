@@ -45,7 +45,7 @@ export async function GET() {
 
     // Format data biar gampang dipake frontend
     const formattedRooms = openRooms.map(room => {
-        const profs: any = room.profiles
+        const profs = room.profiles as { username?: string } | Array<{ username?: string }> | null
         return {
             id: room.id,
             room_code: room.room_code,

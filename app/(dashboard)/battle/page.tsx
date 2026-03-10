@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Zap, Hash, Shuffle, Sword, Loader2, X } from 'lucide-react'
+import { Hash, Shuffle, Sword, Loader2, X } from 'lucide-react'
 
 const CATEGORIES = [
     { value: 'coding', label: 'Coding', emoji: '💻' },
@@ -11,6 +11,14 @@ const CATEGORIES = [
     { value: 'productivity', label: 'Produktivitas', emoji: '⚡' },
     { value: 'general', label: 'Umum', emoji: '🎯' },
 ]
+
+interface AvailableRoom {
+    id: string
+    room_code: string
+    category: string
+    created_at: string
+    host_name: string
+}
 
 export default function BattlePage() {
     const router = useRouter()
@@ -20,7 +28,7 @@ export default function BattlePage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [pendingBattleId, setPendingBattleId] = useState<string | null>(null)
-    const [availableRooms, setAvailableRooms] = useState<any[]>([])
+    const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([])
     const pollingRef = useRef<NodeJS.Timeout | null>(null)
     const roomsPollingRef = useRef<NodeJS.Timeout | null>(null)
 
@@ -32,7 +40,8 @@ export default function BattlePage() {
                 const res = await fetch('/api/battle/list')
                 if (res.ok) {
                     const data = await res.json()
-                    setAvailableRooms(data.rooms || [])
+                    const rooms = Array.isArray(data.rooms) ? data.rooms as AvailableRoom[] : []
+                    setAvailableRooms(rooms)
                 }
             } catch (e) {
                 console.error(e)
@@ -131,8 +140,8 @@ export default function BattlePage() {
     }
 
     return (
-        <div style={{ padding: '24px', maxWidth: '700px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '32px', textAlign: 'center' }}>
+        <div className="responsive-page battle-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+            <div style={{ marginBottom: '32px', textAlign: 'left' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, marginBottom: '4px' }}>
                     ⚔️ Battle Arena
                 </h1>
@@ -172,99 +181,99 @@ export default function BattlePage() {
             )}
 
             {mode === 'select' && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
-                    {[
-                        { label: 'Buat Room', icon: <Sword size={28} />, desc: 'Buat room baru dan undang teman', action: () => setMode('create'), color: 'var(--accent-gold)' },
-                        { label: 'Join Room', icon: <Hash size={28} />, desc: 'Masukkan kode room dari teman', action: () => setMode('join'), color: 'var(--accent-cyan)' },
-                        { label: 'Matchmaking', icon: <Shuffle size={28} />, desc: 'Cari lawan secara otomatis', action: handleMatchmaking, color: 'var(--accent-green)' },
-                    ].map((item) => (
-                        <motion.button
-                            key={item.label}
-                            whileHover={{ y: -4, scale: 1.02 }}
-                            whileTap={{ scale: 0.97 }}
-                            onClick={item.action}
-                            disabled={loading}
-                            style={{
-                                padding: '28px 16px', borderRadius: '4px', cursor: 'pointer',
-                                backgroundColor: 'var(--bg-secondary)', border: `1px solid ${item.color}33`,
-                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
-                                color: item.color, transition: 'all 0.2s',
-                            }}
-                        >
-                            {item.icon}
-                            <div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>
-                                    {item.label}
+                <motion.div className="battle-select-layout" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gap: '16px' }}>
+                    <div className="battle-select-actions" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        {[
+                            { label: 'Buat Room', icon: <Sword size={28} />, desc: 'Buat room baru dan undang teman', action: () => setMode('create'), color: 'var(--accent-gold)' },
+                            { label: 'Join Room', icon: <Hash size={28} />, desc: 'Masukkan kode room dari teman', action: () => setMode('join'), color: 'var(--accent-cyan)' },
+                            { label: 'Matchmaking', icon: <Shuffle size={28} />, desc: 'Cari lawan secara otomatis', action: handleMatchmaking, color: 'var(--accent-green)' },
+                        ].map((item) => (
+                            <motion.button
+                                key={item.label}
+                                whileHover={{ y: -2, scale: 1.01 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={item.action}
+                                disabled={loading}
+                                className="battle-select-card"
+                                style={{
+                                    padding: '28px 16px', borderRadius: '4px', cursor: 'pointer',
+                                    backgroundColor: 'var(--bg-secondary)', border: `1px solid ${item.color}33`,
+                                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
+                                    color: item.color, transition: 'all 0.2s',
+                                }}
+                            >
+                                {item.icon}
+                                <div>
+                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>
+                                        {item.label}
+                                    </div>
+                                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>{item.desc}</div>
                                 </div>
-                                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>{item.desc}</div>
-                            </div>
-                        </motion.button>
-                    ))}
-                </motion.div>
-            )}
-
-            {/* Tersedia UI (Room List) */}
-            {mode === 'select' && (
-                <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} style={{ marginTop: '32px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-                        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700 }}>
-                            🔥 Daftar Room Tersedia
-                        </h2>
-                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                            *Diperbarui live
-                        </span>
+                            </motion.button>
+                        ))}
                     </div>
 
-                    {availableRooms.length === 0 ? (
-                        <div style={{ textAlign: 'center', padding: '32px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px', border: '1px dashed var(--border)', color: 'var(--text-secondary)', fontSize: '13px' }}>
-                            Belum ada room yang terbuka saat ini. Jadilah yang pertama membuat room!
+                    <div className="card battle-room-panel" style={{ padding: '16px', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700 }}>
+                                🔥 Daftar Room Tersedia
+                            </h2>
+                            <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                *Diperbarui live
+                            </span>
                         </div>
-                    ) : (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {availableRooms.map((room) => {
-                                const catEmoji = CATEGORIES.find(c => c.value === room.category)?.emoji || '🎯'
-                                const catLabel = CATEGORIES.find(c => c.value === room.category)?.label || 'Umum'
 
-                                // Format time HH:MM
-                                const roomTime = new Date(room.created_at).toLocaleTimeString('id-ID', {
-                                    hour: '2-digit', minute: '2-digit'
-                                })
+                        {availableRooms.length === 0 ? (
+                            <div className="battle-room-empty" style={{ textAlign: 'center', padding: '32px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px', border: '1px dashed var(--border)', color: 'var(--text-secondary)', fontSize: '13px' }}>
+                                Belum ada room yang terbuka saat ini. Jadilah yang pertama membuat room!
+                            </div>
+                        ) : (
+                            <div className="battle-room-list" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                {availableRooms.map((room) => {
+                                    const catEmoji = CATEGORIES.find(c => c.value === room.category)?.emoji || '🎯'
+                                    const catLabel = CATEGORIES.find(c => c.value === room.category)?.label || 'Umum'
 
-                                return (
-                                    <div key={room.id} style={{
-                                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                        padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px',
-                                        border: '1px solid var(--border)'
-                                    }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                            <div style={{ fontSize: '24px' }}>{catEmoji}</div>
-                                            <div>
-                                                <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', marginBottom: '4px' }}>
-                                                    Room {room.host_name}
-                                                </div>
-                                                <div style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', gap: '12px' }}>
-                                                    <span>⏰ {roomTime}</span>
-                                                    <span>🏷️ {catLabel}</span>
-                                                    <span>🗝️ {room.room_code}</span>
+                                    // Format time HH:MM
+                                    const roomTime = new Date(room.created_at).toLocaleTimeString('id-ID', {
+                                        hour: '2-digit', minute: '2-digit'
+                                    })
+
+                                    return (
+                                        <div className="battle-room-row" key={room.id} style={{
+                                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                                            padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px',
+                                            border: '1px solid var(--border)'
+                                        }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                                                <div style={{ fontSize: '24px' }}>{catEmoji}</div>
+                                                <div>
+                                                    <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', marginBottom: '4px' }}>
+                                                        Room {room.host_name}
+                                                    </div>
+                                                    <div className="battle-room-meta" style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', gap: '12px' }}>
+                                                        <span>⏰ {roomTime}</span>
+                                                        <span>🏷️ {catLabel}</span>
+                                                        <span>🗝️ {room.room_code}</span>
+                                                    </div>
                                                 </div>
                                             </div>
+                                            <button
+                                                onClick={() => handleJoin(room.room_code)}
+                                                disabled={loading}
+                                                style={{
+                                                    padding: '8px 24px', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer',
+                                                    backgroundColor: 'rgba(0, 212, 255, 0.1)', border: '1px solid var(--accent-cyan)',
+                                                    color: 'var(--accent-cyan)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+                                                }}
+                                            >
+                                                {loading ? '...' : 'JOIN'}
+                                            </button>
                                         </div>
-                                        <button
-                                            onClick={() => handleJoin(room.room_code)}
-                                            disabled={loading}
-                                            style={{
-                                                padding: '8px 24px', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer',
-                                                backgroundColor: 'rgba(0, 212, 255, 0.1)', border: '1px solid var(--accent-cyan)',
-                                                color: 'var(--accent-cyan)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
-                                            }}
-                                        >
-                                            {loading ? '...' : 'JOIN'}
-                                        </button>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    )}
+                                    )
+                                })}
+                            </div>
+                        )}
+                    </div>
                 </motion.div>
             )}
 
@@ -277,7 +286,7 @@ export default function BattlePage() {
                         <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 500 }}>
                             Pilih Kategori Soal
                         </label>
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                        <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                             {CATEGORIES.map(cat => (
                                 <button key={cat.value} onClick={() => setCategory(cat.value)} style={{
                                     padding: '12px 8px', borderRadius: '4px', cursor: 'pointer',
@@ -294,7 +303,7 @@ export default function BattlePage() {
                         </div>
                     </div>
                     {error && <div style={{ color: 'var(--accent-red)', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className="battle-action-row" style={{ display: 'flex', gap: '12px' }}>
                         <button onClick={() => setMode('select')} style={{
                             padding: '10px 20px', borderRadius: '4px', cursor: 'pointer',
                             backgroundColor: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '13px',
@@ -334,7 +343,7 @@ export default function BattlePage() {
                         />
                     </div>
                     {error && <div style={{ color: 'var(--accent-red)', fontSize: '13px', marginBottom: '12px' }}>{error}</div>}
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className="battle-action-row" style={{ display: 'flex', gap: '12px' }}>
                         <button onClick={() => { setMode('select'); setRoomCode(''); setError(null) }} style={{
                             padding: '10px 20px', borderRadius: '4px', cursor: 'pointer',
                             backgroundColor: 'transparent', border: '1px solid var(--border)', color: 'var(--text-secondary)', fontSize: '13px',

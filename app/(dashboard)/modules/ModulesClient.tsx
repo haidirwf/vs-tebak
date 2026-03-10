@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Module, UserModule, ModuleCategory } from '@/types'
-import { Search, BookOpen, Clock, Zap, CheckCircle, ChevronRight } from 'lucide-react'
+import { Search, BookOpen, Clock, Zap, CheckCircle } from 'lucide-react'
 
 interface ModulesClientProps {
     modules: Module[]
@@ -46,7 +46,7 @@ export default function ModulesClient({ modules, userModules }: ModulesClientPro
     })
 
     return (
-        <div style={{ padding: '24px' }}>
+        <div className="responsive-page modules-page" style={{ padding: '24px' }}>
             {/* Header */}
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>
@@ -102,7 +102,7 @@ export default function ModulesClient({ modules, userModules }: ModulesClientPro
                     <p>Modul tidak ditemukan</p>
                 </div>
             ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+                <div className="modules-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
                     {filtered.map((module, i) => {
                         const userModule = getUserModule(module.id)
                         const isCompleted = userModule?.status === 'completed'
@@ -113,14 +113,15 @@ export default function ModulesClient({ modules, userModules }: ModulesClientPro
                         return (
                             <motion.div
                                 key={module.id}
+                                className="modules-grid-item"
                                 initial={{ opacity: 0, y: 16 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.04 }}
                                 whileHover={{ y: -2 }}
                             >
-                                <Link href={`/modules/${module.slug}`} style={{ textDecoration: 'none', display: 'block' }}>
-                                    <div className="card" style={{
-                                        padding: '16px', height: '100%', cursor: 'pointer',
+                                <Link href={`/modules/${module.slug}`} className="modules-card-link" style={{ textDecoration: 'none', display: 'block' }}>
+                                    <div className="card modules-card" style={{
+                                        padding: '16px', cursor: 'pointer',
                                         border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : 'var(--border)'}`,
                                         transition: 'border-color 0.2s',
                                     }}>
@@ -139,30 +140,32 @@ export default function ModulesClient({ modules, userModules }: ModulesClientPro
                                             )}
                                         </div>
 
-                                        {/* Title */}
-                                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>
-                                            {module.title}
-                                        </h3>
+                                        <div className="modules-card-body" style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                            {/* Title */}
+                                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, marginBottom: '6px', color: 'var(--text-primary)' }}>
+                                                {module.title}
+                                            </h3>
 
-                                        {/* Description */}
-                                        {module.description && (
-                                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.5 }}>
-                                                {module.description.slice(0, 80)}{module.description.length > 80 ? '...' : ''}
-                                            </p>
-                                        )}
+                                            {/* Description */}
+                                            {module.description && (
+                                                <p className="modules-card-description-fill" style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px', lineHeight: 1.5 }}>
+                                                    {module.description}
+                                                </p>
+                                            )}
 
-                                        {/* Progress Bar (if in progress) */}
-                                        {isInProgress && (
-                                            <div style={{ marginBottom: '10px' }}>
-                                                <div style={{ height: '3px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '2px', overflow: 'hidden' }}>
-                                                    <div style={{ height: '100%', backgroundColor: 'var(--accent-cyan)', width: `${progress}%` }} />
+                                            {/* Progress Bar (if in progress) */}
+                                            {isInProgress && (
+                                                <div style={{ marginBottom: '10px' }}>
+                                                    <div style={{ height: '3px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '2px', overflow: 'hidden' }}>
+                                                        <div style={{ height: '100%', backgroundColor: 'var(--accent-cyan)', width: `${progress}%` }} />
+                                                    </div>
+                                                    <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '3px' }}>{progress}% selesai</div>
                                                 </div>
-                                                <div style={{ fontSize: '10px', color: 'var(--text-muted)', marginTop: '3px' }}>{progress}% selesai</div>
-                                            </div>
-                                        )}
+                                            )}
+                                        </div>
 
                                         {/* Meta */}
-                                        <div style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
+                                        <div className="modules-card-meta-row" style={{ display: 'flex', gap: '12px', marginTop: 'auto' }}>
                                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--text-muted)' }}>
                                                 <Clock size={11} /> {module.duration_minutes}m
                                             </span>

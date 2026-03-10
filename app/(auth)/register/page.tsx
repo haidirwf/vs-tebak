@@ -101,7 +101,7 @@ export default function RegisterPage() {
                     <p style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>Mulai petualangan belajarmu hari ini</p>
                 </div>
 
-                <div className="card" style={{ padding: '32px' }}>
+                <div className="card auth-card" style={{ padding: '32px' }}>
                     <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>Buat Akun</h1>
 
                     {error && (
@@ -114,7 +114,7 @@ export default function RegisterPage() {
                         {/* Avatar Class Selection */}
                         <div>
                             <label style={labelStyle}>Pilih Kelas Karaktermu</label>
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                            <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                                 {(Object.keys(AVATAR_CLASS_STATS) as AvatarClass[]).map((cls) => {
                                     const stat = AVATAR_CLASS_STATS[cls]
                                     const isSelected = selectedClass === cls
@@ -167,7 +167,7 @@ export default function RegisterPage() {
                         </div>
 
                         {/* Username & Full Name */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div className="form-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                             <div>
                                 <label style={labelStyle}>Username</label>
                                 <div style={{ position: 'relative' }}>
@@ -187,7 +187,7 @@ export default function RegisterPage() {
                         </div>
 
                         {/* School & City */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                        <div className="form-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                             <div>
                                 <label style={labelStyle}>Nama Sekolah</label>
                                 <div style={{ position: 'relative' }}>

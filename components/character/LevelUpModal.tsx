@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Star, Zap, ArrowUp } from 'lucide-react'
+import { ArrowUp } from 'lucide-react'
 
 interface LevelUpModalProps {
     oldLevel: number

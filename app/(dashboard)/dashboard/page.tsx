@@ -36,7 +36,7 @@ export default async function DashboardPage() {
     const dateStr = format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale })
 
     return (
-        <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
             {/* Welcome */}
             <div style={{ marginBottom: '24px' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '2px' }}>
@@ -47,7 +47,7 @@ export default async function DashboardPage() {
                 </h1>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 {/* Character Card */}
                 <CharacterCard profile={profile} showStats={true} />
 
@@ -60,9 +60,9 @@ export default async function DashboardPage() {
                 />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 {/* Daily Quests */}
-                <DailyQuestList quests={quests} userQuests={userQuests || []} userId={user.id} />
+                <DailyQuestList quests={quests} userQuests={userQuests || []} />
 
                 {/* Recent Activity */}
                 <RecentActivity modules={completedModules} xpLogs={xpLogRes.data || []} />

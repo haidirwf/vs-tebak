@@ -76,7 +76,7 @@ export default function LoginPage() {
                 </div>
 
                 {/* Form Card */}
-                <div className="card" style={{ padding: '32px' }}>
+                <div className="card auth-card" style={{ padding: '32px' }}>
                     <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Login</h1>
 
                     {error && (
