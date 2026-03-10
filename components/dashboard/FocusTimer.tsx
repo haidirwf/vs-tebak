@@ -1,46 +1,26 @@
 // components/dashboard/FocusTimer.tsx
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Timer, Play, Pause, RotateCcw, Zap, CheckCircle } from 'lucide-react'
 import { useFocusStore } from '@/stores/focusStore'
 import { useUserStore } from '@/stores/userStore'
 import { XP_REWARDS } from '@/lib/game/xp'
-import { createClient } from '@/lib/supabase/client'
 
 export default function FocusTimer() {
     const { isActive, timeLeft, isFinished, startTimer, pauseTimer, resetTimer, tick, sessionsCount } = useFocusStore()
     const { profile, updateXP } = useUserStore()
-    const supabase = createClient()
     const [rewardClaimed, setRewardClaimed] = useState(false)
 
-    useEffect(() => {
-        let interval: NodeJS.Timeout
-        if (isActive && timeLeft > 0) {
-            interval = setInterval(tick, 1000)
-        } else if (timeLeft === 0 && isActive) {
-            handleFinish()
-        }
-        return () => clearInterval(interval)
-    }, [isActive, timeLeft, tick])
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60)
-        const secs = seconds % 60
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-    }
-
-    const handleFinish = async () => {
+    const handleFinish = useCallback(async () => {
         if (rewardClaimed) return
         
         setRewardClaimed(true)
         const xpAmount = XP_REWARDS.focusSession
-        const newXp = (profile?.xp || 0) + xpAmount
-
         // Update database via XP API to trigger quest progress tracking
         if (profile?.id) {
-            await fetch('/api/xp', {
+            const res = await fetch('/api/xp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
@@ -49,15 +29,38 @@ export default function FocusTimer() {
                     category: 'productivity'
                 }),
             })
-        }
 
-        updateXP(newXp)
+            const data = await res.json()
+            if (typeof data.newXp === 'number') {
+                updateXP(data.newXp)
+            }
+        }
         
         // Auto reset after 3 seconds of success state
         setTimeout(() => {
             setRewardClaimed(false)
             resetTimer()
         }, 5000)
+    }, [profile?.id, resetTimer, rewardClaimed, updateXP])
+
+    useEffect(() => {
+        if (!isActive || timeLeft <= 0) return
+        const interval = setInterval(tick, 1000)
+        return () => clearInterval(interval)
+    }, [isActive, timeLeft, tick])
+
+    useEffect(() => {
+        if (!isActive || timeLeft !== 0) return
+        const doneTimer = setTimeout(() => {
+            void handleFinish()
+        }, 0)
+        return () => clearTimeout(doneTimer)
+    }, [isActive, timeLeft, handleFinish])
+
+    const formatTime = (seconds: number) => {
+        const mins = Math.floor(seconds / 60)
+        const secs = seconds % 60
+        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
     }
 
     const progress = (1 - timeLeft / (25 * 60)) * 100
@@ -116,6 +119,8 @@ export default function FocusTimer() {
                 <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
                     {!isActive ? (
                         <motion.button
+                            type="button"
+                            aria-label="Mulai sesi fokus"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={startTimer}
@@ -138,6 +143,8 @@ export default function FocusTimer() {
                         </motion.button>
                     ) : (
                         <motion.button
+                            type="button"
+                            aria-label="Jeda sesi fokus"
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
                             onClick={pauseTimer}
@@ -160,6 +167,7 @@ export default function FocusTimer() {
                     )}
 
                     <motion.button
+                        type="button"
                         whileHover={{ scale: 1.05, backgroundColor: 'rgba(232, 64, 64, 0.1)' }}
                         whileTap={{ scale: 0.95 }}
                         onClick={resetTimer}

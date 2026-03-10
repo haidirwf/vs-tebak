@@ -59,7 +59,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
             {/* Tabs */}
             <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
                 {tabs.map(t => (
-                    <button key={t.key} onClick={() => setTab(t.key)} style={{
+                    <button key={t.key} type="button" aria-pressed={tab === t.key} onClick={() => setTab(t.key)} style={{
                         padding: '8px 18px', borderRadius: '4px', cursor: 'pointer',
                         backgroundColor: tab === t.key ? 'rgba(245,197,66,0.1)' : 'var(--bg-secondary)',
                         border: `1px solid ${tab === t.key ? 'var(--accent-gold)' : 'var(--border)'}`,

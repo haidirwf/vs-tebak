@@ -1,10 +1,8 @@
 // app/(dashboard)/focus/page.tsx
 'use client'
 
-import { motion } from 'framer-motion'
 import FocusTimer from '@/components/dashboard/FocusTimer'
 import MotivationQuote from '@/components/dashboard/MotivationQuote'
-import { Sparkles } from 'lucide-react'
 
 export default function FocusPage() {
     return (

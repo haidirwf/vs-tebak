@@ -3,6 +3,19 @@ import { SupabaseClient } from '@supabase/supabase-js'
 
 export type QuestAction = 'complete_module' | 'win_battle' | 'maintain_streak' | 'earn_xp'
 
+interface DailyQuestRelation {
+    id: string
+    target_value: number
+    xp_reward: number
+}
+
+interface UserQuestRow {
+    id: string
+    current_value: number
+    is_completed: boolean
+    daily_quests: DailyQuestRelation | DailyQuestRelation[]
+}
+
 /**
  * Updates progress for a user's daily quests based on an action.
  * @param supabase Authenticated Supabase client (server-side)
@@ -38,9 +51,12 @@ export async function updateQuestProgress(
 
         if (fetchError || !userQuests) return
 
-        for (const uq of userQuests) {
+        for (const uq of userQuests as unknown as UserQuestRow[]) {
+            const questData = Array.isArray(uq.daily_quests) ? uq.daily_quests[0] : uq.daily_quests
+            if (!questData) continue
+
             const newValue = uq.current_value + increment
-            const target = (uq.daily_quests as any).target_value
+            const target = questData.target_value
             const completed = newValue >= target
 
             await supabase
@@ -55,7 +71,7 @@ export async function updateQuestProgress(
             // Usually the UI/API handles the quest reward, 
             // but we could also add a separate XP log here if we want it truly automatic.
             if (completed) {
-                const xpReward = (uq.daily_quests as any).xp_reward
+                const xpReward = questData.xp_reward
                 if (xpReward > 0) {
                     await awardQuestXp(supabase, userId, xpReward, action)
                 }

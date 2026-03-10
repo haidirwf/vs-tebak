@@ -3,7 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --webpack --hostname 127.0.0.1 --port 3001",
+    "dev": "next dev --hostname 127.0.0.1 --port 3001",
+    "dev:webpack": "next dev --webpack --hostname 127.0.0.1 --port 3001",
     "dev:turbo": "next dev --turbopack --hostname 127.0.0.1 --port 3001",
     "clean": "rm -rf .next",
     "build": "next build",

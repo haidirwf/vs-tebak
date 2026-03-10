@@ -474,6 +474,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     </div>
                 </div>
                 <motion.button
+                    type="button"
                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                     onClick={handleExitGame}
                     style={{
@@ -540,6 +541,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
                 {!myReady ? (
                     <motion.button
+                        type="button"
                         whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
                         onClick={handleReady}
                         style={{
@@ -574,6 +576,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
                 {countdown === null && (
                     <motion.button
+                        type="button"
                         whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                         onClick={handleExitGame}
                         style={{
@@ -645,7 +648,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{opponent?.username || 'Lawan'}</div>
                     </div>
                 </div>
-                <motion.button whileHover={{ scale: 1.02 }} onClick={() => router.push('/battle')} style={{
+                <motion.button type="button" whileHover={{ scale: 1.02 }} onClick={() => router.push('/battle')} style={{
                     padding: '12px 32px', borderRadius: '4px', cursor: 'pointer',
                     backgroundColor: 'var(--accent-gold)', border: 'none',
                     color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700,
@@ -722,7 +725,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         bg = 'rgba(0,212,255,0.1)'; border = 'var(--accent-cyan)'
                     }
                     return (
-                        <motion.button key={idx} whileHover={selectedAnswer === null ? { x: 4 } : {}}
+                        <motion.button type="button" key={idx} whileHover={selectedAnswer === null ? { x: 4 } : {}}
                             onClick={() => handleAnswer(idx)} style={{
                                 textAlign: 'left', padding: '14px 16px', borderRadius: '4px',
                                 cursor: selectedAnswer !== null ? 'default' : 'pointer',
@@ -741,6 +744,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             {/* Surrender Button */}
             <div style={{ marginTop: '32px', textAlign: 'center' }}>
                 <motion.button
+                    type="button"
                     whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
                     onClick={() => setShowSurrenderConfirm(true)}
                     style={{
@@ -792,6 +796,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         </p>
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <button
+                                type="button"
                                 onClick={() => setShowSurrenderConfirm(false)}
                                 style={{
                                     flex: 1,
@@ -808,6 +813,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 Tidak
                             </button>
                             <button
+                                type="button"
                                 onClick={() => {
                                     setShowSurrenderConfirm(false)
                                     handleSurrender()

@@ -87,17 +87,20 @@ export default function LoginPage() {
 
                     <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         <div>
-                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500 }}>Email</label>
+                            <label htmlFor="login-email" style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500 }}>Email</label>
                             <div style={{ position: 'relative' }}>
                                 <Mail size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                                 <input
+                                    id="login-email"
                                     {...register('email')}
                                     type="email"
+                                    autoComplete="email"
                                     placeholder="hero@skillquest.id"
+                                    aria-invalid={Boolean(errors.email)}
                                     style={{
                                         width: '100%', paddingLeft: '36px', paddingRight: '12px', paddingTop: '10px', paddingBottom: '10px',
                                         backgroundColor: 'var(--bg-tertiary)', border: `1px solid ${errors.email ? 'var(--accent-red)' : 'var(--border)'}`,
-                                        borderRadius: '4px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+                                        borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
                                     }}
                                 />
                             </div>
@@ -105,17 +108,20 @@ export default function LoginPage() {
                         </div>
 
                         <div>
-                            <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500 }}>Password</label>
+                            <label htmlFor="login-password" style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500 }}>Password</label>
                             <div style={{ position: 'relative' }}>
                                 <Lock size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                                 <input
+                                    id="login-password"
                                     {...register('password')}
                                     type="password"
+                                    autoComplete="current-password"
                                     placeholder="••••••••"
+                                    aria-invalid={Boolean(errors.password)}
                                     style={{
                                         width: '100%', paddingLeft: '36px', paddingRight: '12px', paddingTop: '10px', paddingBottom: '10px',
                                         backgroundColor: 'var(--bg-tertiary)', border: `1px solid ${errors.password ? 'var(--accent-red)' : 'var(--border)'}`,
-                                        borderRadius: '4px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+                                        borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
                                     }}
                                 />
                             </div>
@@ -146,6 +152,8 @@ export default function LoginPage() {
                     </div>
 
                     <motion.button
+                        type="button"
+                        aria-label="Lanjutkan dengan Google"
                         onClick={handleGoogleLogin}
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
@@ -174,11 +182,6 @@ export default function LoginPage() {
                     </p>
                 </div>
             </motion.div>
-
-            <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        input:focus { border-color: var(--accent-gold) !important; box-shadow: 0 0 0 2px rgba(245,197,66,0.15); }
-      `}</style>
         </div>
     )
 }

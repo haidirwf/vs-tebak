@@ -324,6 +324,8 @@ export default function BattlePage() {
                                                 </div>
                                             </div>
                                             <motion.button
+                                                type="button"
+                                                aria-label={`Tantang room ${room.room_code}`}
                                                 whileHover={{ scale: 1.05 }}
                                                 whileTap={{ scale: 0.95 }}
                                                 onClick={() => handleJoin(room.room_code)}
@@ -405,6 +407,7 @@ export default function BattlePage() {
                             Kode Room (6 karakter)
                         </label>
                         <input
+                            aria-label="Kode room"
                             value={roomCode}
                             onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
                             placeholder="ABCDEF"

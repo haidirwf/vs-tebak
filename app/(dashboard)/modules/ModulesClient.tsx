@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Module, UserModule, ModuleCategory } from '@/types'
 import { Search, BookOpen, Clock, Zap, CheckCircle, Flame } from 'lucide-react'
-import { classHasBonusForCategory, CLASS_BONUS_PERCENT, getClassBonusDescription } from '@/lib/game/xp'
+import { classHasBonusForCategory } from '@/lib/game/xp'
 
 interface ModulesClientProps {
     modules: Module[]
@@ -44,7 +44,6 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 export default function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps) {
     const [search, setSearch] = useState('')
     const [activeCategory, setActiveCategory] = useState<ModuleCategory | 'all'>('all')
-    const classBenefitText = getClassBonusDescription(avatarClass)
 
     const getUserModule = (moduleId: string) => userModules.find(um => um.module_id === moduleId)
 
@@ -69,9 +68,10 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
 
             {/* Controls Row */}
             <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ position: 'relative', flex: 1, minWidth: '300px' }}>
+                <div style={{ position: 'relative', flex: 1, minWidth: '280px' }}>
                     <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input
+                        aria-label="Cari modul"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Cari modul atau topik..."
@@ -79,7 +79,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                             width: '100%', paddingLeft: '40px', paddingRight: '16px',
                             paddingTop: '12px', paddingBottom: '12px',
                             backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border)',
-                            borderRadius: '6px', color: 'var(--text-primary)', fontSize: '14px',
+                            borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px',
                             outline: 'none', transition: 'border-color 0.2s',
                         }}
                         onFocus={(e) => e.target.style.borderColor = 'var(--accent-gold)'}
@@ -95,7 +95,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                             whileTap={{ scale: 0.97 }}
                             onClick={() => setActiveCategory(cat.value)}
                             style={{
-                                padding: '8px 16px', borderRadius: '6px', cursor: 'pointer',
+                                padding: '8px 16px', borderRadius: 'var(--radius-sm)', cursor: 'pointer',
                                 backgroundColor: activeCategory === cat.value ? 'var(--accent-gold)' : 'var(--bg-secondary)',
                                 border: `1px solid ${activeCategory === cat.value ? 'var(--accent-gold)' : 'var(--border)'}`,
                                 color: activeCategory === cat.value ? 'var(--bg-primary)' : 'var(--text-secondary)',
@@ -116,7 +116,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                 <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', border: '1px dashed var(--border)' }}>
                     <BookOpen size={48} style={{ margin: '0 auto 16px', color: 'var(--text-muted)', opacity: 0.2 }} />
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', marginBottom: '8px' }}>Tidak Ada Modul</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Coba ubah kriteria pencarian atau kategori Anda.</p>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Coba ubah kata kunci atau pilih kategori lain.</p>
                 </div>
             ) : (
                 <div className="modules-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>

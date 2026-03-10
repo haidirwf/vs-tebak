@@ -1,8 +1,8 @@
 'use client'
 
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { UserDailyQuest, DailyQuest } from '@/types'
-import { CheckCircle, Circle, Book, Swords, Flame as StreakIcon, Zap, ChevronRight } from 'lucide-react'
+import { CheckCircle, Book, Swords, Flame as StreakIcon, Zap } from 'lucide-react'
 
 interface DailyQuestListProps {
     quests: DailyQuest[]

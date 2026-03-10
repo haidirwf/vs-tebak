@@ -55,7 +55,10 @@ export default function Navbar() {
                 )}
 
                 {/* Notifications */}
-                <button style={{
+                <button
+                    aria-label="Notifikasi"
+                    type="button"
+                    style={{
                     backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
                     color: 'var(--text-secondary)', padding: '4px',
                 }}>

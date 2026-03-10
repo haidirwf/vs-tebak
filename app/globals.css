@@ -16,7 +16,18 @@
   --text-secondary: #888888;
   --text-muted: #444444;
 
-  --radius: 4px;
+  --radius: 8px;
+  --radius-sm: 6px;
+  --radius-lg: 12px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.3);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.22);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.28);
   --font-heading: 'Rajdhani', sans-serif;
   --font-body: 'DM Sans', sans-serif;
 }
@@ -38,6 +49,7 @@ body {
   font-size: 14px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -73,6 +85,20 @@ h1, h2, h3, h4, h5, h6 {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border);
   border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+}
+
+button, input, select, textarea, a {
+  transition: border-color 0.2s ease, background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .font-heading { font-family: var(--font-heading); }
@@ -101,6 +127,11 @@ h1, h2, h3, h4, h5, h6 {
 @keyframes sqShimmer {
   0% { background-position: 200% 0; }
   100% { background-position: -20% 0; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Mobile-first responsive helpers */
@@ -474,17 +505,13 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (min-width: 1024px) {
   html, body {
-    height: calc(100vh / 1.1);
+    height: 100%;
     overflow: hidden;
-  }
-
-  body {
-    zoom: 1.1;
   }
 
   .dashboard-shell {
     flex-direction: row;
-    height: calc(100vh / 1.1) !important;
+    height: 100vh !important;
     overflow: hidden !important;
   }
 
@@ -497,7 +524,6 @@ h1, h2, h3, h4, h5, h6 {
   }
 
   .dashboard-content {
-    zoom: 1;
     will-change: contents;
   }
 
@@ -513,7 +539,7 @@ h1, h2, h3, h4, h5, h6 {
 
   .dashboard-sidebar {
     width: 270px !important;
-    height: calc(100vh / 1.1) !important;
+    height: 100vh !important;
     position: sticky !important;
     top: 0;
   }

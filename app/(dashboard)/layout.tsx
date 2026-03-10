@@ -22,7 +22,7 @@ export default async function DashboardLayout({
 
     return (
         <DashboardProvider profile={profile}>
-            <div className="dashboard-shell" style={{ display: 'flex', height: '100vh', overflow: 'hidden' }}>
+            <div className="dashboard-shell" style={{ display: 'flex', minHeight: '100vh', overflow: 'hidden' }}>
                 <Sidebar />
                 <div className="dashboard-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
                     <div className="dashboard-topbar">

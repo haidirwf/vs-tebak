@@ -6,7 +6,7 @@ import { Module, UserModule, Question, LessonStep } from '@/types'
 import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { classHasBonusForCategory, CLASS_BONUS_PERCENT, getClassBonusDescription } from '@/lib/game/xp'
+import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 
 interface ModuleDetailProps {
     module: Module
@@ -25,12 +25,11 @@ export default function ModuleDetail({ module, userModule, questions, userId, av
     const [loading, setLoading] = useState(false)
     const hasClassBonus = classHasBonusForCategory(avatarClass, module.category)
     const bonusXp = hasClassBonus ? Math.floor(module.xp_reward * CLASS_BONUS_PERCENT / 100) : 0
-    const classBenefitText = getClassBonusDescription(avatarClass)
 
     const content = module.content as LessonStep[] | null
     const steps = content || []
     const totalSteps = steps.length
-    const progress = totalSteps > 0 ? Math.round(((currentStep) / totalSteps) * 100) : 0
+    const progress = totalSteps > 0 ? Math.round(((currentStep + 1) / totalSteps) * 100) : 0
 
     const currentQuestions = questions.filter((_, i) => i < 5) // Show 5 quiz questions
 
@@ -195,7 +194,7 @@ export default function ModuleDetail({ module, userModule, questions, userId, av
                             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>
                                 {steps[currentStep].title}
                             </h2>
-                            <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.8 }}>
+                            <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
                                 {steps[currentStep].content}
                             </div>
                         </motion.div>

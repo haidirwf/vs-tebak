@@ -1,8 +1,8 @@
 // components/dashboard/MotivationQuote.tsx
 'use client'
 
-import { useState, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useMemo } from 'react'
+import { motion } from 'framer-motion'
 import { Quote } from 'lucide-react'
 
 const QUOTES = [
@@ -17,11 +17,10 @@ const QUOTES = [
 ]
 
 export default function MotivationQuote() {
-    const [quote, setQuote] = useState("")
-
-    useEffect(() => {
-        const randomIndex = Math.floor(Math.random() * QUOTES.length)
-        setQuote(QUOTES[randomIndex])
+    const quote = useMemo(() => {
+        const dailySeed = new Date().toISOString().slice(0, 10)
+        const seedNum = dailySeed.split('-').join('').split('').reduce((acc, d) => acc + Number(d), 0)
+        return QUOTES[seedNum % QUOTES.length]
     }, [])
 
     return (

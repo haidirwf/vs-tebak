@@ -78,7 +78,7 @@ export default function RegisterPage() {
     const inputStyle = (hasError?: boolean) => ({
         width: '100%', paddingLeft: '36px', paddingRight: '12px', paddingTop: '10px', paddingBottom: '10px',
         backgroundColor: 'var(--bg-tertiary)', border: `1px solid ${hasError ? 'var(--accent-red)' : 'var(--border)'}`,
-        borderRadius: '4px', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+        borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
     })
 
     const labelStyle = {
@@ -148,20 +148,20 @@ export default function RegisterPage() {
 
                         {/* Email */}
                         <div>
-                            <label style={labelStyle}>Email</label>
+                            <label htmlFor="register-email" style={labelStyle}>Email</label>
                             <div style={{ position: 'relative' }}>
                                 <Mail size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                                <input {...register('email')} type="email" placeholder="hero@skillquest.id" style={inputStyle(!!errors.email)} />
+                                <input id="register-email" {...register('email')} type="email" autoComplete="email" aria-invalid={Boolean(errors.email)} placeholder="hero@skillquest.id" style={inputStyle(!!errors.email)} />
                             </div>
                             {errors.email && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.email.message}</p>}
                         </div>
 
                         {/* Password */}
                         <div>
-                            <label style={labelStyle}>Password</label>
+                            <label htmlFor="register-password" style={labelStyle}>Password</label>
                             <div style={{ position: 'relative' }}>
                                 <Lock size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-                                <input {...register('password')} type="password" placeholder="••••••••" style={inputStyle(!!errors.password)} />
+                                <input id="register-password" {...register('password')} type="password" autoComplete="new-password" aria-invalid={Boolean(errors.password)} placeholder="••••••••" style={inputStyle(!!errors.password)} />
                             </div>
                             {errors.password && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.password.message}</p>}
                         </div>
@@ -169,18 +169,18 @@ export default function RegisterPage() {
                         {/* Username & Full Name */}
                         <div className="form-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                             <div>
-                                <label style={labelStyle}>Username</label>
+                                <label htmlFor="register-username" style={labelStyle}>Username</label>
                                 <div style={{ position: 'relative' }}>
                                     <User size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
-                                    <input {...register('username')} placeholder="hero123" style={inputStyle(!!errors.username)} />
+                                    <input id="register-username" {...register('username')} autoComplete="username" aria-invalid={Boolean(errors.username)} placeholder="hero123" style={inputStyle(!!errors.username)} />
                                 </div>
                                 {errors.username && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.username.message}</p>}
                             </div>
                             <div>
-                                <label style={labelStyle}>Nama Lengkap</label>
+                                <label htmlFor="register-full-name" style={labelStyle}>Nama Lengkap</label>
                                 <div style={{ position: 'relative' }}>
                                     <User size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
-                                    <input {...register('full_name')} placeholder="Budi Santoso" style={inputStyle(!!errors.full_name)} />
+                                    <input id="register-full-name" {...register('full_name')} autoComplete="name" aria-invalid={Boolean(errors.full_name)} placeholder="Budi Santoso" style={inputStyle(!!errors.full_name)} />
                                 </div>
                                 {errors.full_name && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.full_name.message}</p>}
                             </div>
@@ -189,18 +189,18 @@ export default function RegisterPage() {
                         {/* School & City */}
                         <div className="form-two-col" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                             <div>
-                                <label style={labelStyle}>Nama Sekolah</label>
+                                <label htmlFor="register-school-name" style={labelStyle}>Nama Sekolah</label>
                                 <div style={{ position: 'relative' }}>
                                     <School size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
-                                    <input {...register('school_name')} placeholder="SMK N 1 Jakarta" style={inputStyle(!!errors.school_name)} />
+                                    <input id="register-school-name" {...register('school_name')} aria-invalid={Boolean(errors.school_name)} placeholder="SMK N 1 Jakarta" style={inputStyle(!!errors.school_name)} />
                                 </div>
                                 {errors.school_name && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.school_name.message}</p>}
                             </div>
                             <div>
-                                <label style={labelStyle}>Kota</label>
+                                <label htmlFor="register-city" style={labelStyle}>Kota</label>
                                 <div style={{ position: 'relative' }}>
                                     <School size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
-                                    <input {...register('city')} placeholder="Jakarta" style={inputStyle(!!errors.city)} />
+                                    <input id="register-city" {...register('city')} autoComplete="address-level2" aria-invalid={Boolean(errors.city)} placeholder="Jakarta" style={inputStyle(!!errors.city)} />
                                 </div>
                                 {errors.city && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.city.message}</p>}
                             </div>
@@ -231,10 +231,6 @@ export default function RegisterPage() {
                     </p>
                 </div>
             </motion.div>
-            <style>{`
-        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        input:focus { border-color: var(--accent-gold) !important; box-shadow: 0 0 0 2px rgba(245,197,66,0.15); }
-      `}</style>
         </div>
     )
 }
