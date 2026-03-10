@@ -7,6 +7,7 @@ import { useUserStore } from '@/stores/userStore'
 const PAGE_TITLES: Record<string, string> = {
     '/dashboard': 'Dashboard',
     '/modules': 'Modul Belajar',
+    '/focus': 'Zona Fokus',
     '/battle': 'Battle Arena',
     '/leaderboard': 'Leaderboard',
     '/profile': 'Profil',

@@ -1,11 +1,12 @@
 'use client'
 
-import { useState, useEffect, useRef, useCallback } from 'react'
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Question, Battle, Profile } from '@/types'
 import { Sword, Shield, CheckCircle } from 'lucide-react'
+import { getClassBonusDescription } from '@/lib/game/xp'
 
 interface BattleArenaProps {
     battle: Battle
@@ -15,10 +16,11 @@ interface BattleArenaProps {
 }
 
 type BattlePhase = 'waiting' | 'lobby' | 'playing' | 'finished'
+type BattleOutcome = 'win' | 'lose' | 'draw'
 
 export default function BattleArena({ battle: initialBattle, questions, currentUser, opponent: initialOpponent }: BattleArenaProps) {
     const router = useRouter()
-    const supabase = createClient()
+    const supabase = useMemo(() => createClient(), [])
 
     // Derive initial phase
     const initPhase = (): BattlePhase => {
@@ -30,7 +32,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [battle, setBattle] = useState(initialBattle)
     const [opponent, setOpponent] = useState<Profile | null>(initialOpponent)
 
-    // Ready state (tracked via realtime broadcast)
+    // Ready state (source of truth: battles.player1_ready / battles.player2_ready)
     const [iAmReady, setIAmReady] = useState(false)
     const [opponentReady, setOpponentReady] = useState(false)
     const [countdown, setCountdown] = useState<number | null>(null)
@@ -48,11 +50,28 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [showAnswer, setShowAnswer] = useState(false)
     const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
     const [xpResult, setXpResult] = useState<{ base: number; bonus: number } | null>(null)
+    const [finalOutcome, setFinalOutcome] = useState<BattleOutcome | null>(null)
+    const classBenefitText = getClassBonusDescription(currentUser.avatar_class)
 
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
 
     const isPlayer1 = battle.player1_id === currentUser.id
+    const syncXpToUserStore = useCallback(async (newXp: number) => {
+        const { useUserStore } = await import('@/stores/userStore')
+        useUserStore.getState().updateXP(newXp)
+    }, [])
+    const getBattleOutcome = useCallback((my: number, opp: number, isSurrender = false): BattleOutcome => {
+        if (isSurrender) return 'lose'
+        if (my > opp) return 'win'
+        if (my < opp) return 'lose'
+        return 'draw'
+    }, [])
+    const getXpConfig = useCallback((outcome: BattleOutcome) => {
+        if (outcome === 'win') return { amount: 80, category: 'battle_win', reason: 'kemenangan' }
+        if (outcome === 'draw') return { amount: 40, category: 'battle_draw', reason: 'hasil seri' }
+        return { amount: 20, category: 'battle_loss', reason: 'kekalahan' }
+    }, [])
 
     const handleExitGame = async () => {
         if (isPlayer1) {
@@ -60,14 +79,24 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             await supabase.from('battles').delete().eq('id', battle.id)
         } else {
             // Remove self from room
-            await supabase.from('battles').update({ player2_id: null, status: 'waiting' }).eq('id', battle.id)
+            await supabase.from('battles').update({
+                player2_id: null,
+                status: 'waiting',
+                player1_ready: false,
+                player2_ready: false,
+            }).eq('id', battle.id)
             // Inform player 1 so they go back to waiting
             channelRef.current?.send({ type: 'broadcast', event: 'player_left', payload: {} })
         }
         router.push('/battle')
     }
 
-    const endBattle = useCallback(async (finalMyScore: number, finalOppScore: number, isSurrender = false) => {
+    const endBattle = useCallback(async (
+        finalMyScore: number,
+        finalOppScore: number,
+        isSurrender = false,
+        forcedOutcome?: BattleOutcome
+    ) => {
         clearInterval(timerRef.current!)
         setIAmFinished(true)
 
@@ -76,11 +105,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             payload: { player_id: currentUser.id }
         })
 
-        if (opponentFinished || !opponent || isSurrender) {
+        if (opponentFinished || !opponent || isSurrender || forcedOutcome) {
             setPhase('finished')
-            let winner = finalMyScore >= finalOppScore ? currentUser.id : (opponent?.id ?? currentUser.id)
+            const outcome = forcedOutcome ?? getBattleOutcome(finalMyScore, finalOppScore, isSurrender)
+            setFinalOutcome(outcome)
             const opponentIdFallback = opponent?.id ?? currentUser.id
-            if (isSurrender) winner = opponentIdFallback // Ensure opponent wins
+            const winner =
+                outcome === 'draw'
+                    ? null
+                    : outcome === 'win'
+                        ? currentUser.id
+                        : opponentIdFallback
 
             await supabase.from('battles').update({
                 status: 'finished',
@@ -90,26 +125,32 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             }).eq('id', battle.id)
 
             // Calculate XP
-            let myXpAmount = finalMyScore >= finalOppScore ? 80 : 20
+            const { amount: xpAmount, category: xpCategory, reason: xpReason } = getXpConfig(outcome)
+            let myXpAmount = xpAmount
             if (isSurrender) myXpAmount = 0 // Penalty for surrendering
-            const xpCategory = finalMyScore >= finalOppScore ? 'battle_win' : 'battle_loss'
 
             if (myXpAmount > 0) {
                 const res = await fetch('/api/xp', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: myXpAmount, reason: `Battle ${isSurrender ? 'menyerah' : finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}`, category: xpCategory })
+                    body: JSON.stringify({ amount: myXpAmount, reason: `Battle ${isSurrender ? 'menyerah' : xpReason}`, category: xpCategory })
                 })
                 const data = await res.json()
                 if (data.success) {
                     setXpResult({ base: myXpAmount, bonus: data.bonusAmount || 0 })
+                    if (typeof data.newXp === 'number') {
+                        await syncXpToUserStore(data.newXp)
+                    }
                 }
             }
         }
-    }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished])
+    }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished, syncXpToUserStore, getBattleOutcome, getXpConfig])
 
     const handleSurrender = async () => {
+        setMyScore(0)
+        setOpponentScore((prev) => Math.max(prev, 100))
+        setFinalOutcome('lose')
         channelRef.current?.send({ type: 'broadcast', event: 'player_surrendered', payload: {} })
-        await endBattle(0, 100, true) // Force opponent to win
+        await endBattle(0, 100, true, 'lose') // Surrender always loses
     }
 
     // Timer — only runs during 'playing' phase
@@ -144,10 +185,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         channelRef.current = channel
 
         channel
-            .on('broadcast', { event: 'player_ready' }, ({ payload }) => {
+            .on('broadcast', { event: 'player_ready' }, async ({ payload }) => {
                 if (payload.player_id !== currentUser.id) {
                     setOpponentReady(true)
                 }
+                const { data: freshBattle } = await supabase.from('battles').select('*').eq('id', battle.id).single()
+                if (freshBattle) setBattle(freshBattle as Battle)
             })
             .on('broadcast', { event: 'game_start' }, () => {
                 // If the host force-starts it over the network
@@ -155,9 +198,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             })
             .on('broadcast', { event: 'player_surrendered' }, () => {
                 // Opponent surrendered, I win
-                setPhase('finished')
                 setOpponentScore(0)
-                endBattle(myScore, 0, false) // I win by default
+                setFinalOutcome('win')
+                endBattle(myScore, 0, false, 'win') // Surrendered opponent always loses
             })
             .on('broadcast', { event: 'player_left' }, () => {
                 if (isPlayer1) {
@@ -166,7 +209,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     setOpponent(null)
                     setOpponentReady(false)
                     setIAmReady(false)
-                    setBattle((prev) => ({ ...prev, player2_id: null }))
+                    setBattle((prev) => ({ ...prev, player2_id: null, player1_ready: false, player2_ready: false }))
                 }
             })
             .on('broadcast', { event: 'player_finished' }, ({ payload }) => {
@@ -186,10 +229,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 const newBattle = payload.new as Battle
                 setBattle(newBattle)
 
-                // When player 2 joins the room, auto-start
+                // When player 2 joins the room, move to lobby (ready check phase)
                 if (newBattle.player2_id) {
                     setPhase((prev) => {
-                        if (prev === 'waiting') return 'playing'
+                        if (prev === 'waiting') return 'lobby'
                         return prev
                     })
                     // Fetch opponent profile if not set
@@ -199,11 +242,20 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             })
             .subscribe((status) => {
                 console.log('Supabase Realtime subscription status:', status)
+                if (status === 'SUBSCRIBED') return
             })
 
         return () => { supabase.removeChannel(channel) }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [battle.id, currentUser.id])
+    }, [battle.id, currentUser.id, supabase, isPlayer1])
+
+    // Sync local ready UI from DB state.
+    useEffect(() => {
+        const myReady = isPlayer1 ? battle.player1_ready : battle.player2_ready
+        const oppReady = isPlayer1 ? battle.player2_ready : battle.player1_ready
+        setIAmReady(Boolean(myReady))
+        setOpponentReady(Boolean(oppReady))
+    }, [battle.player1_ready, battle.player2_ready, isPlayer1])
 
     // Monitor player2_id to transition and fetch opponent (with Fallback Polling)
     useEffect(() => {
@@ -211,8 +263,15 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         const checkFreshBattle = async () => {
             const { data: freshBattle } = await supabase.from('battles').select('*').eq('id', battle.id).single()
-            if (freshBattle && freshBattle.player2_id && !battle.player2_id) {
-                console.log('Opponent joined! Updating battle state.', freshBattle)
+            if (!freshBattle) return
+
+            const hasDiff =
+                freshBattle.player2_id !== battle.player2_id ||
+                freshBattle.player1_ready !== battle.player1_ready ||
+                freshBattle.player2_ready !== battle.player2_ready ||
+                freshBattle.status !== battle.status
+
+            if (hasDiff) {
                 setBattle(freshBattle)
             }
         }
@@ -220,9 +279,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         // Initial check on mount to bypass SSR stale data
         checkFreshBattle()
 
-        // Active polling for Player 1 (Creator) just in case Realtime replication isn't enabled
+        // Fallback polling in waiting/lobby to keep player join + ready state in sync
         if (phase === 'waiting' && isPlayer1) {
             pollInterval = setInterval(checkFreshBattle, 2000)
+        } else if (phase === 'lobby') {
+            pollInterval = setInterval(checkFreshBattle, 1000)
         }
 
         if (battle.player1_id && battle.player2_id) {
@@ -247,7 +308,18 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         return () => {
             if (pollInterval) clearInterval(pollInterval)
         }
-    }, [battle.id, battle.player1_id, battle.player2_id, isPlayer1, opponent, phase, supabase])
+    }, [
+        battle.id,
+        battle.player1_id,
+        battle.player2_id,
+        battle.player1_ready,
+        battle.player2_ready,
+        battle.status,
+        isPlayer1,
+        opponent,
+        phase,
+        supabase
+    ])
 
     // Effect to handle state transition if we finished waiting for opponent
     useEffect(() => {
@@ -255,7 +327,15 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             setPhase('finished')
             const finalMyScore = myScore
             const finalOppScore = opponentScore
-            const winner = finalMyScore >= finalOppScore ? currentUser.id : (opponent?.id ?? currentUser.id)
+            const outcome = getBattleOutcome(finalMyScore, finalOppScore, false)
+            setFinalOutcome(outcome)
+            const winner =
+                outcome === 'draw'
+                    ? null
+                    : outcome === 'win'
+                        ? currentUser.id
+                        : (opponent?.id ?? currentUser.id)
+            const { amount: xpAmount, category: xpCategory, reason: xpReason } = getXpConfig(outcome)
 
             // Only player 1 writes the result
             if (isPlayer1) {
@@ -266,35 +346,62 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     winner_id: winner,
                 }).eq('id', battle.id).then()
 
-                const xpAmount = finalMyScore >= finalOppScore ? 80 : 20
-                const xpCategory = finalMyScore >= finalOppScore ? 'battle_win' : 'battle_loss'
                 fetch('/api/xp', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}`, category: xpCategory })
+                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${xpReason}`, category: xpCategory })
                 }).then(async res => {
                     const data = await res.json()
-                    if (data.success) setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
+                    if (data.success) {
+                        setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
+                        if (typeof data.newXp === 'number') {
+                            await syncXpToUserStore(data.newXp)
+                        }
+                    }
                 })
             } else {
-                const xpAmount = finalMyScore >= finalOppScore ? 80 : 20
-                const xpCategory = finalMyScore >= finalOppScore ? 'battle_win' : 'battle_loss'
                 fetch('/api/xp', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}`, category: xpCategory })
+                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${xpReason}`, category: xpCategory })
                 }).then(async res => {
                     const data = await res.json()
-                    if (data.success) setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
+                    if (data.success) {
+                        setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
+                        if (typeof data.newXp === 'number') {
+                            await syncXpToUserStore(data.newXp)
+                        }
+                    }
                 })
             }
         }
-    }, [iAmFinished, opponentFinished, phase, myScore, opponentScore, currentUser.id, opponent, isPlayer1, battle.id, supabase])
+    }, [iAmFinished, opponentFinished, phase, myScore, opponentScore, currentUser.id, opponent, isPlayer1, battle.id, supabase, syncXpToUserStore, getBattleOutcome, getXpConfig])
 
-    function handleReady() {
-        setIAmReady(true)
+    async function handleReady() {
+        if (iAmReady) return
+
+        setIAmReady(true) // optimistic UI
+        const patch = isPlayer1 ? { player1_ready: true } : { player2_ready: true }
+        const { data, error } = await supabase
+            .from('battles')
+            .update(patch)
+            .eq('id', battle.id)
+            .select('*')
+            .single()
+
+        if (error) {
+            console.error('Failed to update ready status:', error)
+            setIAmReady(false)
+            return
+        }
+
         channelRef.current?.send({
-            type: 'broadcast', event: 'player_ready',
-            payload: { player_id: currentUser.id }
+            type: 'broadcast',
+            event: 'player_ready',
+            payload: { player_id: currentUser.id, ready: true }
         })
+
+        if (data) {
+            setBattle(data as Battle)
+        }
     }
 
     // When both players are ready, start countdown
@@ -461,6 +568,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         {oppReady ? 'Memulai...' : 'Menunggu lawan siap...'}
                     </p>
                 )}
+                <p style={{ color: 'var(--accent-green)', fontSize: '12px', fontWeight: 600, marginTop: '8px' }}>
+                    🔥 Bonus Role: {classBenefitText}
+                </p>
 
                 {countdown === null && (
                     <motion.button
@@ -495,16 +605,21 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
     // Phase: Finished
     if (phase === 'finished') {
-        const won = myScore >= opponentScore
+        const outcome = finalOutcome ?? getBattleOutcome(myScore, opponentScore, false)
+        const isDraw = outcome === 'draw'
+        const won = outcome === 'win'
+        const title = isDraw ? 'SERI' : won ? 'KEMENANGAN!' : 'KEKALAHAN'
+        const titleColor = isDraw ? 'var(--accent-cyan)' : won ? 'var(--accent-gold)' : 'var(--accent-red)'
+        const icon = isDraw ? '🤝' : won ? '🏆' : '💀'
         return (
             <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 minHeight: '70vh', gap: '24px', textAlign: 'center',
             }}>
-                <div style={{ fontSize: '64px' }}>{won ? '🏆' : '💀'}</div>
+                <div style={{ fontSize: '64px' }}>{icon}</div>
                 <div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 700, color: won ? 'var(--accent-gold)' : 'var(--accent-red)', marginBottom: '8px' }}>
-                        {won ? 'KEMENANGAN!' : 'KEKALAHAN'}
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 700, color: titleColor, marginBottom: '8px' }}>
+                        {title}
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
                         {xpResult ? (
@@ -512,8 +627,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--accent-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>  
                                 : `+${xpResult.base} XP didapat!`
                         ) : (
-                            won ? '+80 XP didapat!' : '+20 XP untuk usahamu'
+                            isDraw ? '+40 XP didapat (hasil seri)!' : won ? '+80 XP didapat!' : '+20 XP untuk usahamu'
                         )}
+                    </p>
+                    <p style={{ color: 'var(--accent-green)', fontSize: '12px', fontWeight: 600, marginTop: '6px' }}>
+                        {classBenefitText}
                     </p>
                 </div>
                 <div style={{ display: 'flex', gap: '48px' }}>

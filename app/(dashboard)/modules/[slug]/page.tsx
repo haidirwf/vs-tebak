@@ -12,18 +12,15 @@ export default async function ModulePage({ params }: PageProps) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/login')
 
-    const [moduleRes, profileRes, userModuleRes, questionsRes] = await Promise.all([
-        supabase.from('modules').select('*').eq('slug', slug).single(),
-        supabase.from('profiles').select('avatar_class').eq('id', user.id).single(),
-        supabase.from('user_modules').select('*').eq('user_id', user.id).eq('module_id',
-            (await supabase.from('modules').select('id').eq('slug', slug).single()).data?.id || ''
-        ).single(),
-        supabase.from('questions').select('*').eq('module_id',
-            (await supabase.from('modules').select('id').eq('slug', slug).single()).data?.id || ''
-        ),
-    ])
-
+    const moduleRes = await supabase.from('modules').select('*').eq('slug', slug).single()
     if (!moduleRes.data) notFound()
+
+    const moduleId = moduleRes.data.id
+    const [profileRes, userModuleRes, questionsRes] = await Promise.all([
+        supabase.from('profiles').select('avatar_class').eq('id', user.id).single(),
+        supabase.from('user_modules').select('*').eq('user_id', user.id).eq('module_id', moduleId).single(),
+        supabase.from('questions').select('*').eq('module_id', moduleId),
+    ])
 
     return (
         <ModuleDetail
@@ -35,4 +32,3 @@ export default async function ModulePage({ params }: PageProps) {
         />
     )
 }
-

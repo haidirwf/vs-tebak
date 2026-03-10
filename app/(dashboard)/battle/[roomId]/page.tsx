@@ -3,6 +3,16 @@ import { notFound, redirect } from 'next/navigation'
 import BattleArena from './BattleArena'
 
 export const dynamic = 'force-dynamic'
+const BATTLE_QUESTION_COUNT = 10
+
+function stableHash(input: string): number {
+    let hash = 2166136261
+    for (let i = 0; i < input.length; i++) {
+        hash ^= input.charCodeAt(i)
+        hash = Math.imul(hash, 16777619)
+    }
+    return hash >>> 0
+}
 
 interface PageProps {
     params: Promise<{ roomId: string }>
@@ -31,14 +41,17 @@ export default async function BattleRoomPage({ params }: PageProps) {
         redirect('/battle')
     }
 
-    // Fetch questions for the battle category
-    let questionsQuery = supabase.from('questions').select('*').order('id')
+    // Fetch a larger pool first, then shuffle to avoid repetitive question order.
+    let questionsQuery = supabase.from('questions').select('*')
     if (battle.category && battle.category !== 'general') {
         const { data: modules } = await supabase.from('modules').select('id').eq('category', battle.category)
         const moduleIds = modules?.map(m => m.id) || []
         if (moduleIds.length > 0) questionsQuery = questionsQuery.in('module_id', moduleIds)
     }
-    const { data: questions } = await questionsQuery.limit(10)
+    const { data: questionPool } = await questionsQuery.limit(200)
+    const questions = [...(questionPool || [])]
+        .sort((a, b) => stableHash(`${roomId}:${a.id}`) - stableHash(`${roomId}:${b.id}`))
+        .slice(0, BATTLE_QUESTION_COUNT)
 
     // Fetch opponent profile
     const opponentId = isPlayer1 ? battle.player2_id : battle.player1_id
@@ -51,7 +64,7 @@ export default async function BattleRoomPage({ params }: PageProps) {
     return (
         <BattleArena
             battle={battle}
-            questions={questions || []}
+            questions={questions}
             currentUser={userProfileRes.data}
             opponent={opponent}
         />

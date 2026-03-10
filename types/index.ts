@@ -70,6 +70,8 @@ export interface Battle {
   room_code: string
   player1_id: string | null
   player2_id: string | null
+  player1_ready: boolean
+  player2_ready: boolean
   status: BattleStatus
   player1_score: number
   player2_score: number

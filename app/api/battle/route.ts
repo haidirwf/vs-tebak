@@ -35,8 +35,15 @@ export async function POST(request: NextRequest) {
             const roomToJoin = openRooms[0]
             const { data: updatedBattleArr, error: joinError } = await supabase
                 .from('battles')
-                .update({ player2_id: user.id, status: 'active' })
+                .update({
+                    player2_id: user.id,
+                    status: 'active',
+                    player1_ready: false,
+                    player2_ready: false,
+                })
                 .eq('id', roomToJoin.id)
+                .eq('status', 'waiting')
+                .is('player2_id', null)
                 .select()
 
             if (!joinError && updatedBattleArr && updatedBattleArr.length > 0) {
@@ -68,6 +75,8 @@ export async function POST(request: NextRequest) {
             player1_id: user.id,
             status: 'waiting',
             category,
+            player1_ready: false,
+            player2_ready: false,
         })
         .select()
         .single()
@@ -101,8 +110,15 @@ export async function GET(request: NextRequest) {
         // Attempt to update
         const { data: updatedBattleArr, error: updateError } = await supabase
             .from('battles')
-            .update({ player2_id: user.id, status: 'active' })
+            .update({
+                player2_id: user.id,
+                status: 'active',
+                player1_ready: false,
+                player2_ready: false,
+            })
             .eq('id', battle.id)
+            .eq('status', 'waiting')
+            .is('player2_id', null)
             .select('*')
 
         if (updateError) {
@@ -112,6 +128,8 @@ export async function GET(request: NextRequest) {
         if (updatedBattleArr && updatedBattleArr.length > 0) {
             return NextResponse.json({ battle: updatedBattleArr[0] })
         }
+
+        return NextResponse.json({ error: 'Room sudah terisi pemain lain' }, { status: 409 })
     }
 
     // If already active or the user is player1

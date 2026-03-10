@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Hash, Shuffle, Sword, Loader2, X } from 'lucide-react'
+import { Hash, Shuffle, Sword, Loader2, X, Clock, Zap } from 'lucide-react'
 
 const CATEGORIES = [
     { value: 'coding', label: 'Coding', emoji: '💻' },
@@ -56,6 +56,17 @@ export default function BattlePage() {
     useEffect(() => {
         if (mode !== 'matchmaking' || !pendingBattleId) return
 
+        const cancelPendingRoom = () => {
+            const endpoint = `/api/battle/${pendingBattleId}`
+            if (navigator.sendBeacon) {
+                // sendBeacon is always POST; server supports POST cancel for this use case.
+                const payload = new Blob([JSON.stringify({ reason: 'page_leave' })], { type: 'application/json' })
+                navigator.sendBeacon(endpoint, payload)
+                return
+            }
+            fetch(endpoint, { method: 'DELETE', keepalive: true }).catch(() => { })
+        }
+
         pollingRef.current = setInterval(async () => {
             const res = await fetch(`/api/battle/${pendingBattleId}`)
             if (!res.ok) return
@@ -69,8 +80,8 @@ export default function BattlePage() {
         // Cleanup function for tab close / refresh
         const handleUnload = () => {
             if (pendingBattleId && mode === 'matchmaking') {
-                // Use beacon so it fires even as the document is unloading
-                navigator.sendBeacon(`/api/battle/${pendingBattleId}`, JSON.stringify({ method: 'DELETE' }))
+                // Use beacon so it fires even as the document is unloading.
+                cancelPendingRoom()
             }
         }
 
@@ -79,6 +90,10 @@ export default function BattlePage() {
         return () => {
             clearInterval(pollingRef.current!)
             window.removeEventListener('beforeunload', handleUnload)
+            // Also cleanup when user navigates to another page inside the app.
+            if (pendingBattleId && mode === 'matchmaking') {
+                cancelPendingRoom()
+            }
         }
     }, [mode, pendingBattleId, router])
 
@@ -182,34 +197,75 @@ export default function BattlePage() {
 
             {mode === 'select' && (
                 <motion.div className="battle-select-layout" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gap: '16px' }}>
-                    <div className="battle-select-actions" style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div className="battle-select-actions" style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                        gap: '20px',
+                        marginBottom: '32px'
+                    }}>
                         {[
-                            { label: 'Buat Room', icon: <Sword size={28} />, desc: 'Buat room baru dan undang teman', action: () => setMode('create'), color: 'var(--accent-gold)' },
-                            { label: 'Join Room', icon: <Hash size={28} />, desc: 'Masukkan kode room dari teman', action: () => setMode('join'), color: 'var(--accent-cyan)' },
-                            { label: 'Matchmaking', icon: <Shuffle size={28} />, desc: 'Cari lawan secara otomatis', action: handleMatchmaking, color: 'var(--accent-green)' },
+                            { label: 'Buat Room', icon: <Sword size={24} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: 'var(--accent-gold)', accent: 'rgba(245, 197, 66, 0.1)' },
+                            { label: 'Join Room', icon: <Hash size={24} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: 'var(--accent-cyan)', accent: 'rgba(0, 212, 255, 0.1)' },
+                            { label: 'Matchmaking', icon: <Shuffle size={24} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: 'var(--accent-green)', accent: 'rgba(34, 197, 94, 0.1)' },
                         ].map((item) => (
-                            <motion.button
+                            <motion.div
                                 key={item.label}
-                                whileHover={{ y: -2, scale: 1.01 }}
-                                whileTap={{ scale: 0.98 }}
+                                whileHover={{ y: -8 }}
                                 onClick={item.action}
-                                disabled={loading}
-                                className="battle-select-card"
-                                style={{
-                                    padding: '28px 16px', borderRadius: '4px', cursor: 'pointer',
-                                    backgroundColor: 'var(--bg-secondary)', border: `1px solid ${item.color}33`,
-                                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
-                                    color: item.color, transition: 'all 0.2s',
-                                }}
+                                style={{ cursor: 'pointer' }}
                             >
-                                {item.icon}
-                                <div>
-                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '4px' }}>
-                                        {item.label}
+                                <div className="card" style={{
+                                    padding: '24px',
+                                    height: '100%',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '16px',
+                                    backgroundColor: 'var(--bg-secondary)',
+                                    border: `1px solid var(--border)`,
+                                    borderBottom: `3px solid ${item.color}`,
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                    transition: 'all 0.3s ease'
+                                }}>
+                                    {/* Icon Background Detail */}
+                                    <div style={{
+                                        position: 'absolute', top: '-10px', right: '-10px',
+                                        opacity: 0.05, transform: 'rotate(-15deg)', color: item.color
+                                    }}>
+                                        {item.icon}
                                     </div>
-                                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)', textAlign: 'center' }}>{item.desc}</div>
+
+                                    <div style={{ 
+                                        width: '48px', height: '48px', 
+                                        backgroundColor: item.accent, 
+                                        borderRadius: '8px',
+                                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                        color: item.color,
+                                        border: `1px solid ${item.color}20`
+                                    }}>
+                                        {item.icon}
+                                    </div>
+
+                                    <div>
+                                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, marginBottom: '6px', color: 'var(--text-primary)' }}>
+                                            {item.label}
+                                        </h3>
+                                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                                            {item.desc}
+                                        </p>
+                                    </div>
+
+                                    <div style={{ marginTop: 'auto', paddingTop: '12px' }}>
+                                        <span style={{ 
+                                            fontSize: '11px', fontWeight: 800, color: item.color, 
+                                            fontFamily: 'var(--font-heading)', textTransform: 'uppercase',
+                                            letterSpacing: '0.05em'
+                                        }}>
+                                            PILIH MODE &rarr;
+                                        </span>
+                                    </div>
                                 </div>
-                            </motion.button>
+                            </motion.div>
                         ))}
                     </div>
 
@@ -241,33 +297,53 @@ export default function BattlePage() {
                                     return (
                                         <div className="battle-room-row" key={room.id} style={{
                                             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                            padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: '8px',
-                                            border: '1px solid var(--border)'
+                                            padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px',
+                                            border: '1px solid var(--border)',
+                                            position: 'relative', overflow: 'hidden',
+                                            transition: 'all 0.3s ease'
                                         }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                                                <div style={{ fontSize: '24px' }}>{catEmoji}</div>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', position: 'relative', zIndex: 1 }}>
+                                                <div style={{ 
+                                                    width: '52px', height: '52px', 
+                                                    backgroundColor: 'rgba(255, 255, 255, 0.03)', 
+                                                    borderRadius: '10px',
+                                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                                    fontSize: '24px', border: '1px solid var(--border)'
+                                                }}>
+                                                    {catEmoji}
+                                                </div>
                                                 <div>
-                                                    <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '15px', color: 'var(--text-primary)', marginBottom: '4px' }}>
+                                                    <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '16px', color: 'var(--text-primary)', marginBottom: '4px' }}>
                                                         Room {room.host_name}
                                                     </div>
-                                                    <div className="battle-room-meta" style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', gap: '12px' }}>
-                                                        <span>⏰ {roomTime}</span>
-                                                        <span>🏷️ {catLabel}</span>
-                                                        <span>🗝️ {room.room_code}</span>
+                                                    <div className="battle-room-meta" style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', gap: '12px', fontWeight: 500 }}>
+                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={12} /> {roomTime}</span>
+                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Zap size={12} className="text-gold" /> {catLabel}</span>
+                                                        <span style={{ backgroundColor: 'var(--bg-tertiary)', padding: '2px 8px', borderRadius: '4px', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-cyan)' }}>#{room.room_code}</span>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <button
+                                            <motion.button
+                                                whileHover={{ scale: 1.05 }}
+                                                whileTap={{ scale: 0.95 }}
                                                 onClick={() => handleJoin(room.room_code)}
                                                 disabled={loading}
                                                 style={{
-                                                    padding: '8px 24px', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer',
-                                                    backgroundColor: 'rgba(0, 212, 255, 0.1)', border: '1px solid var(--accent-cyan)',
-                                                    color: 'var(--accent-cyan)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+                                                    padding: '10px 24px', borderRadius: '6px', cursor: loading ? 'not-allowed' : 'pointer',
+                                                    backgroundColor: 'var(--accent-gold)', border: 'none',
+                                                    color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 800,
+                                                    position: 'relative', zIndex: 1, boxShadow: '0 4px 12px rgba(245, 197, 66, 0.2)'
                                                 }}
                                             >
-                                                {loading ? '...' : 'JOIN'}
-                                            </button>
+                                                {loading ? '...' : 'TANTANG'}
+                                            </motion.button>
+                                            
+                                            {/* Decorative glow */}
+                                            <div style={{
+                                                position: 'absolute', bottom: '-20px', right: '-20px',
+                                                width: '60px', height: '60px', backgroundColor: 'var(--accent-gold)',
+                                                filter: 'blur(40px)', opacity: 0.05
+                                            }} />
                                         </div>
                                     )
                                 })}

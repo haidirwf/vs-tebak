@@ -7,9 +7,11 @@ export const XP_REWARDS = {
     dailyQuest: 30,
     streakBonus: 15,
     firstLogin: 25,
+    focusSession: 20,
 } as const
 
 export type XPRewardKey = keyof typeof XP_REWARDS
+export type ClassBonusContext = 'coding' | 'design' | 'battle_win' | 'productivity' | 'battle_loss' | string
 
 export function getXpRequired(level: number): number {
     return Math.floor(100 * Math.pow(level, 1.5))
@@ -62,17 +64,19 @@ export const CLASS_BONUS_MAP: Record<string, string> = {
 }
 
 /**
- * Calculate the XP bonus amount for a given class and activity.
- * @param avatarClass - The user's character class
- * @param category - The activity category (e.g. 'coding', 'design', 'productivity', 'battle_win', 'battle_loss')
- * @param baseAmount - The base XP before bonus
- * @returns The bonus XP (0 if no match)
+ * Return XP multiplier for a class and activity context.
+ * 1.25 when bonus is active, 1.0 otherwise.
  */
-export function getClassXpBonus(avatarClass: string, category: string, baseAmount: number): number {
-    if (CLASS_BONUS_MAP[avatarClass] === category) {
-        return Math.floor(baseAmount * CLASS_BONUS_PERCENT / 100)
-    }
-    return 0
+export function getClassXpBonus(avatarClass: string, context: ClassBonusContext): number {
+    const normalizedClass = avatarClass?.toLowerCase()
+    const normalizedContext = context?.toLowerCase()
+    return CLASS_BONUS_MAP[normalizedClass] === normalizedContext ? 1 + (CLASS_BONUS_PERCENT / 100) : 1
+}
+
+export function getClassBonusAmount(avatarClass: string, context: ClassBonusContext, baseAmount: number): number {
+    const multiplier = getClassXpBonus(avatarClass, context)
+    if (multiplier <= 1 || !Number.isFinite(baseAmount) || baseAmount <= 0) return 0
+    return Math.floor(baseAmount * (multiplier - 1))
 }
 
 /**
@@ -80,6 +84,21 @@ export function getClassXpBonus(avatarClass: string, category: string, baseAmoun
  * Useful for UI indicators on module cards.
  */
 export function classHasBonusForCategory(avatarClass: string, moduleCategory: string): boolean {
-    return CLASS_BONUS_MAP[avatarClass] === moduleCategory
+    return CLASS_BONUS_MAP[avatarClass?.toLowerCase()] === moduleCategory?.toLowerCase()
 }
 
+export function getClassBonusDescription(avatarClass: string): string {
+    const normalizedClass = avatarClass?.toLowerCase()
+    switch (normalizedClass) {
+        case 'warrior':
+            return `Warrior: +${CLASS_BONUS_PERCENT}% XP saat menyelesaikan modul kategori coding.`
+        case 'mage':
+            return `Mage: +${CLASS_BONUS_PERCENT}% XP saat menyelesaikan modul kategori design.`
+        case 'archer':
+            return `Archer: +${CLASS_BONUS_PERCENT}% XP saat menang battle.`
+        case 'healer':
+            return `Healer: +${CLASS_BONUS_PERCENT}% XP saat menyelesaikan modul kategori productivity.`
+        default:
+            return `Tidak ada bonus class yang terdeteksi.`
+    }
+}

@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { calculateLevel, getClassXpBonus } from '@/lib/game/xp'
+import { calculateLevel, getClassBonusAmount, getClassXpBonus } from '@/lib/game/xp'
+import { updateQuestProgress } from '@/lib/game/quests'
 
 export async function POST(request: NextRequest) {
     const supabase = await createClient()
@@ -29,7 +30,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Calculate class bonus
-    const bonusAmount = category ? getClassXpBonus(profile.avatar_class, category, amount) : 0
+    const normalizedCategory = category?.toLowerCase().trim()
+    const bonusMultiplier = normalizedCategory ? getClassXpBonus(profile.avatar_class, normalizedCategory) : 1
+    const bonusAmount = normalizedCategory ? getClassBonusAmount(profile.avatar_class, normalizedCategory, amount) : 0
     const totalAmount = amount + bonusAmount
 
     const newTotalXp = profile.xp + totalAmount
@@ -53,6 +56,20 @@ export async function POST(request: NextRequest) {
         reason: bonusAmount > 0 ? `${reason || 'XP gained'} (+${bonusAmount} class bonus)` : (reason || 'XP gained'),
     })
 
+    // --- QUEST LOGS ---
+    // Update "earn_xp" quest
+    await updateQuestProgress(supabase, user.id, 'earn_xp', totalAmount)
+
+    // Update "complete_module" quest if reason suggests it
+    if (reason && reason.toLowerCase().includes('menyelesaikan modul')) {
+        await updateQuestProgress(supabase, user.id, 'complete_module', 1)
+    }
+
+    // Update "win_battle" quest if reason suggests it
+    if (reason && reason.toLowerCase().includes('menang battle')) {
+        await updateQuestProgress(supabase, user.id, 'win_battle', 1)
+    }
+
     return NextResponse.json({
         success: true,
         newXp: newTotalXp,
@@ -61,7 +78,7 @@ export async function POST(request: NextRequest) {
         leveledUp,
         bonusApplied: bonusAmount > 0,
         bonusAmount,
+        bonusMultiplier,
         totalAwarded: totalAmount,
     })
 }
-

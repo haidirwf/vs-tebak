@@ -3,6 +3,26 @@ import { NextRequest, NextResponse } from 'next/server'
 
 export const dynamic = 'force-dynamic'
 
+async function cancelWaitingRoom(roomId: string, userId: string) {
+    const supabase = await createClient()
+
+    const { data: battle } = await supabase
+        .from('battles')
+        .select('player1_id, status')
+        .eq('id', roomId)
+        .single()
+
+    if (!battle) return { status: 404 as const, body: { error: 'Room not found' } }
+    if (battle.player1_id !== userId || battle.status !== 'waiting') {
+        return { status: 403 as const, body: { error: 'Cannot cancel' } }
+    }
+
+    const { error } = await supabase.from('battles').delete().eq('id', roomId)
+    if (error) return { status: 500 as const, body: { error: error.message } }
+
+    return { status: 200 as const, body: { success: true } }
+}
+
 // GET: Return battle status for polling
 export async function GET(
     _request: NextRequest,
@@ -34,19 +54,20 @@ export async function DELETE(
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { data: battle } = await supabase
-        .from('battles')
-        .select('player1_id, status')
-        .eq('id', roomId)
-        .single()
+    const result = await cancelWaitingRoom(roomId, user.id)
+    return NextResponse.json(result.body, { status: result.status })
+}
 
-    if (!battle) return NextResponse.json({ error: 'Room not found' }, { status: 404 })
-    if (battle.player1_id !== user.id || battle.status !== 'waiting') {
-        return NextResponse.json({ error: 'Cannot cancel' }, { status: 403 })
-    }
+// POST: same as DELETE, used by navigator.sendBeacon cleanup on page leave.
+export async function POST(
+    _request: NextRequest,
+    context: { params: Promise<{ roomId: string }> }
+) {
+    const { roomId } = await context.params
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-    const { error } = await supabase.from('battles').delete().eq('id', roomId)
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-
-    return NextResponse.json({ success: true })
+    const result = await cancelWaitingRoom(roomId, user.id)
+    return NextResponse.json(result.body, { status: result.status })
 }

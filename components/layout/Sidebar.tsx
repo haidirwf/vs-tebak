@@ -13,7 +13,8 @@ import { getXpProgress } from '@/lib/game/xp'
 const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
     { href: '/modules', icon: BookOpen, label: 'Modul' },
-    { href: '/battle', icon: Zap, label: 'Battle' },
+    { href: '/focus', icon: Zap, label: 'Fokus' },
+    { href: '/battle', icon: Swords, label: 'Battle' },
     { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
     { href: '/profile', icon: User, label: 'Profil' },
 ]
