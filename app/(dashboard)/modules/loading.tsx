@@ -13,9 +13,10 @@ export default function ModulesLoading() {
                 <div className="sq-skeleton" style={{ height: '34px', width: '84px' }} />
                 <div className="sq-skeleton" style={{ height: '34px', width: '82px' }} />
                 <div className="sq-skeleton" style={{ height: '34px', width: '106px' }} />
+                <div className="sq-skeleton" style={{ height: '34px', width: '74px' }} />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
                 {Array.from({ length: 6 }).map((_, i) => (
                     <div key={i} className="card" style={{ padding: '16px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '12px' }}>

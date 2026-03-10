@@ -12,8 +12,9 @@ export default async function ModulePage({ params }: PageProps) {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/login')
 
-    const [moduleRes, userModuleRes, questionsRes] = await Promise.all([
+    const [moduleRes, profileRes, userModuleRes, questionsRes] = await Promise.all([
         supabase.from('modules').select('*').eq('slug', slug).single(),
+        supabase.from('profiles').select('avatar_class').eq('id', user.id).single(),
         supabase.from('user_modules').select('*').eq('user_id', user.id).eq('module_id',
             (await supabase.from('modules').select('id').eq('slug', slug).single()).data?.id || ''
         ).single(),
@@ -30,6 +31,8 @@ export default async function ModulePage({ params }: PageProps) {
             userModule={userModuleRes.data || null}
             questions={questionsRes.data || []}
             userId={user.id}
+            avatarClass={profileRes.data?.avatar_class || 'warrior'}
         />
     )
 }
+

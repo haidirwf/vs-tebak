@@ -3,24 +3,28 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Module, UserModule, Question, LessonStep } from '@/types'
-import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock } from 'lucide-react'
+import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 
 interface ModuleDetailProps {
     module: Module
     userModule: UserModule | null
     questions: Question[]
     userId: string
+    avatarClass: string
 }
 
-export default function ModuleDetail({ module, userModule, questions, userId }: ModuleDetailProps) {
+export default function ModuleDetail({ module, userModule, questions, userId, avatarClass }: ModuleDetailProps) {
     const router = useRouter()
     const [currentStep, setCurrentStep] = useState(0)
     const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({})
     const [quizSubmitted, setQuizSubmitted] = useState(false)
     const [completed, setCompleted] = useState(userModule?.status === 'completed')
     const [loading, setLoading] = useState(false)
+    const hasClassBonus = classHasBonusForCategory(avatarClass, module.category)
+    const bonusXp = hasClassBonus ? Math.floor(module.xp_reward * CLASS_BONUS_PERCENT / 100) : 0
 
     const content = module.content as LessonStep[] | null
     const steps = content || []
@@ -55,7 +59,7 @@ export default function ModuleDetail({ module, userModule, questions, userId }: 
         await fetch('/api/xp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: module.xp_reward, reason: `Menyelesaikan modul: ${module.title}` }),
+            body: JSON.stringify({ amount: module.xp_reward, reason: `Menyelesaikan modul: ${module.title}`, category: module.category }),
         })
 
         // Fetch updated profile to trigger XP and Level UI reactivity
@@ -123,6 +127,11 @@ export default function ModuleDetail({ module, userModule, questions, userId }: 
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--accent-gold)' }}>
                                 <Zap size={12} /> +{module.xp_reward} XP
                             </span>
+                            {hasClassBonus && (
+                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600 }}>
+                                    <Flame size={11} /> +{bonusXp} bonus
+                                </span>
+                            )}
                         </div>
                     </div>
                     {completed && (
@@ -229,7 +238,7 @@ export default function ModuleDetail({ module, userModule, questions, userId }: 
                                     fontFamily: 'var(--font-heading)',
                                 }}
                             >
-                                {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward} XP`}
+                                {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''} XP`}
                             </motion.button>
                         ) : (
                             <div style={{ color: 'var(--accent-green)', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -308,7 +317,7 @@ export default function ModuleDetail({ module, userModule, questions, userId }: 
                                         color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
                                     }}
                                 >
-                                    {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward} XP`}
+                                    {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''} XP`}
                                 </motion.button>
                             )}
                         </div>
@@ -327,7 +336,7 @@ export default function ModuleDetail({ module, userModule, questions, userId }: 
                                         color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
                                     }}
                                 >
-                                    Tandai Selesai (+{module.xp_reward} XP)
+                                    Tandai Selesai (+{module.xp_reward}{hasClassBonus ? ` + ${bonusXp} bonus` : ''} XP)
                                 </motion.button>
                             )}
                         </div>

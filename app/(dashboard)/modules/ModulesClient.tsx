@@ -4,11 +4,13 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Module, UserModule, ModuleCategory } from '@/types'
-import { Search, BookOpen, Clock, Zap, CheckCircle } from 'lucide-react'
+import { Search, BookOpen, Clock, Zap, CheckCircle, Flame } from 'lucide-react'
+import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 
 interface ModulesClientProps {
     modules: Module[]
     userModules: UserModule[]
+    avatarClass: string
 }
 
 const CATEGORIES: { value: ModuleCategory | 'all'; label: string; emoji: string }[] = [
@@ -32,7 +34,7 @@ const CATEGORY_COLORS: Record<string, string> = {
     business: 'var(--accent-red)',
 }
 
-export default function ModulesClient({ modules, userModules }: ModulesClientProps) {
+export default function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps) {
     const [search, setSearch] = useState('')
     const [activeCategory, setActiveCategory] = useState<ModuleCategory | 'all'>('all')
 
@@ -137,6 +139,16 @@ export default function ModulesClient({ modules, userModules }: ModulesClientPro
                                             </span>
                                             {isCompleted && (
                                                 <CheckCircle size={16} style={{ color: 'var(--accent-green)' }} />
+                                            )}
+                                            {!isCompleted && classHasBonusForCategory(avatarClass, module.category) && (
+                                                <span style={{
+                                                    fontSize: '10px', fontWeight: 700, color: 'var(--accent-green)',
+                                                    backgroundColor: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.3)',
+                                                    padding: '2px 6px', borderRadius: '3px', fontFamily: 'var(--font-heading)',
+                                                    display: 'flex', alignItems: 'center', gap: '3px',
+                                                }}>
+                                                    <Flame size={9} /> +{CLASS_BONUS_PERCENT}% XP
+                                                </span>
                                             )}
                                         </div>
 

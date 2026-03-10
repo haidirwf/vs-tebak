@@ -48,3 +48,38 @@ export const AVATAR_CLASS_STATS = {
     archer: { str: 5, int: 5, agi: 9, wis: 4, label: 'Archer', emoji: '🏹', description: 'AGI tinggi, cocok untuk quiz battle' },
     healer: { str: 4, int: 5, agi: 4, wis: 9, label: 'Healer', emoji: '✨', description: 'WIS tinggi, cocok untuk modul produktivitas' },
 } as const
+
+// ============ CLASS BONUS SYSTEM ============
+
+export const CLASS_BONUS_PERCENT = 25
+
+/** Maps each class to the activity category that triggers its bonus */
+export const CLASS_BONUS_MAP: Record<string, string> = {
+    warrior: 'coding',
+    mage: 'design',
+    archer: 'battle_win',
+    healer: 'productivity',
+}
+
+/**
+ * Calculate the XP bonus amount for a given class and activity.
+ * @param avatarClass - The user's character class
+ * @param category - The activity category (e.g. 'coding', 'design', 'productivity', 'battle_win', 'battle_loss')
+ * @param baseAmount - The base XP before bonus
+ * @returns The bonus XP (0 if no match)
+ */
+export function getClassXpBonus(avatarClass: string, category: string, baseAmount: number): number {
+    if (CLASS_BONUS_MAP[avatarClass] === category) {
+        return Math.floor(baseAmount * CLASS_BONUS_PERCENT / 100)
+    }
+    return 0
+}
+
+/**
+ * Check if a class gets a bonus for a specific module category.
+ * Useful for UI indicators on module cards.
+ */
+export function classHasBonusForCategory(avatarClass: string, moduleCategory: string): boolean {
+    return CLASS_BONUS_MAP[avatarClass] === moduleCategory
+}
+

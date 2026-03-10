@@ -1,5 +1,6 @@
 import Link from 'next/link'
-import { Swords, BookOpen, Zap, Trophy, Users, ChevronRight, Star, Flame } from 'lucide-react'
+import { Swords, BookOpen, Zap, Trophy, Users, ChevronRight, Star, Flame, LayoutDashboard } from 'lucide-react'
+import { createClient } from '@/lib/supabase/server'
 
 const FEATURES = [
   {
@@ -47,7 +48,11 @@ const CLASSES = [
   { name: 'Healer', emoji: '✨', desc: 'Bijak & produktif', color: 'var(--accent-gold)' },
 ]
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  const isLoggedIn = !!user
+
   return (
     <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
       {/* Navbar */}
@@ -63,20 +68,33 @@ export default function LandingPage() {
           </span>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-          <Link href="/login" style={{
-            padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
-            backgroundColor: 'transparent', border: '1px solid var(--border)',
-            color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500,
-          }}>
-            Masuk
-          </Link>
-          <Link href="/register" style={{
-            padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
-            backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
-            fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
-          }}>
-            Daftar Gratis
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/dashboard" style={{
+              padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
+              backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+              fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', gap: '6px',
+            }}>
+              <LayoutDashboard size={14} /> Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link href="/login" style={{
+                padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
+                backgroundColor: 'transparent', border: '1px solid var(--border)',
+                color: 'var(--text-secondary)', fontSize: '13px', fontWeight: 500,
+              }}>
+                Masuk
+              </Link>
+              <Link href="/register" style={{
+                padding: '8px 18px', borderRadius: '4px', textDecoration: 'none',
+                backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+                fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+              }}>
+                Daftar Gratis
+              </Link>
+            </>
+          )}
         </div>
       </nav>
 
@@ -109,21 +127,34 @@ export default function LandingPage() {
         </p>
 
         <div className="landing-cta-row" style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
-          <Link href="/register" style={{
-            padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
-            backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
-            fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700,
-            display: 'inline-flex', alignItems: 'center', gap: '8px',
-          }}>
-            MULAI PETUALANGAN <ChevronRight size={16} />
-          </Link>
-          <Link href="/login" style={{
-            padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
-            backgroundColor: 'transparent', border: '1px solid var(--border)',
-            color: 'var(--text-primary)', fontSize: '15px',
-          }}>
-            Sudah punya akun
-          </Link>
+          {isLoggedIn ? (
+            <Link href="/dashboard" style={{
+              padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
+              backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+              fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', gap: '8px',
+            }}>
+              <LayoutDashboard size={16} /> KE DASHBOARD <ChevronRight size={16} />
+            </Link>
+          ) : (
+            <>
+              <Link href="/register" style={{
+                padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
+                backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
+                fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700,
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+              }}>
+                MULAI PETUALANGAN <ChevronRight size={16} />
+              </Link>
+              <Link href="/login" style={{
+                padding: '14px 32px', borderRadius: '4px', textDecoration: 'none',
+                backgroundColor: 'transparent', border: '1px solid var(--border)',
+                color: 'var(--text-primary)', fontSize: '15px',
+              }}>
+                Sudah punya akun
+              </Link>
+            </>
+          )}
         </div>
       </section>
 
@@ -201,18 +232,22 @@ export default function LandingPage() {
       {/* CTA */}
       <section className="landing-cta" style={{ padding: '80px 48px', textAlign: 'center' }}>
         <h2 className="landing-cta-title" style={{ fontFamily: 'var(--font-heading)', fontSize: '40px', fontWeight: 700, marginBottom: '12px' }}>
-          Siap Memulai Petualangan?
+          {isLoggedIn ? 'Petualanganmu Menanti!' : 'Siap Memulai Petualangan?'}
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '32px' }}>
-          Bergabunglah gratis dan mulai perjalanan belajarmu hari ini!
+          {isLoggedIn
+            ? 'Lanjutkan perjalanan belajarmu dan raih level selanjutnya!'
+            : 'Bergabunglah gratis dan mulai perjalanan belajarmu hari ini!'}
         </p>
-        <Link href="/register" style={{
+        <Link href={isLoggedIn ? '/dashboard' : '/register'} style={{
           padding: '16px 48px', borderRadius: '4px', textDecoration: 'none',
           backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
           fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700,
           display: 'inline-flex', alignItems: 'center', gap: '10px',
         }}>
-          <Swords size={20} /> DAFTAR SEKARANG — GRATIS!
+          {isLoggedIn
+            ? <><LayoutDashboard size={20} /> LANJUT BELAJAR</>
+            : <><Swords size={20} /> DAFTAR SEKARANG — GRATIS!</>}
         </Link>
       </section>
 

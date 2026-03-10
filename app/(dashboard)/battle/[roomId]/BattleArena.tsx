@@ -47,6 +47,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
     const [showAnswer, setShowAnswer] = useState(false)
     const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
+    const [xpResult, setXpResult] = useState<{ base: number; bonus: number } | null>(null)
 
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
@@ -91,12 +92,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             // Calculate XP
             let myXpAmount = finalMyScore >= finalOppScore ? 80 : 20
             if (isSurrender) myXpAmount = 0 // Penalty for surrendering
+            const xpCategory = finalMyScore >= finalOppScore ? 'battle_win' : 'battle_loss'
 
             if (myXpAmount > 0) {
-                await fetch('/api/xp', {
+                const res = await fetch('/api/xp', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: myXpAmount, reason: `Battle ${isSurrender ? 'menyerah' : finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}` })
+                    body: JSON.stringify({ amount: myXpAmount, reason: `Battle ${isSurrender ? 'menyerah' : finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}`, category: xpCategory })
                 })
+                const data = await res.json()
+                if (data.success) {
+                    setXpResult({ base: myXpAmount, bonus: data.bonusAmount || 0 })
+                }
             }
         }
     }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished])
@@ -261,16 +267,24 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 }).eq('id', battle.id).then()
 
                 const xpAmount = finalMyScore >= finalOppScore ? 80 : 20
+                const xpCategory = finalMyScore >= finalOppScore ? 'battle_win' : 'battle_loss'
                 fetch('/api/xp', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}` })
-                }).then()
+                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}`, category: xpCategory })
+                }).then(async res => {
+                    const data = await res.json()
+                    if (data.success) setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
+                })
             } else {
                 const xpAmount = finalMyScore >= finalOppScore ? 80 : 20
+                const xpCategory = finalMyScore >= finalOppScore ? 'battle_win' : 'battle_loss'
                 fetch('/api/xp', {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}` })
-                }).then()
+                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${finalMyScore >= finalOppScore ? 'kemenangan' : 'kekalahan'}`, category: xpCategory })
+                }).then(async res => {
+                    const data = await res.json()
+                    if (data.success) setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
+                })
             }
         }
     }, [iAmFinished, opponentFinished, phase, myScore, opponentScore, currentUser.id, opponent, isPlayer1, battle.id, supabase])
@@ -493,7 +507,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         {won ? 'KEMENANGAN!' : 'KEKALAHAN'}
                     </h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
-                        {won ? `+80 XP didapat!` : '+20 XP untuk usahamu'}
+                        {xpResult ? (
+                            xpResult.bonus > 0
+                                ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--accent-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>  
+                                : `+${xpResult.base} XP didapat!`
+                        ) : (
+                            won ? '+80 XP didapat!' : '+20 XP untuk usahamu'
+                        )}
                     </p>
                 </div>
                 <div style={{ display: 'flex', gap: '48px' }}>

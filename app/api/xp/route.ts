@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { calculateLevel } from '@/lib/game/xp'
+import { calculateLevel, getClassXpBonus } from '@/lib/game/xp'
 
 export async function POST(request: NextRequest) {
     const supabase = await createClient()
@@ -11,16 +11,16 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { amount, reason } = body as { amount: number; reason: string }
+    const { amount, reason, category } = body as { amount: number; reason: string; category?: string }
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
         return NextResponse.json({ error: 'Invalid XP amount' }, { status: 400 })
     }
 
-    // Get current profile
+    // Get current profile (including avatar_class for bonus calculation)
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('xp, level')
+        .select('xp, level, avatar_class')
         .eq('id', user.id)
         .single()
 
@@ -28,7 +28,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    const newTotalXp = profile.xp + amount
+    // Calculate class bonus
+    const bonusAmount = category ? getClassXpBonus(profile.avatar_class, category, amount) : 0
+    const totalAmount = amount + bonusAmount
+
+    const newTotalXp = profile.xp + totalAmount
     const { level, xpToNext } = calculateLevel(newTotalXp)
     const leveledUp = level > profile.level
 
@@ -42,11 +46,11 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: updateError.message }, { status: 500 })
     }
 
-    // Log XP gain
+    // Log XP gain (total including bonus)
     await supabase.from('xp_logs').insert({
         user_id: user.id,
-        xp_amount: amount,
-        reason: reason || 'XP gained',
+        xp_amount: totalAmount,
+        reason: bonusAmount > 0 ? `${reason || 'XP gained'} (+${bonusAmount} class bonus)` : (reason || 'XP gained'),
     })
 
     return NextResponse.json({
@@ -55,5 +59,9 @@ export async function POST(request: NextRequest) {
         newLevel: level,
         xpToNext,
         leveledUp,
+        bonusApplied: bonusAmount > 0,
+        bonusAmount,
+        totalAwarded: totalAmount,
     })
 }
+
