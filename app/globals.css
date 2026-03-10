@@ -370,6 +370,32 @@ input::placeholder, textarea::placeholder {
   grid-template-columns: 1fr;
 }
 
+.battle-select-actions {
+  gap: 12px !important;
+  margin-bottom: 20px !important;
+}
+
+.battle-mode-card-match {
+  grid-column: 1 / -1;
+}
+
+.battle-mode-card .card {
+  padding: 16px !important;
+  gap: 10px !important;
+}
+
+.battle-mode-card .card h3 {
+  font-size: 16px !important;
+}
+
+.battle-mode-card .card p {
+  font-size: 12px !important;
+}
+
+.battle-card-desc {
+  display: none;
+}
+
 .battle-select-card {
   min-height: 148px;
 }
@@ -552,13 +578,37 @@ input::placeholder, textarea::placeholder {
   }
 
   .battle-select-actions {
+    grid-template-columns: 1fr !important;
+    display: grid !important;
     height: 100%;
     gap: 20px !important;
+    margin-bottom: 0 !important;
   }
 
   .battle-select-card {
     flex: 1;
     min-height: 0;
+  }
+
+  .battle-mode-card-match {
+    grid-column: auto;
+  }
+
+  .battle-mode-card .card {
+    padding: 24px !important;
+    gap: 16px !important;
+  }
+
+  .battle-mode-card .card h3 {
+    font-size: 18px !important;
+  }
+
+  .battle-mode-card .card p {
+    font-size: 13px !important;
+  }
+
+  .battle-card-desc {
+    display: block;
   }
 
   .battle-room-panel {

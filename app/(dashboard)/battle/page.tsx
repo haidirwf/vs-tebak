@@ -199,17 +199,18 @@ export default function BattlePage() {
                 <motion.div className="battle-select-layout" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gap: '16px' }}>
                     <div className="battle-select-actions" style={{ 
                         display: 'grid', 
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+                        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', 
                         gap: '20px',
                         marginBottom: '32px'
                     }}>
                         {[
-                            { label: 'Buat Room', icon: <Sword size={24} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: 'var(--accent-gold)', accent: 'rgba(245, 197, 66, 0.1)' },
-                            { label: 'Join Room', icon: <Hash size={24} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: 'var(--accent-cyan)', accent: 'rgba(0, 212, 255, 0.1)' },
-                            { label: 'Matchmaking', icon: <Shuffle size={24} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: 'var(--accent-green)', accent: 'rgba(34, 197, 94, 0.1)' },
+                            { key: 'create', label: 'Buat Room', icon: <Sword size={24} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: 'var(--accent-gold)', accent: 'rgba(245, 197, 66, 0.1)' },
+                            { key: 'join', label: 'Join Room', icon: <Hash size={24} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: 'var(--accent-cyan)', accent: 'rgba(0, 212, 255, 0.1)' },
+                            { key: 'matchmaking', label: 'Matchmaking', icon: <Shuffle size={24} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: 'var(--accent-green)', accent: 'rgba(34, 197, 94, 0.1)' },
                         ].map((item) => (
                             <motion.div
                                 key={item.label}
+                                className={`battle-mode-card ${item.key === 'matchmaking' ? 'battle-mode-card-match' : ''}`}
                                 whileHover={{ y: -8 }}
                                 onClick={item.action}
                                 style={{ cursor: 'pointer' }}
@@ -250,7 +251,7 @@ export default function BattlePage() {
                                         <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, marginBottom: '6px', color: 'var(--text-primary)' }}>
                                             {item.label}
                                         </h3>
-                                        <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                                        <p className="battle-card-desc" style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5 }}>
                                             {item.desc}
                                         </p>
                                     </div>
