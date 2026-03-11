@@ -530,9 +530,9 @@ input::placeholder, textarea::placeholder {
 }
 
 @media (min-width: 1024px) {
+  /* keep html/body full height but allow vertical scrolling outside dashboard */
   html, body {
     height: 100%;
-    overflow: hidden;
   }
 
   .dashboard-shell {
