@@ -301,7 +301,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             pollInterval = setInterval(checkFreshBattle, 1000)
         }
 
-        if (battle.player1_id && battle.player2_id && battle.status !== 'finished') {
+        if (battle.player1_id && battle.player2_id) {
             setPhase((prev) => {
                 if (prev === 'waiting') return 'lobby'
                 return prev
