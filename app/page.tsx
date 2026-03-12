@@ -64,7 +64,7 @@ export default async function LandingPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <Swords size={22} style={{ color: 'var(--accent-gold)' }} />
           <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--accent-gold)' }}>
-            SkillQuest
+            Skillungo
           </span>
         </div>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
@@ -255,10 +255,10 @@ export default async function LandingPage() {
       <footer className="landing-footer" style={{ padding: '24px 48px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '8px' }}>
           <Swords size={16} style={{ color: 'var(--accent-gold)' }} />
-          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', fontSize: '16px' }}>SkillQuest</span>
+          <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', fontSize: '16px' }}>Skillungo</span>
         </div>
         <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          © 2026 SkillQuest · FICPACT CUP 2026 · &quot;Level Up Your Skills, Conquer Your Future&quot;
+          © 2026 Skillungo · FICPACT CUP 2026 · &quot;Level Up Your Skills, Conquer Your Future&quot;
         </p>
       </footer>
     </div>

@@ -222,6 +222,10 @@ input::placeholder, textarea::placeholder {
   max-width: 220px;
 }
 
+.dashboard-equal-card {
+  min-height: 0;
+}
+
 .dashboard-character-preview {
   display: none;
 }
@@ -656,6 +660,10 @@ input::placeholder, textarea::placeholder {
 
   .dashboard-mobile-actions {
     display: none;
+  }
+
+  .dashboard-equal-card {
+    height: 360px;
   }
 
   .dashboard-character-preview {

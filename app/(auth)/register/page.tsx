@@ -96,7 +96,7 @@ export default function RegisterPage() {
                 <div style={{ textAlign: 'center', marginBottom: '24px' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                         <Swords size={28} style={{ color: 'var(--accent-gold)' }} />
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, color: 'var(--accent-gold)' }}>SkillQuest</span>
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, color: 'var(--accent-gold)' }}>Skillungo</span>
                     </div>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>Mulai petualangan belajarmu hari ini</p>
                 </div>

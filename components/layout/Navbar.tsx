@@ -19,7 +19,7 @@ export default function Navbar() {
 
     const title = Object.entries(PAGE_TITLES).find(([key]) =>
         key === pathname || pathname.startsWith(key + '/')
-    )?.[1] || 'SkillQuest'
+    )?.[1] || 'Skillungo'
 
     return (
         <header className="dashboard-navbar" style={{

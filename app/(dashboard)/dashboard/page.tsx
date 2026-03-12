@@ -46,14 +46,14 @@ export default async function DashboardPage() {
                 </h1>
             </div>
 
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                {/* Character Card & Class Benefits */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <CharacterCard profile={profile} showStats={true} />
-                    
-                    {/* Role Benefits Detail */}
-                    <div className="card" style={{ padding: '20px' }}>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ marginBottom: '20px' }}>
+                <CharacterCard profile={profile} showStats={true} />
+            </div>
+
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'stretch' }}>
+                <div className="dashboard-equal-card">
+                    <div className="card" style={{ padding: '20px', height: '100%' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             🎭 Benefit Role
                         </h3>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
@@ -63,46 +63,47 @@ export default async function DashboardPage() {
                                 { name: 'Archer', desc: '+25% XP Menang Battle', color: 'var(--accent-green)', icon: '🏹' },
                                 { name: 'Healer', desc: '+25% XP Modul Produktivitas & Fokus', color: 'var(--accent-gold)', icon: '✨' },
                             ].map(role => (
-                                <div key={role.name} style={{ 
-                                    padding: '12px', 
-                                    backgroundColor: 'var(--bg-secondary)', 
+                                <div key={role.name} style={{
+                                    padding: '12px',
+                                    backgroundColor: 'var(--bg-secondary)',
                                     borderRadius: '8px',
                                     border: `1px solid ${role.name.toLowerCase() === profile.avatar_class ? role.color : 'var(--border)'}`,
                                     position: 'relative',
                                     opacity: role.name.toLowerCase() === profile.avatar_class ? 1 : 0.6
                                 }}>
                                     {role.name.toLowerCase() === profile.avatar_class && (
-                                        <div style={{ 
-                                            position: 'absolute', top: '-8px', right: '8px', 
-                                            backgroundColor: role.color, color: 'white', 
+                                        <div style={{
+                                            position: 'absolute', top: '-8px', right: '8px',
+                                            backgroundColor: role.color, color: 'white',
                                             fontSize: '8px', padding: '2px 6px', borderRadius: '4px',
                                             fontWeight: 800
                                         }}>AKTIF</div>
                                     )}
                                     <div style={{ fontSize: '18px', marginBottom: '4px' }}>{role.icon}</div>
-                                    <div style={{ fontSize: '13px', fontWeight: 700, color: role.color }}>{role.name}</div>
-                                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)' }}>{role.desc}</div>
+                                    <div style={{ fontSize: '13px', fontWeight: 700, color: role.color, fontFamily: 'var(--font-heading)' }}>{role.name}</div>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{role.desc}</div>
                                 </div>
                             ))}
                         </div>
                     </div>
                 </div>
 
-                {/* Stats */}
-                <DashboardStats
-                    modulesCompleted={completedModules.length}
-                    totalXp={profile.xp}
-                    streak={profile.streak_count}
-                    level={profile.level}
-                />
-            </div>
+                <div className="dashboard-equal-card">
+                    <DashboardStats
+                        modulesCompleted={completedModules.length}
+                        totalXp={profile.xp}
+                        streak={profile.streak_count}
+                        level={profile.level}
+                    />
+                </div>
 
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                {/* Daily Quests */}
-                <DailyQuestList quests={quests} userQuests={userQuestsRes.data || []} />
+                <div className="dashboard-equal-card">
+                    <DailyQuestList quests={quests} userQuests={userQuestsRes.data || []} />
+                </div>
 
-                {/* Recent Activity */}
-                <RecentActivity modules={completedModules} xpLogs={xpLogRes.data || []} />
+                <div className="dashboard-equal-card">
+                    <RecentActivity modules={completedModules} xpLogs={xpLogRes.data || []} />
+                </div>
             </div>
         </div>
     )

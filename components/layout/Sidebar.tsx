@@ -67,12 +67,36 @@ export default function Sidebar() {
                 <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                     <Swords size={20} style={{ color: 'var(--accent-gold)' }} />
                     <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--accent-gold)' }}>
-                        SkillQuest
+                        Skillungo
                     </span>
                 </Link>
 
                 {profile && (
                     <div className="dashboard-mobile-actions">
+                        {profile.streak_count > 0 && (
+                            <div
+                                className="dashboard-mobile-streak"
+                                title={`Streak ${profile.streak_count} hari`}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    borderRadius: '4px',
+                                    padding: '5px 8px',
+                                    border: '1px solid var(--border)',
+                                    backgroundColor: 'var(--bg-tertiary)',
+                                    color: 'var(--accent-red)',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontSize: '12px',
+                                    fontWeight: 700,
+                                    whiteSpace: 'nowrap',
+                                }}
+                            >
+                                <Flame size={12} />
+                                {profile.streak_count}
+                            </div>
+                        )}
+
                         <Link
                             href="/profile"
                             className="dashboard-mobile-profile"
@@ -87,28 +111,7 @@ export default function Sidebar() {
                                 backgroundColor: 'var(--bg-tertiary)',
                             }}
                         >
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '14px' }}>{CLASS_EMOJI[profile.avatar_class] || '🎮'}</span>
-                                {profile.streak_count > 0 && (
-                                    <span style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '3px',
-                                        padding: '2px 6px',
-                                        borderRadius: '999px',
-                                        border: '1px solid rgba(232,64,64,0.35)',
-                                        backgroundColor: 'rgba(232,64,64,0.12)',
-                                        color: 'var(--accent-red)',
-                                        fontFamily: 'var(--font-heading)',
-                                        fontSize: '10px',
-                                        fontWeight: 800,
-                                        lineHeight: 1,
-                                    }}>
-                                        <Flame size={10} />
-                                        {profile.streak_count}
-                                    </span>
-                                )}
-                            </span>
+                            <span style={{ fontSize: '14px' }}>{CLASS_EMOJI[profile.avatar_class] || '🎮'}</span>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                                 <span style={{
                                     fontFamily: 'var(--font-heading)',

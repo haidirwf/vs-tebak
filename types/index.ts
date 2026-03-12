@@ -1,4 +1,4 @@
-// types/index.ts — SkillQuest TypeScript Types
+// types/index.ts — Skillungo TypeScript Types
 
 export type AvatarClass = 'warrior' | 'mage' | 'archer' | 'healer'
 export type ModuleCategory = 'coding' | 'design' | 'productivity' | 'business'

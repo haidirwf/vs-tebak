@@ -16,7 +16,7 @@ interface RecentActivityProps {
 
 export default function RecentActivity({ modules, xpLogs }: RecentActivityProps) {
     return (
-        <div className="card" style={{ padding: '20px' }}>
+        <div className="card" style={{ padding: '20px', height: '100%', display: 'flex', flexDirection: 'column' }}>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
                 Aktivitas Terbaru
             </h3>
@@ -26,16 +26,16 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                     Belum ada aktivitas. Mulai belajar sekarang! 🚀
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
                     {xpLogs.slice(0, 6).map((log, i) => (
                         <div key={i} style={{
                             display: 'flex', alignItems: 'center', gap: '10px',
-                            padding: '8px 10px', borderRadius: '4px',
+                            padding: '8px 10px', borderRadius: '8px',
                             backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border)',
                         }}>
                             <Zap size={14} style={{ color: 'var(--accent-gold)', flexShrink: 0 }} />
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: '12px', color: 'var(--text-primary)' }}>{log.reason || 'XP didapat'}</div>
+                                <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>{log.reason || 'XP didapat'}</div>
                                 <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                                     {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: idLocale })}
                                 </div>

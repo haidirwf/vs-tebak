@@ -39,7 +39,7 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
     ]
 
     return (
-        <div className="card" style={{ padding: '20px' }}>
+        <div className="card" style={{ padding: '20px', height: '100%' }}>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
                 Statistik
             </h3>
@@ -53,12 +53,13 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
                         style={{
                             backgroundColor: 'var(--bg-tertiary)',
                             border: '1px solid var(--border)',
-                            borderRadius: '4px', padding: '12px',
+                            borderRadius: '8px',
+                            padding: '12px',
                         }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px', color: stat.color }}>
                             {stat.icon}
-                            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>{stat.label}</span>
+                            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>{stat.label}</span>
                         </div>
                         <div style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, color: stat.color }}>
                             {stat.value}

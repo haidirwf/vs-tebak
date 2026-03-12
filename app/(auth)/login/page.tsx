@@ -69,7 +69,7 @@ export default function LoginPage() {
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                         <Swords size={32} style={{ color: 'var(--accent-gold)' }} />
                         <span style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-gold)' }}>
-                            SkillQuest
+                            Skillungo
                         </span>
                     </div>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Masuk ke petualangan belajarmu</p>
