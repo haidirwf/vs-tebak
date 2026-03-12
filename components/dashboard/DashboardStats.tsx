@@ -39,7 +39,7 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
     ]
 
     return (
-        <div className="card" style={{ padding: '20px', height: '100%' }}>
+        <div className="card" style={{ padding: '20px' }}>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
                 Statistik
             </h3>

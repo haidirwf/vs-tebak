@@ -31,7 +31,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
     const completedCount = quests.filter(q => getProgress(q.id)?.is_completed).length
 
     return (
-        <div className="card" style={{ padding: '24px', position: 'relative', overflow: 'hidden', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="card" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800 }}>
@@ -58,11 +58,11 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             </div>
 
             {quests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontSize: '14px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed var(--border)', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontSize: '14px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed var(--border)' }}>
                     Belum ada quest hari ini. <br />Istirahat sejenak, Hero!
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1, minHeight: 0, overflow: 'auto', paddingRight: '2px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                     {quests.map((quest, i) => {
                         const progress = getProgress(quest.id)
                         const isCompleted = progress?.is_completed ?? false

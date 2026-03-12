@@ -50,9 +50,9 @@ export default async function DashboardPage() {
                 <CharacterCard profile={profile} showStats={true} />
             </div>
 
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'stretch' }}>
-                <div className="dashboard-equal-card">
-                    <div className="card" style={{ padding: '20px', height: '100%' }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+                <div>
+                    <div className="card" style={{ padding: '20px' }}>
                         <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                             🎭 Benefit Role
                         </h3>
@@ -88,7 +88,7 @@ export default async function DashboardPage() {
                     </div>
                 </div>
 
-                <div className="dashboard-equal-card">
+                <div>
                     <DashboardStats
                         modulesCompleted={completedModules.length}
                         totalXp={profile.xp}
@@ -97,11 +97,11 @@ export default async function DashboardPage() {
                     />
                 </div>
 
-                <div className="dashboard-equal-card">
+                <div>
                     <DailyQuestList quests={quests} userQuests={userQuestsRes.data || []} />
                 </div>
 
-                <div className="dashboard-equal-card">
+                <div>
                     <RecentActivity modules={completedModules} xpLogs={xpLogRes.data || []} />
                 </div>
             </div>

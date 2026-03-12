@@ -16,7 +16,7 @@ interface RecentActivityProps {
 
 export default function RecentActivity({ modules, xpLogs }: RecentActivityProps) {
     return (
-        <div className="card" style={{ padding: '20px', height: '100%', display: 'flex', flexDirection: 'column' }}>
+        <div className="card" style={{ padding: '20px' }}>
             <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
                 Aktivitas Terbaru
             </h3>
@@ -26,7 +26,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                     Belum ada aktivitas. Mulai belajar sekarang! 🚀
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     {xpLogs.slice(0, 6).map((log, i) => (
                         <div key={i} style={{
                             display: 'flex', alignItems: 'center', gap: '10px',
