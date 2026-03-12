@@ -224,6 +224,7 @@ input::placeholder, textarea::placeholder {
 
 .dashboard-equal-card {
   min-height: 0;
+  display: flex;
 }
 
 .dashboard-character-preview {
@@ -663,7 +664,8 @@ input::placeholder, textarea::placeholder {
   }
 
   .dashboard-equal-card {
-    height: 360px;
+    min-height: 320px;
+    height: auto;
   }
 
   .dashboard-character-preview {
