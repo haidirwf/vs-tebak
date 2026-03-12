@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight } from 'lucide-react'
+import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getXpProgress } from '@/lib/game/xp'
 
@@ -87,7 +87,28 @@ export default function Sidebar() {
                                 backgroundColor: 'var(--bg-tertiary)',
                             }}
                         >
-                            <span style={{ fontSize: '14px' }}>{CLASS_EMOJI[profile.avatar_class] || '🎮'}</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ fontSize: '14px' }}>{CLASS_EMOJI[profile.avatar_class] || '🎮'}</span>
+                                {profile.streak_count > 0 && (
+                                    <span style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        padding: '2px 6px',
+                                        borderRadius: '999px',
+                                        border: '1px solid rgba(232,64,64,0.35)',
+                                        backgroundColor: 'rgba(232,64,64,0.12)',
+                                        color: 'var(--accent-red)',
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '10px',
+                                        fontWeight: 800,
+                                        lineHeight: 1,
+                                    }}>
+                                        <Flame size={10} />
+                                        {profile.streak_count}
+                                    </span>
+                                )}
+                            </span>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                                 <span style={{
                                     fontFamily: 'var(--font-heading)',

@@ -14,9 +14,10 @@ export function checkStreakStatus(lastActive: string | null, currentStreak: numb
 
     if (!lastActive) {
         return {
-            isActive: false,
-            streakCount: 0,
-            lastActive: null,
+            // First recorded activity starts streak at day 1.
+            isActive: true,
+            streakCount: 1,
+            lastActive: today,
             shouldUpdate: true,
         }
     }
@@ -42,9 +43,9 @@ export function checkStreakStatus(lastActive: string | null, currentStreak: numb
             shouldUpdate: true,
         }
     } else {
-        // Streak broken
+        // Streak broken; start a new active streak today.
         return {
-            isActive: false,
+            isActive: true,
             streakCount: 1,
             lastActive: today,
             shouldUpdate: true,

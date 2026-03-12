@@ -53,11 +53,13 @@ export interface UserModule {
   status: ModuleStatus
   progress_percent: number
   completed_at: string | null
+  xp_granted_at?: string | null
 }
 
 export interface Question {
   id: string
-  module_id: string
+  module_id?: string
+  category?: string
   question_text: string
   options: string[]
   correct_option: number

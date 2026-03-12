@@ -6,7 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Timer, Play, Pause, RotateCcw, Zap, CheckCircle } from 'lucide-react'
 import { useFocusStore } from '@/stores/focusStore'
 import { useUserStore } from '@/stores/userStore'
-import { XP_REWARDS } from '@/lib/game/xp'
+
+const FOCUS_SESSION_XP = 20
 
 export default function FocusTimer() {
     const { isActive, timeLeft, isFinished, startTimer, pauseTimer, resetTimer, tick, sessionsCount } = useFocusStore()
@@ -17,17 +18,12 @@ export default function FocusTimer() {
         if (rewardClaimed) return
         
         setRewardClaimed(true)
-        const xpAmount = XP_REWARDS.focusSession
         // Update database via XP API to trigger quest progress tracking
         if (profile?.id) {
             const res = await fetch('/api/xp', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ 
-                    amount: xpAmount, 
-                    reason: 'Focus Session Completed',
-                    category: 'productivity'
-                }),
+                body: JSON.stringify({ action: 'focus_session' }),
             })
 
             const data = await res.json()
@@ -232,7 +228,7 @@ export default function FocusTimer() {
                             fontWeight: 700,
                             fontFamily: 'var(--font-heading)'
                         }}>
-                            <Zap size={16} fill="currentColor" /> +{XP_REWARDS.focusSession} XP DIAKUISISI
+                            <Zap size={16} fill="currentColor" /> +{FOCUS_SESSION_XP} XP DIAKUISISI
                         </div>
                     </motion.div>
                 )}

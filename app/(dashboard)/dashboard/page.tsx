@@ -6,17 +6,24 @@ import DashboardStats from '@/components/dashboard/DashboardStats'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
+import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
+
+export const dynamic = 'force-dynamic'
 
 export default async function DashboardPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/login')
+    const today = format(new Date(), 'yyyy-MM-dd')
 
-    const [profileRes, questsRes, userModulesRes, xpLogRes] = await Promise.all([
+    await ensureDailyQuestsAndProgress(supabase, user.id, today)
+
+    const [profileRes, questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),
-        supabase.from('daily_quests').select('*').eq('date', format(new Date(), 'yyyy-MM-dd')),
+        supabase.from('daily_quests').select('*').eq('date', today),
         supabase.from('user_modules').select('*, modules(title, category, xp_reward)').eq('user_id', user.id).eq('status', 'completed').order('completed_at', { ascending: false }).limit(5),
         supabase.from('xp_logs').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
+        supabase.from('user_daily_quests').select('*').eq('user_id', user.id).eq('date', today),
     ])
 
     const profile = profileRes.data
@@ -24,14 +31,6 @@ export default async function DashboardPage() {
     const completedModules = userModulesRes.data || []
 
     if (!profile) redirect('/login')
-
-    // Fetch user quest progress
-    const today = format(new Date(), 'yyyy-MM-dd')
-    const { data: userQuests } = await supabase
-        .from('user_daily_quests')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('date', today)
 
     const dateStr = format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale })
 
@@ -100,7 +99,7 @@ export default async function DashboardPage() {
 
             <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
                 {/* Daily Quests */}
-                <DailyQuestList quests={quests} userQuests={userQuests || []} />
+                <DailyQuestList quests={quests} userQuests={userQuestsRes.data || []} />
 
                 {/* Recent Activity */}
                 <RecentActivity modules={completedModules} xpLogs={xpLogRes.data || []} />

@@ -36,20 +36,48 @@ export default async function BattleRoomPage({ params }: PageProps) {
     const isPlayer1 = battle.player1_id === user.id
     const isPlayer2 = battle.player2_id === user.id
 
-    // Reject if room is already active/finished and user isn't one of the players
-    if (battle.status !== 'waiting' && !isPlayer1 && !isPlayer2) {
+    // Participant-only access for battle room page
+    if (!isPlayer1 && !isPlayer2) {
         redirect('/battle')
     }
 
-    // Fetch a larger pool first, then shuffle to avoid repetitive question order.
-    let questionsQuery = supabase.from('questions').select('*')
+    // Primary source: standalone battle_questions (no dependency to modules table).
+    let questionPool: Array<{
+        id: string
+        question_text: string
+        options: string[]
+        correct_option: number
+        difficulty: string
+        explanation: string | null
+        module_id?: string
+    }> = []
+
+    let standaloneQuery = supabase
+        .from('battle_questions')
+        .select('id, question_text, options, correct_option, difficulty, explanation')
+        .eq('is_active', true)
+
     if (battle.category && battle.category !== 'general') {
-        const { data: modules } = await supabase.from('modules').select('id').eq('category', battle.category)
-        const moduleIds = modules?.map(m => m.id) || []
-        if (moduleIds.length > 0) questionsQuery = questionsQuery.in('module_id', moduleIds)
+        standaloneQuery = standaloneQuery.eq('category', battle.category)
     }
-    const { data: questionPool } = await questionsQuery.limit(200)
-    const questions = [...(questionPool || [])]
+
+    const { data: standaloneQuestions, error: standaloneError } = await standaloneQuery.limit(200)
+
+    if (!standaloneError && standaloneQuestions && standaloneQuestions.length > 0) {
+        questionPool = standaloneQuestions
+    } else {
+        // Fallback path for legacy schema.
+        let legacyQuery = supabase.from('questions').select('*')
+        if (battle.category && battle.category !== 'general') {
+            const { data: modules } = await supabase.from('modules').select('id').eq('category', battle.category)
+            const moduleIds = modules?.map(m => m.id) || []
+            if (moduleIds.length > 0) legacyQuery = legacyQuery.in('module_id', moduleIds)
+        }
+        const { data: legacyQuestions } = await legacyQuery.limit(200)
+        questionPool = legacyQuestions || []
+    }
+
+    const questions = [...questionPool]
         .sort((a, b) => stableHash(`${roomId}:${a.id}`) - stableHash(`${roomId}:${b.id}`))
         .slice(0, BATTLE_QUESTION_COUNT)
 

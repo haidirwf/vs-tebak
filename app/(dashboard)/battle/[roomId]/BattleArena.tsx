@@ -24,6 +24,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
     // Derive initial phase
     const initPhase = (): BattlePhase => {
+        if (initialBattle.status === 'finished') return 'finished'
         if (initialBattle.player1_id && initialBattle.player2_id) return 'lobby'
         return 'waiting'
     }
@@ -55,6 +56,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
+    const finalizedRef = useRef(false)
 
     const isPlayer1 = battle.player1_id === currentUser.id
     const syncXpToUserStore = useCallback(async (newXp: number) => {
@@ -67,11 +69,28 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         if (my < opp) return 'lose'
         return 'draw'
     }, [])
-    const getXpConfig = useCallback((outcome: BattleOutcome) => {
-        if (outcome === 'win') return { amount: 80, category: 'battle_win', reason: 'kemenangan' }
-        if (outcome === 'draw') return { amount: 40, category: 'battle_draw', reason: 'hasil seri' }
-        return { amount: 20, category: 'battle_loss', reason: 'kekalahan' }
+    const getXpAction = useCallback((outcome: BattleOutcome): 'battle_win' | 'battle_draw' | 'battle_loss' => {
+        if (outcome === 'win') return 'battle_win'
+        if (outcome === 'draw') return 'battle_draw'
+        return 'battle_loss'
     }, [])
+    const awardXp = useCallback(async (outcome: BattleOutcome, isSurrender = false) => {
+        if (isSurrender) return
+        const action = getXpAction(outcome)
+
+        const res = await fetch('/api/xp', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action })
+        })
+        const data = await res.json()
+        if (data.success) {
+            setXpResult({ base: data.baseAward || 0, bonus: data.bonusAmount || 0 })
+            if (typeof data.newXp === 'number') {
+                await syncXpToUserStore(data.newXp)
+            }
+        }
+    }, [getXpAction, syncXpToUserStore])
 
     const handleExitGame = async () => {
         if (isPlayer1) {
@@ -106,6 +125,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         })
 
         if (opponentFinished || !opponent || isSurrender || forcedOutcome) {
+            if (finalizedRef.current) return
+            finalizedRef.current = true
+
             setPhase('finished')
             const outcome = forcedOutcome ?? getBattleOutcome(finalMyScore, finalOppScore, isSurrender)
             setFinalOutcome(outcome)
@@ -124,26 +146,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 winner_id: winner,
             }).eq('id', battle.id)
 
-            // Calculate XP
-            const { amount: xpAmount, category: xpCategory, reason: xpReason } = getXpConfig(outcome)
-            let myXpAmount = xpAmount
-            if (isSurrender) myXpAmount = 0 // Penalty for surrendering
-
-            if (myXpAmount > 0) {
-                const res = await fetch('/api/xp', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: myXpAmount, reason: `Battle ${isSurrender ? 'menyerah' : xpReason}`, category: xpCategory })
-                })
-                const data = await res.json()
-                if (data.success) {
-                    setXpResult({ base: myXpAmount, bonus: data.bonusAmount || 0 })
-                    if (typeof data.newXp === 'number') {
-                        await syncXpToUserStore(data.newXp)
-                    }
-                }
-            }
+            await awardXp(outcome, isSurrender)
         }
-    }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished, syncXpToUserStore, getBattleOutcome, getXpConfig])
+    }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished, getBattleOutcome, awardXp])
 
     const handleSurrender = async () => {
         setMyScore(0)
@@ -229,6 +234,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 const newBattle = payload.new as Battle
                 setBattle(newBattle)
 
+                if (newBattle.status === 'finished') {
+                    setPhase('finished')
+                    return
+                }
+
                 // When player 2 joins the room, move to lobby (ready check phase)
                 if (newBattle.player2_id) {
                     setPhase((prev) => {
@@ -279,6 +289,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         // Initial check on mount to bypass SSR stale data
         checkFreshBattle()
 
+        if (battle.status === 'finished') {
+            setPhase('finished')
+            return
+        }
+
         // Fallback polling in waiting/lobby to keep player join + ready state in sync
         if (phase === 'waiting' && isPlayer1) {
             pollInterval = setInterval(checkFreshBattle, 2000)
@@ -286,7 +301,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             pollInterval = setInterval(checkFreshBattle, 1000)
         }
 
-        if (battle.player1_id && battle.player2_id) {
+        if (battle.player1_id && battle.player2_id && battle.status !== 'finished') {
             setPhase((prev) => {
                 if (prev === 'waiting') return 'lobby'
                 return prev
@@ -324,6 +339,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     // Effect to handle state transition if we finished waiting for opponent
     useEffect(() => {
         if (iAmFinished && opponentFinished && phase !== 'finished') {
+            if (finalizedRef.current) return
+            finalizedRef.current = true
+
             setPhase('finished')
             const finalMyScore = myScore
             const finalOppScore = opponentScore
@@ -335,7 +353,6 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     : outcome === 'win'
                         ? currentUser.id
                         : (opponent?.id ?? currentUser.id)
-            const { amount: xpAmount, category: xpCategory, reason: xpReason } = getXpConfig(outcome)
 
             // Only player 1 writes the result
             if (isPlayer1) {
@@ -345,35 +362,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     player2_score: finalOppScore,
                     winner_id: winner,
                 }).eq('id', battle.id).then()
-
-                fetch('/api/xp', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${xpReason}`, category: xpCategory })
-                }).then(async res => {
-                    const data = await res.json()
-                    if (data.success) {
-                        setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
-                        if (typeof data.newXp === 'number') {
-                            await syncXpToUserStore(data.newXp)
-                        }
-                    }
-                })
-            } else {
-                fetch('/api/xp', {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ amount: xpAmount, reason: `Battle ${xpReason}`, category: xpCategory })
-                }).then(async res => {
-                    const data = await res.json()
-                    if (data.success) {
-                        setXpResult({ base: xpAmount, bonus: data.bonusAmount || 0 })
-                        if (typeof data.newXp === 'number') {
-                            await syncXpToUserStore(data.newXp)
-                        }
-                    }
-                })
             }
+            awardXp(outcome, false)
         }
-    }, [iAmFinished, opponentFinished, phase, myScore, opponentScore, currentUser.id, opponent, isPlayer1, battle.id, supabase, syncXpToUserStore, getBattleOutcome, getXpConfig])
+    }, [iAmFinished, opponentFinished, phase, myScore, opponentScore, currentUser.id, opponent, isPlayer1, battle.id, supabase, getBattleOutcome, awardXp])
 
     async function handleReady() {
         if (iAmReady) return
@@ -406,11 +398,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
     // When both players are ready, start countdown
     useEffect(() => {
-        if (iAmReady && opponentReady && phase === 'lobby' && countdown === null) {
+        if (battle.status !== 'finished' && iAmReady && opponentReady && phase === 'lobby' && countdown === null) {
             if (isPlayer1) channelRef.current?.send({ type: 'broadcast', event: 'game_start', payload: {} })
             setCountdown(5)
         }
-    }, [iAmReady, opponentReady, isPlayer1, phase, countdown])
+    }, [battle.status, iAmReady, opponentReady, isPlayer1, phase, countdown])
 
     // Handle countdown timer
     useEffect(() => {
@@ -615,47 +607,63 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const titleColor = isDraw ? 'var(--accent-cyan)' : won ? 'var(--accent-gold)' : 'var(--accent-red)'
         const icon = isDraw ? '🤝' : won ? '🏆' : '💀'
         return (
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} style={{
-                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                minHeight: '70vh', gap: '24px', textAlign: 'center',
-            }}>
-                <div style={{ fontSize: '64px' }}>{icon}</div>
-                <div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 700, color: titleColor, marginBottom: '8px' }}>
-                        {title}
-                    </h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
+            <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ padding: '28px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '56px' }}>{icon}</div>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: 700, color: titleColor, marginBottom: '10px' }}>{title}</h2>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '6px' }}>
                         {xpResult ? (
                             xpResult.bonus > 0
-                                ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--accent-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>  
+                                ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--accent-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>
                                 : `+${xpResult.base} XP didapat!`
                         ) : (
                             isDraw ? '+40 XP didapat (hasil seri)!' : won ? '+80 XP didapat!' : '+20 XP untuk usahamu'
                         )}
                     </p>
-                    <p style={{ color: 'var(--accent-green)', fontSize: '12px', fontWeight: 600, marginTop: '6px' }}>
+                    <p style={{ color: 'var(--accent-green)', fontSize: '12px', fontWeight: 600, marginBottom: '18px' }}>
                         {classBenefitText}
                     </p>
-                </div>
-                <div style={{ display: 'flex', gap: '48px' }}>
-                    <div>
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 700, color: 'var(--accent-cyan)' }}>{myScore}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Skormu</div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '34px', marginBottom: '18px' }}>
+                        <div>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', color: 'var(--accent-cyan)' }}>{myScore}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Kamu</div>
+                        </div>
+                        <div style={{ color: 'var(--text-muted)' }}>vs</div>
+                        <div>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', color: 'var(--text-secondary)' }}>{opponentScore}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{opponent?.username || 'Lawan'}</div>
+                        </div>
                     </div>
-                    <div style={{ fontSize: '28px', color: 'var(--text-muted)', alignSelf: 'center' }}>vs</div>
-                    <div>
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 700, color: 'var(--text-secondary)' }}>{opponentScore}</div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{opponent?.username || 'Lawan'}</div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
+                        <button
+                            type="button"
+                            onClick={() => router.push('/battle')}
+                            style={{
+                                padding: '10px 18px', borderRadius: '4px', cursor: 'pointer',
+                                backgroundColor: 'transparent', border: '1px solid var(--border)',
+                                color: 'var(--text-secondary)', fontSize: '13px',
+                            }}
+                        >
+                            Kembali
+                        </button>
+                        <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => router.push('/battle')}
+                            style={{
+                                padding: '10px 18px', borderRadius: '4px', cursor: 'pointer',
+                                backgroundColor: 'var(--accent-gold)', border: 'none',
+                                color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                            }}
+                        >
+                            MAIN LAGI
+                        </motion.button>
                     </div>
-                </div>
-                <motion.button type="button" whileHover={{ scale: 1.02 }} onClick={() => router.push('/battle')} style={{
-                    padding: '12px 32px', borderRadius: '4px', cursor: 'pointer',
-                    backgroundColor: 'var(--accent-gold)', border: 'none',
-                    color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700,
-                }}>
-                    MAIN LAGI
-                </motion.button>
-            </motion.div>
+                </motion.div>
+            </div>
         )
     }
 
@@ -668,21 +676,22 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         )
     }
 
-    const q = questions[currentQ]
+    const safeQuestionIndex = Math.min(currentQ, Math.max(questions.length - 1, 0))
+    const q = questions[safeQuestionIndex]
     const timerPercent = (timeLeft / 15) * 100
     const timerColor = timeLeft > 8 ? 'var(--accent-green)' : timeLeft > 4 ? 'var(--accent-gold)' : 'var(--accent-red)'
 
     return (
-        <div style={{ maxWidth: '700px', margin: '0 auto', padding: '24px' }}>
+        <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
             {/* Scoreboard */}
-            <div className="card" style={{ padding: '16px', marginBottom: '20px', display: 'flex', alignItems: 'center' }}>
+            <div className="card" style={{ padding: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
                 <div style={{ flex: 1, textAlign: 'center' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '2px' }}>{currentUser.username}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '2px' }}>Kamu</div>
                     <div style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-cyan)' }}>{myScore}</div>
                 </div>
                 <div style={{ textAlign: 'center', padding: '0 16px' }}>
                     <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                        {currentQ + 1}/{questions.length}
+                        {safeQuestionIndex + 1}/{questions.length}
                     </div>
                     <Sword size={20} style={{ color: 'var(--accent-red)', margin: '4px auto' }} />
                 </div>
@@ -708,7 +717,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             <AnimatePresence mode="wait">
                 <motion.div key={currentQ} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
                     className="card" style={{ padding: '24px', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>SOAL {currentQ + 1}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>SOAL {safeQuestionIndex + 1}</div>
                     <p style={{ fontSize: '16px', fontWeight: 600, lineHeight: 1.6 }}>{q.question_text}</p>
                 </motion.div>
             </AnimatePresence>

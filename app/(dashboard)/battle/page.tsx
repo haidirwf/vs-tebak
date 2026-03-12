@@ -9,6 +9,7 @@ const CATEGORIES = [
     { value: 'coding', label: 'Coding', emoji: '💻' },
     { value: 'design', label: 'Desain', emoji: '🎨' },
     { value: 'productivity', label: 'Produktivitas', emoji: '⚡' },
+    { value: 'business', label: 'Bisnis', emoji: '📈' },
     { value: 'general', label: 'Umum', emoji: '🎯' },
 ]
 
@@ -69,7 +70,15 @@ export default function BattlePage() {
 
         pollingRef.current = setInterval(async () => {
             const res = await fetch(`/api/battle/${pendingBattleId}`)
-            if (!res.ok) return
+            if (!res.ok) {
+                if (res.status === 403 || res.status === 404) {
+                    clearInterval(pollingRef.current!)
+                    setPendingBattleId(null)
+                    setMode('select')
+                    setError('Room matchmaking sudah tidak tersedia. Coba lagi.')
+                }
+                return
+            }
             const data = await res.json()
             if (data.status === 'active') {
                 clearInterval(pollingRef.current!)
@@ -199,7 +208,7 @@ export default function BattlePage() {
                 <motion.div className="battle-select-layout" initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'grid', gap: '16px' }}>
                     <div className="battle-select-actions" style={{ 
                         display: 'grid', 
-                        gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', 
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', 
                         gap: '20px',
                         marginBottom: '32px'
                     }}>
@@ -207,6 +216,7 @@ export default function BattlePage() {
                             { key: 'create', label: 'Buat Room', icon: <Sword size={24} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: 'var(--accent-gold)', accent: 'rgba(245, 197, 66, 0.1)' },
                             { key: 'join', label: 'Join Room', icon: <Hash size={24} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: 'var(--accent-cyan)', accent: 'rgba(0, 212, 255, 0.1)' },
                             { key: 'matchmaking', label: 'Matchmaking', icon: <Shuffle size={24} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: 'var(--accent-green)', accent: 'rgba(34, 197, 94, 0.1)' },
+                            { key: 'practice', label: 'Vs Computer', icon: <Zap size={24} />, desc: 'Latihan cepat melawan AI bot tanpa harus menunggu lawan online.', action: () => router.push('/battle/computer'), color: 'var(--accent-red)', accent: 'rgba(232, 64, 64, 0.1)' },
                         ].map((item) => (
                             <motion.div
                                 key={item.label}
@@ -365,7 +375,7 @@ export default function BattlePage() {
                         <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 500 }}>
                             Pilih Kategori Soal
                         </label>
-                        <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                        <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '8px' }}>
                             {CATEGORIES.map(cat => (
                                 <button key={cat.value} onClick={() => setCategory(cat.value)} style={{
                                     padding: '12px 8px', borderRadius: '4px', cursor: 'pointer',

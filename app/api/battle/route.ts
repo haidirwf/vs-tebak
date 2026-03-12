@@ -132,6 +132,12 @@ export async function GET(request: NextRequest) {
         return NextResponse.json({ error: 'Room sudah terisi pemain lain' }, { status: 409 })
     }
 
-    // If already active or the user is player1
+    // Prevent exposing active/finished room detail to non-participants.
+    const isParticipant = battle.player1_id === user.id || battle.player2_id === user.id
+    if (!isParticipant) {
+        return NextResponse.json({ error: 'Room tidak dapat diakses' }, { status: 403 })
+    }
+
+    // If already active/finished for participant, or waiting room fallback
     return NextResponse.json({ battle })
 }

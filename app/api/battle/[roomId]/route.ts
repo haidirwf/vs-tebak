@@ -35,11 +35,15 @@ export async function GET(
 
     const { data: battle, error } = await supabase
         .from('battles')
-        .select('id, status, player2_id')
+        .select('id, status, player1_id, player2_id')
         .eq('id', roomId)
         .single()
 
     if (error || !battle) return NextResponse.json({ error: 'Room not found' }, { status: 404 })
+    const isParticipant = battle.player1_id === user.id || battle.player2_id === user.id
+    if (!isParticipant) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+    }
 
     return NextResponse.json({ status: battle.status, player2_id: battle.player2_id })
 }

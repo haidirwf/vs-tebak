@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Module, UserModule, Question, LessonStep } from '@/types'
-import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame } from 'lucide-react'
+import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
@@ -11,18 +11,29 @@ import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 interface ModuleDetailProps {
     module: Module
     userModule: UserModule | null
+    completedFromLog?: boolean
     questions: Question[]
     userId: string
     avatarClass: string
 }
 
-export default function ModuleDetail({ module, userModule, questions, userId, avatarClass }: ModuleDetailProps) {
+interface CompletionFeedback {
+    alreadyClaimed: boolean
+    baseAward: number
+    bonusAmount: number
+    totalAwarded: number
+    leveledUp: boolean
+    newLevel: number | null
+}
+
+export default function ModuleDetail({ module, userModule, completedFromLog = false, questions, userId, avatarClass }: ModuleDetailProps) {
     const router = useRouter()
     const [currentStep, setCurrentStep] = useState(0)
     const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({})
     const [quizSubmitted, setQuizSubmitted] = useState(false)
-    const [completed, setCompleted] = useState(userModule?.status === 'completed')
+    const [completed, setCompleted] = useState(Boolean(userModule?.status === 'completed' || completedFromLog))
     const [loading, setLoading] = useState(false)
+    const [completionFeedback, setCompletionFeedback] = useState<CompletionFeedback | null>(null)
     const hasClassBonus = classHasBonusForCategory(avatarClass, module.category)
     const bonusXp = hasClassBonus ? Math.floor(module.xp_reward * CLASS_BONUS_PERCENT / 100) : 0
 
@@ -34,32 +45,29 @@ export default function ModuleDetail({ module, userModule, questions, userId, av
     const currentQuestions = questions.filter((_, i) => i < 5) // Show 5 quiz questions
 
     async function handleComplete() {
+        if (loading || completed) return
         setLoading(true)
         const supabase = createClient()
 
-        // Update user_modules
-        const existingData = userModule ? { id: userModule.id } : null
-        if (existingData) {
-            await supabase.from('user_modules').update({
-                status: 'completed',
-                progress_percent: 100,
-                completed_at: new Date().toISOString(),
-            }).eq('id', existingData.id)
-        } else {
-            await supabase.from('user_modules').insert({
-                user_id: userId,
-                module_id: module.id,
-                status: 'completed',
-                progress_percent: 100,
-                completed_at: new Date().toISOString(),
-            })
-        }
-
-        // Award XP
-        await fetch('/api/xp', {
+        // Server-authoritative completion + XP claim (idempotent)
+        const xpRes = await fetch('/api/xp', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ amount: module.xp_reward, reason: `Menyelesaikan modul: ${module.title}`, category: module.category }),
+            body: JSON.stringify({ action: 'complete_module', moduleId: module.id }),
+        })
+        const xpData = await xpRes.json()
+        if (!xpRes.ok || !xpData?.success) {
+            setLoading(false)
+            return
+        }
+
+        setCompletionFeedback({
+            alreadyClaimed: Boolean(xpData.alreadyClaimed),
+            baseAward: Number(xpData.baseAward ?? 0),
+            bonusAmount: Number(xpData.bonusAmount ?? 0),
+            totalAwarded: Number(xpData.totalAwarded ?? 0),
+            leveledUp: Boolean(xpData.leveledUp),
+            newLevel: xpData.newLevel ? Number(xpData.newLevel) : null,
         })
 
         // Fetch updated profile to trigger XP and Level UI reactivity
@@ -97,7 +105,11 @@ export default function ModuleDetail({ module, userModule, questions, userId, av
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
             {/* Back */}
-            <button onClick={() => router.back()} style={{
+            <button
+                onClick={() => {
+                    router.push(`/modules?refresh=${Date.now()}`)
+                }}
+                style={{
                 display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)',
                 fontSize: '13px', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '20px',
             }}>
@@ -343,6 +355,110 @@ export default function ModuleDetail({ module, userModule, questions, userId, av
                     )}
                 </div>
             )}
+
+            <AnimatePresence>
+                {completionFeedback && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '16px',
+                            zIndex: 1000,
+                        }}
+                        onClick={() => setCompletionFeedback(null)}
+                    >
+                        <motion.div
+                            initial={{ y: 16, opacity: 0, scale: 0.98 }}
+                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                            exit={{ y: 10, opacity: 0, scale: 0.98 }}
+                            transition={{ duration: 0.2 }}
+                            className="card"
+                            style={{
+                                width: '100%',
+                                maxWidth: '420px',
+                                padding: '20px',
+                                border: '1px solid rgba(34, 197, 94, 0.35)',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
+                                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, color: 'var(--accent-green)' }}>
+                                    {completionFeedback.alreadyClaimed ? 'Modul Sudah Pernah Selesai' : 'Modul Berhasil Diselesaikan'}
+                                </h3>
+                                <button
+                                    onClick={() => setCompletionFeedback(null)}
+                                    style={{
+                                        border: 'none',
+                                        background: 'transparent',
+                                        color: 'var(--text-muted)',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                    }}
+                                >
+                                    <X size={16} />
+                                </button>
+                            </div>
+
+                            <div style={{ display: 'grid', gap: '8px', marginBottom: '14px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}>Base XP</span>
+                                    <span style={{ fontWeight: 700 }}>+{completionFeedback.baseAward}</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}>Bonus Class</span>
+                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                                        +{completionFeedback.bonusAmount}
+                                    </span>
+                                </div>
+                                <div style={{ height: '1px', backgroundColor: 'var(--border)' }} />
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
+                                    <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Total XP</span>
+                                    <span style={{ fontWeight: 800, color: 'var(--accent-cyan)' }}>+{completionFeedback.totalAwarded}</span>
+                                </div>
+                            </div>
+
+                            {completionFeedback.leveledUp && completionFeedback.newLevel && (
+                                <div style={{
+                                    marginBottom: '14px',
+                                    padding: '10px 12px',
+                                    borderRadius: '8px',
+                                    border: '1px solid rgba(245,197,66,0.4)',
+                                    backgroundColor: 'rgba(245,197,66,0.1)',
+                                    fontSize: '13px',
+                                    color: 'var(--accent-gold)',
+                                    fontWeight: 700,
+                                }}>
+                                    Level up! Kamu sekarang Level {completionFeedback.newLevel}
+                                </div>
+                            )}
+
+                            <button
+                                onClick={() => setCompletionFeedback(null)}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px 14px',
+                                    borderRadius: '8px',
+                                    border: 'none',
+                                    backgroundColor: 'var(--accent-cyan)',
+                                    color: 'var(--bg-primary)',
+                                    fontWeight: 700,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Oke, lanjut
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     )
 }

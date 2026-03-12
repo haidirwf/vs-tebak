@@ -1,5 +1,6 @@
 // lib/game/quests.ts
 import { SupabaseClient } from '@supabase/supabase-js'
+import { format } from 'date-fns'
 
 export type QuestAction = 'complete_module' | 'win_battle' | 'maintain_streak' | 'earn_xp'
 
@@ -11,6 +12,8 @@ interface DailyQuestRelation {
 
 interface UserQuestRow {
     id: string
+    quest_id: string
+    date: string
     current_value: number
     is_completed: boolean
     daily_quests: DailyQuestRelation | DailyQuestRelation[]
@@ -27,16 +30,16 @@ export async function updateQuestProgress(
     supabase: SupabaseClient,
     userId: string,
     action: QuestAction,
-    increment: number = 1
+    increment: number = 1,
+    today: string = format(new Date(), 'yyyy-MM-dd')
 ) {
     try {
-        // Find active daily quests of this type for today
-        // Note: In a real app, 'today' should be handled carefully with timezones.
-        // For now, we'll look for user_daily_quests that aren't completed yet.
         const { data: userQuests, error: fetchError } = await supabase
             .from('user_daily_quests')
             .select(`
                 id,
+                quest_id,
+                date,
                 current_value,
                 is_completed,
                 daily_quests!inner (
@@ -46,8 +49,10 @@ export async function updateQuestProgress(
                 )
             `)
             .eq('user_id', userId)
+            .eq('date', today)
             .eq('is_completed', false)
             .eq('daily_quests.quest_type', action)
+            .eq('daily_quests.date', today)
 
         if (fetchError || !userQuests) return
 
