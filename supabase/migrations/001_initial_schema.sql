@@ -141,14 +141,14 @@ ALTER TABLE questions ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "questions_public_read" ON questions FOR SELECT USING (true);
 
 -- User Modules: self only
-CREATE POLICY "user_modules_self" ON user_modules FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "user_modules_self" ON user_modules FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Daily Quests: public read
 ALTER TABLE daily_quests ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "daily_quests_public_read" ON daily_quests FOR SELECT USING (true);
 
 -- User Daily Quests: self only
-CREATE POLICY "user_daily_quests_self" ON user_daily_quests FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "user_daily_quests_self" ON user_daily_quests FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Badges: public read
 CREATE POLICY "badges_public_read" ON badges FOR SELECT USING (true);
@@ -158,7 +158,7 @@ CREATE POLICY "user_badges_read" ON user_badges FOR SELECT USING (true);
 CREATE POLICY "user_badges_insert" ON user_badges FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- XP Logs: self only
-CREATE POLICY "xp_logs_self" ON xp_logs FOR ALL USING (auth.uid() = user_id);
+CREATE POLICY "xp_logs_self" ON xp_logs FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- Battles: public read (participants), insert by auth users
 CREATE POLICY "battles_read" ON battles FOR SELECT USING (true);
