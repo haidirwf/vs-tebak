@@ -66,8 +66,25 @@ export async function ensureDailyQuestsAndProgress(
 
         // Ignore duplicate race safely, but keep logs for real failures.
         if (insertDailyError && !insertDailyError.message.toLowerCase().includes('duplicate key')) {
-            console.error('Failed to seed daily_quests:', insertDailyError)
+            console.error('Failed to seed daily_quests:', insertDailyError.message || insertDailyError.details || insertDailyError)
         }
+    }
+
+    // 2) Ensure user exists in profiles before we touch progress rows.
+    const { data: profileRow, error: profileError } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('id', userId)
+        .maybeSingle()
+
+    if (profileError) {
+        console.error('Failed to confirm profile for daily quests seed:', profileError)
+        return
+    }
+
+    if (!profileRow) {
+        console.warn('Skipping user_daily_quests seed because profile is missing for user:', userId)
+        return
     }
 
     // 2) Ensure user has progress rows for each today's quest.
@@ -111,7 +128,10 @@ export async function ensureDailyQuestsAndProgress(
             .insert(missingUserRows)
 
         if (insertUserQuestsError && !insertUserQuestsError.message.toLowerCase().includes('duplicate key')) {
-            console.error('Failed to seed user_daily_quests:', insertUserQuestsError)
+            console.error(
+                'Failed to seed user_daily_quests:',
+                insertUserQuestsError.message || insertUserQuestsError.details || insertUserQuestsError
+            )
         }
     }
 }

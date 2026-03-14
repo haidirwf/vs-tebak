@@ -19,13 +19,23 @@ export default async function DashboardLayout({
     if (!user) redirect('/login')
 
     const today = format(new Date(), 'yyyy-MM-dd')
-    await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
-    const { data: streakProfile } = await supabase
+    const { data: streakProfile, error: streakProfileError } = await supabase
         .from('profiles')
         .select('streak_count, last_active')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
+
+    if (streakProfileError) {
+        console.error('Failed to load profile before seeding daily quests:', streakProfileError)
+        redirect('/register')
+    }
+
+    if (!streakProfile) {
+        redirect('/register')
+    }
+
+    await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
     if (streakProfile) {
         const streakStatus = checkStreakStatus(streakProfile.last_active, streakProfile.streak_count)

@@ -36,7 +36,6 @@ export default async function ModulePage({ params }: PageProps) {
             userModule={userModuleRes.data || null}
             completedFromLog={completedFromLog}
             questions={questionsRes.data || []}
-            userId={user.id}
             avatarClass={profileRes.data?.avatar_class || 'warrior'}
         />
     )

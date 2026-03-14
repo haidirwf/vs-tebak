@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Module, UserModule, Question, LessonStep } from '@/types'
 import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 
 interface ModuleDetailProps {
@@ -13,7 +12,6 @@ interface ModuleDetailProps {
     userModule: UserModule | null
     completedFromLog?: boolean
     questions: Question[]
-    userId: string
     avatarClass: string
 }
 
@@ -26,9 +24,58 @@ interface CompletionFeedback {
     newLevel: number | null
 }
 
-export default function ModuleDetail({ module, userModule, completedFromLog = false, questions, userId, avatarClass }: ModuleDetailProps) {
+function isLikelyUrl(value: string): boolean {
+    try {
+        const parsed = new URL(value)
+        return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+    } catch {
+        return false
+    }
+}
+
+function extractYouTubeVideoId(raw: string | null | undefined): string | null {
+    if (!raw) return null
+
+    const value = raw.trim()
+    if (!value) return null
+
+    try {
+        const url = new URL(value)
+        const host = url.hostname.replace(/^www\./, '')
+
+        if (host === 'youtube.com' || host === 'm.youtube.com') {
+            const videoId = url.searchParams.get('v')
+            if (videoId) return videoId
+            if (url.pathname.startsWith('/embed/')) {
+                const id = url.pathname.split('/embed/')[1]?.split('/')[0]
+                if (id) return id
+            }
+        }
+
+        if (host === 'youtu.be') {
+            const id = url.pathname.slice(1).split('/')[0]
+            if (id) return id
+        }
+    } catch {
+        // Allow plain video id as shorthand.
+        if (/^[a-zA-Z0-9_-]{11}$/.test(value)) {
+            return value
+        }
+    }
+
+    return null
+}
+
+function getYouTubeEmbedUrl(raw: string | null | undefined): string | null {
+    const id = extractYouTubeVideoId(raw)
+    if (!id) return null
+    return `https://www.youtube-nocookie.com/embed/${id}`
+}
+
+export default function ModuleDetail({ module, userModule, completedFromLog = false, questions, avatarClass }: ModuleDetailProps) {
     const router = useRouter()
     const [currentStep, setCurrentStep] = useState(0)
+    const [phase, setPhase] = useState<'lesson' | 'quiz'>('lesson')
     const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({})
     const [quizSubmitted, setQuizSubmitted] = useState(false)
     const [completed, setCompleted] = useState(Boolean(userModule?.status === 'completed' || completedFromLog))
@@ -38,16 +85,30 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
     const bonusXp = hasClassBonus ? Math.floor(module.xp_reward * CLASS_BONUS_PERCENT / 100) : 0
 
     const content = module.content as LessonStep[] | null
-    const steps = content || []
+    const fallbackSteps: LessonStep[] = [
+        {
+            id: 'intro',
+            title: 'Pengantar Materi',
+            type: 'text',
+            content: module.description || 'Materi belum tersedia detailnya. Baca pengantar ini lalu lanjut ke quiz.',
+        },
+    ]
+    const steps = content && content.length > 0 ? content : fallbackSteps
     const totalSteps = steps.length
-    const progress = totalSteps > 0 ? Math.round(((currentStep + 1) / totalSteps) * 100) : 0
-
     const currentQuestions = questions.filter((_, i) => i < 5) // Show 5 quiz questions
+    const hasQuiz = currentQuestions.length > 0
+    const allQuizAnswered = currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
+    const canComplete = !hasQuiz || (quizSubmitted && allQuizAnswered)
+    const lessonProgress = Math.round(((currentStep + 1) / totalSteps) * 100)
+    const progress = completed
+        ? 100
+        : phase === 'lesson'
+            ? lessonProgress
+            : (quizSubmitted ? 95 : 85)
 
     async function handleComplete() {
-        if (loading || completed) return
+        if (loading || completed || !canComplete) return
         setLoading(true)
-        const supabase = createClient()
 
         // Server-authoritative completion + XP claim (idempotent)
         const xpRes = await fetch('/api/xp', {
@@ -70,17 +131,9 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
             newLevel: xpData.newLevel ? Number(xpData.newLevel) : null,
         })
 
-        // Fetch updated profile to trigger XP and Level UI reactivity
-        const { data: updatedProfile } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('id', userId)
-            .single()
-
-        if (updatedProfile) {
-            // Import and use the user store directly if not already injected
+        if (typeof xpData.newXp === 'number') {
             const { useUserStore } = await import('@/stores/userStore')
-            useUserStore.getState().setProfile(updatedProfile)
+            useUserStore.getState().updateXP(xpData.newXp)
         }
 
         setCompleted(true)
@@ -93,6 +146,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
     }
 
     function handleSubmitQuiz() {
+        if (!allQuizAnswered) return
         setQuizSubmitted(true)
     }
 
@@ -101,6 +155,12 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
         productivity: 'var(--accent-green)', business: 'var(--accent-red)',
     }
     const catColor = CATEGORY_COLORS[module.category] || 'var(--accent-cyan)'
+    const activeStep = steps[currentStep]
+    const videoEmbedUrl = activeStep?.type === 'video' ? getYouTubeEmbedUrl(activeStep.content) : null
+    const videoId = activeStep?.type === 'video' ? extractYouTubeVideoId(activeStep.content) : null
+    const videoRawContent = activeStep?.type === 'video' ? (activeStep.content || '').trim() : ''
+    const youtubeWatchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : videoRawContent
+    const showVideoText = activeStep?.type === 'video' && videoRawContent.length > 0 && !isLikelyUrl(videoRawContent)
 
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
@@ -171,7 +231,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
             </div>
 
             {/* Content / Steps */}
-            {steps.length > 0 ? (
+            {phase === 'lesson' ? (
                 <div>
                     {/* Step Navigation */}
                     <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', flexWrap: 'wrap' }}>
@@ -204,11 +264,83 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                 </span>
                             </div>
                             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>
-                                {steps[currentStep].title}
+                                {activeStep.title}
                             </h2>
-                            <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
-                                {steps[currentStep].content}
-                            </div>
+                            {activeStep.type === 'video' ? (
+                                <div>
+                                    <div
+                                        style={{
+                                            width: '100%',
+                                            aspectRatio: '16 / 9',
+                                            borderRadius: '10px',
+                                            overflow: 'hidden',
+                                            border: '1px solid var(--border)',
+                                            backgroundColor: 'var(--bg-tertiary)',
+                                            marginBottom: '12px',
+                                        }}
+                                    >
+                                        {videoEmbedUrl ? (
+                                            <iframe
+                                                src={`${videoEmbedUrl}?rel=0&modestbranding=1&playsinline=1`}
+                                                title={activeStep.title}
+                                                allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                                allowFullScreen
+                                                referrerPolicy="strict-origin-when-cross-origin"
+                                                loading="lazy"
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    border: 'none',
+                                                    display: 'block',
+                                                }}
+                                            />
+                                        ) : (
+                                            <div
+                                                style={{
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    color: 'var(--text-muted)',
+                                                    fontSize: '13px',
+                                                    textAlign: 'center',
+                                                    padding: '16px',
+                                                }}
+                                            >
+                                                Tempel URL YouTube pada konten step video untuk menampilkan embed.
+                                            </div>
+                                        )}
+                                    </div>
+                                    {videoEmbedUrl && (
+                                        <a
+                                            href={youtubeWatchUrl}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '6px',
+                                                marginBottom: '10px',
+                                                fontSize: '12px',
+                                                color: 'var(--accent-cyan)',
+                                                textDecoration: 'none',
+                                            }}
+                                        >
+                                            Buka di YouTube
+                                        </a>
+                                    )}
+                                    {showVideoText && (
+                                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
+                                            {videoRawContent}
+                                        </p>
+                                    )}
+                                </div>
+                            ) : (
+                                <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
+                                    {activeStep.content}
+                                </div>
+                            )}
                         </motion.div>
                     </AnimatePresence>
 
@@ -238,6 +370,19 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                             >
                                 Selanjutnya <ChevronRight size={14} />
                             </motion.button>
+                        ) : hasQuiz ? (
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                onClick={() => setPhase('quiz')}
+                                style={{
+                                    padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
+                                    backgroundColor: 'var(--accent-gold)', border: 'none',
+                                    color: 'var(--bg-primary)', fontSize: '13px', fontWeight: 700,
+                                    fontFamily: 'var(--font-heading)',
+                                }}
+                            >
+                                Lanjut ke Quiz
+                            </motion.button>
                         ) : !completed ? (
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
@@ -260,13 +405,31 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                     </div>
                 </div>
             ) : (
-                /* No content — show quiz only */
                 <div>
-                    {questions.length > 0 ? (
+                    {hasQuiz ? (
                         <div className="card" style={{ padding: '24px' }}>
-                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>
-                                Quiz — {module.title}
-                            </h2>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700 }}>
+                                    Quiz — {module.title}
+                                </h2>
+                                <button
+                                    onClick={() => setPhase('lesson')}
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        border: '1px solid var(--border)',
+                                        borderRadius: '6px',
+                                        color: 'var(--text-secondary)',
+                                        padding: '6px 10px',
+                                        cursor: 'pointer',
+                                        fontSize: '12px',
+                                    }}
+                                >
+                                    Kembali ke Materi
+                                </button>
+                            </div>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '20px' }}>
+                                Jawab semua soal dulu sebelum modul bisa diselesaikan.
+                            </p>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                                 {currentQuestions.map((q, qi) => {
                                     const selected = quizAnswers[q.id]
@@ -310,10 +473,13 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     onClick={handleSubmitQuiz}
+                                    disabled={!allQuizAnswered}
                                     style={{
                                         marginTop: '20px', padding: '10px 24px', borderRadius: '4px',
                                         backgroundColor: 'var(--accent-gold)', border: 'none',
-                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                        cursor: allQuizAnswered ? 'pointer' : 'not-allowed',
+                                        opacity: allQuizAnswered ? 1 : 0.6,
                                     }}
                                 >
                                     SUBMIT JAWABAN
@@ -322,11 +488,12 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                 <motion.button
                                     whileHover={{ scale: 1.02 }}
                                     onClick={handleComplete}
-                                    disabled={loading}
+                                    disabled={loading || !canComplete}
                                     style={{
                                         marginTop: '16px', padding: '10px 24px', borderRadius: '4px',
                                         backgroundColor: 'var(--accent-green)', border: 'none',
-                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                        cursor: loading ? 'not-allowed' : 'pointer',
                                     }}
                                 >
                                     {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''} XP`}

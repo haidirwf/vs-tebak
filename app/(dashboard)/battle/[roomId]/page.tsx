@@ -14,6 +14,27 @@ function stableHash(input: string): number {
     return hash >>> 0
 }
 
+function shuffleBattleQuestionOptions<T extends { options: string[]; correct_option: number; id: string }>(
+    question: T,
+    seed: string
+): T {
+    const indexedOptions = question.options.map((opt, idx) => ({ opt, idx }))
+    indexedOptions.sort((a, b) => {
+        const ha = stableHash(`${seed}:${question.id}:${a.idx}:${a.opt}`)
+        const hb = stableHash(`${seed}:${question.id}:${b.idx}:${b.opt}`)
+        return ha - hb
+    })
+
+    const options = indexedOptions.map((item) => item.opt)
+    const correct_option = indexedOptions.findIndex((item) => item.idx === question.correct_option)
+
+    return {
+        ...question,
+        options,
+        correct_option: correct_option >= 0 ? correct_option : question.correct_option,
+    }
+}
+
 interface PageProps {
     params: Promise<{ roomId: string }>
 }
@@ -80,6 +101,7 @@ export default async function BattleRoomPage({ params }: PageProps) {
     const questions = [...questionPool]
         .sort((a, b) => stableHash(`${roomId}:${a.id}`) - stableHash(`${roomId}:${b.id}`))
         .slice(0, BATTLE_QUESTION_COUNT)
+        .map((q) => shuffleBattleQuestionOptions(q, roomId))
 
     // Fetch opponent profile
     const opponentId = isPlayer1 ? battle.player2_id : battle.player1_id

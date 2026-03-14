@@ -19,7 +19,25 @@ export const useUserStore = create<UserStore>((set, get) => ({
     isLoading: true,
     levelUpData: null,
 
-    setProfile: (profile) => set({ profile }),
+    setProfile: (incomingProfile) => {
+        const { profile: currentProfile } = get()
+
+        // Trigger level-up modal when profile is refreshed with a higher level.
+        if (
+            incomingProfile &&
+            currentProfile &&
+            incomingProfile.id === currentProfile.id &&
+            incomingProfile.level > currentProfile.level
+        ) {
+            set({
+                profile: incomingProfile,
+                levelUpData: { oldLevel: currentProfile.level, newLevel: incomingProfile.level },
+            })
+            return
+        }
+
+        set({ profile: incomingProfile })
+    },
     setLoading: (isLoading) => set({ isLoading }),
 
     updateXP: (newTotalXp: number) => {

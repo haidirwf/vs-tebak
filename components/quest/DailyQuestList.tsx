@@ -35,7 +35,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800 }}>
-                        QUEST HARIAN
+                        QUEST MINGGUAN
                     </h3>
                 </div>
                 <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>

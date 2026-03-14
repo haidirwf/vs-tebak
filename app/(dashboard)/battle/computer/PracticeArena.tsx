@@ -36,6 +36,18 @@ function shuffle<T>(arr: T[]): T[] {
     return cloned
 }
 
+function shuffleQuestionOptions(question: PracticeQuestion): PracticeQuestion {
+    const indexed = question.options.map((opt, idx) => ({ opt, idx }))
+    const shuffled = shuffle(indexed)
+    const newCorrect = shuffled.findIndex((item) => item.idx === question.correct_option)
+
+    return {
+        ...question,
+        options: shuffled.map((item) => item.opt),
+        correct_option: newCorrect >= 0 ? newCorrect : question.correct_option,
+    }
+}
+
 function botAccuracyByDifficulty(difficulty: string) {
     if (difficulty === 'hard') return 0.55
     if (difficulty === 'easy') return 0.8
@@ -110,7 +122,9 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
     }
 
     function startPractice() {
-        const picked = shuffle(availableQuestions).slice(0, BATTLE_QUESTION_COUNT)
+        const picked = shuffle(availableQuestions)
+            .slice(0, BATTLE_QUESTION_COUNT)
+            .map((q) => shuffleQuestionOptions(q))
         if (picked.length === 0) return
         setQuestions(picked)
         setCurrentQ(0)
@@ -389,4 +403,3 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
         </div>
     )
 }
-
