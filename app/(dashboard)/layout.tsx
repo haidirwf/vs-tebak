@@ -3,10 +3,8 @@ import Navbar from '@/components/layout/Navbar'
 import { DashboardProvider } from '@/components/layout/DashboardProvider'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { checkStreakStatus } from '@/lib/game/streak'
 import { format } from 'date-fns'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
-import { updateQuestProgress } from '@/lib/game/quests'
 
 export default async function DashboardLayout({
     children,
@@ -20,45 +18,17 @@ export default async function DashboardLayout({
 
     const today = format(new Date(), 'yyyy-MM-dd')
 
-    const { data: streakProfile, error: streakProfileError } = await supabase
-        .from('profiles')
-        .select('streak_count, last_active')
-        .eq('id', user.id)
-        .maybeSingle()
-
-    if (streakProfileError) {
-        console.error('Failed to load profile before seeding daily quests:', streakProfileError)
-        redirect('/register')
-    }
-
-    if (!streakProfile) {
-        redirect('/register')
-    }
-
     await ensureDailyQuestsAndProgress(supabase, user.id, today)
-
-    if (streakProfile) {
-        const streakStatus = checkStreakStatus(streakProfile.last_active, streakProfile.streak_count)
-        if (streakStatus.shouldUpdate) {
-            await supabase
-                .from('profiles')
-                .update({
-                    streak_count: streakStatus.streakCount,
-                    last_active: today,
-                })
-                .eq('id', user.id)
-        }
-
-        if (streakStatus.isActive) {
-            await updateQuestProgress(supabase, user.id, 'maintain_streak', streakStatus.streakCount, today)
-        }
-    }
 
     const { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
         .single()
+
+    if (!profile) {
+        redirect('/register')
+    }
 
     return (
         <DashboardProvider profile={profile}>

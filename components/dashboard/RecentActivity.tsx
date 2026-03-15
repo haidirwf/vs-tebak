@@ -14,6 +14,15 @@ interface RecentActivityProps {
     }>
 }
 
+function formatReason(reason: string | null): string {
+    if (!reason) return 'XP didapat'
+    const cleaned = reason
+        .replace(/\s*\[module:[^\]]+\]/gi, '')
+        .replace(/\s{2,}/g, ' ')
+        .trim()
+    return cleaned || 'XP didapat'
+}
+
 export default function RecentActivity({ modules, xpLogs }: RecentActivityProps) {
     return (
         <div className="card" style={{ padding: '20px' }}>
@@ -35,7 +44,9 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                         }}>
                             <Zap size={14} style={{ color: 'var(--accent-gold)', flexShrink: 0 }} />
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>{log.reason || 'XP didapat'}</div>
+                                <div style={{ fontSize: '12px', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>
+                                    {formatReason(log.reason)}
+                                </div>
                                 <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                                     {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: idLocale })}
                                 </div>

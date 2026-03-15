@@ -28,7 +28,9 @@ export default function FocusTimer() {
 
             const data = await res.json()
             if (typeof data.newXp === 'number') {
-                updateXP(data.newXp)
+                updateXP(data.newXp, {
+                    newStreak: typeof data.streak === 'number' ? data.streak : undefined,
+                })
             }
         }
         

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Module, UserModule, Question, LessonStep } from '@/types'
 import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X } from 'lucide-react'
@@ -22,6 +22,35 @@ interface CompletionFeedback {
     totalAwarded: number
     leveledUp: boolean
     newLevel: number | null
+}
+
+const MAX_QUIZ_QUESTIONS = 5
+
+const CATEGORY_COLORS: Record<string, string> = {
+    coding: 'var(--accent-cyan)',
+    design: 'var(--accent-gold)',
+    productivity: 'var(--accent-green)',
+    business: 'var(--accent-red)',
+}
+
+const COMPLETE_CTA_STYLE: CSSProperties = {
+    padding: '10px 24px',
+    borderRadius: '4px',
+    border: 'none',
+    color: 'var(--bg-primary)',
+    fontSize: '13px',
+    fontWeight: 700,
+    fontFamily: 'var(--font-heading)',
+}
+
+const QUIZ_PRIMARY_CTA_STYLE: CSSProperties = {
+    padding: '10px 24px',
+    borderRadius: '4px',
+    border: 'none',
+    color: 'var(--bg-primary)',
+    fontFamily: 'var(--font-heading)',
+    fontSize: '14px',
+    fontWeight: 700,
 }
 
 function isLikelyUrl(value: string): boolean {
@@ -95,7 +124,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
     ]
     const steps = content && content.length > 0 ? content : fallbackSteps
     const totalSteps = steps.length
-    const currentQuestions = questions.filter((_, i) => i < 5) // Show 5 quiz questions
+    const currentQuestions = questions.slice(0, MAX_QUIZ_QUESTIONS)
     const hasQuiz = currentQuestions.length > 0
     const allQuizAnswered = currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
     const canComplete = !hasQuiz || (quizSubmitted && allQuizAnswered)
@@ -133,7 +162,9 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
 
         if (typeof xpData.newXp === 'number') {
             const { useUserStore } = await import('@/stores/userStore')
-            useUserStore.getState().updateXP(xpData.newXp)
+            useUserStore.getState().updateXP(xpData.newXp, {
+                newStreak: typeof xpData.streak === 'number' ? xpData.streak : undefined,
+            })
         }
 
         setCompleted(true)
@@ -150,11 +181,10 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
         setQuizSubmitted(true)
     }
 
-    const CATEGORY_COLORS: Record<string, string> = {
-        coding: 'var(--accent-cyan)', design: 'var(--accent-gold)',
-        productivity: 'var(--accent-green)', business: 'var(--accent-red)',
-    }
     const catColor = CATEGORY_COLORS[module.category] || 'var(--accent-cyan)'
+    const displayedProgress = completed ? 100 : progress
+    const completionRewardText = `${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''}`
+    const completionCtaText = loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${completionRewardText} XP`
     const activeStep = steps[currentStep]
     const videoEmbedUrl = activeStep?.type === 'video' ? getYouTubeEmbedUrl(activeStep.content) : null
     const videoId = activeStep?.type === 'video' ? extractYouTubeVideoId(activeStep.content) : null
@@ -162,8 +192,35 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
     const youtubeWatchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : videoRawContent
     const showVideoText = activeStep?.type === 'video' && videoRawContent.length > 0 && !isLikelyUrl(videoRawContent)
 
+    function getQuizOptionVisual(idx: number, selected: number | undefined, isCorrect: boolean, correctOption: number) {
+        let backgroundColor = 'var(--bg-tertiary)'
+        let borderColor = 'var(--border)'
+
+        if (quizSubmitted) {
+            if (idx === correctOption) {
+                backgroundColor = 'rgba(34,197,94,0.1)'
+                borderColor = 'var(--accent-green)'
+            } else if (idx === selected && !isCorrect) {
+                backgroundColor = 'rgba(232,64,64,0.1)'
+                borderColor = 'var(--accent-red)'
+            }
+        } else if (idx === selected) {
+            backgroundColor = 'rgba(0,212,255,0.1)'
+            borderColor = 'var(--accent-cyan)'
+        }
+
+        return { backgroundColor, borderColor }
+    }
+
     return (
-        <div style={{ maxWidth: '800px', margin: '0 auto', padding: '24px' }}>
+        <div
+            style={{
+                maxWidth: '800px',
+                margin: '0 auto',
+                padding: '24px',
+                paddingBottom: '24px',
+            }}
+        >
             {/* Back */}
             <button
                 onClick={() => {
@@ -218,11 +275,11 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                 <div style={{ marginTop: '16px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Progress Belajar</span>
-                        <span style={{ fontSize: '11px', color: 'var(--accent-cyan)' }}>{completed ? 100 : progress}%</span>
+                        <span style={{ fontSize: '11px', color: 'var(--accent-cyan)' }}>{displayedProgress}%</span>
                     </div>
                     <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
                         <motion.div
-                            animate={{ width: `${completed ? 100 : progress}%` }}
+                            animate={{ width: `${displayedProgress}%` }}
                             style={{ height: '100%', backgroundColor: 'var(--accent-cyan)' }}
                             transition={{ duration: 0.5 }}
                         />
@@ -345,7 +402,21 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                     </AnimatePresence>
 
                     {/* Navigation Buttons */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <div
+                        className="module-nav-floating"
+                        style={{
+                            bottom: '10px',
+                            zIndex: 30,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            gap: '12px',
+                            padding: '10px 12px',
+                            borderRadius: '10px',
+                            border: '1px solid var(--border)',
+                            backgroundColor: 'color-mix(in srgb, var(--bg-primary) 92%, transparent)',
+                            backdropFilter: 'blur(6px)',
+                        }}
+                    >
                         <button
                             onClick={() => setCurrentStep(s => Math.max(0, s - 1))}
                             disabled={currentStep === 0}
@@ -389,13 +460,12 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                 onClick={handleComplete}
                                 disabled={loading}
                                 style={{
-                                    padding: '10px 24px', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer',
+                                    ...COMPLETE_CTA_STYLE,
+                                    cursor: loading ? 'not-allowed' : 'pointer',
                                     backgroundColor: 'var(--accent-green)', border: 'none',
-                                    color: 'var(--bg-primary)', fontSize: '13px', fontWeight: 700,
-                                    fontFamily: 'var(--font-heading)',
                                 }}
                             >
-                                {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''} XP`}
+                                {completionCtaText}
                             </motion.button>
                         ) : (
                             <div style={{ color: 'var(--accent-green)', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -441,18 +511,11 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                             </p>
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                                 {q.options.map((opt, idx) => {
-                                                    let optBg = 'var(--bg-tertiary)'
-                                                    let optBorder = 'var(--border)'
-                                                    if (quizSubmitted) {
-                                                        if (idx === q.correct_option) { optBg = 'rgba(34,197,94,0.1)'; optBorder = 'var(--accent-green)' }
-                                                        else if (idx === selected && !isCorrect) { optBg = 'rgba(232,64,64,0.1)'; optBorder = 'var(--accent-red)' }
-                                                    } else if (idx === selected) {
-                                                        optBg = 'rgba(0,212,255,0.1)'; optBorder = 'var(--accent-cyan)'
-                                                    }
+                                                    const { backgroundColor, borderColor } = getQuizOptionVisual(idx, selected, isCorrect, q.correct_option)
                                                     return (
                                                         <button key={idx} onClick={() => handleAnswer(q.id, idx)} style={{
                                                             textAlign: 'left', padding: '10px 12px', borderRadius: '4px',
-                                                            backgroundColor: optBg, border: `1px solid ${optBorder}`,
+                                                            backgroundColor, border: `1px solid ${borderColor}`,
                                                             color: 'var(--text-primary)', fontSize: '13px', cursor: quizSubmitted ? 'default' : 'pointer',
                                                         }}>
                                                             {String.fromCharCode(65 + idx)}. {opt}
@@ -475,9 +538,9 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                     onClick={handleSubmitQuiz}
                                     disabled={!allQuizAnswered}
                                     style={{
-                                        marginTop: '20px', padding: '10px 24px', borderRadius: '4px',
-                                        backgroundColor: 'var(--accent-gold)', border: 'none',
-                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                        ...QUIZ_PRIMARY_CTA_STYLE,
+                                        marginTop: '20px',
+                                        backgroundColor: 'var(--accent-gold)',
                                         cursor: allQuizAnswered ? 'pointer' : 'not-allowed',
                                         opacity: allQuizAnswered ? 1 : 0.6,
                                     }}
@@ -490,13 +553,13 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                     onClick={handleComplete}
                                     disabled={loading || !canComplete}
                                     style={{
-                                        marginTop: '16px', padding: '10px 24px', borderRadius: '4px',
-                                        backgroundColor: 'var(--accent-green)', border: 'none',
-                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                        ...QUIZ_PRIMARY_CTA_STYLE,
+                                        marginTop: '16px',
+                                        backgroundColor: 'var(--accent-green)',
                                         cursor: loading ? 'not-allowed' : 'pointer',
                                     }}
                                 >
-                                    {loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''} XP`}
+                                    {completionCtaText}
                                 </motion.button>
                             )}
                         </div>
@@ -510,12 +573,13 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                     onClick={handleComplete}
                                     disabled={loading}
                                     style={{
-                                        marginTop: '16px', padding: '10px 24px', borderRadius: '4px',
-                                        backgroundColor: 'var(--accent-gold)', border: 'none',
-                                        color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, cursor: 'pointer',
+                                        ...QUIZ_PRIMARY_CTA_STYLE,
+                                        marginTop: '16px',
+                                        backgroundColor: 'var(--accent-gold)',
+                                        cursor: loading ? 'not-allowed' : 'pointer',
                                     }}
                                 >
-                                    Tandai Selesai (+{module.xp_reward}{hasClassBonus ? ` + ${bonusXp} bonus` : ''} XP)
+                                    {loading ? 'Menyimpan...' : `Tandai Selesai (+${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} bonus` : ''} XP)`}
                                 </motion.button>
                             )}
                         </div>

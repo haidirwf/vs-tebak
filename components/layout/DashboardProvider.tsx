@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { Profile } from '@/types'
 import LevelUpModal from '@/components/character/LevelUpModal'
+import StreakUpModal from '@/components/character/StreakUpModal'
 
 export function DashboardProvider({
     children,
@@ -12,7 +13,7 @@ export function DashboardProvider({
     children: React.ReactNode
     profile: Profile | null
 }) {
-    const { setProfile, setLoading, levelUpData, dismissLevelUp } = useUserStore()
+    const { setProfile, setLoading, levelUpData, streakUpData, dismissLevelUp, dismissStreakUp } = useUserStore()
 
     useEffect(() => {
         setProfile(profile)
@@ -27,6 +28,13 @@ export function DashboardProvider({
                     oldLevel={levelUpData.oldLevel}
                     newLevel={levelUpData.newLevel}
                     onClose={dismissLevelUp}
+                />
+            )}
+            {streakUpData && (
+                <StreakUpModal
+                    oldStreak={streakUpData.oldStreak}
+                    newStreak={streakUpData.newStreak}
+                    onClose={dismissStreakUp}
                 />
             )}
         </>

@@ -422,6 +422,14 @@ input::placeholder, textarea::placeholder {
   max-width: 1280px !important;
 }
 
+.module-nav-floating {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(800px, calc(100vw - 48px));
+  box-sizing: border-box;
+}
+
 @media (min-width: 768px) {
   .responsive-page {
     padding: 24px !important;
@@ -568,6 +576,11 @@ input::placeholder, textarea::placeholder {
     height: 100vh !important;
     position: sticky !important;
     top: 0;
+  }
+
+  .module-nav-floating {
+    left: calc(50% + 135px);
+    width: min(800px, calc(100vw - 270px - 48px));
   }
 
   .battle-select-layout {

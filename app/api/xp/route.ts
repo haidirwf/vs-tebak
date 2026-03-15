@@ -4,6 +4,7 @@ import { calculateLevel, getClassBonusAmount, getClassXpBonus } from '@/lib/game
 import { updateQuestProgress } from '@/lib/game/quests'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 import { format } from 'date-fns'
+import { checkStreakStatus } from '@/lib/game/streak'
 
 type XpAction = 'complete_module' | 'battle_win' | 'battle_draw' | 'battle_loss' | 'focus_session'
 
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
         if (action === 'complete_module' && skipAward) {
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('xp, level, xp_to_next_level')
+                .select('xp, level, xp_to_next_level, streak_count')
                 .eq('id', user.id)
                 .single()
 
@@ -134,6 +135,8 @@ export async function POST(request: NextRequest) {
                 totalAwarded: 0,
                 action,
                 alreadyClaimed: true,
+                streak: profile?.streak_count ?? 0,
+                streakUpdated: false,
             })
         }
         return NextResponse.json({ error: 'Invalid XP config' }, { status: 400 })
@@ -142,7 +145,7 @@ export async function POST(request: NextRequest) {
     // Get current profile (including avatar_class for bonus calculation)
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('xp, level, avatar_class')
+        .select('xp, level, avatar_class, streak_count, last_active')
         .eq('id', user.id)
         .single()
 
@@ -159,11 +162,18 @@ export async function POST(request: NextRequest) {
     const newTotalXp = profile.xp + totalAmount
     const { level, xpToNext } = calculateLevel(newTotalXp)
     const leveledUp = level > profile.level
+    const streakStatus = checkStreakStatus(profile.last_active, profile.streak_count)
 
     // Update profile XP and level
     const { error: updateError } = await supabase
         .from('profiles')
-        .update({ xp: newTotalXp, level, xp_to_next_level: xpToNext })
+        .update({
+            xp: newTotalXp,
+            level,
+            xp_to_next_level: xpToNext,
+            streak_count: streakStatus.streakCount,
+            last_active: streakStatus.lastActive,
+        })
         .eq('id', user.id)
 
     if (updateError) {
@@ -190,6 +200,9 @@ export async function POST(request: NextRequest) {
     if (action === 'battle_win') {
         await updateQuestProgress(supabase, user.id, 'win_battle', 1, today)
     }
+    if (streakStatus.isActive) {
+        await updateQuestProgress(supabase, user.id, 'maintain_streak', streakStatus.streakCount, today)
+    }
 
     return NextResponse.json({
         success: true,
@@ -203,5 +216,7 @@ export async function POST(request: NextRequest) {
         bonusMultiplier,
         totalAwarded: totalAmount,
         action,
+        streak: streakStatus.streakCount,
+        streakUpdated: streakStatus.shouldUpdate,
     })
 }
