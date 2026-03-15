@@ -43,12 +43,40 @@ interface RedeemResult {
     voucherName: string
 }
 
+type RedeemModalSource = 'claim' | 'history'
+
 function toStringValue(value: unknown, fallback = ''): string {
     return typeof value === 'string' ? value : fallback
 }
 
 function toNumberValue(value: unknown, fallback = 0): number {
     return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+}
+
+function containsVoucherValueInName(name: string, voucherValue: number): boolean {
+    const nameDigits = name.replace(/\D/g, '')
+    const valueDigits = String(Math.max(0, Math.floor(voucherValue)))
+    if (!nameDigits || !valueDigits) return false
+    return nameDigits.includes(valueDigits)
+}
+
+function stripVoucherValueFromName(name: string, voucherValue: number): string {
+    let cleaned = name
+    const valueDigits = String(Math.max(0, Math.floor(voucherValue)))
+    const compactThousands = valueDigits.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+    const groupedThousands = valueDigits.replace(/\B(?=(\d{3})+(?!\d))/g, '[\\s.]?')
+    const patterns = [
+        new RegExp(`\\b[rR][pP]\\s*${valueDigits}\\b`, 'g'),
+        new RegExp(`\\b[rR][pP]\\s*${compactThousands}\\b`, 'g'),
+        new RegExp(`\\b${groupedThousands}\\b`, 'g'),
+    ]
+
+    for (const pattern of patterns) {
+        cleaned = cleaned.replace(pattern, '')
+    }
+
+    cleaned = cleaned.replace(/\s{2,}/g, ' ').trim()
+    return cleaned || name
 }
 
 export default function VoucherStoreClient({ initialXp, vouchers, initialHistory }: VoucherStoreClientProps) {
@@ -58,6 +86,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
     const [loadingId, setLoadingId] = useState<string | null>(null)
     const [error, setError] = useState<string | null>(null)
     const [redeemResult, setRedeemResult] = useState<RedeemResult | null>(null)
+    const [redeemModalSource, setRedeemModalSource] = useState<RedeemModalSource>('claim')
     const [copied, setCopied] = useState(false)
 
     const displayXp = useMemo(() => profile?.xp ?? xp, [profile?.xp, xp])
@@ -100,6 +129,8 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                 return
             }
 
+            setRedeemModalSource('claim')
+            setCopied(false)
             setRedeemResult(result)
             setXp(result.newXp)
             setHistory((prev) => [
@@ -174,6 +205,10 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                         {vouchers.map((voucher) => {
                             const alreadyClaimed = claimedVoucherIds.has(voucher.id)
                             const canRedeem = !alreadyClaimed && displayXp >= voucher.xp_cost && (voucher.stock === null || voucher.stock > 0)
+                            const showValueBadge = true
+                            const cleanVoucherName = containsVoucherValueInName(voucher.name, voucher.voucher_value)
+                                ? stripVoucherValueFromName(voucher.name, voucher.voucher_value)
+                                : voucher.name
                             return (
                                 <div key={voucher.id} style={{
                                     border: '1px solid var(--border)',
@@ -184,19 +219,21 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                             <Ticket size={15} style={{ color: 'var(--accent-cyan)' }} />
-                                            <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px' }}>{voucher.name}</strong>
+                                            <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px' }}>{cleanVoucherName}</strong>
                                         </div>
-                                        <span style={{
-                                            fontSize: '11px',
-                                            color: 'var(--accent-green)',
-                                            backgroundColor: 'rgba(34,197,94,0.12)',
-                                            border: '1px solid rgba(34,197,94,0.3)',
-                                            borderRadius: '4px',
-                                            padding: '2px 6px',
-                                            fontWeight: 700,
-                                        }}>
-                                            Rp{voucher.voucher_value.toLocaleString('id-ID')}
-                                        </span>
+                                        {showValueBadge && (
+                                            <span style={{
+                                                fontSize: '11px',
+                                                color: 'var(--accent-green)',
+                                                backgroundColor: 'rgba(34,197,94,0.12)',
+                                                border: '1px solid rgba(34,197,94,0.3)',
+                                                borderRadius: '4px',
+                                                padding: '2px 6px',
+                                                fontWeight: 700,
+                                            }}>
+                                                Rp{voucher.voucher_value.toLocaleString('id-ID')}
+                                            </span>
+                                        )}
                                     </div>
                                     <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
                                         {voucher.description || 'Voucher kantin untuk penukaran makanan/minuman.'}
@@ -243,12 +280,31 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                     ) : (
                         <div style={{ display: 'grid', gap: '10px' }}>
                             {history.slice(0, 12).map((item) => (
-                                <div key={item.id} style={{
+                                <button
+                                    key={item.id}
+                                    type="button"
+                                    onClick={() => {
+                                        setRedeemModalSource('history')
+                                        setCopied(false)
+                                        setRedeemResult({
+                                            redemptionId: item.id,
+                                            code: item.code,
+                                            newXp: displayXp,
+                                            xpSpent: item.xp_spent,
+                                            voucherValue: item.voucher_value,
+                                            voucherName: item.voucherName,
+                                        })
+                                    }}
+                                    style={{
                                     border: '1px solid var(--border)',
                                     borderRadius: '8px',
                                     backgroundColor: 'var(--bg-tertiary)',
                                     padding: '10px',
-                                }}>
+                                    textAlign: 'left',
+                                    cursor: 'pointer',
+                                    width: '100%',
+                                }}
+                                >
                                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
                                         <strong style={{ fontSize: '13px', fontFamily: 'var(--font-heading)' }}>{item.voucherName}</strong>
                                         <span style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 700 }}>
@@ -261,7 +317,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                     <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
                                         {formatDistanceToNow(new Date(item.created_at), { addSuffix: true, locale: idLocale })}
                                     </div>
-                                </div>
+                                </button>
                             ))}
                         </div>
                     )}
@@ -297,7 +353,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'var(--accent-green)' }}>
                                 <CheckCircle size={18} />
                                 <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800 }}>
-                                    Voucher Berhasil Diklaim
+                                    {redeemModalSource === 'claim' ? 'Voucher Berhasil Diklaim' : 'Detail Kode Voucher'}
                                 </h4>
                             </div>
                             <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '14px' }}>

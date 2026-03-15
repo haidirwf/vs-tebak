@@ -3,6 +3,7 @@
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Trophy } from 'lucide-react'
+import BadgeIcon from '@/components/character/BadgeIcon'
 
 interface BadgeUnlockModalProps {
     badge: {
@@ -66,7 +67,7 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                         BADGE UNLOCKED!
                     </div>
                     <div style={{ fontSize: '42px', marginBottom: '8px' }}>
-                        {badge.icon_url || '🏅'}
+                        <BadgeIcon icon={badge.icon_url} size={42} color="var(--accent-gold)" />
                     </div>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 800, marginBottom: '8px' }}>
                         {badge.name}

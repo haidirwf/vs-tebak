@@ -9,7 +9,7 @@ async function test() {
   const { data: q, error: qErr } = await supabase.from('daily_quests').select('id')
   console.log('quests:', q, qErr)
 
-  const { data, error } = await supabase.from('user_daily_quests').insert([{
+  const { error } = await supabase.from('user_daily_quests').insert([{
     user_id: '00000000-0000-0000-0000-000000000000', // invalid uuid
     quest_id: q[0].id,
     current_value: 0,

@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import CharacterCard from '@/components/character/CharacterCard'
 import { Trophy, BookOpen, Zap, Target } from 'lucide-react'
 import { ensureUserBadges } from '@/lib/game/badges'
+import BadgeIcon from '@/components/character/BadgeIcon'
 
 export default async function ProfilePage() {
     const supabase = await createClient()
@@ -73,7 +74,9 @@ export default async function ProfilePage() {
                                 backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border)',
                                 borderRadius: '4px', padding: '12px', textAlign: 'center',
                             }}>
-                                <div style={{ fontSize: '24px', marginBottom: '4px' }}>{ub.badges?.icon_url || '🏅'}</div>
+                                <div style={{ fontSize: '24px', marginBottom: '4px', lineHeight: 1 }}>
+                                    <BadgeIcon icon={ub.badges?.icon_url} size={24} />
+                                </div>
                                 <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-gold)' }}>{ub.badges?.name}</div>
                             </div>
                         ))}

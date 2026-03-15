@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Bell, Flame } from 'lucide-react'
+import { Flame } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 
 const PAGE_TITLES: Record<string, string> = {
@@ -55,16 +55,6 @@ export default function Navbar() {
                     </div>
                 )}
 
-                {/* Notifications */}
-                <button
-                    aria-label="Notifikasi"
-                    type="button"
-                    style={{
-                    backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
-                    color: 'var(--text-secondary)', padding: '4px',
-                }}>
-                    <Bell size={18} />
-                </button>
             </div>
         </header>
     )
