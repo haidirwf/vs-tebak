@@ -2,11 +2,13 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import CharacterCard from '@/components/character/CharacterCard'
 import { Trophy, BookOpen, Zap, Target } from 'lucide-react'
+import { ensureUserBadges } from '@/lib/game/badges'
 
 export default async function ProfilePage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/login')
+    await ensureUserBadges(supabase, user.id)
 
     const [profileRes, badgesRes, completedRes, battlesRes] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', user.id).single(),

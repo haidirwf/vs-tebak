@@ -4,16 +4,26 @@ import { create } from 'zustand'
 import { Profile } from '@/types'
 import { calculateLevel } from '@/lib/game/xp'
 
+interface BadgeUnlockData {
+    id: string
+    name: string
+    description: string | null
+    icon_url: string | null
+}
+
 interface UserStore {
     profile: Profile | null
     isLoading: boolean
     levelUpData: { oldLevel: number; newLevel: number } | null
     streakUpData: { oldStreak: number; newStreak: number } | null
+    badgeUnlockData: BadgeUnlockData | null
+    badgeUnlockQueue: BadgeUnlockData[]
     setProfile: (profile: Profile | null) => void
     setLoading: (loading: boolean) => void
-    updateXP: (newTotalXp: number, options?: { newStreak?: number }) => void
+    updateXP: (newTotalXp: number, options?: { newStreak?: number; earnedBadges?: BadgeUnlockData[] }) => void
     dismissLevelUp: () => void
     dismissStreakUp: () => void
+    dismissBadgeUnlock: () => void
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
@@ -21,6 +31,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
     isLoading: true,
     levelUpData: null,
     streakUpData: null,
+    badgeUnlockData: null,
+    badgeUnlockQueue: [],
 
     setProfile: (incomingProfile) => {
         const { profile: currentProfile } = get()
@@ -61,7 +73,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
     setLoading: (isLoading) => set({ isLoading }),
 
     updateXP: (newTotalXp: number, options) => {
-        const { profile } = get()
+        const { profile, badgeUnlockData, badgeUnlockQueue } = get()
         if (!profile) return
 
         const oldLevel = profile.level
@@ -74,6 +86,20 @@ export const useUserStore = create<UserStore>((set, get) => ({
         }
         if (incomingStreak > oldStreak) {
             set({ streakUpData: { oldStreak, newStreak: incomingStreak } })
+        }
+
+        const newBadges = options?.earnedBadges || []
+        if (newBadges.length > 0) {
+            if (!badgeUnlockData) {
+                set({
+                    badgeUnlockData: newBadges[0],
+                    badgeUnlockQueue: [...badgeUnlockQueue, ...newBadges.slice(1)],
+                })
+            } else {
+                set({
+                    badgeUnlockQueue: [...badgeUnlockQueue, ...newBadges],
+                })
+            }
         }
 
         set({
@@ -89,4 +115,15 @@ export const useUserStore = create<UserStore>((set, get) => ({
 
     dismissLevelUp: () => set({ levelUpData: null }),
     dismissStreakUp: () => set({ streakUpData: null }),
+    dismissBadgeUnlock: () => {
+        const { badgeUnlockQueue } = get()
+        if (badgeUnlockQueue.length === 0) {
+            set({ badgeUnlockData: null })
+            return
+        }
+        set({
+            badgeUnlockData: badgeUnlockQueue[0],
+            badgeUnlockQueue: badgeUnlockQueue.slice(1),
+        })
+    },
 }))

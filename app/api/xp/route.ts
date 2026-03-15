@@ -5,6 +5,7 @@ import { updateQuestProgress } from '@/lib/game/quests'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 import { format } from 'date-fns'
 import { checkStreakStatus } from '@/lib/game/streak'
+import { ensureUserBadges } from '@/lib/game/badges'
 
 type XpAction = 'complete_module' | 'battle_win' | 'battle_draw' | 'battle_loss' | 'focus_session'
 
@@ -188,33 +189,48 @@ export async function POST(request: NextRequest) {
     })
 
     // --- QUEST LOGS ---
+    let questBonusAwarded = 0
     // Update "earn_xp" quest
-    await updateQuestProgress(supabase, user.id, 'earn_xp', totalAmount, today)
+    questBonusAwarded += await updateQuestProgress(supabase, user.id, 'earn_xp', totalAmount, today)
 
     // Update "complete_module" quest if reason suggests it
     if (action === 'complete_module' && !skipAward) {
-        await updateQuestProgress(supabase, user.id, 'complete_module', 1, today)
+        questBonusAwarded += await updateQuestProgress(supabase, user.id, 'complete_module', 1, today)
     }
 
     // Update "win_battle" quest only for battle_win
     if (action === 'battle_win') {
-        await updateQuestProgress(supabase, user.id, 'win_battle', 1, today)
+        questBonusAwarded += await updateQuestProgress(supabase, user.id, 'win_battle', 1, today)
     }
     if (streakStatus.isActive) {
-        await updateQuestProgress(supabase, user.id, 'maintain_streak', streakStatus.streakCount, today)
+        questBonusAwarded += await updateQuestProgress(supabase, user.id, 'maintain_streak', streakStatus.streakCount, today)
     }
+
+    const { data: finalProfile } = await supabase
+        .from('profiles')
+        .select('xp, level, xp_to_next_level')
+        .eq('id', user.id)
+        .single()
+
+    const finalXp = finalProfile?.xp ?? newTotalXp
+    const finalLevel = finalProfile?.level ?? level
+    const finalXpToNext = finalProfile?.xp_to_next_level ?? xpToNext
+    const leveledUpFinal = finalLevel > profile.level
+    const earnedBadges = await ensureUserBadges(supabase, user.id)
 
     return NextResponse.json({
         success: true,
-        newXp: newTotalXp,
-        newLevel: level,
-        xpToNext,
-        leveledUp,
+        newXp: finalXp,
+        newLevel: finalLevel,
+        xpToNext: finalXpToNext,
+        leveledUp: leveledUpFinal || leveledUp,
         bonusApplied: bonusAmount > 0,
         baseAward: baseAmount,
         bonusAmount,
         bonusMultiplier,
         totalAwarded: totalAmount,
+        questBonusAwarded,
+        earnedBadges,
         action,
         streak: streakStatus.streakCount,
         streakUpdated: streakStatus.shouldUpdate,

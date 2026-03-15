@@ -14,16 +14,28 @@ function stableHash(input: string): number {
     return hash >>> 0
 }
 
+function createSeededRng(seed: number): () => number {
+    let state = seed >>> 0
+    return () => {
+        state = (Math.imul(1664525, state) + 1013904223) >>> 0
+        return state / 4294967296
+    }
+}
+
 function shuffleBattleQuestionOptions<T extends { options: string[]; correct_option: number; id: string }>(
     question: T,
     seed: string
 ): T {
     const indexedOptions = question.options.map((opt, idx) => ({ opt, idx }))
-    indexedOptions.sort((a, b) => {
-        const ha = stableHash(`${seed}:${question.id}:${a.idx}:${a.opt}`)
-        const hb = stableHash(`${seed}:${question.id}:${b.idx}:${b.opt}`)
-        return ha - hb
-    })
+    const rng = createSeededRng(stableHash(`${seed}:${question.id}`))
+
+    // Seeded Fisher-Yates to avoid answer position bias.
+    for (let i = indexedOptions.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1))
+        const tmp = indexedOptions[i]
+        indexedOptions[i] = indexedOptions[j]
+        indexedOptions[j] = tmp
+    }
 
     const options = indexedOptions.map((item) => item.opt)
     const correct_option = indexedOptions.findIndex((item) => item.idx === question.correct_option)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, type CSSProperties } from 'react'
+import { useMemo, useState, type CSSProperties } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Module, UserModule, Question, LessonStep } from '@/types'
 import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X } from 'lucide-react'
@@ -101,6 +101,80 @@ function getYouTubeEmbedUrl(raw: string | null | undefined): string | null {
     return `https://www.youtube-nocookie.com/embed/${id}`
 }
 
+function stableHash(input: string): number {
+    let hash = 2166136261
+    for (let i = 0; i < input.length; i++) {
+        hash ^= input.charCodeAt(i)
+        hash = Math.imul(hash, 16777619)
+    }
+    return hash >>> 0
+}
+
+function createSeededRng(seed: number): () => number {
+    let state = seed >>> 0
+    return () => {
+        state = (Math.imul(1664525, state) + 1013904223) >>> 0
+        return state / 4294967296
+    }
+}
+
+function shuffleModuleQuestionOptions(question: Question, seed: string): Question {
+    const pairs = question.options.map((opt, idx) => ({ opt, idx }))
+    const rng = createSeededRng(stableHash(seed))
+
+    for (let i = pairs.length - 1; i > 0; i--) {
+        const j = Math.floor(rng() * (i + 1))
+        const tmp = pairs[i]
+        pairs[i] = pairs[j]
+        pairs[j] = tmp
+    }
+
+    const options = pairs.map((pair) => pair.opt)
+    const correctOption = pairs.findIndex((pair) => pair.idx === question.correct_option)
+
+    return {
+        ...question,
+        options,
+        correct_option: correctOption >= 0 ? correctOption : question.correct_option,
+    }
+}
+
+function buildAutoLessonSteps(module: Module): LessonStep[] {
+    const categoryGuide: Record<string, string> = {
+        coding: 'Materi ini membahas konsep teknis inti, pola implementasi, dan best practice agar kamu bisa langsung praktik.',
+        design: 'Materi ini membahas prinsip desain, proses berpikir desain, dan cara membangun keputusan visual yang kuat.',
+        productivity: 'Materi ini fokus ke pola kerja efektif, manajemen energi, dan sistem kebiasaan untuk hasil yang konsisten.',
+        business: 'Materi ini membahas mindset bisnis, strategi eksekusi, dan cara mengukur dampak dari keputusanmu.',
+    }
+
+    return [
+        {
+            id: 'auto-intro',
+            title: `Pengantar: ${module.title}`,
+            type: 'text',
+            content: module.description || `Di modul ini kamu akan memahami dasar-dasar ${module.title} secara terstruktur.`,
+        },
+        {
+            id: 'auto-konsep',
+            title: 'Konsep Inti Materi',
+            type: 'text',
+            content: categoryGuide[module.category] || 'Pelajari konsep inti materi, lalu pahami alur logika sebelum lanjut ke praktik.',
+        },
+        {
+            id: 'auto-praktik',
+            title: 'Penerapan Praktis',
+            type: 'text',
+            content: 'Setelah memahami konsep, coba terapkan pada studi kasus sederhana. Fokus ke alasan di balik setiap langkah yang kamu ambil.',
+        },
+    ]
+}
+
+function ensureLessonDepth(module: Module, rawSteps: LessonStep[]): LessonStep[] {
+    const textCount = rawSteps.filter((step) => step.type === 'text').length
+    if (textCount >= 2) return rawSteps
+    return [...buildAutoLessonSteps(module), ...rawSteps]
+}
+
 export default function ModuleDetail({ module, userModule, completedFromLog = false, questions, avatarClass }: ModuleDetailProps) {
     const router = useRouter()
     const [currentStep, setCurrentStep] = useState(0)
@@ -122,9 +196,14 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
             content: module.description || 'Materi belum tersedia detailnya. Baca pengantar ini lalu lanjut ke quiz.',
         },
     ]
-    const steps = content && content.length > 0 ? content : fallbackSteps
+    const baseSteps = content && content.length > 0 ? content : fallbackSteps
+    const steps = ensureLessonDepth(module, baseSteps)
     const totalSteps = steps.length
-    const currentQuestions = questions.slice(0, MAX_QUIZ_QUESTIONS)
+    const shuffledQuestions = useMemo(
+        () => questions.map((question) => shuffleModuleQuestionOptions(question, `${module.id}:${question.id}`)),
+        [questions, module.id]
+    )
+    const currentQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS)
     const hasQuiz = currentQuestions.length > 0
     const allQuizAnswered = currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
     const canComplete = !hasQuiz || (quizSubmitted && allQuizAnswered)
@@ -164,6 +243,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
             const { useUserStore } = await import('@/stores/userStore')
             useUserStore.getState().updateXP(xpData.newXp, {
                 newStreak: typeof xpData.streak === 'number' ? xpData.streak : undefined,
+                earnedBadges: Array.isArray(xpData.earnedBadges) ? xpData.earnedBadges : undefined,
             })
         }
 

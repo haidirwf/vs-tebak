@@ -59,9 +59,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const finalizedRef = useRef(false)
 
     const isPlayer1 = battle.player1_id === currentUser.id
-    const syncXpToUserStore = useCallback(async (newXp: number, newStreak?: number) => {
+    const syncXpToUserStore = useCallback(async (
+        newXp: number,
+        newStreak?: number,
+        earnedBadges?: Array<{ id: string; name: string; description: string | null; icon_url: string | null }>
+    ) => {
         const { useUserStore } = await import('@/stores/userStore')
-        useUserStore.getState().updateXP(newXp, { newStreak })
+        useUserStore.getState().updateXP(newXp, { newStreak, earnedBadges })
     }, [])
     const getBattleOutcome = useCallback((my: number, opp: number, isSurrender = false): BattleOutcome => {
         if (isSurrender) return 'lose'
@@ -89,7 +93,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             if (typeof data.newXp === 'number') {
                 await syncXpToUserStore(
                     data.newXp,
-                    typeof data.streak === 'number' ? data.streak : undefined
+                    typeof data.streak === 'number' ? data.streak : undefined,
+                    Array.isArray(data.earnedBadges) ? data.earnedBadges : undefined
                 )
             }
         }
@@ -498,9 +503,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 </h2>
 
                 {/* Players row */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '32px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'stretch', gap: '16px', marginBottom: '16px', width: '100%', maxWidth: '640px' }}>
                     {/* Me */}
-                    <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        border: '1px solid var(--border)',
+                        borderRadius: '10px',
+                        backgroundColor: 'var(--bg-secondary)',
+                        padding: '14px',
+                    }}>
                         <div style={{
                             width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 8px',
                             backgroundColor: myReady ? 'rgba(34,197,94,0.15)' : 'var(--bg-secondary)',
@@ -510,15 +522,35 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             {myReady ? <CheckCircle size={36} color="var(--accent-green)" /> : <Shield size={36} color="var(--text-muted)" />}
                         </div>
                         <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{currentUser.username}</p>
+                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                            {currentUser.school_name || 'Sekolah belum diisi'}
+                        </p>
                         <p style={{ fontSize: '11px', color: myReady ? 'var(--accent-green)' : 'var(--text-muted)', marginTop: '4px' }}>
                             {myReady ? '✓ SIAP' : 'Menunggu...'}
                         </p>
                     </div>
 
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', color: 'var(--accent-red)' }}>VS</div>
+                    <div style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontFamily: 'var(--font-heading)',
+                        fontSize: '20px',
+                        color: 'var(--accent-red)',
+                        minWidth: '48px',
+                    }}>
+                        VS
+                    </div>
 
                     {/* Opponent */}
-                    <div style={{ textAlign: 'center' }}>
+                    <div style={{
+                        flex: 1,
+                        textAlign: 'center',
+                        border: '1px solid var(--border)',
+                        borderRadius: '10px',
+                        backgroundColor: 'var(--bg-secondary)',
+                        padding: '14px',
+                    }}>
                         <div style={{
                             width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 8px',
                             backgroundColor: oppReady ? 'rgba(34,197,94,0.15)' : 'var(--bg-secondary)',
@@ -528,6 +560,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             {oppReady ? <CheckCircle size={36} color="var(--accent-green)" /> : <Shield size={36} color="var(--text-muted)" />}
                         </div>
                         <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{opponent?.username || '???'}</p>
+                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
+                            {opponent?.school_name || 'Sekolah lawan belum diisi'}
+                        </p>
                         <p style={{ fontSize: '11px', color: oppReady ? 'var(--accent-green)' : 'var(--text-muted)', marginTop: '4px' }}>
                             {oppReady ? '✓ SIAP' : 'Menunggu...'}
                         </p>

@@ -127,6 +127,29 @@ export interface XPLog {
   created_at: string
 }
 
+export interface VoucherCatalog {
+  id: string
+  name: string
+  description: string | null
+  xp_cost: number
+  voucher_value: number
+  stock: number | null
+  is_active: boolean
+  created_at: string
+}
+
+export interface VoucherRedemption {
+  id: string
+  user_id: string
+  voucher_id: string
+  code: string
+  xp_spent: number
+  voucher_value: number
+  status: 'issued' | 'redeemed' | 'expired'
+  redeemed_at: string | null
+  created_at: string
+}
+
 // Game state types
 export interface LevelInfo {
   level: number
