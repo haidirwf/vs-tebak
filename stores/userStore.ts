@@ -11,61 +11,47 @@ interface BadgeUnlockData {
     icon_url: string | null
 }
 
+type UserPopup =
+    | { type: 'level_up'; data: { oldLevel: number; newLevel: number } }
+    | { type: 'streak_up'; data: { oldStreak: number; newStreak: number } }
+    | { type: 'badge_unlock'; data: BadgeUnlockData }
+
 interface UserStore {
     profile: Profile | null
     isLoading: boolean
-    levelUpData: { oldLevel: number; newLevel: number } | null
-    streakUpData: { oldStreak: number; newStreak: number } | null
-    badgeUnlockData: BadgeUnlockData | null
-    badgeUnlockQueue: BadgeUnlockData[]
+    activePopup: UserPopup | null
+    popupQueue: UserPopup[]
     setProfile: (profile: Profile | null) => void
     setLoading: (loading: boolean) => void
     updateXP: (newTotalXp: number, options?: { newStreak?: number; earnedBadges?: BadgeUnlockData[] }) => void
-    dismissLevelUp: () => void
-    dismissStreakUp: () => void
-    dismissBadgeUnlock: () => void
+    enqueuePopups: (items: UserPopup[]) => void
+    dismissActivePopup: () => void
 }
 
 export const useUserStore = create<UserStore>((set, get) => ({
     profile: null,
     isLoading: true,
-    levelUpData: null,
-    streakUpData: null,
-    badgeUnlockData: null,
-    badgeUnlockQueue: [],
+    activePopup: null,
+    popupQueue: [],
 
     setProfile: (incomingProfile) => {
         const { profile: currentProfile } = get()
 
-        // Trigger level-up modal when profile is refreshed with a higher level.
-        if (
-            incomingProfile &&
-            currentProfile &&
-            incomingProfile.id === currentProfile.id &&
-            incomingProfile.level > currentProfile.level
-        ) {
-            set({
-                profile: incomingProfile,
-                levelUpData: { oldLevel: currentProfile.level, newLevel: incomingProfile.level },
-                streakUpData:
-                    incomingProfile.streak_count > currentProfile.streak_count
-                        ? { oldStreak: currentProfile.streak_count, newStreak: incomingProfile.streak_count }
-                        : null,
-            })
-            return
-        }
-
-        if (
-            incomingProfile &&
-            currentProfile &&
-            incomingProfile.id === currentProfile.id &&
-            incomingProfile.streak_count > currentProfile.streak_count
-        ) {
-            set({
-                profile: incomingProfile,
-                streakUpData: { oldStreak: currentProfile.streak_count, newStreak: incomingProfile.streak_count },
-            })
-            return
+        if (incomingProfile && currentProfile && incomingProfile.id === currentProfile.id) {
+            const autoPopups: UserPopup[] = []
+            if (incomingProfile.level > currentProfile.level) {
+                autoPopups.push({
+                    type: 'level_up',
+                    data: { oldLevel: currentProfile.level, newLevel: incomingProfile.level },
+                })
+            }
+            if (incomingProfile.streak_count > currentProfile.streak_count) {
+                autoPopups.push({
+                    type: 'streak_up',
+                    data: { oldStreak: currentProfile.streak_count, newStreak: incomingProfile.streak_count },
+                })
+            }
+            if (autoPopups.length > 0) get().enqueuePopups(autoPopups)
         }
 
         set({ profile: incomingProfile })
@@ -73,33 +59,36 @@ export const useUserStore = create<UserStore>((set, get) => ({
     setLoading: (isLoading) => set({ isLoading }),
 
     updateXP: (newTotalXp: number, options) => {
-        const { profile, badgeUnlockData, badgeUnlockQueue } = get()
+        const { profile } = get()
         if (!profile) return
 
         const oldLevel = profile.level
         const oldStreak = profile.streak_count
         const calc = calculateLevel(newTotalXp)
         const incomingStreak = typeof options?.newStreak === 'number' ? options.newStreak : profile.streak_count
+        const queuedPopups: UserPopup[] = []
 
         if (calc.level > oldLevel) {
-            set({ levelUpData: { oldLevel, newLevel: calc.level } })
+            queuedPopups.push({
+                type: 'level_up',
+                data: { oldLevel, newLevel: calc.level },
+            })
         }
         if (incomingStreak > oldStreak) {
-            set({ streakUpData: { oldStreak, newStreak: incomingStreak } })
+            queuedPopups.push({
+                type: 'streak_up',
+                data: { oldStreak, newStreak: incomingStreak },
+            })
         }
 
         const newBadges = options?.earnedBadges || []
         if (newBadges.length > 0) {
-            if (!badgeUnlockData) {
-                set({
-                    badgeUnlockData: newBadges[0],
-                    badgeUnlockQueue: [...badgeUnlockQueue, ...newBadges.slice(1)],
-                })
-            } else {
-                set({
-                    badgeUnlockQueue: [...badgeUnlockQueue, ...newBadges],
-                })
-            }
+            queuedPopups.push(
+                ...newBadges.map((badge) => ({
+                    type: 'badge_unlock' as const,
+                    data: badge,
+                }))
+            )
         }
 
         set({
@@ -111,19 +100,31 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 streak_count: incomingStreak,
             },
         })
+        if (queuedPopups.length > 0) get().enqueuePopups(queuedPopups)
     },
 
-    dismissLevelUp: () => set({ levelUpData: null }),
-    dismissStreakUp: () => set({ streakUpData: null }),
-    dismissBadgeUnlock: () => {
-        const { badgeUnlockQueue } = get()
-        if (badgeUnlockQueue.length === 0) {
-            set({ badgeUnlockData: null })
-            return
-        }
-        set({
-            badgeUnlockData: badgeUnlockQueue[0],
-            badgeUnlockQueue: badgeUnlockQueue.slice(1),
+    enqueuePopups: (items) => {
+        if (items.length === 0) return
+        set((state) => {
+            if (!state.activePopup) {
+                return {
+                    activePopup: items[0],
+                    popupQueue: [...state.popupQueue, ...items.slice(1)],
+                }
+            }
+            return {
+                popupQueue: [...state.popupQueue, ...items],
+            }
         })
     },
+    dismissActivePopup: () =>
+        set((state) => {
+            if (state.popupQueue.length === 0) {
+                return { activePopup: null }
+            }
+            return {
+                activePopup: state.popupQueue[0],
+                popupQueue: state.popupQueue.slice(1),
+            }
+        }),
 }))

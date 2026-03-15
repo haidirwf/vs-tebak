@@ -21,8 +21,10 @@ export default function LoginPage() {
     const router = useRouter()
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
+    const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL || ''
+    const demoPassword = process.env.NEXT_PUBLIC_DEMO_PASSWORD || ''
 
-    const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
+    const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginForm>({
         resolver: zodResolver(loginSchema),
     })
 
@@ -54,6 +56,24 @@ export default function LoginPage() {
             provider: 'google',
             options: { redirectTo: `${window.location.origin}/auth/callback` },
         })
+    }
+
+    const fillDemoCredentials = () => {
+        if (!demoEmail || !demoPassword) {
+            setError('Akun demo belum dikonfigurasi.')
+            return
+        }
+        setError(null)
+        setValue('email', demoEmail, { shouldValidate: true, shouldDirty: true })
+        setValue('password', demoPassword, { shouldValidate: true, shouldDirty: true })
+    }
+
+    const handleDemoLogin = async () => {
+        if (!demoEmail || !demoPassword) {
+            setError('Akun demo belum dikonfigurasi.')
+            return
+        }
+        await onSubmit({ email: demoEmail, password: demoPassword })
     }
 
     return (
@@ -180,6 +200,43 @@ export default function LoginPage() {
                             Daftar sekarang
                         </Link>
                     </p>
+
+                    <div style={{ marginTop: '14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                        <button
+                            type="button"
+                            onClick={fillDemoCredentials}
+                            style={{
+                                padding: '9px 10px',
+                                borderRadius: '4px',
+                                border: '1px solid var(--border)',
+                                backgroundColor: 'var(--bg-tertiary)',
+                                color: 'var(--text-secondary)',
+                                cursor: 'pointer',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                            }}
+                        >
+                            Isi Akun Demo
+                        </button>
+                        <button
+                            type="button"
+                            onClick={handleDemoLogin}
+                            disabled={isLoading}
+                            style={{
+                                padding: '9px 10px',
+                                borderRadius: '4px',
+                                border: '1px solid rgba(34,197,94,0.35)',
+                                backgroundColor: 'rgba(34,197,94,0.12)',
+                                color: 'var(--accent-green)',
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                opacity: isLoading ? 0.7 : 1,
+                                fontSize: '12px',
+                                fontWeight: 700,
+                            }}
+                        >
+                            Masuk Akun Demo (juri)
+                        </button>
+                    </div>
                 </div>
             </motion.div>
         </div>

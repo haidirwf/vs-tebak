@@ -17,12 +17,8 @@ export function DashboardProvider({
     const {
         setProfile,
         setLoading,
-        levelUpData,
-        streakUpData,
-        badgeUnlockData,
-        dismissLevelUp,
-        dismissStreakUp,
-        dismissBadgeUnlock,
+        activePopup,
+        dismissActivePopup,
     } = useUserStore()
 
     useEffect(() => {
@@ -33,24 +29,24 @@ export function DashboardProvider({
     return (
         <>
             {children}
-            {levelUpData && (
+            {activePopup?.type === 'level_up' && (
                 <LevelUpModal
-                    oldLevel={levelUpData.oldLevel}
-                    newLevel={levelUpData.newLevel}
-                    onClose={dismissLevelUp}
+                    oldLevel={activePopup.data.oldLevel}
+                    newLevel={activePopup.data.newLevel}
+                    onClose={dismissActivePopup}
                 />
             )}
-            {streakUpData && (
+            {activePopup?.type === 'streak_up' && (
                 <StreakUpModal
-                    oldStreak={streakUpData.oldStreak}
-                    newStreak={streakUpData.newStreak}
-                    onClose={dismissStreakUp}
+                    oldStreak={activePopup.data.oldStreak}
+                    newStreak={activePopup.data.newStreak}
+                    onClose={dismissActivePopup}
                 />
             )}
-            {badgeUnlockData && (
+            {activePopup?.type === 'badge_unlock' && (
                 <BadgeUnlockModal
-                    badge={badgeUnlockData}
-                    onClose={dismissBadgeUnlock}
+                    badge={activePopup.data}
+                    onClose={dismissActivePopup}
                 />
             )}
         </>

@@ -57,6 +57,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const finalizedRef = useRef(false)
+    const xpAwardRequestedRef = useRef(false)
 
     const isPlayer1 = battle.player1_id === currentUser.id
     const syncXpToUserStore = useCallback(async (
@@ -79,26 +80,32 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         return 'battle_loss'
     }, [])
     const awardXp = useCallback(async (outcome: BattleOutcome, isSurrender = false) => {
-        if (isSurrender) return
+        if (xpAwardRequestedRef.current) return
+        xpAwardRequestedRef.current = true
         const action = getXpAction(outcome)
-
-        const res = await fetch('/api/xp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action })
-        })
-        const data = await res.json()
-        if (data.success) {
-            setXpResult({ base: data.baseAward || 0, bonus: data.bonusAmount || 0 })
-            if (typeof data.newXp === 'number') {
-                await syncXpToUserStore(
-                    data.newXp,
-                    typeof data.streak === 'number' ? data.streak : undefined,
-                    Array.isArray(data.earnedBadges) ? data.earnedBadges : undefined
-                )
+        try {
+            const res = await fetch('/api/xp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action, battleId: battle.id, isSurrender })
+            })
+            const data = await res.json()
+            if (data.success) {
+                setXpResult({ base: data.baseAward || 0, bonus: data.bonusAmount || 0 })
+                if (typeof data.newXp === 'number') {
+                    await syncXpToUserStore(
+                        data.newXp,
+                        typeof data.streak === 'number' ? data.streak : undefined,
+                        Array.isArray(data.earnedBadges) ? data.earnedBadges : undefined
+                    )
+                }
+            } else {
+                xpAwardRequestedRef.current = false
             }
+        } catch {
+            xpAwardRequestedRef.current = false
         }
-    }, [getXpAction, syncXpToUserStore])
+    }, [battle.id, getXpAction, syncXpToUserStore])
 
     const handleExitGame = async () => {
         if (isPlayer1) {
@@ -243,6 +250,19 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 setBattle(newBattle)
 
                 if (newBattle.status === 'finished') {
+                    const finalMy = isPlayer1 ? (newBattle.player1_score || 0) : (newBattle.player2_score || 0)
+                    const finalOpp = isPlayer1 ? (newBattle.player2_score || 0) : (newBattle.player1_score || 0)
+                    setMyScore(finalMy)
+                    setOpponentScore(finalOpp)
+
+                    const outcome: BattleOutcome =
+                        newBattle.winner_id === null
+                            ? 'draw'
+                            : newBattle.winner_id === currentUser.id
+                                ? 'win'
+                                : 'lose'
+                    setFinalOutcome(outcome)
+                    await awardXp(outcome, false)
                     setPhase('finished')
                     return
                 }
@@ -265,7 +285,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         return () => { supabase.removeChannel(channel) }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [battle.id, currentUser.id, supabase, isPlayer1])
+    }, [battle.id, currentUser.id, supabase, isPlayer1, awardXp])
 
     // Sync local ready UI from DB state.
     useEffect(() => {

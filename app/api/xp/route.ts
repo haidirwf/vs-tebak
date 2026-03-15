@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
     const today = format(new Date(), 'yyyy-MM-dd')
     await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
-    const body = await request.json() as { action?: XpAction; moduleId?: string }
+    const body = await request.json() as { action?: XpAction; moduleId?: string; battleId?: string }
     const action = body.action
     if (!action) {
         return NextResponse.json({ error: 'Missing action' }, { status: 400 })
@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
     let reason = ''
     let category = ''
     let skipAward = false
+    let duplicateMarker: string | null = null
 
     if (action === 'complete_module') {
         if (!body.moduleId) {
@@ -112,11 +113,27 @@ export async function POST(request: NextRequest) {
         baseAmount = cfg.base
         category = cfg.category
         reason = cfg.reason
+
+        // Prevent duplicate XP claim for the same battle result from race/reconnect/realtime overlap.
+        if (action.startsWith('battle_') && body.battleId) {
+            duplicateMarker = `[battle:${body.battleId}:${action}]`
+            const { data: existingBattleXp } = await supabase
+                .from('xp_logs')
+                .select('id')
+                .eq('user_id', user.id)
+                .ilike('reason', `%${duplicateMarker}%`)
+                .limit(1)
+            if (existingBattleXp && existingBattleXp.length > 0) {
+                skipAward = true
+            } else {
+                reason = `${reason} ${duplicateMarker}`
+            }
+        }
     }
 
     if (!baseAmount || baseAmount <= 0) {
         // For duplicate complete_module claim, return success without adding XP.
-        if (action === 'complete_module' && skipAward) {
+        if (skipAward) {
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('xp, level, xp_to_next_level, streak_count')
@@ -136,6 +153,7 @@ export async function POST(request: NextRequest) {
                 totalAwarded: 0,
                 action,
                 alreadyClaimed: true,
+                marker: duplicateMarker,
                 streak: profile?.streak_count ?? 0,
                 streakUpdated: false,
             })

@@ -1,3 +1,24 @@
+## Demo Login (Untuk Juri)
+
+Tambahkan kredensial demo di `.env.local`:
+
+```bash
+NEXT_PUBLIC_DEMO_EMAIL=demo@skillungo.id
+NEXT_PUBLIC_DEMO_PASSWORD=demopassword123
+```
+
+Setelah itu, di halaman login akan muncul tombol:
+- `Isi Akun Demo`
+- `Masuk Akun Demo`
+
+Untuk membuat akun demo terlihat "high stats" (XP tinggi, streak tinggi, banyak badge), jalankan:
+
+- [demo_boost_account.sql](/home/idal/sekolajh/lombacuy1/supabase/demo_boost_account.sql)
+
+Pastikan email di variabel `v_email` dalam SQL tersebut sama dengan akun demo yang kamu pakai.
+
+---
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
