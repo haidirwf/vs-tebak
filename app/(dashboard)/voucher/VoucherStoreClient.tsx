@@ -43,6 +43,14 @@ interface RedeemResult {
     voucherName: string
 }
 
+function toStringValue(value: unknown, fallback = ''): string {
+    return typeof value === 'string' ? value : fallback
+}
+
+function toNumberValue(value: unknown, fallback = 0): number {
+    return typeof value === 'number' && Number.isFinite(value) ? value : fallback
+}
+
 export default function VoucherStoreClient({ initialXp, vouchers, initialHistory }: VoucherStoreClientProps) {
     const { profile } = useUserStore()
     const [xp, setXp] = useState(initialXp)
@@ -79,12 +87,17 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
             }
 
             const result: RedeemResult = {
-                redemptionId: data.redemptionId,
-                code: data.code,
-                newXp: data.newXp,
-                xpSpent: data.xpSpent,
-                voucherValue: data.voucherValue,
-                voucherName: data.voucherName,
+                redemptionId: toStringValue(data.redemptionId),
+                code: toStringValue(data.code),
+                newXp: toNumberValue(data.newXp),
+                xpSpent: toNumberValue(data.xpSpent),
+                voucherValue: toNumberValue(data.voucherValue),
+                voucherName: toStringValue(data.voucherName, 'Voucher Kantin'),
+            }
+
+            if (!result.redemptionId || !result.code) {
+                setError('Response voucher tidak valid dari server.')
+                return
             }
 
             setRedeemResult(result)
