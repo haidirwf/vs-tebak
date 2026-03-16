@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import BattleArena from './BattleArena'
-
-export const dynamic = 'force-dynamic'
 const BATTLE_QUESTION_COUNT = 10
 
 function stableHash(input: string): number {

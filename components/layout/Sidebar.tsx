@@ -11,13 +11,13 @@ import { useUserStore } from '@/stores/userStore'
 import { getXpProgress } from '@/lib/game/xp'
 
 const navItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/modules', icon: BookOpen, label: 'Modul' },
-    { href: '/focus', icon: Zap, label: 'Fokus' },
-    { href: '/battle', icon: Swords, label: 'Battle' },
-    { href: '/voucher', icon: Ticket, label: 'Voucher' },
-    { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
-    { href: '/profile', icon: User, label: 'Profil' },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', tour: 'dashboard' },
+    { href: '/modules', icon: BookOpen, label: 'Modul', tour: 'modules' },
+    { href: '/focus', icon: Zap, label: 'Fokus', tour: 'focus' },
+    { href: '/battle', icon: Swords, label: 'Battle', tour: 'battle' },
+    { href: '/voucher', icon: Ticket, label: 'Voucher', tour: 'voucher' },
+    { href: '/leaderboard', icon: Trophy, label: 'Leaderboard', tour: 'leaderboard' },
+    { href: '/profile', icon: User, label: 'Profil', tour: 'profile' },
 ]
 
 const CLASS_COLORS: Record<string, string> = {
@@ -204,6 +204,7 @@ export default function Sidebar() {
                             <motion.div
                                 className="dashboard-sidebar-item"
                                 whileHover={{ x: 2 }}
+                                data-tour={`nav-${item.tour}`}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
                                     padding: '10px 10px', borderRadius: '4px', marginBottom: '2px',

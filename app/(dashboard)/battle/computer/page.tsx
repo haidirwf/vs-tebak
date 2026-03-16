@@ -2,8 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import PracticeArena from './PracticeArena'
 
-export const dynamic = 'force-dynamic'
-
 export default async function BattleComputerPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
@@ -17,4 +15,3 @@ export default async function BattleComputerPage() {
 
     return <PracticeArena questionPool={questionPool || []} />
 }
-

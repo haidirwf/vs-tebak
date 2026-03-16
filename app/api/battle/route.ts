@@ -6,8 +6,6 @@ function generateRoomCode(): string {
     return Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
 }
 
-export const dynamic = 'force-dynamic'
-
 // POST: Create a new room OR auto-queue for matchmaking
 export async function POST(request: NextRequest) {
     const supabase = await createClient()

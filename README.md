@@ -11,11 +11,34 @@ Setelah itu, di halaman login akan muncul tombol:
 - `Isi Akun Demo`
 - `Masuk Akun Demo`
 
-Untuk membuat akun demo terlihat "high stats" (XP tinggi, streak tinggi, banyak badge), jalankan:
+Untuk reset akun demo ke kondisi user baru daftar (XP/streak/progress nol), jalankan:
 
 - [demo_boost_account.sql](/home/idal/sekolajh/lombacuy1/supabase/demo_boost_account.sql)
 
 Pastikan email di variabel `v_email` dalam SQL tersebut sama dengan akun demo yang kamu pakai.
+
+## Optimasi Performa (Mode Penjurian)
+
+Set environment variable ini di Vercel agar animasi/transisi berat dinonaktifkan saat penjurian:
+
+```bash
+NEXT_PUBLIC_JUDGE_MODE=true
+```
+
+Checklist deploy performa:
+
+1. Gunakan `Production Deployment` (bukan Preview) saat demo utama.
+2. Set env di Vercel:
+   - `NEXT_PUBLIC_DEMO_EMAIL`
+   - `NEXT_PUBLIC_DEMO_PASSWORD`
+   - `NEXT_PUBLIC_JUDGE_MODE=true`
+3. Redeploy setelah mengubah env.
+4. Jalankan SQL reset demo user sebelum penjurian:
+   - [demo_boost_account.sql](/home/idal/sekolajh/lombacuy1/supabase/demo_boost_account.sql)
+5. Uji cepat Lighthouse mobile (target aman):
+   - LCP < 2.5s
+   - CLS < 0.1
+   - INP < 200ms
 
 ---
 

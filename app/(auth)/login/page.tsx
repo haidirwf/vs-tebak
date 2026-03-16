@@ -17,12 +17,15 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>
 
+const DEFAULT_DEMO_EMAIL = 'akundemo@skillungo.com'
+const DEFAULT_DEMO_PASSWORD = 'siswa123'
+
 export default function LoginPage() {
     const router = useRouter()
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL || ''
-    const demoPassword = process.env.NEXT_PUBLIC_DEMO_PASSWORD || ''
+    const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL || DEFAULT_DEMO_EMAIL
+    const demoPassword = process.env.NEXT_PUBLIC_DEMO_PASSWORD || DEFAULT_DEMO_PASSWORD
 
     const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginForm>({
         resolver: zodResolver(loginSchema),
@@ -59,20 +62,12 @@ export default function LoginPage() {
     }
 
     const fillDemoCredentials = () => {
-        if (!demoEmail || !demoPassword) {
-            setError('Akun demo belum dikonfigurasi.')
-            return
-        }
         setError(null)
         setValue('email', demoEmail, { shouldValidate: true, shouldDirty: true })
         setValue('password', demoPassword, { shouldValidate: true, shouldDirty: true })
     }
 
     const handleDemoLogin = async () => {
-        if (!demoEmail || !demoPassword) {
-            setError('Akun demo belum dikonfigurasi.')
-            return
-        }
         await onSubmit({ email: demoEmail, password: demoPassword })
     }
 

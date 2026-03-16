@@ -1,8 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
-export const dynamic = 'force-dynamic'
-
 // POST /api/battle/admin  - Hapus semua waiting room yang lama
 // (hanya untuk cleanup, bisa dipanggil sekali)
 export async function POST() {

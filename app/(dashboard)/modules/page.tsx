@@ -2,15 +2,22 @@ import { createClient } from '@/lib/supabase/server'
 import { Module, UserModule } from '@/types'
 import ModulesClient from './ModulesClient'
 
-export const dynamic = 'force-dynamic'
-
 export default async function ModulesPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
     const [modulesRes, userModulesRes, profileRes, xpLogsRes] = await Promise.all([
-        supabase.from('modules').select('*').eq('is_published', true).order('created_at'),
-        user ? supabase.from('user_modules').select('*').eq('user_id', user!.id) : Promise.resolve({ data: [] }),
+        supabase
+            .from('modules')
+            .select('id, slug, title, description, category, difficulty, xp_reward, duration_minutes, thumbnail_url, content, is_published, created_at')
+            .eq('is_published', true)
+            .order('created_at'),
+        user
+            ? supabase
+                .from('user_modules')
+                .select('id, user_id, module_id, status, progress_percent, completed_at, xp_granted_at')
+                .eq('user_id', user!.id)
+            : Promise.resolve({ data: [] }),
         user ? supabase.from('profiles').select('avatar_class').eq('id', user!.id).single() : Promise.resolve({ data: null }),
         user ? supabase.from('xp_logs').select('reason').eq('user_id', user!.id).ilike('reason', '%[module:%').limit(500) : Promise.resolve({ data: [] }),
     ])

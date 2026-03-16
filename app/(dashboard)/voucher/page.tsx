@@ -2,8 +2,6 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import VoucherStoreClient from './VoucherStoreClient'
 
-export const dynamic = 'force-dynamic'
-
 type VoucherRow = {
     id: string
     name: string

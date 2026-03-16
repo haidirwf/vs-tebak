@@ -3,9 +3,14 @@
 import { useEffect } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { Profile } from '@/types'
+import dynamic from 'next/dynamic'
 import LevelUpModal from '@/components/character/LevelUpModal'
 import StreakUpModal from '@/components/character/StreakUpModal'
 import BadgeUnlockModal from '@/components/character/BadgeUnlockModal'
+
+const FirstTimeTutorial = dynamic(() => import('@/components/onboarding/FirstTimeTutorial'), {
+    ssr: false,
+})
 
 export function DashboardProvider({
     children,
@@ -14,6 +19,7 @@ export function DashboardProvider({
     children: React.ReactNode
     profile: Profile | null
 }) {
+    const onboardingDisabled = process.env.NEXT_PUBLIC_DISABLE_ONBOARDING === 'true'
     const {
         setProfile,
         setLoading,
@@ -29,6 +35,14 @@ export function DashboardProvider({
     return (
         <>
             {children}
+            {profile && !onboardingDisabled && (
+                <FirstTimeTutorial
+                    userId={profile.id}
+                    isNewUser={profile.xp <= 0 && profile.streak_count <= 0 && profile.level <= 1}
+                    blocked={Boolean(activePopup)}
+                    forceShow={profile.username === 'BOT_JURI'}
+                />
+            )}
             {activePopup?.type === 'level_up' && (
                 <LevelUpModal
                     oldLevel={activePopup.data.oldLevel}

@@ -1,5 +1,20 @@
 import type { Metadata } from 'next'
+import { DM_Sans, Rajdhani } from 'next/font/google'
 import './globals.css'
+
+const headingFont = Rajdhani({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-rajdhani',
+  display: 'swap',
+})
+
+const bodyFont = DM_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-dm-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
   title: 'Skillungo — Level Up Your Skills, Conquer Your Future',
@@ -17,9 +32,10 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+  const judgeMode = process.env.NEXT_PUBLIC_JUDGE_MODE === 'true'
   return (
     <html lang="id">
-      <body>{children}</body>
+      <body className={`${headingFont.variable} ${bodyFont.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
     </html>
   )
 }

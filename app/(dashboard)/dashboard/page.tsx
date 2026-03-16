@@ -8,8 +8,6 @@ import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 
-export const dynamic = 'force-dynamic'
-
 export default async function DashboardPage() {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
