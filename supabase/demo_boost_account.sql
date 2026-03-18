@@ -42,8 +42,8 @@ BEGIN
 
   UPDATE profiles
   SET
-    username = 'BOT_JURI',
-    full_name = 'Akun Bot Juri',
+    username = 'pelajar1',
+    full_name = 'Pelajar 1',
     school_name = NULL,
     city = NULL,
     avatar_class = 'warrior',

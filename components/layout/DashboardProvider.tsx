@@ -40,7 +40,7 @@ export function DashboardProvider({
                     userId={profile.id}
                     isNewUser={profile.xp <= 0 && profile.streak_count <= 0 && profile.level <= 1}
                     blocked={Boolean(activePopup)}
-                    forceShow={profile.username === 'BOT_JURI'}
+                    forceShow={profile.username === 'pelajar1'}
                 />
             )}
             {activePopup?.type === 'level_up' && (

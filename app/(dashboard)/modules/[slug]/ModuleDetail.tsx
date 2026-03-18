@@ -139,6 +139,42 @@ function shuffleModuleQuestionOptions(question: Question, seed: string): Questio
     }
 }
 
+function getQuestionDifficultyWeight(rawDifficulty: string | null | undefined): number {
+    const difficulty = (rawDifficulty || '').toLowerCase()
+    if (difficulty === 'hard' || difficulty === 'advanced') return 3
+    if (difficulty === 'medium' || difficulty === 'intermediate') return 2
+    if (difficulty === 'easy' || difficulty === 'beginner') return 1
+    return 0
+}
+
+function prioritizeModuleQuestions(questions: Question[], moduleId: string): Question[] {
+    const withPriority = questions.map((question, idx) => {
+        const textLength = (question.question_text || '').trim().length
+        const avgOptionLength = question.options.length > 0
+            ? question.options.reduce((sum, option) => sum + option.trim().length, 0) / question.options.length
+            : 0
+        const difficultyWeight = getQuestionDifficultyWeight(question.difficulty)
+        const seedTieBreaker = stableHash(`${moduleId}:${question.id}:${idx}`) / 4294967296
+
+        return {
+            question,
+            difficultyWeight,
+            textLength,
+            avgOptionLength,
+            seedTieBreaker,
+        }
+    })
+
+    withPriority.sort((a, b) => {
+        if (b.difficultyWeight !== a.difficultyWeight) return b.difficultyWeight - a.difficultyWeight
+        if (b.textLength !== a.textLength) return b.textLength - a.textLength
+        if (b.avgOptionLength !== a.avgOptionLength) return b.avgOptionLength - a.avgOptionLength
+        return b.seedTieBreaker - a.seedTieBreaker
+    })
+
+    return withPriority.map((item) => item.question)
+}
+
 function buildAutoLessonSteps(module: Module): LessonStep[] {
     const categoryGuide: Record<string, string> = {
         coding: 'Materi ini membahas konsep teknis inti, pola implementasi, dan best practice agar kamu bisa langsung praktik.',
@@ -199,11 +235,12 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
     const baseSteps = content && content.length > 0 ? content : fallbackSteps
     const steps = ensureLessonDepth(module, baseSteps)
     const totalSteps = steps.length
-    const shuffledQuestions = useMemo(
-        () => questions.map((question) => shuffleModuleQuestionOptions(question, `${module.id}:${question.id}`)),
-        [questions, module.id]
-    )
-    const currentQuestions = shuffledQuestions.slice(0, MAX_QUIZ_QUESTIONS)
+    const currentQuestions = useMemo(() => {
+        const prioritized = prioritizeModuleQuestions(questions, module.id)
+        return prioritized
+            .slice(0, MAX_QUIZ_QUESTIONS)
+            .map((question) => shuffleModuleQuestionOptions(question, `${module.id}:${question.id}`))
+    }, [questions, module.id])
     const hasQuiz = currentQuestions.length > 0
     const allQuizAnswered = currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
     const canComplete = !hasQuiz || (quizSubmitted && allQuizAnswered)
