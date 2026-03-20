@@ -1,10 +1,9 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-// POST /api/battle/cleanup
-// Intended for scheduled jobs (cron) with BATTLE_CLEANUP_SECRET.
-export async function POST(request: NextRequest) {
-    const secret = process.env.BATTLE_CLEANUP_SECRET
+async function runCleanup(request: NextRequest) {
+    // Support either dedicated cleanup secret or Vercel CRON_SECRET.
+    const secret = process.env.BATTLE_CLEANUP_SECRET || process.env.CRON_SECRET
     const authHeader = request.headers.get('authorization')
 
     if (secret) {
@@ -39,3 +38,14 @@ export async function POST(request: NextRequest) {
     })
 }
 
+// GET /api/battle/cleanup
+// Vercel Cron triggers via GET.
+export async function GET(request: NextRequest) {
+    return runCleanup(request)
+}
+
+// POST /api/battle/cleanup
+// Manual trigger (curl/Postman) also supported.
+export async function POST(request: NextRequest) {
+    return runCleanup(request)
+}
