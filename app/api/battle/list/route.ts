@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
-export async function GET() {
+export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
@@ -9,15 +10,16 @@ export async function GET() {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // 1. Passive Cleanup: Hapus room "waiting" yang usianya sudah lebih dari 60 menit
-    // Ini membantu membersihkan "Ghost Rooms" secara otomatis.
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-    await supabase.from('battles')
-        .delete()
-        .eq('status', 'waiting')
-        .lt('created_at', oneHourAgo)
+    const rateKey = `battle:list:${getRateLimitIdentifier(request, user.id)}`
+    const rate = checkRateLimit({ key: rateKey, limit: 60, windowMs: 60_000 })
+    if (!rate.ok) {
+        return NextResponse.json({
+            error: 'Terlalu banyak request list room. Coba lagi sebentar.',
+            retry_after_ms: rate.retryAfterMs,
+        }, { status: 429 })
+    }
 
-    // 2. Ambil semua battle yang statusnya 'waiting', belum ada player2,
+    // Ambil semua battle yang statusnya 'waiting', belum ada player2,
     // dan BUKAN milik user yang sedang request (biar ga main sama diri sendiri)
     const { data: openRooms, error } = await supabase
         .from('battles')

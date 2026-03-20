@@ -18,6 +18,7 @@ function formatReason(reason: string | null): string {
     if (!reason) return 'XP didapat'
     const cleaned = reason
         .replace(/\s*\[(?:module|dailyquest):[^\]]+\]/gi, '')
+        .replace(/\s*\[battle:[^\]]+\]/gi, '')
         .replace(/\s{2,}/g, ' ')
         .trim()
     return cleaned || 'XP didapat'

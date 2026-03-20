@@ -21,6 +21,10 @@ type BattleOutcome = 'win' | 'lose' | 'draw'
 export default function BattleArena({ battle: initialBattle, questions, currentUser, opponent: initialOpponent }: BattleArenaProps) {
     const router = useRouter()
     const supabase = useMemo(() => createClient(), [])
+    const isDev = process.env.NODE_ENV !== 'production'
+    const debugBattle = (...args: unknown[]) => {
+        if (isDev) console.debug('[battle]', ...args)
+    }
 
     // Derive initial phase
     const initPhase = (): BattlePhase => {
@@ -224,7 +228,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             })
             .on('broadcast', { event: 'player_left' }, () => {
                 if (isPlayer1) {
-                    console.log('Opponent left the room.')
+                    debugBattle('Opponent left the room.')
                     setPhase('waiting')
                     setOpponent(null)
                     setOpponentReady(false)
@@ -245,7 +249,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             .on('postgres_changes', {
                 event: 'UPDATE', schema: 'public', table: 'battles', filter: `id=eq.${battle.id}`
             }, async (payload) => {
-                console.log('Battle update received via Realtime:', payload.new)
+                debugBattle('Battle update received via Realtime:', payload.new)
                 const newBattle = payload.new as Battle
                 setBattle(newBattle)
 
@@ -279,7 +283,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 }
             })
             .subscribe((status) => {
-                console.log('Supabase Realtime subscription status:', status)
+                debugBattle('Supabase Realtime subscription status:', status)
                 if (status === 'SUBSCRIBED') return
             })
 

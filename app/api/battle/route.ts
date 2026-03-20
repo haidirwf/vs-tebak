@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
 function generateRoomCode(): string {
     const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
@@ -11,6 +12,15 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const rateKey = `battle:create:${getRateLimitIdentifier(request, user.id)}`
+    const rate = checkRateLimit({ key: rateKey, limit: 20, windowMs: 60_000 })
+    if (!rate.ok) {
+        return NextResponse.json({
+            error: 'Terlalu banyak request create/join battle. Coba lagi sebentar.',
+            retry_after_ms: rate.retryAfterMs,
+        }, { status: 429 })
+    }
 
     const body = await request.json() as { category?: string; matchmaking?: boolean }
     const category = body.category || 'general'
@@ -88,6 +98,15 @@ export async function GET(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const rateKey = `battle:join:${getRateLimitIdentifier(request, user.id)}`
+    const rate = checkRateLimit({ key: rateKey, limit: 40, windowMs: 60_000 })
+    if (!rate.ok) {
+        return NextResponse.json({
+            error: 'Terlalu banyak percobaan join room. Coba lagi sebentar.',
+            retry_after_ms: rate.retryAfterMs,
+        }, { status: 429 })
+    }
 
     const { searchParams } = new URL(request.url)
     const roomCode = searchParams.get('code')

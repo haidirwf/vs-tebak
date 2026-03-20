@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
 async function cancelWaitingRoom(roomId: string, userId: string) {
     const supabase = await createClient()
@@ -23,13 +24,22 @@ async function cancelWaitingRoom(roomId: string, userId: string) {
 
 // GET: Return battle status for polling
 export async function GET(
-    _request: NextRequest,
+    request: NextRequest,
     context: { params: Promise<{ roomId: string }> }
 ) {
     const { roomId } = await context.params
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+    const rateKey = `battle:poll:${getRateLimitIdentifier(request, user.id)}:${roomId}`
+    const rate = checkRateLimit({ key: rateKey, limit: 180, windowMs: 60_000 })
+    if (!rate.ok) {
+        return NextResponse.json({
+            error: 'Polling terlalu cepat. Coba lagi sebentar.',
+            retry_after_ms: rate.retryAfterMs,
+        }, { status: 429 })
+    }
 
     const { data: battle, error } = await supabase
         .from('battles')

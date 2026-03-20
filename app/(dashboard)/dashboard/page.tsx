@@ -17,11 +17,33 @@ export default async function DashboardPage() {
     await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
     const [profileRes, questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', user.id).single(),
-        supabase.from('daily_quests').select('*').eq('date', today),
-        supabase.from('user_modules').select('*, modules(title, category, xp_reward)').eq('user_id', user.id).eq('status', 'completed').order('completed_at', { ascending: false }).limit(5),
-        supabase.from('xp_logs').select('*').eq('user_id', user.id).order('created_at', { ascending: false }).limit(10),
-        supabase.from('user_daily_quests').select('*').eq('user_id', user.id).eq('date', today),
+        supabase
+            .from('profiles')
+            .select('id, username, full_name, school_name, city, avatar_class, level, xp, xp_to_next_level, streak_count, last_active, created_at')
+            .eq('id', user.id)
+            .single(),
+        supabase
+            .from('daily_quests')
+            .select('id, title, description, quest_type, target_value, xp_reward, date')
+            .eq('date', today),
+        supabase
+            .from('user_modules')
+            .select('completed_at, modules(title, category, xp_reward)')
+            .eq('user_id', user.id)
+            .eq('status', 'completed')
+            .order('completed_at', { ascending: false })
+            .limit(5),
+        supabase
+            .from('xp_logs')
+            .select('xp_amount, reason, created_at')
+            .eq('user_id', user.id)
+            .order('created_at', { ascending: false })
+            .limit(10),
+        supabase
+            .from('user_daily_quests')
+            .select('id, user_id, quest_id, current_value, is_completed, date')
+            .eq('user_id', user.id)
+            .eq('date', today),
     ])
 
     const profile = profileRes.data

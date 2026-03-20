@@ -6,6 +6,7 @@ import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 import { format } from 'date-fns'
 import { checkStreakStatus } from '@/lib/game/streak'
 import { ensureUserBadges } from '@/lib/game/badges'
+import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
 type XpAction = 'complete_module' | 'battle_win' | 'battle_draw' | 'battle_loss' | 'focus_session'
 
@@ -23,6 +24,15 @@ export async function POST(request: NextRequest) {
     if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
+
+    const rateKey = `xp:${getRateLimitIdentifier(request, user.id)}`
+    const rate = checkRateLimit({ key: rateKey, limit: 20, windowMs: 60_000 })
+    if (!rate.ok) {
+        return NextResponse.json({
+            error: 'Terlalu banyak request XP. Coba lagi sebentar.',
+            retry_after_ms: rate.retryAfterMs,
+        }, { status: 429 })
+    }
     const today = format(new Date(), 'yyyy-MM-dd')
     await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
@@ -30,6 +40,46 @@ export async function POST(request: NextRequest) {
     const action = body.action
     if (!action) {
         return NextResponse.json({ error: 'Missing action' }, { status: 400 })
+    }
+
+    // Server-side anti exploit: battle outcome must match persisted battle result.
+    if (action.startsWith('battle_')) {
+        if (!body.battleId) {
+            return NextResponse.json({ error: 'battleId is required for battle actions' }, { status: 400 })
+        }
+
+        const { data: battle, error: battleError } = await supabase
+            .from('battles')
+            .select('id, status, winner_id, player1_id, player2_id')
+            .eq('id', body.battleId)
+            .maybeSingle()
+
+        if (battleError || !battle) {
+            return NextResponse.json({ error: 'Battle not found' }, { status: 404 })
+        }
+
+        const isParticipant = battle.player1_id === user.id || battle.player2_id === user.id
+        if (!isParticipant) {
+            return NextResponse.json({ error: 'Forbidden battle claim' }, { status: 403 })
+        }
+
+        if (battle.status !== 'finished') {
+            return NextResponse.json({ error: 'Battle belum selesai' }, { status: 409 })
+        }
+
+        const expectedAction: XpAction =
+            battle.winner_id === null
+                ? 'battle_draw'
+                : battle.winner_id === user.id
+                    ? 'battle_win'
+                    : 'battle_loss'
+
+        if (action !== expectedAction) {
+            return NextResponse.json({
+                error: 'Action tidak sesuai hasil battle',
+                expectedAction,
+            }, { status: 409 })
+        }
     }
 
     let baseAmount = 0
@@ -115,8 +165,9 @@ export async function POST(request: NextRequest) {
         reason = cfg.reason
 
         // Prevent duplicate XP claim for the same battle result from race/reconnect/realtime overlap.
-        if (action.startsWith('battle_') && body.battleId) {
-            duplicateMarker = `[battle:${body.battleId}:${action}]`
+        if (action.startsWith('battle_')) {
+            const battleId = body.battleId as string
+            duplicateMarker = `[battle:${battleId}:${action}]`
             const { data: existingBattleXp } = await supabase
                 .from('xp_logs')
                 .select('id')

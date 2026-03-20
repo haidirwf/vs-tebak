@@ -13,6 +13,10 @@ const CATEGORIES = [
     { value: 'general', label: 'Umum', emoji: '🎯' },
 ]
 
+const MATCHMAKING_TIMEOUT_MS = 45_000
+const MATCHMAKING_POLL_BASE_MS = 1_500
+const MATCHMAKING_POLL_MAX_MS = 5_000
+
 interface AvailableRoom {
     id: string
     room_code: string
@@ -29,8 +33,11 @@ export default function BattlePage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [pendingBattleId, setPendingBattleId] = useState<string | null>(null)
+    const [matchmakingTimedOut, setMatchmakingTimedOut] = useState(false)
+    const [matchmakingElapsedSec, setMatchmakingElapsedSec] = useState(0)
     const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([])
     const pollingRef = useRef<NodeJS.Timeout | null>(null)
+    const matchmakingTimerRef = useRef<NodeJS.Timeout | null>(null)
     const roomsPollingRef = useRef<NodeJS.Timeout | null>(null)
 
     // Fetch available rooms
@@ -57,6 +64,10 @@ export default function BattlePage() {
     useEffect(() => {
         if (mode !== 'matchmaking' || !pendingBattleId) return
 
+        const startedAt = Date.now()
+        let attempts = 0
+        let stopped = false
+
         const cancelPendingRoom = () => {
             const endpoint = `/api/battle/${pendingBattleId}`
             if (navigator.sendBeacon) {
@@ -68,11 +79,29 @@ export default function BattlePage() {
             fetch(endpoint, { method: 'DELETE', keepalive: true }).catch(() => { })
         }
 
-        pollingRef.current = setInterval(async () => {
+        const runPoll = async () => {
+            if (stopped) return
+
+            const elapsed = Date.now() - startedAt
+            setMatchmakingElapsedSec(Math.floor(elapsed / 1000))
+
+            if (elapsed >= MATCHMAKING_TIMEOUT_MS) {
+                stopped = true
+                clearTimeout(pollingRef.current!)
+                clearInterval(matchmakingTimerRef.current!)
+                setMatchmakingTimedOut(true)
+                setError('Belum menemukan lawan. Silakan coba lagi.')
+                cancelPendingRoom()
+                setPendingBattleId(null)
+                return
+            }
+
             const res = await fetch(`/api/battle/${pendingBattleId}`)
             if (!res.ok) {
                 if (res.status === 403 || res.status === 404) {
-                    clearInterval(pollingRef.current!)
+                    stopped = true
+                    clearTimeout(pollingRef.current!)
+                    clearInterval(matchmakingTimerRef.current!)
                     setPendingBattleId(null)
                     setMode('select')
                     setError('Room matchmaking sudah tidak tersedia. Coba lagi.')
@@ -81,10 +110,23 @@ export default function BattlePage() {
             }
             const data = await res.json()
             if (data.status === 'active') {
-                clearInterval(pollingRef.current!)
+                stopped = true
+                clearTimeout(pollingRef.current!)
+                clearInterval(matchmakingTimerRef.current!)
                 router.push(`/battle/${pendingBattleId}`)
+                return
             }
-        }, 2000)
+
+            attempts += 1
+            const delay = Math.min(MATCHMAKING_POLL_BASE_MS + attempts * 350, MATCHMAKING_POLL_MAX_MS)
+            pollingRef.current = setTimeout(runPoll, delay)
+        }
+
+        // Safety timer for elapsed label even when requests are delayed.
+        matchmakingTimerRef.current = setInterval(() => {
+            setMatchmakingElapsedSec(Math.floor((Date.now() - startedAt) / 1000))
+        }, 1000)
+        runPoll()
 
         // Cleanup function for tab close / refresh
         const handleUnload = () => {
@@ -97,7 +139,9 @@ export default function BattlePage() {
         window.addEventListener('beforeunload', handleUnload)
 
         return () => {
-            clearInterval(pollingRef.current!)
+            stopped = true
+            clearTimeout(pollingRef.current!)
+            clearInterval(matchmakingTimerRef.current!)
             window.removeEventListener('beforeunload', handleUnload)
             // Also cleanup when user navigates to another page inside the app.
             if (pendingBattleId && mode === 'matchmaking') {
@@ -134,6 +178,8 @@ export default function BattlePage() {
     async function handleMatchmaking() {
         setLoading(true)
         setError(null)
+        setMatchmakingTimedOut(false)
+        setMatchmakingElapsedSec(0)
         const res = await fetch('/api/battle', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -155,11 +201,14 @@ export default function BattlePage() {
     }
 
     async function handleCancelMatchmaking() {
-        clearInterval(pollingRef.current!)
+        clearTimeout(pollingRef.current!)
+        clearInterval(matchmakingTimerRef.current!)
         if (pendingBattleId) {
             await fetch(`/api/battle/${pendingBattleId}`, { method: 'DELETE' })
         }
         setPendingBattleId(null)
+        setMatchmakingTimedOut(false)
+        setMatchmakingElapsedSec(0)
         setMode('select')
     }
 
@@ -183,24 +232,59 @@ export default function BattlePage() {
                     </motion.div>
                     <div>
                         <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>
-                            Mencari Lawan...
+                            {matchmakingTimedOut ? 'Matchmaking Timeout' : 'Mencari Lawan...'}
                         </h2>
                         <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
-                            Menunggu pemain lain bergabung. Ini bisa memakan beberapa saat.
+                            {matchmakingTimedOut
+                                ? 'Belum ada lawan yang cocok. Coba lagi atau kembali ke mode pilihan.'
+                                : 'Menunggu pemain lain bergabung. Ini bisa memakan beberapa saat.'}
+                        </p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '12px', marginTop: '8px' }}>
+                            Waktu tunggu: {matchmakingElapsedSec}s
                         </p>
                     </div>
-                    <motion.button
-                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                        onClick={handleCancelMatchmaking}
-                        style={{
-                            marginTop: '12px', padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
-                            backgroundColor: 'rgba(232, 64, 64, 0.1)', border: '1px solid var(--accent-red)',
-                            color: 'var(--accent-red)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
-                            display: 'flex', alignItems: 'center', gap: '8px',
-                        }}
-                    >
-                        <X size={16} /> Batalkan
-                    </motion.button>
+                    {matchmakingTimedOut ? (
+                        <div style={{ display: 'flex', gap: '10px', marginTop: '12px' }}>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                onClick={handleMatchmaking}
+                                disabled={loading}
+                                style={{
+                                    padding: '10px 24px', borderRadius: '4px', cursor: loading ? 'not-allowed' : 'pointer',
+                                    backgroundColor: 'rgba(34, 197, 94, 0.12)', border: '1px solid var(--accent-green)',
+                                    color: 'var(--accent-green)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                }}
+                            >
+                                <Clock size={16} /> Coba Lagi
+                            </motion.button>
+                            <motion.button
+                                whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                                onClick={() => { setMode('select'); setError(null) }}
+                                style={{
+                                    padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
+                                    backgroundColor: 'rgba(232, 64, 64, 0.1)', border: '1px solid var(--accent-red)',
+                                    color: 'var(--accent-red)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                }}
+                            >
+                                <X size={16} /> Kembali
+                            </motion.button>
+                        </div>
+                    ) : (
+                        <motion.button
+                            whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
+                            onClick={handleCancelMatchmaking}
+                            style={{
+                                marginTop: '12px', padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
+                                backgroundColor: 'rgba(232, 64, 64, 0.1)', border: '1px solid var(--accent-red)',
+                                color: 'var(--accent-red)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                display: 'flex', alignItems: 'center', gap: '8px',
+                            }}
+                        >
+                            <X size={16} /> Batalkan
+                        </motion.button>
+                    )}
                 </motion.div>
             )}
 
