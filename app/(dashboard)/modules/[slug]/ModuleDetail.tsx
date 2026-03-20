@@ -455,7 +455,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                     >
                                         {videoEmbedUrl ? (
                                             <iframe
-                                                src={`${videoEmbedUrl}?rel=0&modestbranding=1&playsinline=1`}
+                                                src={`${videoEmbedUrl}?rel=0&modestbranding=1&playsinline=0&fs=1`}
                                                 title={activeStep.title}
                                                 allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                                 allowFullScreen

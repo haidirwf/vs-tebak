@@ -39,6 +39,7 @@ export default function BattlePage() {
     const pollingRef = useRef<NodeJS.Timeout | null>(null)
     const matchmakingTimerRef = useRef<NodeJS.Timeout | null>(null)
     const roomsPollingRef = useRef<NodeJS.Timeout | null>(null)
+    const cancelRequestedRef = useRef(false)
 
     // Fetch available rooms
     useEffect(() => {
@@ -64,11 +65,14 @@ export default function BattlePage() {
     useEffect(() => {
         if (mode !== 'matchmaking' || !pendingBattleId) return
 
+        cancelRequestedRef.current = false
         const startedAt = Date.now()
         let attempts = 0
         let stopped = false
 
         const cancelPendingRoom = () => {
+            if (cancelRequestedRef.current) return
+            cancelRequestedRef.current = true
             const endpoint = `/api/battle/${pendingBattleId}`
             if (navigator.sendBeacon) {
                 // sendBeacon is always POST; server supports POST cancel for this use case.
@@ -204,6 +208,7 @@ export default function BattlePage() {
         clearTimeout(pollingRef.current!)
         clearInterval(matchmakingTimerRef.current!)
         if (pendingBattleId) {
+            cancelRequestedRef.current = true
             await fetch(`/api/battle/${pendingBattleId}`, { method: 'DELETE' })
         }
         setPendingBattleId(null)
