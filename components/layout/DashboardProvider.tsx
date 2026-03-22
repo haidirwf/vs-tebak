@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 import LevelUpModal from '@/components/character/LevelUpModal'
 import StreakUpModal from '@/components/character/StreakUpModal'
 import BadgeUnlockModal from '@/components/character/BadgeUnlockModal'
+import RefreshOnFocus from '@/components/layout/RefreshOnFocus'
 
 const FirstTimeTutorial = dynamic(() => import('@/components/onboarding/FirstTimeTutorial'), {
     ssr: false,
@@ -34,6 +35,7 @@ export function DashboardProvider({
 
     return (
         <>
+            <RefreshOnFocus />
             {children}
             {profile && !onboardingDisabled && (
                 <FirstTimeTutorial
