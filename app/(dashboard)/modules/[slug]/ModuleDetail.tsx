@@ -280,6 +280,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
             const { useUserStore } = await import('@/stores/userStore')
             useUserStore.getState().updateXP(xpData.newXp, {
                 newStreak: typeof xpData.streak === 'number' ? xpData.streak : undefined,
+                newLastActive: typeof xpData.lastActive === 'string' || xpData.lastActive === null ? xpData.lastActive : undefined,
                 earnedBadges: Array.isArray(xpData.earnedBadges) ? xpData.earnedBadges : undefined,
             })
         }

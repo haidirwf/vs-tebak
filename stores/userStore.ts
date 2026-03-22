@@ -3,6 +3,7 @@
 import { create } from 'zustand'
 import { Profile } from '@/types'
 import { calculateLevel } from '@/lib/game/xp'
+import { isStreakActiveToday } from '@/lib/game/streak'
 
 interface BadgeUnlockData {
     id: string
@@ -23,7 +24,7 @@ interface UserStore {
     popupQueue: UserPopup[]
     setProfile: (profile: Profile | null) => void
     setLoading: (loading: boolean) => void
-    updateXP: (newTotalXp: number, options?: { newStreak?: number; earnedBadges?: BadgeUnlockData[] }) => void
+    updateXP: (newTotalXp: number, options?: { newStreak?: number; newLastActive?: string | null; earnedBadges?: BadgeUnlockData[] }) => void
     enqueuePopups: (items: UserPopup[]) => void
     dismissActivePopup: () => void
 }
@@ -45,7 +46,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
                     data: { oldLevel: currentProfile.level, newLevel: incomingProfile.level },
                 })
             }
-            if (incomingProfile.streak_count > currentProfile.streak_count) {
+            if (
+                incomingProfile.streak_count > currentProfile.streak_count &&
+                isStreakActiveToday(incomingProfile.last_active, incomingProfile.streak_count)
+            ) {
                 autoPopups.push({
                     type: 'streak_up',
                     data: { oldStreak: currentProfile.streak_count, newStreak: incomingProfile.streak_count },
@@ -66,6 +70,8 @@ export const useUserStore = create<UserStore>((set, get) => ({
         const oldStreak = profile.streak_count
         const calc = calculateLevel(newTotalXp)
         const incomingStreak = typeof options?.newStreak === 'number' ? options.newStreak : profile.streak_count
+        const incomingLastActive =
+            options?.newLastActive !== undefined ? options.newLastActive : profile.last_active
         const queuedPopups: UserPopup[] = []
 
         if (calc.level > oldLevel) {
@@ -74,7 +80,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 data: { oldLevel, newLevel: calc.level },
             })
         }
-        if (incomingStreak > oldStreak) {
+        if (incomingStreak > oldStreak && isStreakActiveToday(incomingLastActive, incomingStreak)) {
             queuedPopups.push({
                 type: 'streak_up',
                 data: { oldStreak, newStreak: incomingStreak },
@@ -98,6 +104,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 level: calc.level,
                 xp_to_next_level: calc.xpToNext,
                 streak_count: incomingStreak,
+                last_active: incomingLastActive,
             },
         })
         if (queuedPopups.length > 0) get().enqueuePopups(queuedPopups)

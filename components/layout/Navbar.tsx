@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation'
 import { Flame } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
+import { isStreakActiveToday } from '@/lib/game/streak'
 
 const PAGE_TITLES: Record<string, string> = {
     '/dashboard': 'Dashboard',
@@ -35,7 +36,7 @@ export default function Navbar() {
 
             <div className="dashboard-navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {/* Streak */}
-                {profile && profile.streak_count > 0 && (
+                {profile && isStreakActiveToday(profile.last_active, profile.streak_count) && (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Flame size={14} style={{ color: 'var(--accent-red)' }} />
                         <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent-red)', fontFamily: 'var(--font-heading)' }}>

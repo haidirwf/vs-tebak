@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'
 import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame, Ticket } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getXpProgress } from '@/lib/game/xp'
+import { isStreakActiveToday } from '@/lib/game/streak'
 
 const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', tour: 'dashboard' },
@@ -74,7 +75,7 @@ export default function Sidebar() {
 
                 {profile && (
                     <div className="dashboard-mobile-actions">
-                        {profile.streak_count > 0 && (
+                        {isStreakActiveToday(profile.last_active, profile.streak_count) && (
                             <div
                                 className="dashboard-mobile-streak"
                                 title={`Streak ${profile.streak_count} hari`}

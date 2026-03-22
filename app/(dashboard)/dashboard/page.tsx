@@ -7,6 +7,7 @@ import RecentActivity from '@/components/dashboard/RecentActivity'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
+import { isStreakActiveToday } from '@/lib/game/streak'
 
 export default async function DashboardPage() {
     const supabase = await createClient()
@@ -51,6 +52,9 @@ export default async function DashboardPage() {
     const completedModules = userModulesRes.data || []
 
     if (!profile) redirect('/login')
+    const activeStreakCount = isStreakActiveToday(profile.last_active, profile.streak_count)
+        ? profile.streak_count
+        : 0
 
     const dateStr = format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale })
 
@@ -112,7 +116,7 @@ export default async function DashboardPage() {
                     <DashboardStats
                         modulesCompleted={completedModules.length}
                         totalXp={profile.xp}
-                        streak={profile.streak_count}
+                        streak={activeStreakCount}
                         level={profile.level}
                     />
                 </div>

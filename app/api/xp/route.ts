@@ -187,7 +187,7 @@ export async function POST(request: NextRequest) {
         if (skipAward) {
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('xp, level, xp_to_next_level, streak_count')
+                .select('xp, level, xp_to_next_level, streak_count, last_active')
                 .eq('id', user.id)
                 .single()
 
@@ -206,6 +206,7 @@ export async function POST(request: NextRequest) {
                 alreadyClaimed: true,
                 marker: duplicateMarker,
                 streak: profile?.streak_count ?? 0,
+                lastActive: profile?.last_active ?? null,
                 streakUpdated: false,
             })
         }
@@ -302,6 +303,7 @@ export async function POST(request: NextRequest) {
         earnedBadges,
         action,
         streak: streakStatus.streakCount,
+        lastActive: streakStatus.lastActive,
         streakUpdated: streakStatus.shouldUpdate,
     })
 }

@@ -69,10 +69,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const syncXpToUserStore = useCallback(async (
         newXp: number,
         newStreak?: number,
+        newLastActive?: string | null,
         earnedBadges?: Array<{ id: string; name: string; description: string | null; icon_url: string | null }>
     ) => {
         const { useUserStore } = await import('@/stores/userStore')
-        useUserStore.getState().updateXP(newXp, { newStreak, earnedBadges })
+        useUserStore.getState().updateXP(newXp, { newStreak, newLastActive, earnedBadges })
     }, [])
     const getBattleOutcome = useCallback((my: number, opp: number, isSurrender = false): BattleOutcome => {
         if (isSurrender) return 'lose'
@@ -105,6 +106,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     await syncXpToUserStore(
                         data.newXp,
                         typeof data.streak === 'number' ? data.streak : undefined,
+                        typeof data.lastActive === 'string' || data.lastActive === null ? data.lastActive : undefined,
                         Array.isArray(data.earnedBadges) ? data.earnedBadges : undefined
                     )
                 }
