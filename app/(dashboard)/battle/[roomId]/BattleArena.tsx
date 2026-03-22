@@ -62,6 +62,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const finalizedRef = useRef(false)
     const xpAwardRequestedRef = useRef(false)
+    const myScoreRef = useRef(0)
+    const opponentScoreRef = useRef(0)
 
     const isPlayer1 = battle.player1_id === currentUser.id
     const syncXpToUserStore = useCallback(async (
@@ -95,7 +97,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             })
             const data = await res.json()
             if (data.success) {
-                setXpResult({ base: data.baseAward || 0, bonus: data.bonusAmount || 0 })
+                const isDuplicateClaim = Boolean(data.alreadyClaimed)
+                if (!isDuplicateClaim) {
+                    setXpResult({ base: data.baseAward || 0, bonus: data.bonusAmount || 0 })
+                }
                 if (typeof data.newXp === 'number') {
                     await syncXpToUserStore(
                         data.newXp,
@@ -137,6 +142,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     ) => {
         clearInterval(timerRef.current!)
         setIAmFinished(true)
+        setMyScore(finalMyScore)
+        setOpponentScore(finalOppScore)
 
         channelRef.current?.send({
             type: 'broadcast', event: 'player_finished',
@@ -170,12 +177,19 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished, getBattleOutcome, awardXp])
 
     const handleSurrender = async () => {
-        setMyScore(0)
-        setOpponentScore((prev) => Math.max(prev, 100))
         setFinalOutcome('lose')
-        channelRef.current?.send({ type: 'broadcast', event: 'player_surrendered', payload: {} })
-        await endBattle(0, 100, true, 'lose') // Surrender always loses
+        channelRef.current?.send({
+            type: 'broadcast',
+            event: 'player_surrendered',
+            payload: { player_id: currentUser.id }
+        })
+        await endBattle(myScoreRef.current, opponentScoreRef.current, true, 'lose')
     }
+
+    useEffect(() => {
+        myScoreRef.current = myScore
+        opponentScoreRef.current = opponentScore
+    }, [myScore, opponentScore])
 
     // Timer — only runs during 'playing' phase
     useEffect(() => {
@@ -220,11 +234,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 // If the host force-starts it over the network
                 setCountdown(5)
             })
-            .on('broadcast', { event: 'player_surrendered' }, () => {
+            .on('broadcast', { event: 'player_surrendered' }, ({ payload }) => {
+                if (payload?.player_id === currentUser.id) return
                 // Opponent surrendered, I win
-                setOpponentScore(0)
                 setFinalOutcome('win')
-                endBattle(myScore, 0, false, 'win') // Surrendered opponent always loses
+                endBattle(myScoreRef.current, opponentScoreRef.current, false, 'win') // Surrendered opponent always loses
             })
             .on('broadcast', { event: 'player_left' }, () => {
                 if (isPlayer1) {
