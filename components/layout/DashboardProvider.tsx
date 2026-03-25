@@ -39,6 +39,7 @@ export function DashboardProvider({
             {children}
             {profile && !onboardingDisabled && (
                 <FirstTimeTutorial
+                    key={profile.id}
                     userId={profile.id}
                     isNewUser={profile.xp <= 0 && profile.streak_count <= 0 && profile.level <= 1}
                     blocked={Boolean(activePopup)}

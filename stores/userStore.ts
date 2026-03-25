@@ -24,7 +24,7 @@ interface UserStore {
     popupQueue: UserPopup[]
     setProfile: (profile: Profile | null) => void
     setLoading: (loading: boolean) => void
-    updateXP: (newTotalXp: number, options?: { newStreak?: number; newLastActive?: string | null; earnedBadges?: BadgeUnlockData[] }) => void
+    updateXP: (newTotalXp: number, options?: { newStreak?: number; newLastActive?: string | null; streakUpdated?: boolean; earnedBadges?: BadgeUnlockData[] }) => void
     enqueuePopups: (items: UserPopup[]) => void
     dismissActivePopup: () => void
 }
@@ -72,6 +72,7 @@ export const useUserStore = create<UserStore>((set, get) => ({
         const incomingStreak = typeof options?.newStreak === 'number' ? options.newStreak : profile.streak_count
         const incomingLastActive =
             options?.newLastActive !== undefined ? options.newLastActive : profile.last_active
+        const streakUpdatedByServer = options?.streakUpdated === true
         const queuedPopups: UserPopup[] = []
 
         if (calc.level > oldLevel) {
@@ -80,7 +81,10 @@ export const useUserStore = create<UserStore>((set, get) => ({
                 data: { oldLevel, newLevel: calc.level },
             })
         }
-        if (incomingStreak > oldStreak && isStreakActiveToday(incomingLastActive, incomingStreak)) {
+        const shouldShowStreakPopup =
+            (streakUpdatedByServer && incomingStreak > 0) ||
+            (incomingStreak > oldStreak && isStreakActiveToday(incomingLastActive, incomingStreak))
+        if (shouldShowStreakPopup) {
             queuedPopups.push({
                 type: 'streak_up',
                 data: { oldStreak, newStreak: incomingStreak },

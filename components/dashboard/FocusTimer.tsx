@@ -32,6 +32,7 @@ export default function FocusTimer() {
                 updateXP(data.newXp, {
                     newStreak: typeof data.streak === 'number' ? data.streak : undefined,
                     newLastActive: typeof data.lastActive === 'string' || data.lastActive === null ? data.lastActive : undefined,
+                    streakUpdated: data.streakUpdated === true,
                     earnedBadges: Array.isArray(data.earnedBadges) ? data.earnedBadges : undefined,
                 })
             }

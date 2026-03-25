@@ -281,6 +281,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
             useUserStore.getState().updateXP(xpData.newXp, {
                 newStreak: typeof xpData.streak === 'number' ? xpData.streak : undefined,
                 newLastActive: typeof xpData.lastActive === 'string' || xpData.lastActive === null ? xpData.lastActive : undefined,
+                streakUpdated: xpData.streakUpdated === true,
                 earnedBadges: Array.isArray(xpData.earnedBadges) ? xpData.earnedBadges : undefined,
             })
         }
