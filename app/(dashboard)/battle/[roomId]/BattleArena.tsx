@@ -64,6 +64,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const xpAwardRequestedRef = useRef(false)
     const myScoreRef = useRef(0)
     const opponentScoreRef = useRef(0)
+    const opponentFinalScoreRef = useRef<number | null>(null)
+    const finalizeFallbackRequestedRef = useRef(false)
+    const finalizeFallbackTimerRef = useRef<NodeJS.Timeout | null>(null)
 
     const isPlayer1 = battle.player1_id === currentUser.id
     const syncXpToUserStore = useCallback(async (
@@ -149,15 +152,21 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         channelRef.current?.send({
             type: 'broadcast', event: 'player_finished',
-            payload: { player_id: currentUser.id }
+            payload: { player_id: currentUser.id, final_score: finalMyScore }
         })
 
         if (opponentFinished || !opponent || isSurrender || forcedOutcome) {
             if (finalizedRef.current) return
             finalizedRef.current = true
 
+            const resolvedOppScore =
+                typeof opponentFinalScoreRef.current === 'number'
+                    ? Math.max(finalOppScore, opponentFinalScoreRef.current)
+                    : finalOppScore
+
+            setOpponentScore(resolvedOppScore)
             setPhase('finished')
-            const outcome = forcedOutcome ?? getBattleOutcome(finalMyScore, finalOppScore, isSurrender)
+            const outcome = forcedOutcome ?? getBattleOutcome(finalMyScore, resolvedOppScore, isSurrender)
             setFinalOutcome(outcome)
             const opponentIdFallback = opponent?.id ?? currentUser.id
             const winner =
@@ -167,14 +176,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         ? currentUser.id
                         : opponentIdFallback
 
-            await supabase.from('battles').update({
-                status: 'finished',
-                player1_score: isPlayer1 ? finalMyScore : finalOppScore,
-                player2_score: isPlayer1 ? finalOppScore : finalMyScore,
-                winner_id: winner,
-            }).eq('id', battle.id)
+            if (isPlayer1) {
+                await supabase.from('battles').update({
+                    status: 'finished',
+                    player1_score: finalMyScore,
+                    player2_score: resolvedOppScore,
+                    winner_id: winner,
+                }).eq('id', battle.id)
 
-            await awardXp(outcome, isSurrender)
+                await awardXp(outcome, isSurrender)
+            }
         }
     }, [battle.id, currentUser.id, isPlayer1, opponent, supabase, opponentFinished, getBattleOutcome, awardXp])
 
@@ -192,6 +203,36 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         myScoreRef.current = myScore
         opponentScoreRef.current = opponentScore
     }, [myScore, opponentScore])
+
+    // Fallback safety: if host misses final DB write, let participant force finalize once.
+    useEffect(() => {
+        if (isPlayer1) return
+        if (phase !== 'finished') return
+        if (!iAmFinished || !opponentFinished) return
+        if (battle.status === 'finished') return
+        if (finalizeFallbackRequestedRef.current) return
+
+        finalizeFallbackTimerRef.current = setTimeout(async () => {
+            if (finalizeFallbackRequestedRef.current) return
+            finalizeFallbackRequestedRef.current = true
+            try {
+                await fetch(`/api/battle/${battle.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        myScore: myScoreRef.current,
+                        opponentScore: opponentScoreRef.current,
+                    }),
+                })
+            } catch {
+                finalizeFallbackRequestedRef.current = false
+            }
+        }, 4500)
+
+        return () => {
+            if (finalizeFallbackTimerRef.current) clearTimeout(finalizeFallbackTimerRef.current)
+        }
+    }, [isPlayer1, phase, iAmFinished, opponentFinished, battle.status, battle.id])
 
     // Timer — only runs during 'playing' phase
     useEffect(() => {
@@ -254,6 +295,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             })
             .on('broadcast', { event: 'player_finished' }, ({ payload }) => {
                 if (payload.player_id !== currentUser.id) {
+                    if (typeof payload.final_score === 'number') {
+                        opponentFinalScoreRef.current = payload.final_score
+                        setOpponentScore(payload.final_score)
+                    }
                     setOpponentFinished(true)
                 }
             })
@@ -320,6 +365,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         let pollInterval: NodeJS.Timeout
 
         const checkFreshBattle = async () => {
+            if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
             const { data: freshBattle } = await supabase.from('battles').select('*').eq('id', battle.id).single()
             if (!freshBattle) return
 
@@ -344,9 +390,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         // Fallback polling in waiting/lobby to keep player join + ready state in sync
         if (phase === 'waiting' && isPlayer1) {
-            pollInterval = setInterval(checkFreshBattle, 2000)
+            pollInterval = setInterval(checkFreshBattle, 5000)
         } else if (phase === 'lobby') {
-            pollInterval = setInterval(checkFreshBattle, 1000)
+            pollInterval = setInterval(checkFreshBattle, 2500)
         }
 
         if (battle.player1_id && battle.player2_id) {
@@ -402,7 +448,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         ? currentUser.id
                         : (opponent?.id ?? currentUser.id)
 
-            // Only player 1 writes the result
+            // Only player 1 writes and awards. Player 2 waits for DB update event.
             if (isPlayer1) {
                 supabase.from('battles').update({
                     status: 'finished',
@@ -410,8 +456,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     player2_score: finalOppScore,
                     winner_id: winner,
                 }).eq('id', battle.id).then()
+                awardXp(outcome, false)
             }
-            awardXp(outcome, false)
         }
     }, [iAmFinished, opponentFinished, phase, myScore, opponentScore, currentUser.id, opponent, isPlayer1, battle.id, supabase, getBattleOutcome, awardXp])
 

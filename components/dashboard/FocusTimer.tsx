@@ -1,7 +1,7 @@
 // components/dashboard/FocusTimer.tsx
 'use client'
 
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Timer, Play, Pause, RotateCcw, Zap, CheckCircle } from 'lucide-react'
 import { useFocusStore } from '@/stores/focusStore'
@@ -13,6 +13,7 @@ export default function FocusTimer() {
     const { isActive, timeLeft, isFinished, startTimer, pauseTimer, resetTimer, tick, sessionsCount } = useFocusStore()
     const { profile, updateXP } = useUserStore()
     const [rewardClaimed, setRewardClaimed] = useState(false)
+    const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
     const handleFinish = useCallback(async () => {
         if (rewardClaimed) return
@@ -37,7 +38,7 @@ export default function FocusTimer() {
         }
         
         // Auto reset after 3 seconds of success state
-        setTimeout(() => {
+        resetTimeoutRef.current = setTimeout(() => {
             setRewardClaimed(false)
             resetTimer()
         }, 5000)
@@ -56,6 +57,12 @@ export default function FocusTimer() {
         }, 0)
         return () => clearTimeout(doneTimer)
     }, [isActive, timeLeft, handleFinish])
+
+    useEffect(() => {
+        return () => {
+            if (resetTimeoutRef.current) clearTimeout(resetTimeoutRef.current)
+        }
+    }, [])
 
     const formatTime = (seconds: number) => {
         const mins = Math.floor(seconds / 60)

@@ -45,6 +45,7 @@ export default function BattlePage() {
     useEffect(() => {
         if (mode !== 'select') return
         const fetchRooms = async () => {
+            if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
             try {
                 const res = await fetch('/api/battle/list')
                 if (res.ok) {
@@ -57,7 +58,7 @@ export default function BattlePage() {
             }
         }
         fetchRooms()
-        roomsPollingRef.current = setInterval(fetchRooms, 3000)
+        roomsPollingRef.current = setInterval(fetchRooms, 8000)
         return () => clearInterval(roomsPollingRef.current!)
     }, [mode])
 
@@ -97,6 +98,11 @@ export default function BattlePage() {
                 setError('Belum menemukan lawan. Silakan coba lagi.')
                 cancelPendingRoom()
                 setPendingBattleId(null)
+                return
+            }
+
+            if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
+                pollingRef.current = setTimeout(runPoll, MATCHMAKING_POLL_MAX_MS)
                 return
             }
 

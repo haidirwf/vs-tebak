@@ -12,10 +12,10 @@ export default async function ProfilePage() {
     await ensureUserBadges(supabase, user.id)
 
     const [profileRes, badgesRes, completedRes, battlesRes] = await Promise.all([
-        supabase.from('profiles').select('*').eq('id', user.id).single(),
-        supabase.from('user_badges').select('*, badges(*)').eq('user_id', user.id),
-        supabase.from('user_modules').select('*, modules(title, category)').eq('user_id', user.id).eq('status', 'completed'),
-        supabase.from('battles').select('*').or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`).eq('status', 'finished'),
+        supabase.from('profiles').select('id, username, full_name, school_name, city, avatar_class, level, xp, xp_to_next_level, streak_count, last_active, created_at').eq('id', user.id).single(),
+        supabase.from('user_badges').select('id, badges(name, icon_url)').eq('user_id', user.id),
+        supabase.from('user_modules').select('id, modules(title)').eq('user_id', user.id).eq('status', 'completed'),
+        supabase.from('battles').select('winner_id').or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`).eq('status', 'finished'),
     ])
 
     const profile = profileRes.data
@@ -25,6 +25,14 @@ export default async function ProfilePage() {
     const completedModules = completedRes.data || []
     const battles = battlesRes.data || []
     const battlesWon = battles.filter(b => b.winner_id === user.id).length
+    const normalizedBadges = badges.map((ub) => ({
+        id: ub.id,
+        badge: Array.isArray(ub.badges) ? ub.badges[0] : ub.badges,
+    }))
+    const normalizedCompletedModules = completedModules.map((um) => ({
+        id: um.id,
+        module: Array.isArray(um.modules) ? um.modules[0] : um.modules,
+    }))
 
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
@@ -69,15 +77,15 @@ export default async function ProfilePage() {
                     </p>
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
-                        {badges.map((ub) => (
+                        {normalizedBadges.map((ub) => (
                             <div key={ub.id} style={{
                                 backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border)',
                                 borderRadius: '4px', padding: '12px', textAlign: 'center',
                             }}>
                                 <div style={{ fontSize: '24px', marginBottom: '4px', lineHeight: 1 }}>
-                                    <BadgeIcon icon={ub.badges?.icon_url} size={24} />
+                                    <BadgeIcon icon={ub.badge?.icon_url} size={24} />
                                 </div>
-                                <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-gold)' }}>{ub.badges?.name}</div>
+                                <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-gold)' }}>{ub.badge?.name}</div>
                             </div>
                         ))}
                     </div>
@@ -93,7 +101,7 @@ export default async function ProfilePage() {
                     <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Belum ada modul yang diselesaikan. Mulai belajar sekarang!</p>
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }}>
-                        {completedModules.map((um) => (
+                        {normalizedCompletedModules.map((um) => (
                             <div key={um.id} style={{
                                 padding: '10px 12px', borderRadius: '4px',
                                 backgroundColor: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.2)',
@@ -101,7 +109,7 @@ export default async function ProfilePage() {
                             }}>
                                 <span style={{ color: 'var(--accent-green)' }}>✓</span>
                                 <span style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
-                                    {(um as Record<string, unknown> & { modules?: { title: string } }).modules?.title || 'Modul'}
+                                    {um.module?.title || 'Modul'}
                                 </span>
                             </div>
                         ))}

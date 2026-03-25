@@ -54,19 +54,19 @@ export default async function LandingPage() {
   const isLoggedIn = !!user
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', overflow: 'auto' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', overflow: 'auto', paddingTop: '72px' }}>
       {/* Navbar */}
       <nav className="landing-nav" style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '16px 48px', borderBottom: '1px solid var(--border)',
-        backgroundColor: 'var(--bg-secondary)', position: 'sticky', top: 0, zIndex: 100,
+        backgroundColor: 'var(--bg-secondary)', position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100,
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
           <Swords size={22} style={{ color: 'var(--accent-gold)' }} />
           <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--accent-gold)' }}>
             Skillungo
           </span>
-        </div>
+        </Link>
         <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
           {isLoggedIn ? (
             <Link href="/dashboard" style={{

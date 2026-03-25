@@ -8,6 +8,9 @@ type DailyQuestSeed = {
     xp_reward: number
 }
 
+const RECENT_ENSURE_TTL_MS = 60_000
+const recentEnsureRuns = new Map<string, number>()
+
 const DEFAULT_DAILY_QUESTS: DailyQuestSeed[] = [
     {
         title: 'Pelajar Rajin',
@@ -44,6 +47,19 @@ export async function ensureDailyQuestsAndProgress(
     userId: string,
     today: string
 ) {
+    const cacheKey = `${userId}:${today}`
+    const now = Date.now()
+    const lastRun = recentEnsureRuns.get(cacheKey)
+    if (lastRun && now - lastRun < RECENT_ENSURE_TTL_MS) return
+    recentEnsureRuns.set(cacheKey, now)
+
+    if (recentEnsureRuns.size > 500) {
+        const cutoff = now - RECENT_ENSURE_TTL_MS * 2
+        for (const [key, at] of recentEnsureRuns.entries()) {
+            if (at < cutoff) recentEnsureRuns.delete(key)
+        }
+    }
+
     const parseDate = (value: string) => new Date(`${value}T00:00:00Z`)
     const formatDate = (value: Date) => value.toISOString().slice(0, 10)
     const baseDate = parseDate(today)

@@ -49,7 +49,6 @@ export default function Sidebar() {
         const supabase = createClient()
         await supabase.auth.signOut()
         router.push('/login')
-        router.refresh()
     }
 
     async function handleLogoutWithConfirm() {

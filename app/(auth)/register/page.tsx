@@ -72,7 +72,6 @@ export default function RegisterPage() {
         }
 
         router.push('/dashboard')
-        router.refresh()
     }
 
     const inputStyle = (hasError?: boolean) => ({

@@ -6,7 +6,6 @@ import DashboardStats from '@/components/dashboard/DashboardStats'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
-import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 import { isStreakActiveToday } from '@/lib/game/streak'
 
 export default async function DashboardPage() {
@@ -14,8 +13,6 @@ export default async function DashboardPage() {
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) redirect('/login')
     const today = format(new Date(), 'yyyy-MM-dd')
-
-    await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
     const [profileRes, questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
         supabase
