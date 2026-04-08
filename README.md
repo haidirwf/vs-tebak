@@ -65,5 +65,5 @@ Project ini diikutsertakan pada **FICPACT CUP 2026** untuk kategori **Web Develo
 
 ## Output Lomba
 
-**Posisi 10 dari 30 peserta.**
+**Posisi 17 dari 54 tim.**
 
