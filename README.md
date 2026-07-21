@@ -57,13 +57,3 @@ BATTLE_CLEANUP_SECRET=your_cleanup_secret
 ```
 
 
-## Lomba
-
-Project ini diikutsertakan pada **FICPACT CUP 2026** untuk kategori **Web Development**. Konteks lombanya adalah kompetisi pembuatan produk web edukasi untuk pelajar Indonesia.
-
----
-
-## Output Lomba
-
-**Posisi 17 dari 54 tim.**
-
