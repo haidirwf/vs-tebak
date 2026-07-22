@@ -648,12 +648,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         </p>
                     </div>
 
-                    <div style={{
+                    <div className="animate-vs-pulse" style={{
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontFamily: 'var(--font-heading)',
-                        fontSize: '20px',
+                        fontSize: '26px',
+                        fontWeight: 800,
                         color: 'var(--accent-red)',
                         minWidth: '48px',
                     }}>

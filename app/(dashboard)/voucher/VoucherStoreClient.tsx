@@ -210,11 +210,11 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                 ? stripVoucherValueFromName(voucher.name, voucher.voucher_value)
                                 : voucher.name
                             return (
-                                <div key={voucher.id} style={{
-                                    border: '1px solid var(--border)',
+                                <div key={voucher.id} className="ticket-card hover-lift" style={{
+                                    border: '1px dashed var(--border)',
                                     borderRadius: '8px',
                                     backgroundColor: 'var(--bg-tertiary)',
-                                    padding: '12px',
+                                    padding: '14px 18px',
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

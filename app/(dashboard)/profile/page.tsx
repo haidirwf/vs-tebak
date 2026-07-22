@@ -78,9 +78,9 @@ export default async function ProfilePage() {
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
                         {normalizedBadges.map((ub) => (
-                            <div key={ub.id} style={{
-                                backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border)',
-                                borderRadius: '4px', padding: '12px', textAlign: 'center',
+                            <div key={ub.id} className="hover-lift" style={{
+                                backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--accent-gold)33',
+                                borderRadius: '6px', padding: '12px', textAlign: 'center', cursor: 'pointer',
                             }}>
                                 <div style={{ fontSize: '24px', marginBottom: '4px', lineHeight: 1 }}>
                                     <BadgeIcon icon={ub.badge?.icon_url} size={24} />

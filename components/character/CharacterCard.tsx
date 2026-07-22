@@ -30,7 +30,7 @@ export default function CharacterCard({ profile, showStats = true }: CharacterCa
     const xpProgress = getXpProgress(Math.max(0, xpInLevel), profile.xp_to_next_level)
 
     return (
-        <div className="card" style={{ padding: '20px', border: `1px solid ${accentColor}22` }}>
+        <div className={`card glow-${profile.avatar_class}`} style={{ padding: '20px', border: `1px solid ${accentColor}44`, position: 'relative', overflow: 'hidden' }}>
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'start', gap: '16px', marginBottom: '16px' }}>
                 {/* Avatar */}
