@@ -224,27 +224,6 @@ export default function Sidebar() {
                         </Link>
                     )
                 })}
-
-                <motion.button
-                    className="dashboard-nav-logout"
-                    onClick={() => setShowLogoutConfirm(true)}
-                    whileHover={{ x: 2 }}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '10px 10px',
-                        borderRadius: '4px',
-                        cursor: 'pointer',
-                        backgroundColor: 'rgba(232,64,64,0.1)',
-                        border: '1px solid rgba(232,64,64,0.4)',
-                        color: 'var(--accent-red)',
-                        whiteSpace: 'nowrap',
-                    }}
-                >
-                    <LogOut size={16} />
-                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700 }}>Keluar</span>
-                </motion.button>
             </nav>
 
             {/* Logout */}
