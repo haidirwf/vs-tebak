@@ -124,6 +124,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     }, [battle.id, getXpAction, syncXpToUserStore])
 
     const handleExitGame = async () => {
+        try {
+            channelRef.current?.send({ type: 'broadcast', event: 'player_left', payload: { player_id: currentUser.id } })
+        } catch { }
+
         if (isPlayer1) {
             // Delete the entire room
             await supabase.from('battles').delete().eq('id', battle.id)
@@ -135,8 +139,6 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 player1_ready: false,
                 player2_ready: false,
             }).eq('id', battle.id)
-            // Inform player 1 so they go back to waiting
-            channelRef.current?.send({ type: 'broadcast', event: 'player_left', payload: {} })
         }
         router.push('/battle')
     }
@@ -286,13 +288,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 endBattle(myScoreRef.current, opponentScoreRef.current, false, 'win') // Surrendered opponent always loses
             })
             .on('broadcast', { event: 'player_left' }, () => {
-                if (isPlayer1) {
-                    debugBattle('Opponent left the room.')
-                    setPhase('waiting')
-                    setOpponent(null)
-                    setOpponentReady(false)
-                    setIAmReady(false)
-                    setBattle((prev) => ({ ...prev, player2_id: null, player1_ready: false, player2_ready: false }))
+                debugBattle('Opponent left the room.')
+                if (phase === 'playing') {
+                    setFinalOutcome('win')
+                    endBattle(myScoreRef.current, opponentScoreRef.current, false, 'win')
+                } else {
+                    router.push('/battle')
                 }
             })
             .on('broadcast', { event: 'player_finished' }, ({ payload }) => {
@@ -308,6 +309,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 if (payload.player_id !== currentUser.id) {
                     setOpponentScore(payload.score)
                 }
+            })
+            .on('postgres_changes', {
+                event: 'DELETE', schema: 'public', table: 'battles', filter: `id=eq.${battle.id}`
+            }, () => {
+                debugBattle('Battle room deleted by host')
+                router.push('/battle')
             })
             .on('postgres_changes', {
                 event: 'UPDATE', schema: 'public', table: 'battles', filter: `id=eq.${battle.id}`
@@ -334,6 +341,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     return
                 }
 
+                if (!isPlayer1 && (!newBattle.player2_id || newBattle.status === 'waiting')) {
+                    router.push('/battle')
+                    return
+                }
+
+                if (isPlayer1 && (phase === 'lobby' || phase === 'waiting') && !newBattle.player2_id) {
+                    router.push('/battle')
+                    return
+                }
+
                 // When player 2 joins the room, move to lobby (ready check phase)
                 if (newBattle.player2_id) {
                     setPhase((prev) => {
@@ -352,7 +369,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         return () => { supabase.removeChannel(channel) }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [battle.id, currentUser.id, supabase, isPlayer1, awardXp])
+    }, [battle.id, currentUser.id, supabase, isPlayer1, awardXp, phase, router])
 
     // Sync local ready UI from DB state.
     useEffect(() => {
@@ -368,8 +385,21 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         const checkFreshBattle = async () => {
             if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
-            const { data: freshBattle } = await supabase.from('battles').select('*').eq('id', battle.id).single()
-            if (!freshBattle) return
+            const { data: freshBattle, error: fetchErr } = await supabase.from('battles').select('*').eq('id', battle.id).maybeSingle()
+            if (fetchErr || !freshBattle) {
+                router.push('/battle')
+                return
+            }
+
+            if (!isPlayer1 && (freshBattle.player2_id !== currentUser.id || freshBattle.status === 'waiting')) {
+                router.push('/battle')
+                return
+            }
+
+            if (isPlayer1 && (phase === 'lobby') && !freshBattle.player2_id) {
+                router.push('/battle')
+                return
+            }
 
             const hasDiff =
                 freshBattle.player2_id !== battle.player2_id ||
