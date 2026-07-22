@@ -126,7 +126,7 @@ export default function RegisterPage() {
                                             onClick={() => { setSelectedClass(cls); setValue('avatar_class', cls) }}
                                             style={{
                                                 padding: '10px 6px', borderRadius: '4px', cursor: 'pointer',
-                                                backgroundColor: isSelected ? 'rgba(245,197,66,0.1)' : 'var(--bg-tertiary)',
+                                                backgroundColor: isSelected ? 'var(--accent-gold-bg)' : 'var(--bg-tertiary)',
                                                 border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'var(--border)'}`,
                                                 display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
                                             }}

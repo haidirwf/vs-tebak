@@ -308,10 +308,10 @@ export default function BattlePage() {
                         marginBottom: '32px'
                     }}>
                         {[
-                            { key: 'create', label: 'Buat Room', icon: <Sword size={24} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: 'var(--accent-gold)', accent: 'rgba(245, 197, 66, 0.1)' },
-                            { key: 'join', label: 'Join Room', icon: <Hash size={24} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: 'var(--accent-cyan)', accent: 'rgba(0, 212, 255, 0.1)' },
-                            { key: 'matchmaking', label: 'Matchmaking', icon: <Shuffle size={24} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: 'var(--accent-green)', accent: 'rgba(34, 197, 94, 0.1)' },
-                            { key: 'practice', label: 'Vs Computer', icon: <Zap size={24} />, desc: 'Latihan cepat melawan AI bot tanpa harus menunggu lawan online.', action: () => router.push('/battle/computer'), color: 'var(--accent-red)', accent: 'rgba(232, 64, 64, 0.1)' },
+                            { key: 'create', label: 'Buat Room', icon: <Sword size={24} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: 'var(--accent-gold)', accent: 'var(--accent-gold-bg)' },
+                            { key: 'join', label: 'Join Room', icon: <Hash size={24} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: 'var(--accent-cyan)', accent: 'var(--accent-cyan-bg)' },
+                            { key: 'matchmaking', label: 'Matchmaking', icon: <Shuffle size={24} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: 'var(--accent-green)', accent: 'var(--accent-green-bg)' },
+                            { key: 'practice', label: 'Vs Computer', icon: <Zap size={24} />, desc: 'Latihan cepat melawan AI bot tanpa harus menunggu lawan online.', action: () => router.push('/battle/computer'), color: 'var(--accent-red)', accent: 'var(--accent-red-bg)' },
                         ].map((item) => (
                             <motion.div
                                 key={item.label}
