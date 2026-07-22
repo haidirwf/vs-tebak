@@ -545,7 +545,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     // Phase: Waiting for opponent (only player1 sees this)
     if (phase === 'waiting') {
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', gap: '24px', textAlign: 'center' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', gap: '24px', textAlign: 'center' }}>
                 <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}>
                     <Sword size={48} style={{ color: 'var(--accent-gold)' }} />
                 </motion.div>
@@ -584,7 +584,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         return (
             <motion.div
                 initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', gap: '32px', textAlign: 'center' }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', gap: '32px', textAlign: 'center' }}
             >
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700 }}>
                     ⚔️ Persiapan Battle
@@ -713,7 +713,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
     if (iAmFinished && !opponentFinished && phase !== 'finished') {
         return (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '70vh', gap: '24px', textAlign: 'center' }}>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', gap: '24px', textAlign: 'center' }}>
                 <div style={{ fontSize: '48px' }}>⏰</div>
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700 }}>Kerja Bagus!</h2>
                 <p style={{ color: 'var(--text-secondary)' }}>Menunggu {opponent?.username || 'Lawan'} menyelesaikan pertanyaannya...</p>
@@ -733,8 +733,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const titleColor = isDraw ? 'var(--accent-cyan)' : won ? 'var(--accent-gold)' : 'var(--accent-red)'
         const icon = isDraw ? '🤝' : won ? '🏆' : '💀'
         return (
-            <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ padding: '28px', textAlign: 'center' }}>
+            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ width: '100%', maxWidth: '760px', padding: '28px', textAlign: 'center' }}>
                     <div style={{ fontSize: '56px' }}>{icon}</div>
                     <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: 700, color: titleColor, marginBottom: '10px' }}>{title}</h2>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '6px' }}>
@@ -808,7 +808,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const timerColor = timeLeft > 8 ? 'var(--accent-green)' : timeLeft > 4 ? 'var(--accent-gold)' : 'var(--accent-red)'
 
     return (
-        <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
+        <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+            <div style={{ width: '100%', maxWidth: '760px' }}>
             {/* Scoreboard */}
             <div className="card" style={{ padding: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
                 <div style={{ flex: 1, textAlign: 'center' }}>
@@ -971,6 +972,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     </div>
                 </div>
             )}
+            </div>
         </div>
     )
 }

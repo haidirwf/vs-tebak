@@ -180,7 +180,8 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
 
     if (!started) {
         return (
-            <div className="responsive-page" style={{ maxWidth: '900px', margin: '0 auto', padding: '24px' }}>
+            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+                <div style={{ width: '100%', maxWidth: '900px' }}>
                 <div style={{ marginBottom: '28px' }}>
                     <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, marginBottom: '6px' }}>
                         🤖 Battle vs Computer
@@ -255,6 +256,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         </motion.button>
                     </div>
                 </div>
+                </div>
             </div>
         )
     }
@@ -264,8 +266,8 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
         const icon = result === 'win' ? '🏆' : result === 'lose' ? '💀' : '🤝'
         const color = result === 'win' ? 'var(--accent-gold)' : result === 'lose' ? 'var(--accent-red)' : 'var(--accent-cyan)'
         return (
-            <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ padding: '28px', textAlign: 'center' }}>
+            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ width: '100%', maxWidth: '760px', padding: '28px', textAlign: 'center' }}>
                     <div style={{ fontSize: '56px' }}>{icon}</div>
                     <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: 700, color, marginBottom: '10px' }}>{title}</h2>
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '34px', marginBottom: '18px' }}>
@@ -328,7 +330,8 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
     const timerColor = timeLeft > 8 ? 'var(--accent-green)' : timeLeft > 4 ? 'var(--accent-gold)' : 'var(--accent-red)'
 
     return (
-        <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
+        <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+            <div style={{ width: '100%', maxWidth: '760px' }}>
             <div className="card" style={{ padding: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
                 <div style={{ flex: 1, textAlign: 'center' }}>
                     <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Kamu</div>
@@ -399,6 +402,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         </motion.button>
                     )
                 })}
+            </div>
             </div>
         </div>
     )

@@ -236,7 +236,7 @@ export default function BattlePage() {
             {mode === 'matchmaking' && (
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{
                     display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-                    minHeight: '40vh', gap: '24px', textAlign: 'center',
+                    minHeight: 'calc(100vh - 200px)', width: '100%', gap: '24px', textAlign: 'center',
                 }}>
                     <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}>
                         <Loader2 size={56} style={{ color: 'var(--accent-green)' }} />
