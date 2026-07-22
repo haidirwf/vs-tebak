@@ -42,37 +42,75 @@
   --font-body: var(--font-dm-sans), 'DM Sans', sans-serif;
 }
 
+/* ===================================================
+   LIGHT MODE SYSTEM (#F8FAFC) - RPG GAMIFICATION THEME
+   =================================================== */
+
 [data-theme="light"] {
   color-scheme: light;
 
-  --bg-primary: #F8FAFC;
-  --bg-secondary: #FFFFFF;
+  /* 1. Latar Belakang Canvas & Kartu */
+  --bg-main: #F8FAFC;
+  --bg-card: #FFFFFF;
+  --bg-border: #E2E8F0;
+
+  --bg-primary: var(--bg-main);
+  --bg-secondary: var(--bg-card);
   --bg-tertiary: #F1F5F9;
-  --border: #E2E8F0;
+  --border: var(--bg-border);
 
-  --accent-gold: #B45309;
-  --accent-gold-bg: #FEF3C7;
-  --accent-gold-border: #FDE68A;
+  /* 2. ⚔️ Role & Aksen RPG Utama */
+  --color-gold: #D97706;       /* ✨ Healer / XP / Level / Rank 1 */
+  --color-red: #DC2626;        /* ⚔️ Warrior / Streak Api / Kalah */
+  --color-cyan: #0284C7;       /* 🔮 Mage / Modul / Hasil Seri */
+  --color-green: #16A34A;      /* 🏹 Archer / Status SIAP / Quest Selesai / Menang */
 
-  --accent-red: #B91C1C;
-  --accent-red-bg: #FEE2E2;
-  --accent-red-border: #FECACA;
+  --accent-gold: var(--color-gold);
+  --accent-red: var(--color-red);
+  --accent-cyan: var(--color-cyan);
+  --accent-green: var(--color-green);
 
-  --accent-cyan: #0369A1;
-  --accent-cyan-bg: #E0F2FE;
-  --accent-cyan-border: #BAE6FD;
+  /* 3. 🎨 Tint Backgrounds & Borders (Badge, Active Buttons, Cards) */
+  --gold-tint-bg: #FEF3C7;
+  --gold-border: #FDE68A;
 
-  --accent-green: #15803D;
-  --accent-green-bg: #DCFCE7;
-  --accent-green-border: #BBF7D0;
+  --red-tint-bg: #FEE2E2;
+  --red-border: #FECACA;
 
-  --text-primary: #0F172A;
-  --text-secondary: #334155;
-  --text-muted: #64748B;
+  --cyan-tint-bg: #E0F2FE;
+  --cyan-border: #BAE6FD;
 
-  --focus-ring: 0 0 0 2px rgba(180, 83, 9, 0.4);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.08);
-  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.08);
+  --green-tint-bg: #DCFCE7;
+  --green-border: #BBF7D0;
+
+  --accent-gold-bg: var(--gold-tint-bg);
+  --accent-gold-border: var(--gold-border);
+
+  --accent-red-bg: var(--red-tint-bg);
+  --accent-red-border: var(--red-border);
+
+  --accent-cyan-bg: var(--cyan-tint-bg);
+  --accent-cyan-border: var(--cyan-border);
+
+  --accent-green-bg: var(--green-tint-bg);
+  --accent-green-border: var(--green-border);
+
+  /* 4. 📝 Tipografi Pendukung */
+  --text-primary: #0F172A;     /* Teks Utama / Heading */
+  --text-secondary: #475569;   /* Deskripsi Modul, Quest, Stat Labels */
+  --text-muted: #94A3B8;       /* Tanggal, Footer, Placeholder, Locked State */
+
+  /* 5. 🏆 Leaderboard Podium & Effects */
+  --podium-gold: #D97706;      /* 🥇 Juara 1 */
+  --podium-silver: #64748B;    /* 🥈 Juara 2 */
+  --podium-bronze: #B45309;    /* 🥉 Juara 3 */
+
+  --focus-ring: rgba(217, 119, 6, 0.35);
+  --shadow-card: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --shadow-modal: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+
+  --shadow-sm: var(--shadow-card);
+  --shadow-md: var(--shadow-modal);
 }
 
 [data-theme="light"] .card {
