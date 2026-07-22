@@ -56,8 +56,8 @@ export default function Navbar() {
                     </div>
                 )}
 
-                {/* Theme Toggle */}
-                <ThemeToggle />
+                {/* Theme Toggle (Disembunyikan sementara, hapus komentar untuk mengaktifkan kembali) */}
+                {/* <ThemeToggle /> */}
             </div>
         </header>
     )
