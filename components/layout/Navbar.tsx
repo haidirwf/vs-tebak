@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import { Flame } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { isStreakActiveToday } from '@/lib/game/streak'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const PAGE_TITLES: Record<string, string> = {
     '/dashboard': 'Dashboard',
@@ -55,6 +56,8 @@ export default function Navbar() {
                     </div>
                 )}
 
+                {/* Theme Toggle */}
+                <ThemeToggle />
             </div>
         </header>
     )

@@ -31,6 +31,37 @@
   --font-body: var(--font-dm-sans), 'DM Sans', sans-serif;
 }
 
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg-primary: #F4F6F8;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #EAEFF4;
+  --border: #D1D5DB;
+
+  --accent-gold: #D97706;
+  --accent-red: #DC2626;
+  --accent-cyan: #0284C7;
+  --accent-green: #15803D;
+
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-muted: #6B7280;
+
+  --focus-ring: 0 0 0 2px rgba(217, 119, 6, 0.4);
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+[data-theme="light"] .card {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+[data-theme="light"] .ticket-card::before,
+[data-theme="light"] .ticket-card::after {
+  background-color: var(--bg-primary);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
