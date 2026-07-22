@@ -79,32 +79,35 @@ export default async function DashboardPage() {
                         </h3>
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                             {[
-                                { name: 'Warrior', desc: '+25% XP Modul Coding', color: 'var(--accent-red)', icon: '⚔️' },
-                                { name: 'Mage', desc: '+25% XP Modul Desain', color: 'var(--accent-cyan)', icon: '🔮' },
-                                { name: 'Archer', desc: '+25% XP Menang Battle', color: 'var(--accent-green)', icon: '🏹' },
-                                { name: 'Healer', desc: '+25% XP Modul Produktivitas & Fokus', color: 'var(--accent-gold)', icon: '✨' },
-                            ].map(role => (
-                                <div key={role.name} style={{
-                                    padding: '12px',
-                                    backgroundColor: 'var(--bg-secondary)',
-                                    borderRadius: '8px',
-                                    border: `1px solid ${role.name.toLowerCase() === profile.avatar_class ? role.color : 'var(--border)'}`,
-                                    position: 'relative',
-                                    opacity: role.name.toLowerCase() === profile.avatar_class ? 1 : 0.6
-                                }}>
-                                    {role.name.toLowerCase() === profile.avatar_class && (
-                                        <div style={{
-                                            position: 'absolute', top: '-8px', right: '8px',
-                                            backgroundColor: role.color, color: 'white',
-                                            fontSize: '8px', padding: '2px 6px', borderRadius: '4px',
-                                            fontWeight: 800
-                                        }}>AKTIF</div>
-                                    )}
-                                    <div style={{ fontSize: '18px', marginBottom: '4px' }}>{role.icon}</div>
-                                    <div style={{ fontSize: '13px', fontWeight: 700, color: role.color, fontFamily: 'var(--font-heading)' }}>{role.name}</div>
-                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{role.desc}</div>
-                                </div>
-                            ))}
+                                { name: 'Warrior', desc: '+25% XP Modul Coding', color: 'var(--accent-red)', bg: 'var(--accent-red-bg)', icon: '⚔️' },
+                                { name: 'Mage', desc: '+25% XP Modul Desain', color: 'var(--accent-cyan)', bg: 'var(--accent-cyan-bg)', icon: '🔮' },
+                                { name: 'Archer', desc: '+25% XP Menang Battle', color: 'var(--accent-green)', bg: 'var(--accent-green-bg)', icon: '🏹' },
+                                { name: 'Healer', desc: '+25% XP Modul Produktivitas', color: 'var(--accent-gold)', bg: 'var(--accent-gold-bg)', icon: '✨' },
+                            ].map(role => {
+                                const isCurrent = role.name.toLowerCase() === profile.avatar_class
+                                return (
+                                    <div key={role.name} style={{
+                                        padding: '12px',
+                                        backgroundColor: isCurrent ? role.bg : 'var(--bg-secondary)',
+                                        borderRadius: '8px',
+                                        border: `1px solid ${isCurrent ? role.color : 'var(--border)'}`,
+                                        position: 'relative',
+                                        opacity: isCurrent ? 1 : 0.7
+                                    }}>
+                                        {isCurrent && (
+                                            <div style={{
+                                                position: 'absolute', top: '-8px', right: '8px',
+                                                backgroundColor: role.color, color: '#FFFFFF',
+                                                fontSize: '8px', padding: '2px 6px', borderRadius: '4px',
+                                                fontWeight: 800
+                                            }}>AKTIF</div>
+                                        )}
+                                        <div style={{ fontSize: '18px', marginBottom: '4px' }}>{role.icon}</div>
+                                        <div style={{ fontSize: '13px', fontWeight: 700, color: role.color, fontFamily: 'var(--font-heading)' }}>{role.name}</div>
+                                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{role.desc}</div>
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
                 </div>

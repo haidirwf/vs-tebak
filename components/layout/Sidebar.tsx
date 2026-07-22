@@ -207,8 +207,8 @@ export default function Sidebar() {
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
                                     padding: '10px 10px', borderRadius: '4px', marginBottom: '2px',
-                                    backgroundColor: isActive ? 'rgba(245,197,66,0.1)' : 'transparent',
-                                    border: `1px solid ${isActive ? 'rgba(245,197,66,0.3)' : 'transparent'}`,
+                                    backgroundColor: isActive ? 'var(--accent-gold-bg)' : 'transparent',
+                                    border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
                                     cursor: 'pointer',
                                 }}
                             >

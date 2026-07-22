@@ -48,7 +48,7 @@ export default function Navbar() {
                 {/* XP */}
                 {profile && (
                     <div className="dashboard-navbar-xp" style={{
-                        backgroundColor: 'rgba(245,197,66,0.1)', border: '1px solid rgba(245,197,66,0.3)',
+                        backgroundColor: 'var(--accent-gold-bg)', border: '1px solid var(--accent-gold-border)',
                         borderRadius: '4px', padding: '4px 10px',
                         fontSize: '12px', fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'var(--accent-gold)',
                     }}>
