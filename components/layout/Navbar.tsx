@@ -8,7 +8,6 @@ import { isStreakActiveToday } from '@/lib/game/streak'
 const PAGE_TITLES: Record<string, string> = {
     '/dashboard': 'Dashboard',
     '/modules': 'Modul Belajar',
-    '/focus': 'Zona Fokus',
     '/battle': 'Battle Arena',
     '/voucher': 'Toko Voucher',
     '/leaderboard': 'Leaderboard',

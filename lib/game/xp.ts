@@ -7,7 +7,6 @@ export const XP_REWARDS = {
     dailyQuest: 30,
     streakBonus: 15,
     firstLogin: 25,
-    focusSession: 20,
 } as const
 
 export type XPRewardKey = keyof typeof XP_REWARDS

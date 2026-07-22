@@ -8,13 +8,12 @@ import { checkStreakStatus } from '@/lib/game/streak'
 import { ensureUserBadges } from '@/lib/game/badges'
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
-type XpAction = 'complete_module' | 'battle_win' | 'battle_draw' | 'battle_loss' | 'focus_session'
+type XpAction = 'complete_module' | 'battle_win' | 'battle_draw' | 'battle_loss'
 
 const STATIC_ACTION_CONFIG: Record<Exclude<XpAction, 'complete_module'>, { base: number; category: string; reason: string }> = {
     battle_win: { base: 80, category: 'battle_win', reason: 'Menang battle' },
     battle_draw: { base: 40, category: 'battle_draw', reason: 'Battle seri' },
     battle_loss: { base: 20, category: 'battle_loss', reason: 'Kalah battle' },
-    focus_session: { base: 20, category: 'productivity', reason: 'Focus session selesai' },
 }
 
 export async function POST(request: NextRequest) {

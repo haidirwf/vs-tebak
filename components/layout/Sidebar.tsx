@@ -14,7 +14,6 @@ import { isStreakActiveToday } from '@/lib/game/streak'
 const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', tour: 'dashboard' },
     { href: '/modules', icon: BookOpen, label: 'Modul', tour: 'modules' },
-    { href: '/focus', icon: Zap, label: 'Fokus', tour: 'focus' },
     { href: '/battle', icon: Swords, label: 'Battle', tour: 'battle' },
     { href: '/voucher', icon: Ticket, label: 'Voucher', tour: 'voucher' },
     { href: '/leaderboard', icon: Trophy, label: 'Leaderboard', tour: 'leaderboard' },

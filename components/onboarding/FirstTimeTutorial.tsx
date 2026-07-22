@@ -28,13 +28,6 @@ const STEPS: TourStep[] = [
         route: '/modules',
     },
     {
-        id: 'focus',
-        selector: '[data-tour="nav-focus"]',
-        title: 'Ini Tombol Fokus',
-        description: 'Dipakai buat sesi fokus terstruktur biar belajarmu konsisten.',
-        route: '/focus',
-    },
-    {
         id: 'battle',
         selector: '[data-tour="nav-battle"]',
         title: 'Ini Tombol Battle',
