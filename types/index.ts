@@ -20,6 +20,8 @@ export interface Profile {
   xp_to_next_level: number
   streak_count: number
   last_active: string | null
+  equipped_items?: Record<string, string> | null
+  character_created?: boolean | null
   created_at: string
 }
 

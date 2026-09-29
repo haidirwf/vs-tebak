@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { Profile } from '@/types'
 import dynamic from 'next/dynamic'
@@ -10,6 +10,10 @@ import BadgeUnlockModal from '@/components/character/BadgeUnlockModal'
 import RefreshOnFocus from '@/components/layout/RefreshOnFocus'
 
 const FirstTimeTutorial = dynamic(() => import('@/components/onboarding/FirstTimeTutorial'), {
+    ssr: false,
+})
+
+const CharacterCreationModal = dynamic(() => import('@/components/character/CharacterCreationModal'), {
     ssr: false,
 })
 
@@ -28,9 +32,20 @@ export function DashboardProvider({
         dismissActivePopup,
     } = useUserStore()
 
+    const needsCharacterCreation = Boolean(
+        profile && (
+            profile.character_created === false ||
+            (profile.character_created === null && profile.xp <= 0 && profile.level <= 1)
+        )
+    )
+    const [showCharacterModal, setShowCharacterModal] = useState(needsCharacterCreation)
+
     useEffect(() => {
         setProfile(profile)
         setLoading(false)
+        if (needsCharacterCreation) {
+            setShowCharacterModal(true)
+        }
 
         // Trigger background user/quest sync non-blocking (throttled to 5 mins)
         if (profile?.id && typeof window !== 'undefined') {
@@ -50,12 +65,19 @@ export function DashboardProvider({
         <>
             {/* <RefreshOnFocus /> dinonaktifkan agar tidak memicu hard server refresh saat fokus window */}
             {children}
+            {profile && (
+                <CharacterCreationModal
+                    isOpen={showCharacterModal}
+                    profile={profile}
+                    onComplete={() => setShowCharacterModal(false)}
+                />
+            )}
             {profile && !onboardingDisabled && (
                 <FirstTimeTutorial
                     key={profile.id}
                     userId={profile.id}
                     isNewUser={profile.xp <= 0 && profile.streak_count <= 0 && profile.level <= 1}
-                    blocked={Boolean(activePopup)}
+                    blocked={Boolean(activePopup) || showCharacterModal}
                     forceShow={profile.username === 'pelajar1'}
                 />
             )}

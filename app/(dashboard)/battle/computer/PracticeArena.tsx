@@ -359,55 +359,49 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         style={{ marginBottom: '28px' }}
                     >
                         {/* You */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="battle-versus-col">
                             <div
+                                className="battle-versus-avatar"
                                 style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    borderRadius: '12px',
                                     backgroundColor: 'rgba(245, 197, 66, 0.12)',
                                     border: '1px solid rgba(245, 197, 66, 0.4)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '24px',
                                     flexShrink: 0,
                                 }}
                             >
                                 ⚔️
                             </div>
-                            <div style={{ textAlign: 'left' }}>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Kamu</div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--color-signal-orange)' }}>
-                                    {myScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                            <div className="battle-versus-info" style={{ textAlign: 'left' }}>
+                                <div className="battle-player-name">Kamu</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--color-signal-orange)', lineHeight: 1.2 }}>
+                                    {myScore} <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* VS center */}
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 800, color: 'var(--color-steel)' }}>
+                        <div className="battle-vs-badge">
                             VS
                         </div>
 
                         {/* Bot */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
-                            <div>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Computer AI</div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#00d4ff' }}>
-                                    {botScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                        <div className="battle-versus-col battle-versus-col-right">
+                            <div className="battle-versus-info">
+                                <div className="battle-player-name">Computer AI</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#00d4ff', lineHeight: 1.2 }}>
+                                    {botScore} <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
                             </div>
                             <div
+                                className="battle-versus-avatar"
                                 style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    borderRadius: '12px',
                                     backgroundColor: 'rgba(0, 212, 255, 0.1)',
                                     border: '1px solid rgba(0, 212, 255, 0.35)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '24px',
                                     flexShrink: 0,
                                 }}
                             >
@@ -522,7 +516,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         className="battle-versus-row"
                     >
                         {/* Player 1 (You) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+                        <div className="battle-versus-col" style={{ position: 'relative' }}>
                             {/* Floating Combat Text for Me */}
                             <AnimatePresence>
                                 {combatText?.target === 'me' && (
@@ -572,40 +566,28 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             >
                                 ⚔️
                             </motion.div>
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
-                                        Kamu <span style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 400 }}>(Hero)</span>
+                            <div className="battle-versus-info">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                                    <span className="battle-player-name">
+                                        Kamu <span style={{ color: 'var(--color-signal-orange)', fontSize: '10px', fontWeight: 400 }}>(Hero)</span>
                                     </span>
                                     <span
+                                        className="battle-level-badge"
                                         style={{
-                                            fontSize: '10px',
-                                            padding: '2px 7px',
-                                            borderRadius: '9999px',
                                             backgroundColor: 'rgba(245, 197, 66, 0.15)',
                                             border: '1px solid rgba(245, 197, 66, 0.4)',
                                             color: 'var(--color-signal-orange)',
-                                            fontWeight: 700,
                                         }}
                                     >
                                         LV.12
                                     </span>
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                <div className="battle-school-name">
                                     Pelajar Hebat · Warrior
                                 </div>
                                 {/* Health / Score Bar */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                                    <div
-                                        style={{
-                                            flex: 1,
-                                            maxWidth: '120px',
-                                            height: '5px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                            borderRadius: '9999px',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
+                                <div className="battle-hp-bar-wrapper">
+                                    <div className="battle-hp-bar-outer">
                                         <motion.div
                                             initial={{ width: '100%' }}
                                             animate={{ width: `${myHpPercent}%` }}
@@ -616,12 +598,12 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                             }}
                                         />
                                     </div>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
+                                    <span className="battle-score-text" style={{ color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
                                         {myScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
                                     </span>
                                 </div>
                                 {/* Mana / Special Gauge */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                                <div className="battle-mp-row">
                                     <div
                                         style={{
                                             flex: 1,
@@ -648,31 +630,18 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             </div>
                         </div>
 
-                        {/* Center VS Pill */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                            <div
-                                style={{
-                                    fontFamily: 'var(--font-heading)',
-                                    fontSize: '12px',
-                                    fontWeight: 800,
-                                    color: 'var(--color-signal-orange)',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                    padding: '4px 14px',
-                                    borderRadius: '9999px',
-                                    border: '1px solid rgba(245, 197, 66, 0.35)',
-                                    letterSpacing: '0.08em',
-                                    boxShadow: '0 0 12px rgba(245, 197, 66, 0.2)',
-                                }}
-                            >
+                        {/* Center VS Badge */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                            <div className="battle-vs-badge">
                                 VS
                             </div>
-                            <span style={{ fontSize: '10px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                            <span style={{ fontSize: '9px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.04em' }}>
                                 {currentQ + 1}/{questions.length}
                             </span>
                         </div>
 
                         {/* Player 2 (Computer Bot) */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right', position: 'relative' }}>
+                        <div className="battle-versus-col battle-versus-col-right" style={{ position: 'relative' }}>
                             {/* Floating Combat Text for Bot */}
                             <AnimatePresence>
                                 {combatText?.target === 'bot' && (
@@ -700,43 +669,31 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                 )}
                             </AnimatePresence>
 
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
+                            <div className="battle-versus-info">
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', flexWrap: 'wrap' }}>
                                     <span
+                                        className="battle-level-badge"
                                         style={{
-                                            fontSize: '10px',
-                                            padding: '2px 7px',
-                                            borderRadius: '9999px',
                                             backgroundColor: 'rgba(0, 212, 255, 0.15)',
                                             border: '1px solid rgba(0, 212, 255, 0.4)',
                                             color: '#00d4ff',
-                                            fontWeight: 700,
                                         }}
                                     >
                                         LV.14
                                     </span>
-                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
+                                    <span className="battle-player-name">
                                         Computer AI
                                     </span>
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                <div className="battle-school-name">
                                     SMK Cybernetics · Bot
                                 </div>
                                 {/* Health / Score Bar */}
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
+                                <div className="battle-hp-bar-wrapper" style={{ justifyContent: 'flex-end' }}>
+                                    <span className="battle-score-text" style={{ color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
                                         {botScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
                                     </span>
-                                    <div
-                                        style={{
-                                            flex: 1,
-                                            maxWidth: '120px',
-                                            height: '5px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                            borderRadius: '9999px',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
+                                    <div className="battle-hp-bar-outer">
                                         <motion.div
                                             initial={{ width: '100%' }}
                                             animate={{ width: `${botHpPercent}%` }}
@@ -750,7 +707,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                     </div>
                                 </div>
                                 {/* Mana / Special Gauge */}
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', marginTop: '3px' }}>
+                                <div className="battle-mp-row" style={{ justifyContent: 'flex-end' }}>
                                     <span style={{ fontSize: '9px', color: '#00d4ff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                                         MP {botMp}%
                                     </span>
@@ -775,8 +732,8 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                         />
                                     </div>
                                 </div>
-                                <div style={{ marginTop: '3px' }}>
-                                    <span style={{ fontSize: '10px', color: botAnswered ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
+                                <div style={{ marginTop: '2px' }}>
+                                    <span className="battle-player-status" style={{ fontSize: '9.5px', color: botAnswered ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
                                         {botAnswered ? '⚡ Sudah Menjawab!' : '🤔 Menganalisis...'}
                                     </span>
                                 </div>
@@ -816,17 +773,19 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '8px',
-                            padding: '8px 16px',
+                            padding: '8px 14px',
                             borderRadius: '10px',
                             backgroundColor: 'rgba(255, 255, 255, 0.03)',
                             border: '1px solid rgba(255, 255, 255, 0.07)',
-                            marginBottom: '18px',
+                            marginBottom: '16px',
                             fontSize: '12px',
                             color: 'var(--color-fog)',
                             textAlign: 'center',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         }}
                     >
-                        <span>{battleLog}</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{battleLog}</span>
                     </motion.div>
 
                     {/* Question Card */}
@@ -837,32 +796,23 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -8 }}
                             transition={{ duration: 0.2 }}
+                            className="battle-question-card"
                             style={{
-                                padding: '22px',
                                 backgroundColor: 'var(--color-carbon)',
-                                borderRadius: '17.1429px',
+                                borderRadius: '14px',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                                marginBottom: '18px',
+                                marginBottom: '14px',
                             }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 700, letterSpacing: '1px' }}>
-                                    SOAL {currentQ + 1} DARI {questions.length}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+                                <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                    SOAL {currentQ + 1}/{questions.length}
                                 </span>
-                                <span style={{ color: 'var(--color-steel)' }}>•</span>
-                                <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi yang tepat untuk menyerang lawan:</span>
+                                <span className="battle-question-subtitle" style={{ color: 'var(--color-steel)' }}>•</span>
+                                <span className="battle-question-subtitle" style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi untuk menyerang lawan:</span>
                             </div>
 
-                            <p
-                                style={{
-                                    fontFamily: 'var(--font-inter)',
-                                    fontSize: '16px',
-                                    fontWeight: 500,
-                                    color: '#ffffff',
-                                    lineHeight: 1.6,
-                                    margin: 0,
-                                }}
-                            >
+                            <p className="battle-question-text" style={{ margin: 0 }}>
                                 {currentQuestion.question_text}
                             </p>
                         </motion.div>
@@ -909,32 +859,25 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                     whileHover={selectedAnswer === null ? { y: -2, borderColor: 'rgba(255, 255, 255, 0.25)' } : {}}
                                     whileTap={selectedAnswer === null ? { scale: 0.99 } : {}}
                                     onClick={() => handleAnswer(idx)}
+                                    className="battle-option-btn"
                                     style={{
-                                        textAlign: 'left',
-                                        padding: '14px 16px',
-                                        borderRadius: '12px',
                                         cursor: selectedAnswer !== null ? 'default' : 'pointer',
                                         backgroundColor: bg,
                                         border: `1px solid ${border}`,
                                         color: textColor,
-                                        fontSize: '13px',
-                                        fontWeight: 500,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px',
                                         transition: 'all 0.15s ease',
                                     }}
                                 >
                                     <span
                                         style={{
-                                            width: '26px',
-                                            height: '26px',
+                                            width: '24px',
+                                            height: '24px',
                                             borderRadius: '6px',
                                             backgroundColor: badgeBg,
                                             color: badgeColor,
                                             fontFamily: 'var(--font-heading)',
                                             fontWeight: 700,
-                                            fontSize: '12px',
+                                            fontSize: '11px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -943,16 +886,16 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                     >
                                         {String.fromCharCode(65 + idx)}
                                     </span>
-                                    <span style={{ flex: 1, lineHeight: 1.4 }}>{opt}</span>
-                                    {showAnswer && isCorrect && <CheckCircle size={16} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />}
-                                    {showAnswer && isSelected && !isCorrect && <XCircle size={16} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />}
+                                    <span className="battle-option-text">{opt}</span>
+                                    {showAnswer && isCorrect && <CheckCircle size={15} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />}
+                                    {showAnswer && isSelected && !isCorrect && <XCircle size={15} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />}
                                 </motion.button>
                             )
                         })}
                     </div>
 
                     {/* Bottom toolbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
                         <button
                             type="button"
                             onClick={() => {
@@ -961,7 +904,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                 setFinished(false)
                             }}
                             className="btn-dark-outline"
-                            style={{ padding: '6px 14px', fontSize: '11px', color: 'var(--accent-red)', borderColor: 'rgba(232, 64, 64, 0.3)' }}
+                            style={{ padding: '6px 12px', fontSize: '11px', color: 'var(--accent-red)', borderColor: 'rgba(232, 64, 64, 0.3)', borderRadius: '8px' }}
                         >
                             Akhiri Latihan
                         </button>

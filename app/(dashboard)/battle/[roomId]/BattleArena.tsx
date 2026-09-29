@@ -7,6 +7,8 @@ import { createClient } from '@/lib/supabase/client'
 import { Question, Battle, Profile } from '@/types'
 import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords } from 'lucide-react'
 import { getClassBonusDescription, AVATAR_CLASS_STATS } from '@/lib/game/xp'
+import { calculateCharacterStats } from '@/lib/game/character'
+import CharacterVisual from '@/components/character/CharacterVisual'
 
 interface BattleArenaProps {
     battle: Battle
@@ -584,6 +586,22 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         }
     }, [countdown, phase])
 
+    // Helper class info & customization stats
+    const myClassKey = (currentUser.avatar_class || 'warrior').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
+    const myClassInfo = AVATAR_CLASS_STATS[myClassKey] || AVATAR_CLASS_STATS.warrior
+    const oppClassKey = (opponent?.avatar_class || 'mage').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
+    const oppClassInfo = AVATAR_CLASS_STATS[oppClassKey] || AVATAR_CLASS_STATS.mage
+    const myHpPercent = Math.max(10, Math.min(100, myHp))
+    const oppHpPercent = Math.max(10, Math.min(100, oppHp))
+
+    const myStats = useMemo(() => {
+        return calculateCharacterStats(
+            myClassKey as any,
+            currentUser.level || 1,
+            (currentUser.equipped_items as any) || {}
+        )
+    }, [myClassKey, currentUser.level, currentUser.equipped_items])
+
     function handleAnswer(idx: number) {
         if (selectedAnswer !== null || showAnswer) return
         clearInterval(timerRef.current!)
@@ -593,28 +611,40 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const q = questions[currentQ]
         const isCorrect = idx === q.correct_option
         const bonus = Math.floor(timeLeft * 0.5)
-        const newScore = myScore + (isCorrect ? 10 + bonus : 0)
+
+        // Customization Buffs
+        const extraAtk = myStats.battleBuffs.extraAtkPoints
+        const rollCrit = (Math.random() * 100) < myStats.battleBuffs.critChancePct
+        const baseScoreGained = isCorrect ? (10 + bonus + extraAtk) : 0
+        const finalScoreGained = isCorrect && rollCrit ? Math.floor(baseScoreGained * 1.5) : baseScoreGained
+        const newScore = myScore + finalScoreGained
         setMyScore(newScore)
 
-        const hpDamage = Math.max(12, Math.floor(100 / Math.max(questions.length, 1)))
+        const baseHpDamage = Math.max(12, Math.floor(100 / Math.max(questions.length, 1)))
         if (isCorrect) {
             const nextCombo = comboCount + 1
             setComboCount(nextCombo)
-            const isCrit = nextCombo >= 2
-            const effectiveDamage = isCrit ? hpDamage + 8 : hpDamage
+            const isCrit = rollCrit || nextCombo >= 2
+            const effectiveDamage = isCrit ? baseHpDamage + 10 : baseHpDamage
             setOppHp(prev => Math.max(10, prev - effectiveDamage))
             setMyMp(mp => Math.min(100, mp + 25))
+
+            // Shield recovery from healer / accessory buff
+            if (myStats.battleBuffs.shieldRegenPoints > 0) {
+                setMyHp(hp => Math.min(100, hp + myStats.battleBuffs.shieldRegenPoints))
+            }
+
             setCombatText({
                 target: 'opp',
-                text: isCrit ? `💥 CRIT! -${effectiveDamage} HP` : `⚔️ -${effectiveDamage} HP`,
+                text: isCrit ? `💥 CRIT! +${finalScoreGained} PTS` : `⚔️ +${finalScoreGained} PTS`,
                 type: isCrit ? 'crit' : 'damage',
             })
             setMeAnimation('attack')
             setOppAnimation('hurt')
             setBattleLog(
                 isCrit
-                    ? `🔥 COMBO x${nextCombo}! Serangan kritikal ${myClassInfo.label} mendarat telak!`
-                    : `⚔️ Serangan ${myClassInfo.label} menembus pertahanan lawan! (-${effectiveDamage} HP)`
+                    ? `🔥 CRITICAL HIT! Serangan ${myClassInfo.label} mendarat telak (+${finalScoreGained} Poin)!`
+                    : `⚔️ Serangan ${myClassInfo.label} menembus pertahanan lawan (+${finalScoreGained} Poin)!`
             )
             setTimeout(() => {
                 setMeAnimation('idle')
@@ -623,14 +653,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             setTimeout(() => setCombatText(null), 1100)
         } else {
             setComboCount(0)
-            setMyHp(prev => Math.max(10, prev - hpDamage))
+            const reduction = myStats.battleBuffs.damageReductionPct
+            const mitigatedDamage = Math.max(4, Math.floor(baseHpDamage * (1 - reduction / 100)))
+            setMyHp(prev => Math.max(10, prev - mitigatedDamage))
             setCombatText({
                 target: 'me',
-                text: `❌ MISS! -${hpDamage} HP`,
+                text: `❌ MISS! -${mitigatedDamage} HP`,
                 type: 'miss',
             })
             setMeAnimation('hurt')
-            setBattleLog(`🛡️ Serangan meleset! Kamu terkena serangan balik lawan (-${hpDamage} HP).`)
+            setBattleLog(`🛡️ Serangan meleset! Zirah menyerap benturan (-${mitigatedDamage} HP).`)
             setTimeout(() => setMeAnimation('idle'), 600)
             setTimeout(() => setCombatText(null), 1100)
         }
@@ -643,7 +675,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         setTimeout(() => {
             if (currentQ < questions.length - 1) {
                 setCurrentQ(q => q + 1)
-                setTimeLeft(15)
+                setTimeLeft(15 + myStats.battleBuffs.extraTimerSec)
                 setSelectedAnswer(null)
                 setShowAnswer(false)
                 setOpponentAnsweredThisRound(false)
@@ -652,14 +684,6 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             }
         }, 1200)
     }
-
-    // Helper class info
-    const myClassKey = (currentUser.avatar_class || 'warrior').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
-    const myClassInfo = AVATAR_CLASS_STATS[myClassKey] || AVATAR_CLASS_STATS.warrior
-    const oppClassKey = (opponent?.avatar_class || 'mage').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
-    const oppClassInfo = AVATAR_CLASS_STATS[oppClassKey] || AVATAR_CLASS_STATS.mage
-    const myHpPercent = Math.max(10, Math.min(100, myHp))
-    const oppHpPercent = Math.max(10, Math.min(100, oppHp))
 
     const handleCopyRoomCode = () => {
         if (!battle?.room_code) return
@@ -808,135 +832,100 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         className="battle-versus-row"
                     >
                         {/* Player 1 (You) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                        <div className="battle-versus-col">
                             <div
+                                className="battle-versus-avatar"
                                 style={{
-                                    width: '52px',
-                                    height: '52px',
-                                    borderRadius: '12px',
                                     backgroundColor: myReady ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 197, 66, 0.12)',
                                     border: `1px solid ${myReady ? 'var(--color-vector-green)' : 'rgba(245, 197, 66, 0.4)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '26px',
                                     flexShrink: 0,
                                     boxShadow: myReady ? '0 0 16px rgba(34, 197, 94, 0.3)' : '0 0 16px rgba(245, 197, 66, 0.2)',
                                 }}
                             >
                                 {myReady ? '✓' : myClassInfo.emoji}
                             </div>
-                            <div style={{ minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: '15px', fontWeight: 600, color: '#ffffff' }}>
-                                        {currentUser.username} <span style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 400 }}>(Kamu)</span>
+                            <div className="battle-versus-info">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                                    <span className="battle-player-name">
+                                        {currentUser.username}
                                     </span>
                                     <span
+                                        className="battle-level-badge"
                                         style={{
-                                            fontSize: '10px',
-                                            padding: '2px 7px',
-                                            borderRadius: '9999px',
                                             backgroundColor: 'rgba(245, 197, 66, 0.15)',
                                             border: '1px solid rgba(245, 197, 66, 0.4)',
                                             color: 'var(--color-signal-orange)',
-                                            fontWeight: 700,
                                         }}
                                     >
                                         LV.{currentUser.level || 1}
                                     </span>
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                <div className="battle-school-name">
                                     {currentUser.school_name || 'Pelajar'} · {myClassInfo.label}
                                 </div>
-                                <div style={{ marginTop: '6px' }}>
+                                <div style={{ marginTop: '4px' }}>
                                     <span
+                                        className="battle-player-status"
                                         style={{
-                                            fontSize: '11px',
-                                            fontWeight: 600,
                                             color: myReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
                                         }}
                                     >
-                                        {myReady ? <CheckCircle size={12} /> : null}
-                                        {myReady ? 'Siap Bertanding' : 'Menunggu Anda Siap'}
+                                        {myReady ? '✓ Siap Bertanding' : 'Menunggu Siap'}
                                     </span>
                                 </div>
                             </div>
                         </div>
 
                         {/* VS Center Pill */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-                            <div
-                                style={{
-                                    fontFamily: 'var(--font-heading)',
-                                    fontSize: '14px',
-                                    fontWeight: 800,
-                                    color: 'var(--color-signal-orange)',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                    padding: '6px 16px',
-                                    borderRadius: '9999px',
-                                    border: '1px solid rgba(245, 197, 66, 0.35)',
-                                    letterSpacing: '0.08em',
-                                    boxShadow: '0 0 16px rgba(245, 197, 66, 0.25)',
-                                }}
-                            >
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <div className="battle-vs-badge">
                                 VS
                             </div>
                         </div>
 
                         {/* Player 2 (Opponent) */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '14px', textAlign: 'right' }}>
-                            <div style={{ minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
+                        <div className="battle-versus-col battle-versus-col-right">
+                            <div className="battle-versus-info">
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', flexWrap: 'wrap' }}>
                                     <span
+                                        className="battle-level-badge"
                                         style={{
-                                            fontSize: '10px',
-                                            padding: '2px 7px',
-                                            borderRadius: '9999px',
                                             backgroundColor: 'rgba(0, 212, 255, 0.15)',
                                             border: '1px solid rgba(0, 212, 255, 0.4)',
                                             color: '#00d4ff',
-                                            fontWeight: 700,
                                         }}
                                     >
                                         LV.{opponent?.level || 1}
                                     </span>
-                                    <span style={{ fontSize: '15px', fontWeight: 600, color: '#ffffff' }}>
-                                        {opponent?.username || 'Menunggu Lawan...'}
+                                    <span className="battle-player-name">
+                                        {opponent?.username || 'Menunggu...'}
                                     </span>
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                <div className="battle-school-name">
                                     {opponent?.school_name || 'Pelajar'} · {oppClassInfo.label}
                                 </div>
-                                <div style={{ marginTop: '6px' }}>
+                                <div style={{ marginTop: '4px' }}>
                                     <span
+                                        className="battle-player-status"
                                         style={{
-                                            fontSize: '11px',
-                                            fontWeight: 600,
                                             color: oppReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
                                         }}
                                     >
-                                        {oppReady ? <CheckCircle size={12} /> : null}
-                                        {oppReady ? 'Lawan Telah Siap' : 'Menunggu Lawan Siap'}
+                                        {oppReady ? '✓ Lawan Siap' : 'Menunggu Lawan'}
                                     </span>
                                 </div>
                             </div>
                             <div
+                                className="battle-versus-avatar"
                                 style={{
-                                    width: '52px',
-                                    height: '52px',
-                                    borderRadius: '12px',
                                     backgroundColor: oppReady ? 'rgba(34, 197, 94, 0.15)' : 'rgba(0, 212, 255, 0.1)',
                                     border: `1px solid ${oppReady ? 'var(--color-vector-green)' : 'rgba(0, 212, 255, 0.35)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '26px',
                                     flexShrink: 0,
                                     boxShadow: oppReady ? '0 0 16px rgba(34, 197, 94, 0.3)' : '0 0 16px rgba(0, 212, 255, 0.2)',
                                 }}
@@ -1062,55 +1051,49 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         style={{ marginBottom: '28px' }}
                     >
                         {/* You */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div className="battle-versus-col">
                             <div
+                                className="battle-versus-avatar"
                                 style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    borderRadius: '12px',
                                     backgroundColor: 'rgba(245, 197, 66, 0.12)',
                                     border: '1px solid rgba(245, 197, 66, 0.4)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '24px',
                                     flexShrink: 0,
                                 }}
                             >
                                 {myClassInfo.emoji}
                             </div>
-                            <div style={{ textAlign: 'left' }}>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Kamu</div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--color-signal-orange)' }}>
-                                    {myScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                            <div className="battle-versus-info" style={{ textAlign: 'left' }}>
+                                <div className="battle-player-name">Kamu</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--color-signal-orange)', lineHeight: 1.2 }}>
+                                    {myScore} <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* VS center */}
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 800, color: 'var(--color-steel)' }}>
+                        <div className="battle-vs-badge">
                             VS
                         </div>
 
                         {/* Opponent */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
-                            <div>
-                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>{opponent?.username || 'Lawan'}</div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#00d4ff' }}>
-                                    {opponentScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                        <div className="battle-versus-col battle-versus-col-right">
+                            <div className="battle-versus-info">
+                                <div className="battle-player-name">{opponent?.username || 'Lawan'}</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#00d4ff', lineHeight: 1.2 }}>
+                                    {opponentScore} <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
                             </div>
                             <div
+                                className="battle-versus-avatar"
                                 style={{
-                                    width: '48px',
-                                    height: '48px',
-                                    borderRadius: '12px',
                                     backgroundColor: 'rgba(0, 212, 255, 0.1)',
                                     border: '1px solid rgba(0, 212, 255, 0.35)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '24px',
                                     flexShrink: 0,
                                 }}
                             >
@@ -1222,7 +1205,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         className="battle-versus-row"
                     >
                         {/* Player 1 (You) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+                        <div className="battle-versus-col" style={{ position: 'relative' }}>
                             {/* Floating Combat Text for Me */}
                             <AnimatePresence>
                                 {combatText?.target === 'me' && (
@@ -1270,42 +1253,36 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     boxShadow: meAnimation === 'attack' ? '0 0 24px rgba(245, 197, 66, 0.6)' : meAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(245, 197, 66, 0.2)',
                                 }}
                             >
-                                {myClassInfo.emoji}
+                                <CharacterVisual
+                                    role={myClassKey as any}
+                                    equipped={(currentUser.equipped_items as any) || {}}
+                                    size={44}
+                                    animationState={meAnimation}
+                                    showAura={false}
+                                />
                             </motion.div>
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        {currentUser.username} <span style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 400 }}>(Kamu)</span>
+                            <div className="battle-versus-info">
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
+                                    <span className="battle-player-name">
+                                        {currentUser.username} <span style={{ color: 'var(--color-signal-orange)', fontSize: '10px', fontWeight: 400 }}>(Kamu)</span>
                                     </span>
                                     <span
+                                        className="battle-level-badge"
                                         style={{
-                                            fontSize: '10px',
-                                            padding: '2px 7px',
-                                            borderRadius: '9999px',
                                             backgroundColor: 'rgba(245, 197, 66, 0.15)',
                                             border: '1px solid rgba(245, 197, 66, 0.4)',
                                             color: 'var(--color-signal-orange)',
-                                            fontWeight: 700,
                                         }}
                                     >
                                         LV.{currentUser.level || 1}
                                     </span>
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div className="battle-school-name">
                                     {currentUser.school_name || 'Pelajar Hebat'} · {myClassInfo.label}
                                 </div>
                                 {/* Health Bar */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                                    <div
-                                        style={{
-                                            flex: 1,
-                                            maxWidth: '120px',
-                                            height: '5px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                            borderRadius: '9999px',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
+                                <div className="battle-hp-bar-wrapper">
+                                    <div className="battle-hp-bar-outer">
                                         <motion.div
                                             initial={{ width: '100%' }}
                                             animate={{ width: `${myHpPercent}%` }}
@@ -1316,12 +1293,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             }}
                                         />
                                     </div>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
+                                    <span className="battle-score-text" style={{ color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
                                         {myScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
                                     </span>
                                 </div>
                                 {/* Mana / Special Gauge */}
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                                <div className="battle-mp-row">
                                     <div
                                         style={{
                                             flex: 1,
@@ -1348,31 +1325,18 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             </div>
                         </div>
 
-                        {/* Center VS Pill */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                            <div
-                                style={{
-                                    fontFamily: 'var(--font-heading)',
-                                    fontSize: '12px',
-                                    fontWeight: 800,
-                                    color: 'var(--color-signal-orange)',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                    padding: '4px 14px',
-                                    borderRadius: '9999px',
-                                    border: '1px solid rgba(245, 197, 66, 0.35)',
-                                    letterSpacing: '0.08em',
-                                    boxShadow: '0 0 12px rgba(245, 197, 66, 0.2)',
-                                }}
-                            >
+                        {/* Center VS Badge */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                            <div className="battle-vs-badge">
                                 VS
                             </div>
-                            <span style={{ fontSize: '10px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                            <span style={{ fontSize: '9px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.04em' }}>
                                 {safeQuestionIndex + 1}/{questions.length}
                             </span>
                         </div>
 
                         {/* Player 2 (Opponent) */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right', position: 'relative' }}>
+                        <div className="battle-versus-col battle-versus-col-right" style={{ position: 'relative' }}>
                             {/* Floating Combat Text for Opponent */}
                             <AnimatePresence>
                                 {combatText?.target === 'opp' && (
@@ -1400,43 +1364,31 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 )}
                             </AnimatePresence>
 
-                            <div style={{ minWidth: 0, flex: 1 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
+                            <div className="battle-versus-info">
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', flexWrap: 'wrap' }}>
                                     <span
+                                        className="battle-level-badge"
                                         style={{
-                                            fontSize: '10px',
-                                            padding: '2px 7px',
-                                            borderRadius: '9999px',
                                             backgroundColor: 'rgba(0, 212, 255, 0.15)',
                                             border: '1px solid rgba(0, 212, 255, 0.4)',
                                             color: '#00d4ff',
-                                            fontWeight: 700,
                                         }}
                                     >
                                         LV.{opponent?.level || 1}
                                     </span>
-                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    <span className="battle-player-name">
                                         {opponent?.username || 'Lawan'}
                                     </span>
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <div className="battle-school-name">
                                     {opponent?.school_name || 'Pelajar'} · {oppClassInfo.label}
                                 </div>
                                 {/* Health Bar */}
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
+                                <div className="battle-hp-bar-wrapper" style={{ justifyContent: 'flex-end' }}>
+                                    <span className="battle-score-text" style={{ color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
                                         {opponentScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
                                     </span>
-                                    <div
-                                        style={{
-                                            flex: 1,
-                                            maxWidth: '120px',
-                                            height: '5px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                            borderRadius: '9999px',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
+                                    <div className="battle-hp-bar-outer">
                                         <motion.div
                                             initial={{ width: '100%' }}
                                             animate={{ width: `${oppHpPercent}%` }}
@@ -1450,7 +1402,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     </div>
                                 </div>
                                 {/* Mana / Special Gauge */}
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', marginTop: '3px' }}>
+                                <div className="battle-mp-row" style={{ justifyContent: 'flex-end' }}>
                                     <span style={{ fontSize: '9px', color: '#00d4ff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
                                         MP {oppMp}%
                                     </span>
@@ -1475,8 +1427,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                         />
                                     </div>
                                 </div>
-                                <div style={{ marginTop: '3px' }}>
-                                    <span style={{ fontSize: '10px', color: opponentFinished ? 'var(--color-vector-green)' : opponentAnsweredThisRound ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
+                                <div style={{ marginTop: '2px' }}>
+                                    <span className="battle-player-status" style={{ fontSize: '9.5px', color: opponentFinished ? 'var(--color-vector-green)' : opponentAnsweredThisRound ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
                                         {opponentFinished ? '✓ Selesai' : opponentAnsweredThisRound ? '⚡ Menjawab' : '🤔 Berpikir...'}
                                     </span>
                                 </div>
@@ -1501,7 +1453,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     boxShadow: oppAnimation === 'attack' ? '0 0 24px rgba(0, 212, 255, 0.6)' : oppAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(0, 212, 255, 0.2)',
                                 }}
                             >
-                                {oppClassInfo.emoji}
+                                <CharacterVisual
+                                    role={oppClassKey as any}
+                                    equipped={(opponent?.equipped_items as any) || {}}
+                                    size={44}
+                                    animationState={oppAnimation}
+                                    showAura={false}
+                                />
                             </motion.div>
                         </div>
                     </div>
@@ -1516,17 +1474,19 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '8px',
-                            padding: '8px 16px',
+                            padding: '8px 14px',
                             borderRadius: '10px',
                             backgroundColor: 'rgba(255, 255, 255, 0.03)',
                             border: '1px solid rgba(255, 255, 255, 0.07)',
-                            marginBottom: '18px',
+                            marginBottom: '16px',
                             fontSize: '12px',
                             color: 'var(--color-fog)',
                             textAlign: 'center',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
                         }}
                     >
-                        <span>{battleLog}</span>
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{battleLog}</span>
                     </motion.div>
 
                     {/* Question Card (Linearity Frosted Block) */}
@@ -1537,32 +1497,23 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -8 }}
                             transition={{ duration: 0.2 }}
+                            className="battle-question-card"
                             style={{
-                                padding: '22px',
                                 backgroundColor: 'var(--color-carbon)',
-                                borderRadius: '17.1429px',
+                                borderRadius: '14px',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
-                                marginBottom: '18px',
+                                marginBottom: '14px',
                             }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-                                <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 700, letterSpacing: '1px' }}>
-                                    PERTANYAAN {safeQuestionIndex + 1} DARI {questions.length}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '10px' }}>
+                                <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                    SOAL {safeQuestionIndex + 1}/{questions.length}
                                 </span>
-                                <span style={{ color: 'var(--color-steel)' }}>•</span>
-                                <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi yang tepat untuk melancarkan serangan duel:</span>
+                                <span className="battle-question-subtitle" style={{ color: 'var(--color-steel)' }}>•</span>
+                                <span className="battle-question-subtitle" style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi untuk menyerang lawan:</span>
                             </div>
 
-                            <h3
-                                style={{
-                                    fontFamily: 'var(--font-inter)',
-                                    fontSize: '16px',
-                                    fontWeight: 500,
-                                    color: '#ffffff',
-                                    lineHeight: 1.6,
-                                    margin: 0,
-                                }}
-                            >
+                            <h3 className="battle-question-text">
                                 {q.question_text}
                             </h3>
                         </motion.div>
@@ -1609,32 +1560,25 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     whileHover={selectedAnswer === null ? { y: -2, borderColor: 'rgba(255, 255, 255, 0.25)' } : {}}
                                     whileTap={selectedAnswer === null ? { scale: 0.99 } : {}}
                                     onClick={() => handleAnswer(idx)}
+                                    className="battle-option-btn"
                                     style={{
-                                        textAlign: 'left',
-                                        padding: '14px 16px',
-                                        borderRadius: '12px',
                                         cursor: selectedAnswer !== null ? 'default' : 'pointer',
                                         backgroundColor: bg,
                                         border: `1px solid ${border}`,
                                         color: textColor,
-                                        fontSize: '13px',
-                                        fontWeight: 500,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '12px',
                                         transition: 'all 0.15s ease',
                                     }}
                                 >
                                     <span
                                         style={{
-                                            width: '26px',
-                                            height: '26px',
+                                            width: '24px',
+                                            height: '24px',
                                             borderRadius: '6px',
                                             backgroundColor: badgeBg,
                                             color: badgeColor,
                                             fontFamily: 'var(--font-heading)',
                                             fontWeight: 700,
-                                            fontSize: '12px',
+                                            fontSize: '11px',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
@@ -1643,18 +1587,18 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     >
                                         {String.fromCharCode(65 + idx)}
                                     </span>
-                                    <span style={{ flex: 1, lineHeight: 1.4 }}>{opt}</span>
-                                    {showAnswer && isCorrect && <CheckCircle size={16} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />}
-                                    {showAnswer && isSelected && !isCorrect && <XCircle size={16} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />}
+                                    <span className="battle-option-text">{opt}</span>
+                                    {showAnswer && isCorrect && <CheckCircle size={15} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />}
+                                    {showAnswer && isSelected && !isCorrect && <XCircle size={15} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />}
                                 </motion.button>
                             )
                         })}
                     </div>
 
                     {/* Bottom Toolbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--color-signal-orange)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            🔥 Bonus Role: {classBenefitText}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--color-signal-orange)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            🔥 {classBenefitText}
                         </span>
 
                         <motion.button
@@ -1663,8 +1607,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setShowSurrenderConfirm(true)}
                             style={{
-                                padding: '6px 14px',
-                                borderRadius: '9999px',
+                                padding: '6px 12px',
+                                borderRadius: '8px',
                                 cursor: 'pointer',
                                 backgroundColor: 'rgba(232, 64, 64, 0.08)',
                                 border: '1px solid rgba(232, 64, 64, 0.3)',
@@ -1674,6 +1618,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 display: 'inline-flex',
                                 alignItems: 'center',
                                 gap: '4px',
+                                flexShrink: 0,
                             }}
                         >
                             🚩 Menyerah
