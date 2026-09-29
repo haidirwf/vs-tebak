@@ -551,24 +551,59 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         }}
                     >
                         {/* Player 1 (You) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+                            {/* Floating Combat Text for Me */}
+                            <AnimatePresence>
+                                {combatText?.target === 'me' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.7 }}
+                                        animate={{ opacity: 1, y: -26, scale: 1.15 }}
+                                        exit={{ opacity: 0, y: -40 }}
+                                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-12px',
+                                            left: '4px',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 900,
+                                            fontSize: '14px',
+                                            color: 'var(--accent-red)',
+                                            textShadow: '0 0 10px rgba(232, 64, 64, 0.9), 0 2px 4px #000000',
+                                            pointerEvents: 'none',
+                                            zIndex: 25,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        {combatText.text}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.div
+                                animate={
+                                    meAnimation === 'attack'
+                                        ? { x: [0, 18, 0], scale: [1, 1.15, 1] }
+                                        : meAnimation === 'hurt'
+                                        ? { x: [-6, 6, -4, 4, 0], scale: [1, 0.95, 1] }
+                                        : { x: 0, scale: 1 }
+                                }
+                                transition={{ duration: 0.35 }}
                                 style={{
                                     width: '46px',
                                     height: '46px',
                                     borderRadius: '10px',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                    border: '1px solid rgba(245, 197, 66, 0.4)',
+                                    backgroundColor: meAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(245, 197, 66, 0.12)',
+                                    border: `1px solid ${meAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(245, 197, 66, 0.4)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontSize: '22px',
                                     flexShrink: 0,
-                                    boxShadow: '0 0 16px rgba(245, 197, 66, 0.2)',
+                                    boxShadow: meAnimation === 'attack' ? '0 0 24px rgba(245, 197, 66, 0.6)' : meAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(245, 197, 66, 0.2)',
                                 }}
                             >
                                 ⚔️
-                            </div>
+                            </motion.div>
                             <div style={{ minWidth: 0, flex: 1 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
                                     <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
@@ -617,6 +652,31 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                         {myScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
                                     </span>
                                 </div>
+                                {/* Mana / Special Gauge */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '3px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            animate={{ width: `${myMp}%` }}
+                                            transition={{ duration: 0.3 }}
+                                            style={{
+                                                height: '100%',
+                                                background: 'linear-gradient(90deg, #3b82f6, #a855f7)',
+                                            }}
+                                        />
+                                    </div>
+                                    <span style={{ fontSize: '9px', color: '#a855f7', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                                        MP {myMp}%
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -644,7 +704,34 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         </div>
 
                         {/* Player 2 (Computer Bot) */}
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right', position: 'relative' }}>
+                            {/* Floating Combat Text for Bot */}
+                            <AnimatePresence>
+                                {combatText?.target === 'bot' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.7 }}
+                                        animate={{ opacity: 1, y: -26, scale: 1.25 }}
+                                        exit={{ opacity: 0, y: -40 }}
+                                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-12px',
+                                            right: '4px',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 900,
+                                            fontSize: '14px',
+                                            color: combatText.type === 'crit' ? '#ff3b30' : 'var(--color-signal-orange)',
+                                            textShadow: '0 0 12px rgba(255, 59, 48, 0.9), 0 2px 4px #000000',
+                                            pointerEvents: 'none',
+                                            zIndex: 25,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        {combatText.text}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
                             <div style={{ minWidth: 0, flex: 1 }}>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
                                     <span
@@ -694,31 +781,88 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                         />
                                     </div>
                                 </div>
+                                {/* Mana / Special Gauge */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', marginTop: '3px' }}>
+                                    <span style={{ fontSize: '9px', color: '#00d4ff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                                        MP {botMp}%
+                                    </span>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '3px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            animate={{ width: `${botMp}%` }}
+                                            transition={{ duration: 0.3 }}
+                                            style={{
+                                                height: '100%',
+                                                background: 'linear-gradient(90deg, #06b6d4, #3b82f6)',
+                                                marginLeft: 'auto',
+                                            }}
+                                        />
+                                    </div>
+                                </div>
                                 <div style={{ marginTop: '3px' }}>
                                     <span style={{ fontSize: '10px', color: botAnswered ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
                                         {botAnswered ? '⚡ Sudah Menjawab!' : '🤔 Menganalisis...'}
                                     </span>
                                 </div>
                             </div>
-                            <div
+                            <motion.div
+                                animate={
+                                    botAnimation === 'attack'
+                                        ? { x: [0, -18, 0], scale: [1, 1.15, 1] }
+                                        : botAnimation === 'hurt'
+                                        ? { x: [6, -6, 4, -4, 0], scale: [1, 0.95, 1] }
+                                        : { x: 0, scale: 1 }
+                                }
+                                transition={{ duration: 0.35 }}
                                 style={{
                                     width: '46px',
                                     height: '46px',
                                     borderRadius: '10px',
-                                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                                    border: '1px solid rgba(0, 212, 255, 0.35)',
+                                    backgroundColor: botAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(0, 212, 255, 0.1)',
+                                    border: `1px solid ${botAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(0, 212, 255, 0.35)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontSize: '22px',
                                     flexShrink: 0,
-                                    boxShadow: '0 0 16px rgba(0, 212, 255, 0.2)',
+                                    boxShadow: botAnimation === 'attack' ? '0 0 24px rgba(0, 212, 255, 0.6)' : botAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(0, 212, 255, 0.2)',
                                 }}
                             >
                                 🤖
-                            </div>
+                            </motion.div>
                         </div>
                     </div>
+
+                    {/* RPG Combat Feed / Action Banner */}
+                    <motion.div
+                        key={battleLog}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                            border: '1px solid rgba(255, 255, 255, 0.07)',
+                            marginBottom: '18px',
+                            fontSize: '12px',
+                            color: 'var(--color-fog)',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <span>{battleLog}</span>
+                    </motion.div>
 
                     {/* Question Card */}
                     <AnimatePresence mode="wait">
