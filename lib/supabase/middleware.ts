@@ -28,7 +28,7 @@ export async function updateSession(request: NextRequest) {
     )
 
     // Protected routes — redirect to login if not authenticated
-    const protectedPaths = ['/dashboard', '/modules', '/battle', '/leaderboard', '/profile']
+    const protectedPaths = ['/dashboard', '/modules', '/battle', '/leaderboard', '/profile', '/voucher']
     const isProtected = protectedPaths.some(p => request.nextUrl.pathname.startsWith(p))
     const authPaths = ['/login', '/register']
     const isAuthPage = authPaths.some(p => request.nextUrl.pathname.startsWith(p))
@@ -38,24 +38,47 @@ export async function updateSession(request: NextRequest) {
         return supabaseResponse
     }
 
-    let user = null
-    let staleAuthCookieNames: string[] = []
-    const { data, error } = await supabase.auth.getUser()
-    if (error?.code === 'refresh_token_not_found') {
-        // Remove stale auth cookies so next request starts with a clean session.
-        staleAuthCookieNames = request.cookies
-            .getAll()
-            .filter(cookie => cookie.name.startsWith('sb-') && cookie.name.includes('auth-token'))
-            .map(cookie => cookie.name)
-        staleAuthCookieNames.forEach(cookieName => {
-            request.cookies.delete(cookieName)
-            supabaseResponse.cookies.set(cookieName, '', { path: '/', maxAge: 0 })
-        })
-    } else if (data?.user) {
-        user = data.user
+    // Fast-path cookie presence check
+    const hasAuthCookie = request.cookies
+        .getAll()
+        .some(cookie => cookie.name.startsWith('sb-') && cookie.name.includes('auth-token') && cookie.value.length > 20)
+
+    if (isProtected && !hasAuthCookie) {
+        const url = request.nextUrl.clone()
+        url.pathname = '/login'
+        return NextResponse.redirect(url)
     }
 
-    if (isProtected && !user) {
+    let user = null
+    let staleAuthCookieNames: string[] = []
+
+    try {
+        // Beri timeout 2.5s agar tidak membeku 10 detik jika cloud Supabase lambat
+        const getUserPromise = supabase.auth.getUser()
+        const timeoutPromise = new Promise<{ data: { user: null }; error: { message: string; code: string } }>((resolve) =>
+            setTimeout(() => resolve({ data: { user: null }, error: { message: 'timeout', code: 'TIMEOUT' } }), 2500)
+        )
+
+        const { data, error } = await Promise.race([getUserPromise, timeoutPromise])
+
+        if (error?.code === 'refresh_token_not_found') {
+            staleAuthCookieNames = request.cookies
+                .getAll()
+                .filter(cookie => cookie.name.startsWith('sb-') && cookie.name.includes('auth-token'))
+                .map(cookie => cookie.name)
+            staleAuthCookieNames.forEach(cookieName => {
+                request.cookies.delete(cookieName)
+                supabaseResponse.cookies.set(cookieName, '', { path: '/', maxAge: 0 })
+            })
+        } else if (data?.user) {
+            user = data.user
+        }
+    } catch {
+        // Fallback: jika timeout/error tapi auth cookie ada, biarkan lewat agar client-side yang handle
+    }
+
+    // Jika pasti tidak ada user dan tidak ada cookie auth
+    if (isProtected && !user && !hasAuthCookie) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         const redirectResponse = NextResponse.redirect(url)
@@ -66,7 +89,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     // Redirect authenticated users away from auth pages
-    if (isAuthPage && user) {
+    if (isAuthPage && (user || hasAuthCookie)) {
         const url = request.nextUrl.clone()
         url.pathname = '/dashboard'
         return NextResponse.redirect(url)
