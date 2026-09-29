@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { motion } from 'framer-motion'
 import CharacterCard from '@/components/character/CharacterCard'
 import { Trophy, BookOpen, Zap, Target } from 'lucide-react'
 import BadgeIcon from '@/components/character/BadgeIcon'

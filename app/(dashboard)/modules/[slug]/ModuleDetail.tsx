@@ -337,7 +337,11 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                 maxWidth: '800px',
                 margin: '0 auto',
                 padding: '24px',
-                paddingBottom: '24px',
+                paddingBottom: '32px',
+                minHeight: 'calc(100vh - 56px)',
+                display: 'flex',
+                flexDirection: 'column',
+                boxSizing: 'border-box',
             }}
         >
             {/* Back */}
@@ -408,7 +412,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
 
             {/* Content / Steps */}
             {phase === 'lesson' ? (
-                <div>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
                     {/* Step Navigation */}
                     <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', flexWrap: 'wrap' }}>
                         {steps.map((step, i) => (
@@ -524,16 +528,16 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                     <div
                         className="module-nav-floating"
                         style={{
-                            bottom: '10px',
-                            zIndex: 30,
+                            marginTop: 'auto',
                             display: 'flex',
                             justifyContent: 'space-between',
                             gap: '12px',
-                            padding: '10px 12px',
+                            padding: '12px 16px',
                             borderRadius: '10px',
                             border: '1px solid var(--border)',
                             backgroundColor: 'color-mix(in srgb, var(--bg-primary) 92%, transparent)',
-                            backdropFilter: 'blur(6px)',
+                            backdropFilter: 'blur(8px)',
+                            WebkitBackdropFilter: 'blur(8px)',
                         }}
                     >
                         <button
