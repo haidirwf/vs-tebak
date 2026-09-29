@@ -197,6 +197,7 @@ export default function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
+                            prefetch={true}
                             className={item.href === '/profile' ? 'dashboard-profile-nav-link' : undefined}
                             style={{ textDecoration: 'none' }}
                         >

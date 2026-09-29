@@ -7,9 +7,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react'],
   },
   onDemandEntries: {
-    // Keep fewer pages in memory during dev to reduce RAM spikes.
-    maxInactiveAge: 60 * 1000,
-    pagesBufferLength: 2,
+    maxInactiveAge: 300 * 1000,
+    pagesBufferLength: 10,
   },
 };
 

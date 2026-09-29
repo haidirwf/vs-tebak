@@ -1,5 +1,7 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import CharacterCard from '@/components/character/CharacterCard'
 import DailyQuestList from '@/components/quest/DailyQuestList'
 import DashboardStats from '@/components/dashboard/DashboardStats'
@@ -7,49 +9,84 @@ import RecentActivity from '@/components/dashboard/RecentActivity'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
 import { isStreakActiveToday } from '@/lib/game/streak'
+import { useUserStore } from '@/stores/userStore'
+import { useContentStore } from '@/stores/contentStore'
+import { createClient } from '@/lib/supabase/client'
 
-export default async function DashboardPage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/login')
+export default function DashboardPage() {
+    const router = useRouter()
+    const { profile } = useUserStore()
+    const {
+        quests,
+        userQuests,
+        completedModules,
+        xpLogs,
+        dashboardFetchedAt,
+        setDashboardData,
+    } = useContentStore()
+
+    const [isFetching, setIsFetching] = useState(!dashboardFetchedAt)
     const today = format(new Date(), 'yyyy-MM-dd')
 
-    const [profileRes, questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
-        supabase
-            .from('profiles')
-            .select('id, username, full_name, school_name, city, avatar_class, level, xp, xp_to_next_level, streak_count, last_active, created_at')
-            .eq('id', user.id)
-            .single(),
-        supabase
-            .from('daily_quests')
-            .select('id, title, description, quest_type, target_value, xp_reward, date')
-            .eq('date', today),
-        supabase
-            .from('user_modules')
-            .select('completed_at, modules(title, category, xp_reward)')
-            .eq('user_id', user.id)
-            .eq('status', 'completed')
-            .order('completed_at', { ascending: false })
-            .limit(5),
-        supabase
-            .from('xp_logs')
-            .select('xp_amount, reason, created_at')
-            .eq('user_id', user.id)
-            .order('created_at', { ascending: false })
-            .limit(10),
-        supabase
-            .from('user_daily_quests')
-            .select('id, user_id, quest_id, current_value, is_completed, date')
-            .eq('user_id', user.id)
-            .eq('date', today),
-    ])
+    useEffect(() => {
+        const supabase = createClient()
 
-    const profile = profileRes.data
-    const quests = questsRes.data || []
-    const completedModules = userModulesRes.data || []
+        async function fetchDashboard() {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) {
+                router.push('/login')
+                return
+            }
 
-    if (!profile) redirect('/login')
-    const activeStreakCount = isStreakActiveToday(profile.last_active, profile.streak_count)
+            try {
+                const [questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
+                    supabase
+                        .from('daily_quests')
+                        .select('id, title, description, quest_type, target_value, xp_reward, date')
+                        .eq('date', today),
+                    supabase
+                        .from('user_modules')
+                        .select('completed_at, modules(title, category, xp_reward)')
+                        .eq('user_id', user.id)
+                        .eq('status', 'completed')
+                        .order('completed_at', { ascending: false })
+                        .limit(5),
+                    supabase
+                        .from('xp_logs')
+                        .select('xp_amount, reason, created_at')
+                        .eq('user_id', user.id)
+                        .order('created_at', { ascending: false })
+                        .limit(10),
+                    supabase
+                        .from('user_daily_quests')
+                        .select('id, user_id, quest_id, current_value, is_completed, date')
+                        .eq('user_id', user.id)
+                        .eq('date', today),
+                ])
+
+                setDashboardData({
+                    quests: questsRes.data || [],
+                    userQuests: userQuestsRes.data || [],
+                    completedModules: userModulesRes.data || [],
+                    xpLogs: xpLogRes.data || [],
+                })
+            } catch (err) {
+                console.error('Error loading dashboard data:', err)
+            } finally {
+                setIsFetching(false)
+            }
+        }
+
+        // Cache 60 seconds stale-while-revalidate
+        const isStale = !dashboardFetchedAt || Date.now() - dashboardFetchedAt > 60_000
+        if (isStale) {
+            fetchDashboard()
+        } else {
+            setIsFetching(false)
+        }
+    }, [today, dashboardFetchedAt, setDashboardData, router])
+
+    const activeStreakCount = profile && isStreakActiveToday(profile.last_active, profile.streak_count)
         ? profile.streak_count
         : 0
 
@@ -63,13 +100,15 @@ export default async function DashboardPage() {
                     {dateStr}
                 </p>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700 }}>
-                    Selamat datang, {profile.username}! 👋
+                    Selamat datang{profile ? `, ${profile.username}` : ''}! 👋
                 </h1>
             </div>
 
-            <div style={{ marginBottom: '20px' }}>
-                <CharacterCard profile={profile} showStats={true} />
-            </div>
+            {profile && (
+                <div style={{ marginBottom: '20px' }}>
+                    <CharacterCard profile={profile} showStats={true} />
+                </div>
+            )}
 
             <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
                 <div>
@@ -84,7 +123,7 @@ export default async function DashboardPage() {
                                 { name: 'Archer', desc: '+25% XP Menang Battle', color: 'var(--accent-green)', bg: 'var(--accent-green-bg)', icon: '🏹' },
                                 { name: 'Healer', desc: '+25% XP Modul Produktivitas', color: 'var(--accent-gold)', bg: 'var(--accent-gold-bg)', icon: '✨' },
                             ].map(role => {
-                                const isCurrent = role.name.toLowerCase() === profile.avatar_class
+                                const isCurrent = role.name.toLowerCase() === profile?.avatar_class
                                 return (
                                     <div key={role.name} style={{
                                         padding: '12px',
@@ -115,18 +154,18 @@ export default async function DashboardPage() {
                 <div>
                     <DashboardStats
                         modulesCompleted={completedModules.length}
-                        totalXp={profile.xp}
+                        totalXp={profile?.xp || 0}
                         streak={activeStreakCount}
-                        level={profile.level}
+                        level={profile?.level || 1}
                     />
                 </div>
 
                 <div>
-                    <DailyQuestList quests={quests} userQuests={userQuestsRes.data || []} />
+                    <DailyQuestList quests={quests} userQuests={userQuests} />
                 </div>
 
                 <div>
-                    <RecentActivity modules={completedModules} xpLogs={xpLogRes.data || []} />
+                    <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
             </div>
         </div>

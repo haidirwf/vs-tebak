@@ -1,38 +1,95 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
+'use client'
+
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import CharacterCard from '@/components/character/CharacterCard'
 import { Trophy, BookOpen, Zap, Target } from 'lucide-react'
-import { ensureUserBadges } from '@/lib/game/badges'
 import BadgeIcon from '@/components/character/BadgeIcon'
+import { useUserStore } from '@/stores/userStore'
+import { useContentStore } from '@/stores/contentStore'
+import { createClient } from '@/lib/supabase/client'
+import { ensureUserBadges } from '@/lib/game/badges'
 
-export default async function ProfilePage() {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/login')
-    await ensureUserBadges(supabase, user.id)
+export default function ProfilePage() {
+    const router = useRouter()
+    const { profile } = useUserStore()
+    const {
+        profileBadges,
+        profileCompletedModules,
+        profileBattlesWon,
+        profileBattlesTotal,
+        profileStatsFetchedAt,
+        setProfileStatsData,
+    } = useContentStore()
 
-    const [profileRes, badgesRes, completedRes, battlesRes] = await Promise.all([
-        supabase.from('profiles').select('id, username, full_name, school_name, city, avatar_class, level, xp, xp_to_next_level, streak_count, last_active, created_at').eq('id', user.id).single(),
-        supabase.from('user_badges').select('id, badges(name, icon_url)').eq('user_id', user.id),
-        supabase.from('user_modules').select('id, modules(title)').eq('user_id', user.id).eq('status', 'completed'),
-        supabase.from('battles').select('winner_id').or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`).eq('status', 'finished'),
-    ])
+    const [isLoading, setIsLoading] = useState(!profileStatsFetchedAt)
 
-    const profile = profileRes.data
-    if (!profile) redirect('/login')
+    useEffect(() => {
+        const supabase = createClient()
 
-    const badges = badgesRes.data || []
-    const completedModules = completedRes.data || []
-    const battles = battlesRes.data || []
-    const battlesWon = battles.filter(b => b.winner_id === user.id).length
-    const normalizedBadges = badges.map((ub) => ({
-        id: ub.id,
-        badge: Array.isArray(ub.badges) ? ub.badges[0] : ub.badges,
-    }))
-    const normalizedCompletedModules = completedModules.map((um) => ({
-        id: um.id,
-        module: Array.isArray(um.modules) ? um.modules[0] : um.modules,
-    }))
+        async function fetchProfileData() {
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) {
+                router.push('/login')
+                return
+            }
+
+            try {
+                await ensureUserBadges(supabase, user.id)
+
+                const [badgesRes, completedRes, battlesRes] = await Promise.all([
+                    supabase.from('user_badges').select('id, badges(name, icon_url)').eq('user_id', user.id),
+                    supabase.from('user_modules').select('id, modules(title)').eq('user_id', user.id).eq('status', 'completed'),
+                    supabase.from('battles').select('winner_id').or(`player1_id.eq.${user.id},player2_id.eq.${user.id}`).eq('status', 'finished'),
+                ])
+
+                const badges = badgesRes.data || []
+                const completedModules = completedRes.data || []
+                const battles = battlesRes.data || []
+                const battlesWon = battles.filter((b) => b.winner_id === user.id).length
+
+                const normalizedBadges = badges.map((ub: any) => ({
+                    id: ub.id,
+                    badge: Array.isArray(ub.badges) ? ub.badges[0] : ub.badges,
+                }))
+                const normalizedCompletedModules = completedModules.map((um: any) => ({
+                    id: um.id,
+                    module: Array.isArray(um.modules) ? um.modules[0] : um.modules,
+                }))
+
+                setProfileStatsData({
+                    badges: normalizedBadges,
+                    completedModules: normalizedCompletedModules,
+                    battlesWon,
+                    battlesTotal: battles.length,
+                })
+            } catch (err) {
+                console.error('Error loading profile stats:', err)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        const isStale = !profileStatsFetchedAt || Date.now() - profileStatsFetchedAt > 60_000
+        if (isStale) {
+            fetchProfileData()
+        } else {
+            setIsLoading(false)
+        }
+    }, [profileStatsFetchedAt, setProfileStatsData, router])
+
+    if (!profile) {
+        return (
+            <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
+                <div className="sq-skeleton" style={{ height: '180px', marginBottom: '20px' }} />
+                <div className="sq-skeleton" style={{ height: '240px' }} />
+            </div>
+        )
+    }
+
+    const winrate = profileBattlesTotal > 0
+        ? `${Math.round((profileBattlesWon / profileBattlesTotal) * 100)}%`
+        : '0%'
 
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
@@ -46,10 +103,10 @@ export default async function ProfilePage() {
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                         {[
-                            { label: 'Modul Diselesaikan', value: completedModules.length, icon: <BookOpen size={14} />, color: 'var(--accent-cyan)' },
-                            { label: 'Battle Dimainkan', value: battles.length, icon: <Zap size={14} />, color: 'var(--accent-red)' },
-                            { label: 'Battle Dimenangi', value: battlesWon, icon: <Trophy size={14} />, color: 'var(--accent-gold)' },
-                            { label: 'Winrate Battle', value: battles.length ? `${Math.round((battlesWon / battles.length) * 100)}%` : '0%', icon: <Target size={14} />, color: 'var(--accent-green)' },
+                            { label: 'Modul Diselesaikan', value: profileCompletedModules.length, icon: <BookOpen size={14} />, color: 'var(--accent-cyan)' },
+                            { label: 'Battle Dimainkan', value: profileBattlesTotal, icon: <Zap size={14} />, color: 'var(--accent-red)' },
+                            { label: 'Battle Dimenangi', value: profileBattlesWon, icon: <Trophy size={14} />, color: 'var(--accent-gold)' },
+                            { label: 'Winrate Battle', value: winrate, icon: <Target size={14} />, color: 'var(--accent-green)' },
                         ].map((stat) => (
                             <div key={stat.label} style={{
                                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -69,15 +126,15 @@ export default async function ProfilePage() {
             {/* Badges */}
             <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
                 <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
-                    🏅 Badge & Achievement ({badges.length})
+                    🏅 Badge & Achievement ({profileBadges.length})
                 </h3>
-                {badges.length === 0 ? (
+                {profileBadges.length === 0 ? (
                     <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
                         Belum ada badge. Selesaikan quest dan battle untuk mendapatkan badge!
                     </p>
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
-                        {normalizedBadges.map((ub) => (
+                        {profileBadges.map((ub: any) => (
                             <div key={ub.id} className="hover-lift" style={{
                                 backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--accent-gold)33',
                                 borderRadius: '6px', padding: '12px', textAlign: 'center', cursor: 'pointer',
@@ -95,13 +152,13 @@ export default async function ProfilePage() {
             {/* Completed Modules */}
             <div className="card" style={{ padding: '20px' }}>
                 <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
-                    📚 Modul Selesai ({completedModules.length})
+                    📚 Modul Selesai ({profileCompletedModules.length})
                 </h3>
-                {completedModules.length === 0 ? (
+                {profileCompletedModules.length === 0 ? (
                     <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Belum ada modul yang diselesaikan. Mulai belajar sekarang!</p>
                 ) : (
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }}>
-                        {normalizedCompletedModules.map((um) => (
+                        {profileCompletedModules.map((um: any) => (
                             <div key={um.id} style={{
                                 padding: '10px 12px', borderRadius: '4px',
                                 backgroundColor: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.2)',
