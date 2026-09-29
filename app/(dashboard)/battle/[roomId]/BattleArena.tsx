@@ -5,8 +5,8 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Question, Battle, Profile } from '@/types'
-import { Sword, Shield, CheckCircle } from 'lucide-react'
-import { getClassBonusDescription } from '@/lib/game/xp'
+import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords } from 'lucide-react'
+import { getClassBonusDescription, AVATAR_CLASS_STATS } from '@/lib/game/xp'
 
 interface BattleArenaProps {
     battle: Battle
@@ -56,6 +56,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
     const [xpResult, setXpResult] = useState<{ base: number; bonus: number } | null>(null)
     const [finalOutcome, setFinalOutcome] = useState<BattleOutcome | null>(null)
+    const [comboCount, setComboCount] = useState(0)
+    const [myHp, setMyHp] = useState(100)
+    const [oppHp, setOppHp] = useState(100)
+    const [myMp, setMyMp] = useState(30)
+    const [oppMp, setOppMp] = useState(30)
+    const [combatText, setCombatText] = useState<{ target: 'me' | 'opp'; text: string; type: 'crit' | 'damage' | 'miss' } | null>(null)
+    const [meAnimation, setMeAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
+    const [oppAnimation, setOppAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
+    const [battleLog, setBattleLog] = useState<string>('Pilih jawaban terbaik untuk melancarkan serangan duel!')
+    const [opponentAnsweredThisRound, setOpponentAnsweredThisRound] = useState(false)
+    const [copiedRoomCode, setCopiedRoomCode] = useState(false)
     const classBenefitText = getClassBonusDescription(currentUser.avatar_class)
 
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
@@ -246,12 +257,21 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 if (prev <= 1) {
                     clearInterval(timerRef.current!)
                     setShowAnswer(true)
+                    setComboCount(0)
+                    const hpDamage = Math.max(12, Math.floor(100 / Math.max(questions.length, 1)))
+                    setMyHp(hp => Math.max(10, hp - hpDamage))
+                    setCombatText({ target: 'me', text: '⏰ TIMEOUT! -15 HP', type: 'miss' })
+                    setMeAnimation('hurt')
+                    setBattleLog('⌛ Waktu habis! Kamu kehilangan giliran dan terkena penalti HP.')
+                    setTimeout(() => setMeAnimation('idle'), 600)
+                    setTimeout(() => setCombatText(null), 1200)
                     setTimeout(() => {
                         if (currentQ < questions.length - 1) {
                             setCurrentQ(q => q + 1)
                             setTimeLeft(15)
                             setSelectedAnswer(null)
                             setShowAnswer(false)
+                            setOpponentAnsweredThisRound(false)
                         } else {
                             endBattle(myScore, opponentScore)
                         }
@@ -308,6 +328,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             .on('broadcast', { event: 'score_update' }, ({ payload }) => {
                 if (payload.player_id !== currentUser.id) {
                     setOpponentScore(payload.score)
+                    setOpponentAnsweredThisRound(true)
+                    setOppAnimation('attack')
+                    setOppMp(mp => Math.min(100, mp + 20))
+                    setBattleLog(`⚡ Lawan telah melancarkan serangannya!`)
+                    setTimeout(() => setOppAnimation('idle'), 600)
                 }
             })
             .on('postgres_changes', {
@@ -555,6 +580,45 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const newScore = myScore + (isCorrect ? 10 + bonus : 0)
         setMyScore(newScore)
 
+        const hpDamage = Math.max(12, Math.floor(100 / Math.max(questions.length, 1)))
+        if (isCorrect) {
+            const nextCombo = comboCount + 1
+            setComboCount(nextCombo)
+            const isCrit = nextCombo >= 2
+            const effectiveDamage = isCrit ? hpDamage + 8 : hpDamage
+            setOppHp(prev => Math.max(10, prev - effectiveDamage))
+            setMyMp(mp => Math.min(100, mp + 25))
+            setCombatText({
+                target: 'opp',
+                text: isCrit ? `💥 CRIT! -${effectiveDamage} HP` : `⚔️ -${effectiveDamage} HP`,
+                type: isCrit ? 'crit' : 'damage',
+            })
+            setMeAnimation('attack')
+            setOppAnimation('hurt')
+            setBattleLog(
+                isCrit
+                    ? `🔥 COMBO x${nextCombo}! Serangan kritikal ${myClassInfo.label} mendarat telak!`
+                    : `⚔️ Serangan ${myClassInfo.label} menembus pertahanan lawan! (-${effectiveDamage} HP)`
+            )
+            setTimeout(() => {
+                setMeAnimation('idle')
+                setOppAnimation('idle')
+            }, 600)
+            setTimeout(() => setCombatText(null), 1100)
+        } else {
+            setComboCount(0)
+            setMyHp(prev => Math.max(10, prev - hpDamage))
+            setCombatText({
+                target: 'me',
+                text: `❌ MISS! -${hpDamage} HP`,
+                type: 'miss',
+            })
+            setMeAnimation('hurt')
+            setBattleLog(`🛡️ Serangan meleset! Kamu terkena serangan balik lawan (-${hpDamage} HP).`)
+            setTimeout(() => setMeAnimation('idle'), 600)
+            setTimeout(() => setCombatText(null), 1100)
+        }
+
         channelRef.current?.send({
             type: 'broadcast', event: 'score_update',
             payload: { player_id: currentUser.id, score: newScore }
@@ -566,43 +630,146 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 setTimeLeft(15)
                 setSelectedAnswer(null)
                 setShowAnswer(false)
+                setOpponentAnsweredThisRound(false)
             } else {
                 endBattle(newScore, opponentScore)
             }
         }, 1200)
     }
 
+    // Helper class info
+    const myClassKey = (currentUser.avatar_class || 'warrior').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
+    const myClassInfo = AVATAR_CLASS_STATS[myClassKey] || AVATAR_CLASS_STATS.warrior
+    const oppClassKey = (opponent?.avatar_class || 'mage').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
+    const oppClassInfo = AVATAR_CLASS_STATS[oppClassKey] || AVATAR_CLASS_STATS.mage
+    const myHpPercent = Math.max(10, Math.min(100, myHp))
+    const oppHpPercent = Math.max(10, Math.min(100, oppHp))
+
+    const handleCopyRoomCode = () => {
+        if (!battle?.room_code) return
+        navigator.clipboard.writeText(battle.room_code)
+        setCopiedRoomCode(true)
+        setTimeout(() => setCopiedRoomCode(false), 2000)
+    }
+
     // Phase: Waiting for opponent (only player1 sees this)
     if (phase === 'waiting') {
         return (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', gap: '24px', textAlign: 'center' }}>
-                <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}>
-                    <Sword size={48} style={{ color: 'var(--accent-gold)' }} />
-                </motion.div>
-                <div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, marginBottom: '8px' }}>Menunggu Lawan...</h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '16px' }}>Bagikan kode room ke temanmu</p>
-                    <div style={{
-                        display: 'inline-block', padding: '12px 24px', borderRadius: '4px',
-                        backgroundColor: 'rgba(245,197,66,0.1)', border: '2px solid var(--accent-gold)',
-                        fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700,
-                        color: 'var(--accent-gold)', letterSpacing: '6px',
-                    }}>
-                        {battle.room_code}
-                    </div>
-                </div>
-                <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    onClick={handleExitGame}
-                    style={{
-                        padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
-                        backgroundColor: 'rgba(232, 64, 64, 0.1)', border: '1px solid var(--accent-red)',
-                        color: 'var(--accent-red)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
-                    }}
+            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="product-demo-panel"
+                    style={{ width: '100%', maxWidth: '640px', textAlign: 'center' }}
                 >
-                    Keluar Permainan
-                </motion.button>
+                    {/* Topbar */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ width: '8px', height: '8px', borderRadius: '9999px', backgroundColor: 'var(--color-signal-orange)', boxShadow: '0 0 8px var(--color-signal-orange)' }} />
+                            <span style={{ fontFamily: 'var(--font-inter)', fontSize: '12px', fontWeight: 500, color: '#ffffff', letterSpacing: '0.04em' }}>
+                                MENUNGGU PENANTANG BATTLE 1V1
+                            </span>
+                        </div>
+                        <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
+                            ID: {battle.id.slice(0, 8)}
+                        </span>
+                    </div>
+
+                    {/* Animated Radar Swords */}
+                    <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <motion.div
+                            animate={{ rotate: 360 }}
+                            transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
+                            style={{
+                                position: 'absolute',
+                                inset: 0,
+                                borderRadius: '9999px',
+                                border: '2px dashed rgba(245, 197, 66, 0.4)',
+                            }}
+                        />
+                        <div
+                            style={{
+                                width: '60px',
+                                height: '60px',
+                                borderRadius: '16px',
+                                backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                fontSize: '26px',
+                                boxShadow: '0 0 20px rgba(245, 197, 66, 0.25)',
+                            }}
+                        >
+                            {myClassInfo.emoji}
+                        </div>
+                    </div>
+
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
+                        Menunggu Lawan Masuk...
+                    </h2>
+                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', maxWidth: '440px', margin: '0 auto 20px', lineHeight: 1.5 }}>
+                        Bagikan kode room ini kepada teman atau rekan sekelasmu untuk bergabung ke dalam duel:
+                    </p>
+
+                    {/* Room Code Card */}
+                    <div
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '14px',
+                            padding: '12px 24px',
+                            borderRadius: '14px',
+                            backgroundColor: 'rgba(245, 197, 66, 0.08)',
+                            border: '1px solid rgba(245, 197, 66, 0.35)',
+                            marginBottom: '24px',
+                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
+                        }}
+                    >
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: 'var(--color-signal-orange)', letterSpacing: '6px' }}>
+                            {battle.room_code}
+                        </span>
+                        <button
+                            type="button"
+                            onClick={handleCopyRoomCode}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '8px 14px',
+                                borderRadius: '8px',
+                                backgroundColor: copiedRoomCode ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.08)',
+                                border: `1px solid ${copiedRoomCode ? 'var(--color-vector-green)' : 'rgba(255, 255, 255, 0.15)'}`,
+                                color: copiedRoomCode ? 'var(--color-vector-green)' : '#ffffff',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                transition: 'all 0.15s ease',
+                            }}
+                        >
+                            {copiedRoomCode ? <Check size={14} /> : <Copy size={14} />}
+                            {copiedRoomCode ? 'Tersalin!' : 'Salin Kode'}
+                        </button>
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                        <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={handleExitGame}
+                            className="btn-dark-outline"
+                            style={{
+                                padding: '10px 24px',
+                                fontSize: '13px',
+                                color: 'var(--accent-red)',
+                                borderColor: 'rgba(232, 64, 64, 0.4)',
+                            }}
+                        >
+                            Batalkan Room
+                        </motion.button>
+                    </div>
+                </motion.div>
             </div>
         )
     }
@@ -612,146 +779,257 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const myReady = iAmReady
         const oppReady = opponentReady
         return (
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', gap: '32px', textAlign: 'center' }}
-            >
-                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700 }}>
-                    ⚔️ Persiapan Battle
-                </h2>
-
-                {/* Players row */}
-                <div style={{ display: 'flex', alignItems: 'stretch', gap: '16px', marginBottom: '16px', width: '100%', maxWidth: '640px' }}>
-                    {/* Me */}
-                    <div style={{
-                        flex: 1,
-                        textAlign: 'center',
-                        border: '1px solid var(--border)',
-                        borderRadius: '10px',
-                        backgroundColor: 'var(--bg-secondary)',
-                        padding: '14px',
-                    }}>
-                        <div style={{
-                            width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 8px',
-                            backgroundColor: myReady ? 'rgba(34,197,94,0.15)' : 'var(--bg-secondary)',
-                            border: `2px solid ${myReady ? 'var(--accent-green)' : 'var(--border)'}`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px',
-                        }}>
-                            {myReady ? <CheckCircle size={36} color="var(--accent-green)" /> : <Shield size={36} color="var(--text-muted)" />}
+            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.96 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="product-demo-panel"
+                    style={{ width: '100%', maxWidth: '720px' }}
+                >
+                    {/* Topbar */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ width: '8px', height: '8px', borderRadius: '9999px', backgroundColor: 'var(--color-vector-green)', boxShadow: '0 0 8px var(--color-vector-green)' }} />
+                            <span style={{ fontFamily: 'var(--font-inter)', fontSize: '12px', fontWeight: 500, color: '#ffffff', letterSpacing: '0.04em' }}>
+                                LOBBY PERSIAPAN BATTLE 1V1
+                            </span>
                         </div>
-                        <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{currentUser.username}</p>
-                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                            {currentUser.school_name || 'Sekolah belum diisi'}
-                        </p>
-                        <p style={{ fontSize: '11px', color: myReady ? 'var(--accent-green)' : 'var(--text-muted)', marginTop: '4px' }}>
-                            {myReady ? '✓ SIAP' : 'Menunggu...'}
-                        </p>
+                        <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
+                            ROOM: {battle.room_code}
+                        </span>
                     </div>
 
-                    <div className="animate-vs-pulse" style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '26px',
-                        fontWeight: 800,
-                        color: 'var(--accent-red)',
-                        minWidth: '48px',
-                    }}>
-                        VS
-                    </div>
-
-                    {/* Opponent */}
-                    <div style={{
-                        flex: 1,
-                        textAlign: 'center',
-                        border: '1px solid var(--border)',
-                        borderRadius: '10px',
-                        backgroundColor: 'var(--bg-secondary)',
-                        padding: '14px',
-                    }}>
-                        <div style={{
-                            width: '72px', height: '72px', borderRadius: '50%', margin: '0 auto 8px',
-                            backgroundColor: oppReady ? 'rgba(34,197,94,0.15)' : 'var(--bg-secondary)',
-                            border: `2px solid ${oppReady ? 'var(--accent-green)' : 'var(--border)'}`,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px',
-                        }}>
-                            {oppReady ? <CheckCircle size={36} color="var(--accent-green)" /> : <Shield size={36} color="var(--text-muted)" />}
-                        </div>
-                        <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 700 }}>{opponent?.username || '???'}</p>
-                        <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '2px' }}>
-                            {opponent?.school_name || 'Sekolah lawan belum diisi'}
-                        </p>
-                        <p style={{ fontSize: '11px', color: oppReady ? 'var(--accent-green)' : 'var(--text-muted)', marginTop: '4px' }}>
-                            {oppReady ? '✓ SIAP' : 'Menunggu...'}
-                        </p>
-                    </div>
-                </div>
-
-                {!myReady ? (
-                    <motion.button
-                        type="button"
-                        whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.97 }}
-                        onClick={handleReady}
+                    {/* Versus Contestant Row */}
+                    <div
                         style={{
-                            padding: '14px 48px', borderRadius: '4px', cursor: 'pointer',
-                            backgroundColor: 'var(--accent-green)', border: 'none',
-                            color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)',
-                            fontSize: '18px', fontWeight: 700, letterSpacing: '1px',
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            gap: '16px',
+                            alignItems: 'center',
+                            padding: '20px',
+                            borderRadius: '17.1429px',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            marginBottom: '24px',
                         }}
                     >
-                        ✓ SIAP!
-                    </motion.button>
-                ) : countdown !== null ? (
-                    <motion.div initial={{ scale: 0.5, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{
-                        marginTop: '16px', display: 'flex', flexDirection: 'column', alignItems: 'center'
-                    }}>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '8px' }}>Mulai dalam</p>
-                        <div style={{
-                            fontFamily: 'var(--font-heading)', fontSize: '48px', fontWeight: 800,
-                            color: 'var(--accent-gold)'
-                        }}>
-                            {countdown}
+                        {/* Player 1 (You) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                            <div
+                                style={{
+                                    width: '52px',
+                                    height: '52px',
+                                    borderRadius: '12px',
+                                    backgroundColor: myReady ? 'rgba(34, 197, 94, 0.15)' : 'rgba(245, 197, 66, 0.12)',
+                                    border: `1px solid ${myReady ? 'var(--color-vector-green)' : 'rgba(245, 197, 66, 0.4)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '26px',
+                                    flexShrink: 0,
+                                    boxShadow: myReady ? '0 0 16px rgba(34, 197, 94, 0.3)' : '0 0 16px rgba(245, 197, 66, 0.2)',
+                                }}
+                            >
+                                {myReady ? '✓' : myClassInfo.emoji}
+                            </div>
+                            <div style={{ minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: '15px', fontWeight: 600, color: '#ffffff' }}>
+                                        {currentUser.username} <span style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 400 }}>(Kamu)</span>
+                                    </span>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            padding: '2px 7px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                                            border: '1px solid rgba(245, 197, 66, 0.4)',
+                                            color: 'var(--color-signal-orange)',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        LV.{currentUser.level || 1}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                    {currentUser.school_name || 'Pelajar'} · {myClassInfo.label}
+                                </div>
+                                <div style={{ marginTop: '6px' }}>
+                                    <span
+                                        style={{
+                                            fontSize: '11px',
+                                            fontWeight: 600,
+                                            color: myReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                        }}
+                                    >
+                                        {myReady ? <CheckCircle size={12} /> : null}
+                                        {myReady ? 'Siap Bertanding' : 'Menunggu Anda Siap'}
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </motion.div>
-                ) : (
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
-                        {oppReady ? 'Memulai...' : 'Menunggu lawan siap...'}
-                    </p>
-                )}
-                <p style={{ color: 'var(--accent-green)', fontSize: '12px', fontWeight: 600, marginTop: '8px' }}>
-                    🔥 Bonus Role: {classBenefitText}
-                </p>
 
-                {countdown === null && (
-                    <motion.button
-                        type="button"
-                        whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                        onClick={handleExitGame}
-                        style={{
-                            padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
-                            backgroundColor: 'transparent', border: '1px solid var(--border)',
-                            color: 'var(--text-secondary)', fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 700,
-                            marginTop: '16px'
-                        }}
-                    >
-                        Keluar Permainan
-                    </motion.button>
-                )}
-            </motion.div>
+                        {/* VS Center Pill */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
+                            <div
+                                style={{
+                                    fontFamily: 'var(--font-heading)',
+                                    fontSize: '14px',
+                                    fontWeight: 800,
+                                    color: 'var(--color-signal-orange)',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                    padding: '6px 16px',
+                                    borderRadius: '9999px',
+                                    border: '1px solid rgba(245, 197, 66, 0.35)',
+                                    letterSpacing: '0.08em',
+                                    boxShadow: '0 0 16px rgba(245, 197, 66, 0.25)',
+                                }}
+                            >
+                                VS
+                            </div>
+                        </div>
+
+                        {/* Player 2 (Opponent) */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '14px', textAlign: 'right' }}>
+                            <div style={{ minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            padding: '2px 7px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'rgba(0, 212, 255, 0.15)',
+                                            border: '1px solid rgba(0, 212, 255, 0.4)',
+                                            color: '#00d4ff',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        LV.{opponent?.level || 1}
+                                    </span>
+                                    <span style={{ fontSize: '15px', fontWeight: 600, color: '#ffffff' }}>
+                                        {opponent?.username || 'Menunggu Lawan...'}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                    {opponent?.school_name || 'Pelajar'} · {oppClassInfo.label}
+                                </div>
+                                <div style={{ marginTop: '6px' }}>
+                                    <span
+                                        style={{
+                                            fontSize: '11px',
+                                            fontWeight: 600,
+                                            color: oppReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                        }}
+                                    >
+                                        {oppReady ? <CheckCircle size={12} /> : null}
+                                        {oppReady ? 'Lawan Telah Siap' : 'Menunggu Lawan Siap'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    width: '52px',
+                                    height: '52px',
+                                    borderRadius: '12px',
+                                    backgroundColor: oppReady ? 'rgba(34, 197, 94, 0.15)' : 'rgba(0, 212, 255, 0.1)',
+                                    border: `1px solid ${oppReady ? 'var(--color-vector-green)' : 'rgba(0, 212, 255, 0.35)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '26px',
+                                    flexShrink: 0,
+                                    boxShadow: oppReady ? '0 0 16px rgba(34, 197, 94, 0.3)' : '0 0 16px rgba(0, 212, 255, 0.2)',
+                                }}
+                            >
+                                {oppReady ? '✓' : oppClassInfo.emoji}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Action Area */}
+                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                        {!myReady ? (
+                            <motion.button
+                                type="button"
+                                whileHover={{ scale: 1.03 }}
+                                whileTap={{ scale: 0.97 }}
+                                onClick={handleReady}
+                                className="btn-signal-orange"
+                                style={{ padding: '14px 44px', fontSize: '15px', fontWeight: 700 }}
+                            >
+                                <Swords size={18} /> SAYA SIAP BERTANDING!
+                            </motion.button>
+                        ) : countdown !== null ? (
+                            <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '6px' }}>Pertandingan Dimulai Dalam</p>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '54px', fontWeight: 800, color: 'var(--color-signal-orange)', textShadow: '0 0 20px rgba(245, 197, 66, 0.6)' }}>
+                                    {countdown}
+                                </div>
+                            </motion.div>
+                        ) : (
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '9999px', backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', color: 'var(--color-vector-green)', fontSize: '13px', fontWeight: 600 }}>
+                                <CheckCircle size={16} /> Menunggu lawan menekan tombol siap...
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: '18px' }}>
+                            <p style={{ color: 'var(--color-signal-orange)', fontSize: '12px', fontWeight: 600 }}>
+                                🔥 Bonus Role Aktif: {classBenefitText}
+                            </p>
+                        </div>
+
+                        {countdown === null && (
+                            <div style={{ marginTop: '20px' }}>
+                                <button
+                                    type="button"
+                                    onClick={handleExitGame}
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: 'var(--color-steel)',
+                                        fontSize: '12px',
+                                        cursor: 'pointer',
+                                        textDecoration: 'underline',
+                                    }}
+                                >
+                                    Keluar Dari Room
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                </motion.div>
+            </div>
         )
     }
 
+    // Phase: Finished early waiting for opponent to finish
     if (iAmFinished && !opponentFinished && phase !== 'finished') {
         return (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', gap: '24px', textAlign: 'center' }}>
-                <div style={{ fontSize: '48px' }}>⏰</div>
-                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700 }}>Kerja Bagus!</h2>
-                <p style={{ color: 'var(--text-secondary)' }}>Menunggu {opponent?.username || 'Lawan'} menyelesaikan pertanyaannya...</p>
-                <div style={{ height: '4px', width: '100px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '2px', overflow: 'hidden', marginTop: '16px' }}>
-                    <motion.div animate={{ x: [-100, 100] }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} style={{ height: '100%', width: '50px', backgroundColor: 'var(--accent-gold)' }} />
-                </div>
-            </motion.div>
+            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '600px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '48px', marginBottom: '14px' }}>⏳</div>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
+                        Semua Pertanyaan Selesai!
+                    </h2>
+                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '20px' }}>
+                        Menunggu {opponent?.username || 'Lawan'} menyelesaikan pertanyaan terakhirnya...
+                    </p>
+                    <div style={{ height: '4px', width: '140px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '9999px', overflow: 'hidden', margin: '0 auto 24px' }}>
+                        <motion.div animate={{ x: [-140, 140] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }} style={{ height: '100%', width: '60px', backgroundColor: 'var(--color-signal-orange)' }} />
+                    </div>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '28px', color: 'var(--color-steel)', fontSize: '13px' }}>
+                        <div>Skor Anda: <strong style={{ color: 'var(--color-signal-orange)' }}>{myScore} PTS</strong></div>
+                        <div>•</div>
+                        <div>Skor Lawan: <strong style={{ color: '#00d4ff' }}>{opponentScore} PTS</strong></div>
+                    </div>
+                </motion.div>
+            </div>
         )
     }
 
@@ -760,63 +1038,120 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const outcome = finalOutcome ?? getBattleOutcome(myScore, opponentScore, false)
         const isDraw = outcome === 'draw'
         const won = outcome === 'win'
-        const title = isDraw ? 'SERI' : won ? 'KEMENANGAN!' : 'KEKALAHAN'
-        const titleColor = isDraw ? 'var(--accent-cyan)' : won ? 'var(--accent-gold)' : 'var(--accent-red)'
+        const title = isDraw ? 'HASIL SERI!' : won ? 'KEMENANGAN MUTLAK!' : 'KEKALAHAN'
+        const titleColor = isDraw ? '#00d4ff' : won ? 'var(--color-signal-orange)' : 'var(--accent-red)'
         const icon = isDraw ? '🤝' : won ? '🏆' : '💀'
+
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ width: '100%', maxWidth: '760px', padding: '28px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '56px' }}>{icon}</div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: 700, color: titleColor, marginBottom: '10px' }}>{title}</h2>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '14px', marginBottom: '6px' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '720px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '56px', marginBottom: '8px' }}>{icon}</div>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: titleColor, marginBottom: '8px' }}>
+                        {title}
+                    </h2>
+                    <p style={{ color: 'var(--color-fog)', fontSize: '14px', marginBottom: '16px' }}>
                         {xpResult ? (
                             xpResult.bonus > 0
-                                ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--accent-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>
+                                ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--color-vector-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>
                                 : `+${xpResult.base} XP didapat!`
                         ) : (
                             isDraw ? '+40 XP didapat (hasil seri)!' : won ? '+80 XP didapat!' : '+20 XP untuk usahamu'
                         )}
                     </p>
-                    <p style={{ color: 'var(--accent-green)', fontSize: '12px', fontWeight: 600, marginBottom: '18px' }}>
+                    <p style={{ color: 'var(--color-signal-orange)', fontSize: '12px', fontWeight: 600, marginBottom: '24px' }}>
                         {classBenefitText}
                     </p>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '34px', marginBottom: '18px' }}>
-                        <div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', color: 'var(--accent-cyan)' }}>{myScore}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Kamu</div>
+                    {/* Contestants Final Comparison */}
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            gap: '16px',
+                            alignItems: 'center',
+                            padding: '20px',
+                            borderRadius: '17.1429px',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            marginBottom: '28px',
+                        }}
+                    >
+                        {/* You */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div
+                                style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                    border: '1px solid rgba(245, 197, 66, 0.4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '24px',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                {myClassInfo.emoji}
+                            </div>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Kamu</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--color-signal-orange)' }}>
+                                    {myScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ color: 'var(--text-muted)' }}>vs</div>
-                        <div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', color: 'var(--text-secondary)' }}>{opponentScore}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{opponent?.username || 'Lawan'}</div>
+
+                        {/* VS center */}
+                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 800, color: 'var(--color-steel)' }}>
+                            VS
+                        </div>
+
+                        {/* Opponent */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
+                            <div>
+                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>{opponent?.username || 'Lawan'}</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#00d4ff' }}>
+                                    {opponentScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                                    border: '1px solid rgba(0, 212, 255, 0.35)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '24px',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                {oppClassInfo.emoji}
+                            </div>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
                         <button
                             type="button"
                             onClick={() => router.push('/battle')}
-                            style={{
-                                padding: '10px 18px', borderRadius: '4px', cursor: 'pointer',
-                                backgroundColor: 'transparent', border: '1px solid var(--border)',
-                                color: 'var(--text-secondary)', fontSize: '13px',
-                            }}
+                            className="btn-dark-outline"
+                            style={{ padding: '12px 24px', fontSize: '13px' }}
                         >
-                            Kembali
+                            Kembali ke Lobby
                         </button>
                         <motion.button
                             type="button"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => router.push('/battle')}
-                            style={{
-                                padding: '10px 18px', borderRadius: '4px', cursor: 'pointer',
-                                backgroundColor: 'var(--accent-gold)', border: 'none',
-                                color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
-                            }}
+                            className="btn-signal-orange"
+                            style={{ padding: '12px 28px', fontSize: '13px', fontWeight: 700 }}
                         >
-                            MAIN LAGI
+                            <Swords size={16} /> MAIN LAGI
                         </motion.button>
                     </div>
                 </motion.div>
@@ -836,173 +1171,636 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const safeQuestionIndex = Math.min(currentQ, Math.max(questions.length - 1, 0))
     const q = questions[safeQuestionIndex]
     const timerPercent = (timeLeft / 15) * 100
-    const timerColor = timeLeft > 8 ? 'var(--accent-green)' : timeLeft > 4 ? 'var(--accent-gold)' : 'var(--accent-red)'
+    const timerColor = timeLeft > 8 ? 'var(--color-vector-green)' : timeLeft > 4 ? 'var(--color-signal-orange)' : 'var(--accent-red)'
 
     return (
         <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-            <div style={{ width: '100%', maxWidth: '760px' }}>
-            {/* Scoreboard */}
-            <div className="card" style={{ padding: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '2px' }}>Kamu</div>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-cyan)' }}>{myScore}</div>
-                </div>
-                <div style={{ textAlign: 'center', padding: '0 16px' }}>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                        {safeQuestionIndex + 1}/{questions.length}
-                    </div>
-                    <Sword size={20} style={{ color: 'var(--accent-red)', margin: '4px auto' }} />
-                </div>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '2px' }}>{opponent?.username || 'Lawan'}</div>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, color: 'var(--text-secondary)' }}>{opponentScore}</div>
-                </div>
-            </div>
-
-            {/* Timer */}
-            <div style={{ marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Waktu tersisa</span>
-                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: timerColor, fontSize: '16px' }}>{timeLeft}s</span>
-                </div>
-                <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <motion.div animate={{ width: `${timerPercent}%` }} transition={{ duration: 1 }}
-                        style={{ height: '100%', backgroundColor: timerColor }} />
-                </div>
-            </div>
-
-            {/* Question */}
-            <AnimatePresence mode="wait">
-                <motion.div key={currentQ} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }}
-                    className="card" style={{ padding: '24px', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>SOAL {safeQuestionIndex + 1}</div>
-                    <p style={{ fontSize: '16px', fontWeight: 600, lineHeight: 1.6 }}>{q.question_text}</p>
-                </motion.div>
-            </AnimatePresence>
-
-            {/* Options */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {q.options.map((opt, idx) => {
-                    let bg = 'var(--bg-secondary)'
-                    let border = 'var(--border)'
-                    if (showAnswer) {
-                        if (idx === q.correct_option) { bg = 'rgba(34,197,94,0.15)'; border = 'var(--accent-green)' }
-                        else if (idx === selectedAnswer) { bg = 'rgba(232,64,64,0.15)'; border = 'var(--accent-red)' }
-                    } else if (idx === selectedAnswer) {
-                        bg = 'rgba(0,212,255,0.1)'; border = 'var(--accent-cyan)'
-                    }
-                    return (
-                        <motion.button type="button" key={idx} whileHover={selectedAnswer === null ? { x: 4 } : {}}
-                            onClick={() => handleAnswer(idx)} style={{
-                                textAlign: 'left', padding: '14px 16px', borderRadius: '4px',
-                                cursor: selectedAnswer !== null ? 'default' : 'pointer',
-                                backgroundColor: bg, border: `1px solid ${border}`,
-                                color: 'var(--text-primary)', fontSize: '14px', fontWeight: 500,
-                            }}>
-                            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginRight: '10px', color: 'var(--text-secondary)' }}>
-                                {String.fromCharCode(65 + idx)}.
-                            </span>
-                            {opt}
-                        </motion.button>
-                    )
-                })}
-            </div>
-
-            {/* Surrender Button */}
-            <div style={{ marginTop: '32px', textAlign: 'center' }}>
-                <motion.button
-                    type="button"
-                    whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}
-                    onClick={() => setShowSurrenderConfirm(true)}
-                    style={{
-                        padding: '8px 16px', borderRadius: '4px', cursor: 'pointer',
-                        backgroundColor: 'transparent', border: '1px solid var(--accent-red)',
-                        color: 'var(--accent-red)', fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 700,
-                    }}
-                >
-                    🚩 Menyerah
-                </motion.button>
-            </div>
-
-            {showSurrenderConfirm && (
-                <div
-                    style={{
-                        position: 'fixed',
-                        inset: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        zIndex: 1000,
-                        padding: '16px',
-                    }}
-                    onClick={() => setShowSurrenderConfirm(false)}
-                >
+            <div style={{ width: '100%', maxWidth: '840px' }}>
+                {/* Linearity Frosted Duel Demonstration Panel */}
+                <div className="product-demo-panel">
+                    {/* Panel Chrome Topbar */}
                     <div
-                        className="card"
                         style={{
-                            width: '100%',
-                            maxWidth: '360px',
-                            padding: '20px',
-                            border: '1px solid var(--border)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            paddingBottom: '16px',
+                            marginBottom: '20px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                         }}
-                        onClick={(e) => e.stopPropagation()}
                     >
-                        <h3
-                            style={{
-                                fontFamily: 'var(--font-heading)',
-                                fontSize: '18px',
-                                fontWeight: 700,
-                                marginBottom: '8px',
-                            }}
-                        >
-                            Konfirmasi Menyerah
-                        </h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '16px' }}>
-                            Yakin ingin menyerah? Kamu akan otomatis didiskualifikasi dan lawanmu menang.
-                        </p>
-                        <div style={{ display: 'flex', gap: '10px' }}>
-                            <button
-                                type="button"
-                                onClick={() => setShowSurrenderConfirm(false)}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span
                                 style={{
-                                    flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '4px',
-                                    border: '1px solid var(--border)',
-                                    backgroundColor: 'transparent',
-                                    color: 'var(--text-secondary)',
-                                    fontFamily: 'var(--font-heading)',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '9999px',
+                                    backgroundColor: 'var(--color-vector-green)',
+                                    boxShadow: '0 0 8px var(--color-vector-green)',
+                                }}
+                            />
+                            <span
+                                style={{
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '12px',
+                                    fontWeight: 500,
+                                    color: '#ffffff',
+                                    letterSpacing: '0.04em',
                                 }}
                             >
-                                Tidak
-                            </button>
-                            <button
-                                type="button"
-                                onClick={() => {
-                                    setShowSurrenderConfirm(false)
-                                    handleSurrender()
-                                }}
+                                {battle.category ? battle.category.toUpperCase() : 'ARENA DUEL 1V1'} · SOAL {safeQuestionIndex + 1} DARI {questions.length}
+                            </span>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span
                                 style={{
-                                    flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '4px',
-                                    border: '1px solid rgba(232,64,64,0.45)',
-                                    backgroundColor: 'rgba(232,64,64,0.1)',
-                                    color: 'var(--accent-red)',
-                                    fontFamily: 'var(--font-heading)',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
+                                    fontSize: '12px',
+                                    color: 'var(--color-signal-orange)',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
                                 }}
                             >
-                                Ya
-                            </button>
+                                <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Ronde Aktif'}
+                            </span>
+                            <span
+                                style={{
+                                    fontSize: '12px',
+                                    color: timerColor,
+                                    fontFamily: 'var(--font-mono)',
+                                    fontWeight: 600,
+                                    backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'rgba(255, 255, 255, 0.06)',
+                                    padding: '3px 10px',
+                                    borderRadius: '9999px',
+                                    border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'rgba(255, 255, 255, 0.12)'}`,
+                                }}
+                            >
+                                00:{timeLeft < 10 ? '0' : ''}{timeLeft}s
+                            </span>
                         </div>
                     </div>
+
+                    {/* Versus Contestant Row (Mirroring Landing Page Simulation) */}
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            gap: '16px',
+                            alignItems: 'center',
+                            padding: '16px 20px',
+                            borderRadius: '17.1429px',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {/* Player 1 (You) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+                            {/* Floating Combat Text for Me */}
+                            <AnimatePresence>
+                                {combatText?.target === 'me' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.7 }}
+                                        animate={{ opacity: 1, y: -26, scale: 1.15 }}
+                                        exit={{ opacity: 0, y: -40 }}
+                                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-12px',
+                                            left: '4px',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 900,
+                                            fontSize: '14px',
+                                            color: 'var(--accent-red)',
+                                            textShadow: '0 0 10px rgba(232, 64, 64, 0.9), 0 2px 4px #000000',
+                                            pointerEvents: 'none',
+                                            zIndex: 25,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        {combatText.text}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <motion.div
+                                animate={
+                                    meAnimation === 'attack'
+                                        ? { x: [0, 18, 0], scale: [1, 1.15, 1] }
+                                        : meAnimation === 'hurt'
+                                        ? { x: [-6, 6, -4, 4, 0], scale: [1, 0.95, 1] }
+                                        : { x: 0, scale: 1 }
+                                }
+                                transition={{ duration: 0.35 }}
+                                style={{
+                                    width: '46px',
+                                    height: '46px',
+                                    borderRadius: '10px',
+                                    backgroundColor: meAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(245, 197, 66, 0.12)',
+                                    border: `1px solid ${meAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(245, 197, 66, 0.4)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '22px',
+                                    flexShrink: 0,
+                                    boxShadow: meAnimation === 'attack' ? '0 0 24px rgba(245, 197, 66, 0.6)' : meAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(245, 197, 66, 0.2)',
+                                }}
+                            >
+                                {myClassInfo.emoji}
+                            </motion.div>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {currentUser.username} <span style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 400 }}>(Kamu)</span>
+                                    </span>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            padding: '2px 7px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                                            border: '1px solid rgba(245, 197, 66, 0.4)',
+                                            color: 'var(--color-signal-orange)',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        LV.{currentUser.level || 1}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {currentUser.school_name || 'Pelajar Hebat'} · {myClassInfo.label}
+                                </div>
+                                {/* Health Bar */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '5px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            initial={{ width: '100%' }}
+                                            animate={{ width: `${myHpPercent}%` }}
+                                            transition={{ duration: 0.4 }}
+                                            style={{
+                                                height: '100%',
+                                                backgroundColor: myHpPercent > 50 ? 'var(--color-vector-green)' : myHpPercent > 25 ? 'var(--color-signal-orange)' : 'var(--accent-red)',
+                                            }}
+                                        />
+                                    </div>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
+                                        {myScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
+                                    </span>
+                                </div>
+                                {/* Mana / Special Gauge */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '3px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            animate={{ width: `${myMp}%` }}
+                                            transition={{ duration: 0.3 }}
+                                            style={{
+                                                height: '100%',
+                                                background: 'linear-gradient(90deg, #3b82f6, #a855f7)',
+                                            }}
+                                        />
+                                    </div>
+                                    <span style={{ fontSize: '9px', color: '#a855f7', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                                        MP {myMp}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Center VS Pill */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <div
+                                style={{
+                                    fontFamily: 'var(--font-heading)',
+                                    fontSize: '12px',
+                                    fontWeight: 800,
+                                    color: 'var(--color-signal-orange)',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                    padding: '4px 14px',
+                                    borderRadius: '9999px',
+                                    border: '1px solid rgba(245, 197, 66, 0.35)',
+                                    letterSpacing: '0.08em',
+                                    boxShadow: '0 0 12px rgba(245, 197, 66, 0.2)',
+                                }}
+                            >
+                                VS
+                            </div>
+                            <span style={{ fontSize: '10px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                                {safeQuestionIndex + 1}/{questions.length}
+                            </span>
+                        </div>
+
+                        {/* Player 2 (Opponent) */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right', position: 'relative' }}>
+                            {/* Floating Combat Text for Opponent */}
+                            <AnimatePresence>
+                                {combatText?.target === 'opp' && (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.7 }}
+                                        animate={{ opacity: 1, y: -26, scale: 1.25 }}
+                                        exit={{ opacity: 0, y: -40 }}
+                                        transition={{ duration: 0.6, ease: 'easeOut' }}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-12px',
+                                            right: '4px',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 900,
+                                            fontSize: '14px',
+                                            color: combatText.type === 'crit' ? '#ff3b30' : 'var(--color-signal-orange)',
+                                            textShadow: '0 0 12px rgba(255, 59, 48, 0.9), 0 2px 4px #000000',
+                                            pointerEvents: 'none',
+                                            zIndex: 25,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        {combatText.text}
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            padding: '2px 7px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'rgba(0, 212, 255, 0.15)',
+                                            border: '1px solid rgba(0, 212, 255, 0.4)',
+                                            color: '#00d4ff',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        LV.{opponent?.level || 1}
+                                    </span>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {opponent?.username || 'Lawan'}
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {opponent?.school_name || 'Pelajar'} · {oppClassInfo.label}
+                                </div>
+                                {/* Health Bar */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
+                                        {opponentScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
+                                    </span>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '5px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            initial={{ width: '100%' }}
+                                            animate={{ width: `${oppHpPercent}%` }}
+                                            transition={{ duration: 0.4 }}
+                                            style={{
+                                                height: '100%',
+                                                backgroundColor: oppHpPercent > 50 ? '#00d4ff' : oppHpPercent > 25 ? 'var(--color-signal-orange)' : 'var(--accent-red)',
+                                                marginLeft: 'auto',
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                {/* Mana / Special Gauge */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', marginTop: '3px' }}>
+                                    <span style={{ fontSize: '9px', color: '#00d4ff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
+                                        MP {oppMp}%
+                                    </span>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '3px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            animate={{ width: `${oppMp}%` }}
+                                            transition={{ duration: 0.3 }}
+                                            style={{
+                                                height: '100%',
+                                                background: 'linear-gradient(90deg, #06b6d4, #3b82f6)',
+                                                marginLeft: 'auto',
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '3px' }}>
+                                    <span style={{ fontSize: '10px', color: opponentFinished ? 'var(--color-vector-green)' : opponentAnsweredThisRound ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
+                                        {opponentFinished ? '✓ Selesai' : opponentAnsweredThisRound ? '⚡ Menjawab' : '🤔 Berpikir...'}
+                                    </span>
+                                </div>
+                            </div>
+                            <motion.div
+                                animate={
+                                    oppAnimation === 'attack'
+                                        ? { x: [0, -18, 0], scale: [1, 1.15, 1] }
+                                        : oppAnimation === 'hurt'
+                                        ? { x: [6, -6, 4, -4, 0], scale: [1, 0.95, 1] }
+                                        : { x: 0, scale: 1 }
+                                }
+                                transition={{ duration: 0.35 }}
+                                style={{
+                                    width: '46px',
+                                    height: '46px',
+                                    borderRadius: '10px',
+                                    backgroundColor: oppAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(0, 212, 255, 0.1)',
+                                    border: `1px solid ${oppAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(0, 212, 255, 0.35)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '22px',
+                                    flexShrink: 0,
+                                    boxShadow: oppAnimation === 'attack' ? '0 0 24px rgba(0, 212, 255, 0.6)' : oppAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(0, 212, 255, 0.2)',
+                                }}
+                            >
+                                {oppClassInfo.emoji}
+                            </motion.div>
+                        </div>
+                    </div>
+
+                    {/* RPG Combat Feed / Action Banner */}
+                    <motion.div
+                        key={battleLog}
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px',
+                            padding: '8px 16px',
+                            borderRadius: '10px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                            border: '1px solid rgba(255, 255, 255, 0.07)',
+                            marginBottom: '18px',
+                            fontSize: '12px',
+                            color: 'var(--color-fog)',
+                            textAlign: 'center',
+                        }}
+                    >
+                        <span>{battleLog}</span>
+                    </motion.div>
+
+                    {/* Question Card (Linearity Frosted Block) */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentQ}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.2 }}
+                            style={{
+                                padding: '22px',
+                                backgroundColor: 'var(--color-carbon)',
+                                borderRadius: '17.1429px',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                marginBottom: '18px',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 700, letterSpacing: '1px' }}>
+                                    PERTANYAAN {safeQuestionIndex + 1} DARI {questions.length}
+                                </span>
+                                <span style={{ color: 'var(--color-steel)' }}>•</span>
+                                <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi yang tepat untuk melancarkan serangan duel:</span>
+                            </div>
+
+                            <h3
+                                style={{
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '16px',
+                                    fontWeight: 500,
+                                    color: '#ffffff',
+                                    lineHeight: 1.6,
+                                    margin: 0,
+                                }}
+                            >
+                                {q.question_text}
+                            </h3>
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {/* Options Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px', marginBottom: '20px' }}>
+                        {q.options.map((opt, idx) => {
+                            const isSelected = selectedAnswer === idx
+                            const isCorrect = idx === q.correct_option
+
+                            let bg = 'rgba(255, 255, 255, 0.04)'
+                            let border = 'rgba(255, 255, 255, 0.1)'
+                            let textColor = '#ffffff'
+                            let badgeBg = 'rgba(255, 255, 255, 0.08)'
+                            let badgeColor = 'var(--color-silver)'
+
+                            if (showAnswer) {
+                                if (isCorrect) {
+                                    bg = 'rgba(34, 197, 94, 0.16)'
+                                    border = 'var(--color-vector-green)'
+                                    textColor = 'var(--color-vector-green)'
+                                    badgeBg = 'var(--color-vector-green)'
+                                    badgeColor = '#050505'
+                                } else if (isSelected) {
+                                    bg = 'rgba(239, 68, 68, 0.16)'
+                                    border = 'var(--accent-red)'
+                                    textColor = 'var(--accent-red)'
+                                    badgeBg = 'var(--accent-red)'
+                                    badgeColor = '#ffffff'
+                                }
+                            } else if (isSelected) {
+                                bg = 'rgba(245, 197, 66, 0.15)'
+                                border = 'var(--color-signal-orange)'
+                                textColor = '#ffffff'
+                                badgeBg = 'var(--color-signal-orange)'
+                                badgeColor = '#050505'
+                            }
+
+                            return (
+                                <motion.button
+                                    key={idx}
+                                    type="button"
+                                    whileHover={selectedAnswer === null ? { y: -2, borderColor: 'rgba(255, 255, 255, 0.25)' } : {}}
+                                    whileTap={selectedAnswer === null ? { scale: 0.99 } : {}}
+                                    onClick={() => handleAnswer(idx)}
+                                    style={{
+                                        textAlign: 'left',
+                                        padding: '14px 16px',
+                                        borderRadius: '12px',
+                                        cursor: selectedAnswer !== null ? 'default' : 'pointer',
+                                        backgroundColor: bg,
+                                        border: `1px solid ${border}`,
+                                        color: textColor,
+                                        fontSize: '13px',
+                                        fontWeight: 500,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        transition: 'all 0.15s ease',
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            width: '26px',
+                                            height: '26px',
+                                            borderRadius: '6px',
+                                            backgroundColor: badgeBg,
+                                            color: badgeColor,
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 700,
+                                            fontSize: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        {String.fromCharCode(65 + idx)}
+                                    </span>
+                                    <span style={{ flex: 1, lineHeight: 1.4 }}>{opt}</span>
+                                    {showAnswer && isCorrect && <CheckCircle size={16} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />}
+                                    {showAnswer && isSelected && !isCorrect && <XCircle size={16} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />}
+                                </motion.button>
+                            )
+                        })}
+                    </div>
+
+                    {/* Bottom Toolbar */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <span style={{ fontSize: '11px', color: 'var(--color-signal-orange)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            🔥 Bonus Role: {classBenefitText}
+                        </span>
+
+                        <motion.button
+                            type="button"
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => setShowSurrenderConfirm(true)}
+                            style={{
+                                padding: '6px 14px',
+                                borderRadius: '9999px',
+                                cursor: 'pointer',
+                                backgroundColor: 'rgba(232, 64, 64, 0.08)',
+                                border: '1px solid rgba(232, 64, 64, 0.3)',
+                                color: 'var(--accent-red)',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                            }}
+                        >
+                            🚩 Menyerah
+                        </motion.button>
+                    </div>
                 </div>
-            )}
+
+                {/* Surrender Confirmation Modal */}
+                {showSurrenderConfirm && (
+                    <div
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                            backdropFilter: 'blur(8px)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 1000,
+                            padding: '16px',
+                        }}
+                        onClick={() => setShowSurrenderConfirm(false)}
+                    >
+                        <div
+                            className="product-demo-panel"
+                            style={{
+                                width: '100%',
+                                maxWidth: '380px',
+                                padding: '24px',
+                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <h3
+                                style={{
+                                    fontFamily: 'var(--font-heading)',
+                                    fontSize: '18px',
+                                    fontWeight: 700,
+                                    color: '#ffffff',
+                                    marginBottom: '8px',
+                                }}
+                            >
+                                Konfirmasi Menyerah
+                            </h3>
+                            <p style={{ color: 'var(--color-fog)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px' }}>
+                                Yakin ingin menyerah? Kamu akan otomatis didiskualifikasi dan lawanmu mendapatkan kemenangan penuh.
+                            </p>
+                            <div style={{ display: 'flex', gap: '10px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setShowSurrenderConfirm(false)}
+                                    className="btn-dark-outline"
+                                    style={{
+                                        flex: 1,
+                                        padding: '10px',
+                                        fontSize: '13px',
+                                        fontWeight: 600,
+                                    }}
+                                >
+                                    Batal
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setShowSurrenderConfirm(false)
+                                        handleSurrender()
+                                    }}
+                                    style={{
+                                        flex: 1,
+                                        padding: '10px',
+                                        borderRadius: '9999px',
+                                        border: '1px solid rgba(232, 64, 64, 0.6)',
+                                        backgroundColor: 'rgba(232, 64, 64, 0.2)',
+                                        color: 'var(--accent-red)',
+                                        fontFamily: 'var(--font-heading)',
+                                        fontWeight: 700,
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Ya, Menyerah
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     )

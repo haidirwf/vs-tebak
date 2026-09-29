@@ -25,6 +25,7 @@ import {
   Layers,
   Code,
   Compass,
+  Terminal,
 } from 'lucide-react'
 
 interface LandingClientProps {

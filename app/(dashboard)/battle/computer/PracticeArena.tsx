@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sword } from 'lucide-react'
+import { Sword, CheckCircle, XCircle, Flame, Swords } from 'lucide-react'
 import { Question } from '@/types'
 
 type PracticeCategory = 'coding' | 'design' | 'productivity' | 'business' | 'general'
@@ -71,6 +71,19 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
     const [botAnswered, setBotAnswered] = useState(false)
     const [finished, setFinished] = useState(false)
     const [result, setResult] = useState<'win' | 'lose' | 'draw' | null>(null)
+    const [comboCount, setComboCount] = useState(0)
+    const [myHp, setMyHp] = useState(100)
+    const [botHp, setBotHp] = useState(100)
+    const [myMp, setMyMp] = useState(30)
+    const [botMp, setBotMp] = useState(20)
+    const [meAnimation, setMeAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
+    const [botAnimation, setBotAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
+    const [combatText, setCombatText] = useState<{
+        target: 'me' | 'bot'
+        text: string
+        type: 'damage' | 'crit' | 'miss'
+    } | null>(null)
+    const [battleLog, setBattleLog] = useState('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk menyerang AI Sentinel!')
 
     const availableQuestions = useMemo(() => {
         if (selectedCategory === 'general') return questionPool
@@ -98,6 +111,18 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
             const remaining = Math.max(1, QUESTION_TIME - Math.floor(botDelayMs / 1000))
             const bonus = Math.floor(remaining * 0.5)
             setBotScore(prev => prev + 10 + bonus)
+            setMyHp(prev => Math.max(10, prev - 10))
+            setBotMp(mp => Math.min(100, mp + 25))
+            setBotAnimation('attack')
+            setMeAnimation('hurt')
+            setCombatText({ target: 'me', text: '⚡ BOT HIT! -10 HP', type: 'damage' })
+            setBattleLog('🤖 AI Sentinel melancarkan serangan energi kilat (-10 HP)!')
+
+            setTimeout(() => {
+                setBotAnimation('idle')
+                setMeAnimation('idle')
+            }, 600)
+            setTimeout(() => setCombatText(null), 1100)
         }, botDelayMs)
     }
 
@@ -136,6 +161,13 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
         setBotAnswered(false)
         setFinished(false)
         setResult(null)
+        setComboCount(0)
+        setMyHp(100)
+        setBotHp(100)
+        setMyMp(30)
+        setBotMp(20)
+        setCombatText(null)
+        setBattleLog('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk menyerang AI Sentinel!')
         setStarted(true)
     }
 
@@ -149,6 +181,14 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                 if (prev <= 1) {
                     clearInterval(timerRef.current!)
                     setShowAnswer(true)
+                    setComboCount(0)
+                    setMyHp(hp => Math.max(10, hp - 15))
+                    setCombatText({ target: 'me', text: '⏰ TIMEOUT! -15 HP', type: 'miss' })
+                    setMeAnimation('hurt')
+                    setBattleLog('⌛ Waktu habis! Kamu terkena penalti giliran dan kehilangan 15 HP.')
+                    setTimeout(() => setMeAnimation('idle'), 600)
+                    setTimeout(() => setCombatText(null), 1100)
+
                     setTimeout(() => {
                         goNextQuestion(myScore, botScore)
                     }, 1200)
@@ -172,6 +212,45 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
         const bonus = Math.floor(timeLeft * 0.5)
         const updatedMyScore = myScore + (isCorrect ? 10 + bonus : 0)
         setMyScore(updatedMyScore)
+
+        const hpDamage = 12
+        if (isCorrect) {
+            const nextCombo = comboCount + 1
+            setComboCount(nextCombo)
+            const isCrit = nextCombo >= 2
+            const effectiveDamage = isCrit ? hpDamage + 10 : hpDamage
+            setBotHp(prev => Math.max(10, prev - effectiveDamage))
+            setMyMp(mp => Math.min(100, mp + 25))
+            setCombatText({
+                target: 'bot',
+                text: isCrit ? `💥 CRIT! -${effectiveDamage} HP` : `⚔️ -${effectiveDamage} HP`,
+                type: isCrit ? 'crit' : 'damage',
+            })
+            setMeAnimation('attack')
+            setBotAnimation('hurt')
+            setBattleLog(
+                isCrit
+                    ? `🔥 COMBO x${nextCombo}! Serangan kritikal Hero mendarat telak (-${effectiveDamage} HP)!`
+                    : `⚔️ Serangan Hero menembus pertahanan AI Sentinel (-${effectiveDamage} HP)!`
+            )
+            setTimeout(() => {
+                setMeAnimation('idle')
+                setBotAnimation('idle')
+            }, 600)
+            setTimeout(() => setCombatText(null), 1100)
+        } else {
+            setComboCount(0)
+            setMyHp(prev => Math.max(10, prev - hpDamage))
+            setCombatText({
+                target: 'me',
+                text: `❌ MISS! -${hpDamage} HP`,
+                type: 'miss',
+            })
+            setMeAnimation('hurt')
+            setBattleLog(`🛡️ Serangan meleset! AI Sentinel membalas dengan serangan balik (-${hpDamage} HP).`)
+            setTimeout(() => setMeAnimation('idle'), 600)
+            setTimeout(() => setCombatText(null), 1100)
+        }
 
         setTimeout(() => {
             goNextQuestion(updatedMyScore, botScore)
@@ -262,38 +341,99 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
     }
 
     if (finished) {
-        const title = result === 'win' ? 'KAMU MENANG!' : result === 'lose' ? 'KAMU KALAH' : 'SERI'
+        const title = result === 'win' ? 'KEMENANGAN MUTLAK!' : result === 'lose' ? 'KEKALAHAN' : 'HASIL SERI!'
         const icon = result === 'win' ? '🏆' : result === 'lose' ? '💀' : '🤝'
-        const color = result === 'win' ? 'var(--accent-gold)' : result === 'lose' ? 'var(--accent-red)' : 'var(--accent-cyan)'
+        const color = result === 'win' ? 'var(--color-signal-orange)' : result === 'lose' ? 'var(--accent-red)' : '#00d4ff'
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="card" style={{ width: '100%', maxWidth: '760px', padding: '28px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '56px' }}>{icon}</div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '30px', fontWeight: 700, color, marginBottom: '10px' }}>{title}</h2>
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '34px', marginBottom: '18px' }}>
-                        <div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', color: 'var(--accent-cyan)' }}>{myScore}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Kamu</div>
+                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '720px', padding: '28px', textAlign: 'center' }}>
+                    <div style={{ fontSize: '56px', marginBottom: '8px' }}>{icon}</div>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color, marginBottom: '10px' }}>{title}</h2>
+                    <p style={{ color: 'var(--color-fog)', fontSize: '14px', marginBottom: '24px' }}>
+                        {result === 'win' ? 'Luar biasa! Kamu berhasil menaklukkan Computer AI.' : result === 'lose' ? 'Tetap semangat! Coba lagi untuk mengasah ketepatan analisismu.' : 'Pertandingan sengit! Skor kalian seimbang.'}
+                    </p>
+
+                    {/* Contestants Final Comparison */}
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            gap: '16px',
+                            alignItems: 'center',
+                            padding: '20px',
+                            borderRadius: '17.1429px',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            marginBottom: '28px',
+                        }}
+                    >
+                        {/* You */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div
+                                style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                    border: '1px solid rgba(245, 197, 66, 0.4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '24px',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                ⚔️
+                            </div>
+                            <div style={{ textAlign: 'left' }}>
+                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Kamu</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--color-signal-orange)' }}>
+                                    {myScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                                </div>
+                            </div>
                         </div>
-                        <div style={{ color: 'var(--text-muted)' }}>vs</div>
-                        <div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', color: 'var(--text-secondary)' }}>{botScore}</div>
-                            <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Computer</div>
+
+                        {/* VS center */}
+                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 800, color: 'var(--color-steel)' }}>
+                            VS
+                        </div>
+
+                        {/* Bot */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
+                            <div>
+                                <div style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>Computer AI</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: '#00d4ff' }}>
+                                    {botScore} <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>PTS</span>
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    width: '48px',
+                                    height: '48px',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                                    border: '1px solid rgba(0, 212, 255, 0.35)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '24px',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                🤖
+                            </div>
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
                         <button
                             type="button"
                             onClick={() => {
                                 setStarted(false)
                                 setFinished(false)
                             }}
-                            style={{
-                                padding: '10px 18px', borderRadius: '4px', cursor: 'pointer',
-                                backgroundColor: 'transparent', border: '1px solid var(--border)',
-                                color: 'var(--text-secondary)', fontSize: '13px',
-                            }}
+                            className="btn-dark-outline"
+                            style={{ padding: '12px 24px', fontSize: '13px' }}
                         >
                             Atur Ulang
                         </button>
@@ -302,13 +442,10 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={startPractice}
-                            style={{
-                                padding: '10px 18px', borderRadius: '4px', cursor: 'pointer',
-                                backgroundColor: 'var(--accent-gold)', border: 'none',
-                                color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
-                            }}
+                            className="btn-signal-orange"
+                            style={{ padding: '12px 28px', fontSize: '13px', fontWeight: 700 }}
                         >
-                            MAIN LAGI
+                            <Swords size={16} /> MAIN LAGI
                         </motion.button>
                     </div>
                 </motion.div>
@@ -319,90 +456,408 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
     if (!currentQuestion) {
         return (
             <div className="responsive-page" style={{ maxWidth: '760px', margin: '0 auto', padding: '24px' }}>
-                <div className="card" style={{ padding: '28px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                <div className="product-demo-panel" style={{ padding: '28px', textAlign: 'center', color: 'var(--text-muted)' }}>
                     Tidak ada soal untuk latihan.
                 </div>
             </div>
         )
     }
 
-    const timerPercent = (timeLeft / QUESTION_TIME) * 100
-    const timerColor = timeLeft > 8 ? 'var(--accent-green)' : timeLeft > 4 ? 'var(--accent-gold)' : 'var(--accent-red)'
+    const timerColor = timeLeft > 8 ? 'var(--color-vector-green)' : timeLeft > 4 ? 'var(--color-signal-orange)' : 'var(--accent-red)'
+    const myHpPercent = Math.max(10, Math.min(100, myHp))
+    const botHpPercent = Math.max(10, Math.min(100, botHp))
 
     return (
         <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-            <div style={{ width: '100%', maxWidth: '760px' }}>
-            <div className="card" style={{ padding: '16px', marginBottom: '16px', display: 'flex', alignItems: 'center' }}>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Kamu</div>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', color: 'var(--accent-cyan)' }}>{myScore}</div>
-                </div>
-                <div style={{ textAlign: 'center', padding: '0 16px' }}>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                        {currentQ + 1}/{questions.length}
+            <div style={{ width: '100%', maxWidth: '840px' }}>
+                {/* Linearity Frosted Duel Panel */}
+                <div className="product-demo-panel">
+                    {/* Topbar */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            paddingBottom: '16px',
+                            marginBottom: '20px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span
+                                style={{
+                                    width: '8px',
+                                    height: '8px',
+                                    borderRadius: '9999px',
+                                    backgroundColor: 'var(--color-vector-green)',
+                                    boxShadow: '0 0 8px var(--color-vector-green)',
+                                }}
+                            />
+                            <span
+                                style={{
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '12px',
+                                    fontWeight: 500,
+                                    color: '#ffffff',
+                                    letterSpacing: '0.04em',
+                                }}
+                            >
+                                SIMULASI BATTLE VS BOT · SOAL {currentQ + 1} DARI {questions.length}
+                            </span>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <span
+                                style={{
+                                    fontSize: '12px',
+                                    color: 'var(--color-signal-orange)',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Ronde Aktif'}
+                            </span>
+                            <span
+                                style={{
+                                    fontSize: '12px',
+                                    color: timerColor,
+                                    fontFamily: 'var(--font-mono)',
+                                    fontWeight: 600,
+                                    backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'rgba(255, 255, 255, 0.06)',
+                                    padding: '3px 10px',
+                                    borderRadius: '9999px',
+                                    border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'rgba(255, 255, 255, 0.12)'}`,
+                                }}
+                            >
+                                00:{timeLeft < 10 ? '0' : ''}{timeLeft}s
+                            </span>
+                        </div>
                     </div>
-                    <Sword size={20} style={{ color: 'var(--accent-red)', margin: '4px auto' }} />
-                </div>
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Computer {botAnswered ? '✓' : ''}</div>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', color: 'var(--text-secondary)' }}>{botScore}</div>
-                </div>
-            </div>
 
-            <div style={{ marginBottom: '16px' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Waktu tersisa</span>
-                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: timerColor, fontSize: '16px' }}>{timeLeft}s</span>
-                </div>
-                <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
-                    <motion.div animate={{ width: `${timerPercent}%` }} transition={{ duration: 1 }} style={{ height: '100%', backgroundColor: timerColor }} />
-                </div>
-            </div>
+                    {/* Versus Contestant Row (Mirroring Landing Page Simulation) */}
+                    <div
+                        style={{
+                            display: 'grid',
+                            gridTemplateColumns: '1fr auto 1fr',
+                            gap: '16px',
+                            alignItems: 'center',
+                            padding: '16px 20px',
+                            borderRadius: '17.1429px',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            marginBottom: '20px',
+                        }}
+                    >
+                        {/* Player 1 (You) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                            <div
+                                style={{
+                                    width: '46px',
+                                    height: '46px',
+                                    borderRadius: '10px',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                    border: '1px solid rgba(245, 197, 66, 0.4)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '22px',
+                                    flexShrink: 0,
+                                    boxShadow: '0 0 16px rgba(245, 197, 66, 0.2)',
+                                }}
+                            >
+                                ⚔️
+                            </div>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
+                                        Kamu <span style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 400 }}>(Hero)</span>
+                                    </span>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            padding: '2px 7px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                                            border: '1px solid rgba(245, 197, 66, 0.4)',
+                                            color: 'var(--color-signal-orange)',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        LV.12
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                    Pelajar Hebat · Warrior
+                                </div>
+                                {/* Health / Score Bar */}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '5px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            initial={{ width: '100%' }}
+                                            animate={{ width: `${myHpPercent}%` }}
+                                            transition={{ duration: 0.4 }}
+                                            style={{
+                                                height: '100%',
+                                                backgroundColor: myHpPercent > 50 ? 'var(--color-vector-green)' : myHpPercent > 25 ? 'var(--color-signal-orange)' : 'var(--accent-red)',
+                                            }}
+                                        />
+                                    </div>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
+                                        {myScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
 
-            <AnimatePresence mode="wait">
-                <motion.div key={currentQ} initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -30 }} className="card" style={{ padding: '24px', marginBottom: '16px' }}>
-                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>SOAL {currentQ + 1}</div>
-                    <p style={{ fontSize: '16px', fontWeight: 600, lineHeight: 1.6 }}>{currentQuestion.question_text}</p>
-                </motion.div>
-            </AnimatePresence>
+                        {/* Center VS Pill */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <div
+                                style={{
+                                    fontFamily: 'var(--font-heading)',
+                                    fontSize: '12px',
+                                    fontWeight: 800,
+                                    color: 'var(--color-signal-orange)',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                    padding: '4px 14px',
+                                    borderRadius: '9999px',
+                                    border: '1px solid rgba(245, 197, 66, 0.35)',
+                                    letterSpacing: '0.08em',
+                                    boxShadow: '0 0 12px rgba(245, 197, 66, 0.2)',
+                                }}
+                            >
+                                VS
+                            </div>
+                            <span style={{ fontSize: '10px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.05em' }}>
+                                {currentQ + 1}/{questions.length}
+                            </span>
+                        </div>
 
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {currentQuestion.options.map((opt, idx) => {
-                    let bg = 'var(--bg-secondary)'
-                    let border = 'var(--border)'
-                    if (showAnswer) {
-                        if (idx === currentQuestion.correct_option) {
-                            bg = 'rgba(34,197,94,0.15)'
-                            border = 'var(--accent-green)'
-                        } else if (idx === selectedAnswer) {
-                            bg = 'rgba(232,64,64,0.15)'
-                            border = 'var(--accent-red)'
-                        }
-                    } else if (idx === selectedAnswer) {
-                        bg = 'rgba(0,212,255,0.1)'
-                        border = 'var(--accent-cyan)'
-                    }
-                    return (
-                        <motion.button
-                            key={idx}
-                            type="button"
-                            whileHover={selectedAnswer === null ? { x: 4 } : {}}
-                            onClick={() => handleAnswer(idx)}
+                        {/* Player 2 (Computer Bot) */}
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', flexWrap: 'wrap' }}>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            padding: '2px 7px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'rgba(0, 212, 255, 0.15)',
+                                            border: '1px solid rgba(0, 212, 255, 0.4)',
+                                            color: '#00d4ff',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        LV.14
+                                    </span>
+                                    <span style={{ fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
+                                        Computer AI
+                                    </span>
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                    SMK Cybernetics · Bot
+                                </div>
+                                {/* Health / Score Bar */}
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', marginTop: '6px' }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 700, color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
+                                        {botScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
+                                    </span>
+                                    <div
+                                        style={{
+                                            flex: 1,
+                                            maxWidth: '120px',
+                                            height: '5px',
+                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                                            borderRadius: '9999px',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        <motion.div
+                                            initial={{ width: '100%' }}
+                                            animate={{ width: `${botHpPercent}%` }}
+                                            transition={{ duration: 0.4 }}
+                                            style={{
+                                                height: '100%',
+                                                backgroundColor: botHpPercent > 50 ? '#00d4ff' : botHpPercent > 25 ? 'var(--color-signal-orange)' : 'var(--accent-red)',
+                                                marginLeft: 'auto',
+                                            }}
+                                        />
+                                    </div>
+                                </div>
+                                <div style={{ marginTop: '3px' }}>
+                                    <span style={{ fontSize: '10px', color: botAnswered ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
+                                        {botAnswered ? '⚡ Sudah Menjawab!' : '🤔 Menganalisis...'}
+                                    </span>
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    width: '46px',
+                                    height: '46px',
+                                    borderRadius: '10px',
+                                    backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                                    border: '1px solid rgba(0, 212, 255, 0.35)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '22px',
+                                    flexShrink: 0,
+                                    boxShadow: '0 0 16px rgba(0, 212, 255, 0.2)',
+                                }}
+                            >
+                                🤖
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Question Card */}
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={currentQ}
+                            initial={{ opacity: 0, y: 8 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -8 }}
+                            transition={{ duration: 0.2 }}
                             style={{
-                                textAlign: 'left', padding: '14px 16px', borderRadius: '4px',
-                                cursor: selectedAnswer !== null ? 'default' : 'pointer',
-                                backgroundColor: bg, border: `1px solid ${border}`,
-                                color: 'var(--text-primary)', fontSize: '14px', fontWeight: 500,
+                                padding: '22px',
+                                backgroundColor: 'var(--color-carbon)',
+                                borderRadius: '17.1429px',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                marginBottom: '18px',
                             }}
                         >
-                            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginRight: '10px', color: 'var(--text-secondary)' }}>
-                                {String.fromCharCode(65 + idx)}.
-                            </span>
-                            {opt}
-                        </motion.button>
-                    )
-                })}
-            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                                <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 700, letterSpacing: '1px' }}>
+                                    SOAL {currentQ + 1} DARI {questions.length}
+                                </span>
+                                <span style={{ color: 'var(--color-steel)' }}>•</span>
+                                <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi yang tepat untuk menyerang lawan:</span>
+                            </div>
+
+                            <p
+                                style={{
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '16px',
+                                    fontWeight: 500,
+                                    color: '#ffffff',
+                                    lineHeight: 1.6,
+                                    margin: 0,
+                                }}
+                            >
+                                {currentQuestion.question_text}
+                            </p>
+                        </motion.div>
+                    </AnimatePresence>
+
+                    {/* Options Grid */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px', marginBottom: '16px' }}>
+                        {currentQuestion.options.map((opt, idx) => {
+                            const isSelected = selectedAnswer === idx
+                            const isCorrect = idx === currentQuestion.correct_option
+
+                            let bg = 'rgba(255, 255, 255, 0.04)'
+                            let border = 'rgba(255, 255, 255, 0.1)'
+                            let textColor = '#ffffff'
+                            let badgeBg = 'rgba(255, 255, 255, 0.08)'
+                            let badgeColor = 'var(--color-silver)'
+
+                            if (showAnswer) {
+                                if (isCorrect) {
+                                    bg = 'rgba(34, 197, 94, 0.16)'
+                                    border = 'var(--color-vector-green)'
+                                    textColor = 'var(--color-vector-green)'
+                                    badgeBg = 'var(--color-vector-green)'
+                                    badgeColor = '#050505'
+                                } else if (isSelected) {
+                                    bg = 'rgba(239, 68, 68, 0.16)'
+                                    border = 'var(--accent-red)'
+                                    textColor = 'var(--accent-red)'
+                                    badgeBg = 'var(--accent-red)'
+                                    badgeColor = '#ffffff'
+                                }
+                            } else if (isSelected) {
+                                bg = 'rgba(245, 197, 66, 0.15)'
+                                border = 'var(--color-signal-orange)'
+                                textColor = '#ffffff'
+                                badgeBg = 'var(--color-signal-orange)'
+                                badgeColor = '#050505'
+                            }
+
+                            return (
+                                <motion.button
+                                    key={idx}
+                                    type="button"
+                                    whileHover={selectedAnswer === null ? { y: -2, borderColor: 'rgba(255, 255, 255, 0.25)' } : {}}
+                                    whileTap={selectedAnswer === null ? { scale: 0.99 } : {}}
+                                    onClick={() => handleAnswer(idx)}
+                                    style={{
+                                        textAlign: 'left',
+                                        padding: '14px 16px',
+                                        borderRadius: '12px',
+                                        cursor: selectedAnswer !== null ? 'default' : 'pointer',
+                                        backgroundColor: bg,
+                                        border: `1px solid ${border}`,
+                                        color: textColor,
+                                        fontSize: '13px',
+                                        fontWeight: 500,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '12px',
+                                        transition: 'all 0.15s ease',
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            width: '26px',
+                                            height: '26px',
+                                            borderRadius: '6px',
+                                            backgroundColor: badgeBg,
+                                            color: badgeColor,
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 700,
+                                            fontSize: '12px',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            flexShrink: 0,
+                                        }}
+                                    >
+                                        {String.fromCharCode(65 + idx)}
+                                    </span>
+                                    <span style={{ flex: 1, lineHeight: 1.4 }}>{opt}</span>
+                                    {showAnswer && isCorrect && <CheckCircle size={16} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />}
+                                    {showAnswer && isSelected && !isCorrect && <XCircle size={16} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />}
+                                </motion.button>
+                            )
+                        })}
+                    </div>
+
+                    {/* Bottom toolbar */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '14px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                resetTimers()
+                                setStarted(false)
+                                setFinished(false)
+                            }}
+                            className="btn-dark-outline"
+                            style={{ padding: '6px 14px', fontSize: '11px', color: 'var(--accent-red)', borderColor: 'rgba(232, 64, 64, 0.3)' }}
+                        >
+                            Akhiri Latihan
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     )
