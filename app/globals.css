@@ -785,7 +785,7 @@ input::placeholder, textarea::placeholder {
   white-space: nowrap !important;
   flex-wrap: nowrap !important;
   -webkit-overflow-scrolling: touch;
-  padding-bottom: 6px;
+  padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
@@ -794,15 +794,32 @@ input::placeholder, textarea::placeholder {
   white-space: nowrap !important;
 }
 
-.character-items-grid {
-  display: grid !important;
-  grid-template-columns: 1fr !important;
-  gap: 12px !important;
+.character-filter-tabs {
+  display: flex !important;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  flex-wrap: nowrap !important;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
 }
 
-@media (min-width: 540px) {
+.character-filter-tabs > button {
+  flex-shrink: 0 !important;
+  white-space: nowrap !important;
+}
+
+.character-items-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+@media (min-width: 640px) {
   .character-items-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+    gap: 14px !important;
   }
 }
 

@@ -268,12 +268,12 @@ export default function CharacterPage() {
 
             {/* Main 2-Column Customization Grid */}
             <div className="character-main-grid">
-                {/* LEFT COLUMN: Character Stage & Equipment Slots */}
+                {/* LEFT COLUMN: Character Stage & Equipment Sockets */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {/* Character Stage Card */}
                     <div
                         style={{
-                            padding: '24px 20px',
+                            padding: '22px 20px',
                             borderRadius: '16px',
                             border: '1px solid #313131',
                             backgroundColor: '#141414',
@@ -309,7 +309,7 @@ export default function CharacterPage() {
                         <CharacterVisual
                             role={avatarClass}
                             equipped={equipped}
-                            size={210}
+                            size={190}
                             showAura={true}
                             interactive={true}
                         />
@@ -328,7 +328,7 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 width: '100%',
-                                marginTop: '16px',
+                                marginTop: '14px',
                                 padding: '10px 12px',
                                 borderRadius: '8px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.03)',
@@ -344,102 +344,88 @@ export default function CharacterPage() {
                                 {roleInfo.perk.effect}
                             </div>
                         </div>
-                    </div>
 
-                    {/* Active Equipment Slots Bar */}
-                    <div
-                        style={{
-                            padding: '18px',
-                            borderRadius: '16px',
-                            border: '1px solid #313131',
-                            backgroundColor: '#141414',
-                        }}
-                    >
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)', marginBottom: '14px' }}>
-                            Perlengkapan Terpasang
-                        </div>
+                        {/* 4 Equipped Gear Sockets Grid */}
+                        <div style={{ width: '100%', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                <span style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
+                                    Perlengkapan Terpasang
+                                </span>
+                                <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
+                                    {Object.values(equipped).filter(Boolean).length}/4 Slot
+                                </span>
+                            </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                            {(['head', 'weapon', 'armor', 'accessory'] as ItemSlot[]).map((slotKey) => {
-                                const itemId = equipped[slotKey]
-                                const item = itemId ? GAME_ITEMS.find(it => it.id === itemId) : null
-                                const slotMeta = SLOT_LABELS[slotKey]
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
+                                {(['head', 'weapon', 'armor', 'accessory'] as ItemSlot[]).map((slotKey) => {
+                                    const itemId = equipped[slotKey]
+                                    const item = itemId ? GAME_ITEMS.find(it => it.id === itemId) : null
+                                    const slotMeta = SLOT_LABELS[slotKey]
 
-                                return (
-                                    <div
-                                        key={slotKey}
-                                        style={{
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'space-between',
-                                            padding: '8px 12px',
-                                            borderRadius: '8px',
-                                            backgroundColor: item ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.02)',
-                                            border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'rgba(255, 255, 255, 0.05)'}`,
-                                        }}
-                                    >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                                            <div
-                                                style={{
-                                                    width: '32px',
-                                                    height: '32px',
-                                                    borderRadius: '6px',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    fontSize: '16px',
-                                                    flexShrink: 0,
-                                                }}
-                                            >
+                                    return (
+                                        <div
+                                            key={slotKey}
+                                            style={{
+                                                padding: '10px 6px',
+                                                borderRadius: '8px',
+                                                backgroundColor: item ? 'rgba(245, 197, 66, 0.08)' : 'rgba(255, 255, 255, 0.02)',
+                                                border: `1px solid ${item ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.06)'}`,
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                textAlign: 'center',
+                                                position: 'relative',
+                                                minWidth: 0,
+                                            }}
+                                        >
+                                            <span style={{ fontSize: '20px', marginBottom: '2px' }}>
                                                 {item ? item.icon : slotMeta.emoji}
-                                            </div>
-                                            <div style={{ minWidth: 0 }}>
-                                                <div style={{ fontSize: '10px', color: 'var(--color-steel)', textTransform: 'uppercase' }}>
-                                                    {slotMeta.name}
-                                                </div>
-                                                <div
+                                            </span>
+                                            <span style={{ fontSize: '9.5px', color: 'var(--color-steel)', whiteSpace: 'nowrap' }}>
+                                                {slotMeta.name}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    fontSize: '10.5px',
+                                                    fontWeight: 600,
+                                                    color: item ? '#ffffff' : 'var(--color-fog)',
+                                                    marginTop: '2px',
+                                                    width: '100%',
+                                                    overflow: 'hidden',
+                                                    textOverflow: 'ellipsis',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                                title={item ? item.name : 'Kosong'}
+                                            >
+                                                {item ? item.name : 'Kosong'}
+                                            </span>
+
+                                            {item && (
+                                                <button
+                                                    type="button"
+                                                    title={`Lepas ${item.name}`}
+                                                    disabled={actionLoadingId === item.id}
+                                                    onClick={() => handleEquipToggle(item, 'unequip')}
                                                     style={{
-                                                        fontSize: '12px',
-                                                        fontWeight: 600,
-                                                        color: item ? '#ffffff' : 'var(--color-fog)',
-                                                        overflow: 'hidden',
-                                                        textOverflow: 'ellipsis',
-                                                        whiteSpace: 'nowrap',
+                                                        marginTop: '6px',
+                                                        padding: '2px 8px',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid rgba(239, 68, 68, 0.35)',
+                                                        backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                                                        color: 'var(--accent-red)',
+                                                        fontSize: '10px',
+                                                        fontWeight: 700,
+                                                        cursor: 'pointer',
+                                                        width: '100%',
                                                     }}
                                                 >
-                                                    {item ? item.name : 'Kosong'}
-                                                </div>
-                                            </div>
+                                                    {actionLoadingId === item.id ? '...' : 'Lepas'}
+                                                </button>
+                                            )}
                                         </div>
-
-                                        {item ? (
-                                            <button
-                                                type="button"
-                                                disabled={actionLoadingId === item.id}
-                                                onClick={() => handleEquipToggle(item, 'unequip')}
-                                                style={{
-                                                    padding: '4px 10px',
-                                                    borderRadius: '6px',
-                                                    border: '1px solid rgba(239, 68, 68, 0.3)',
-                                                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                                                    color: 'var(--accent-red)',
-                                                    fontSize: '11px',
-                                                    cursor: 'pointer',
-                                                    flexShrink: 0,
-                                                }}
-                                            >
-                                                Lepas
-                                            </button>
-                                        ) : (
-                                            <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
-                                                —
-                                            </span>
-                                        )}
-                                    </div>
-                                )
-                            })}
+                                    )
+                                })}
+                            </div>
                         </div>
                     </div>
 
@@ -452,8 +438,13 @@ export default function CharacterPage() {
                             border: '1px solid #313131',
                         }}
                     >
-                        <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)', marginBottom: '10px' }}>
-                            Total Atribut & Buff Tempur:
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
+                                Total Atribut & Buff Tempur:
+                            </div>
+                            <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
+                                PvP Duel 1v1
+                            </span>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                             <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
@@ -496,8 +487,20 @@ export default function CharacterPage() {
                     </div>
                 </div>
 
-                {/* RIGHT COLUMN: Tabs (Inventory, Shop, Role Traits) */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0, maxWidth: '100%' }}>
+                {/* RIGHT COLUMN: Unified Inventory & Shop Box */}
+                <div
+                    className="card"
+                    style={{
+                        padding: '20px',
+                        backgroundColor: '#141414',
+                        border: '1px solid #313131',
+                        borderRadius: '16px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '16px',
+                        minWidth: 0,
+                    }}
+                >
                     {/* Navigation Tabs */}
                     <div className="character-nav-tabs">
                         <button
@@ -507,10 +510,10 @@ export default function CharacterPage() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '8px 16px',
+                                padding: '8px 14px',
                                 borderRadius: '8px',
-                                border: 'none',
-                                backgroundColor: activeTab === 'inventory' ? 'rgba(245, 197, 66, 0.15)' : 'transparent',
+                                border: activeTab === 'inventory' ? '1px solid rgba(245, 197, 66, 0.35)' : '1px solid transparent',
+                                backgroundColor: activeTab === 'inventory' ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
                                 color: activeTab === 'inventory' ? '#F5C542' : 'var(--color-fog)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
@@ -519,7 +522,7 @@ export default function CharacterPage() {
                             }}
                         >
                             <Package size={15} />
-                            <span>Inventori Milikmu ({inventory.length})</span>
+                            <span>Inventori ({inventory.length})</span>
                         </button>
 
                         <button
@@ -529,10 +532,10 @@ export default function CharacterPage() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '8px 16px',
+                                padding: '8px 14px',
                                 borderRadius: '8px',
-                                border: 'none',
-                                backgroundColor: activeTab === 'shop' ? 'rgba(56, 189, 248, 0.15)' : 'transparent',
+                                border: activeTab === 'shop' ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid transparent',
+                                backgroundColor: activeTab === 'shop' ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
                                 color: activeTab === 'shop' ? '#38bdf8' : 'var(--color-fog)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
@@ -541,7 +544,7 @@ export default function CharacterPage() {
                             }}
                         >
                             <ShoppingBag size={15} />
-                            <span>Toko Aksesoris (Beli XP)</span>
+                            <span>Toko Aksesoris</span>
                         </button>
 
                         <button
@@ -551,10 +554,10 @@ export default function CharacterPage() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '8px 16px',
+                                padding: '8px 14px',
                                 borderRadius: '8px',
-                                border: 'none',
-                                backgroundColor: activeTab === 'perks' ? 'rgba(16, 185, 129, 0.15)' : 'transparent',
+                                border: activeTab === 'perks' ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid transparent',
+                                backgroundColor: activeTab === 'perks' ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
                                 color: activeTab === 'perks' ? '#10b981' : 'var(--color-fog)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
@@ -563,13 +566,13 @@ export default function CharacterPage() {
                             }}
                         >
                             <Info size={15} />
-                            <span>Panduan Role & Efek</span>
+                            <span>Panduan Role</span>
                         </button>
                     </div>
 
                     {/* Slot Filter Buttons (For Inventory & Shop) */}
                     {activeTab !== 'perks' && (
-                        <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
+                        <div className="character-filter-tabs">
                             {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map(flt => (
                                 <button
                                     key={flt}
@@ -578,9 +581,9 @@ export default function CharacterPage() {
                                     style={{
                                         padding: '5px 12px',
                                         borderRadius: '6px',
-                                        border: `1px solid ${selectedSlotFilter === flt ? 'rgba(255, 255, 255, 0.25)' : 'rgba(255, 255, 255, 0.06)'}`,
-                                        backgroundColor: selectedSlotFilter === flt ? 'rgba(255, 255, 255, 0.12)' : 'rgba(255, 255, 255, 0.02)',
-                                        color: selectedSlotFilter === flt ? '#ffffff' : 'var(--color-steel)',
+                                        border: `1px solid ${selectedSlotFilter === flt ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.08)'}`,
+                                        backgroundColor: selectedSlotFilter === flt ? 'rgba(245, 197, 66, 0.12)' : 'rgba(255, 255, 255, 0.02)',
+                                        color: selectedSlotFilter === flt ? '#F5C542' : 'var(--color-steel)',
                                         fontSize: '11px',
                                         fontWeight: 600,
                                         cursor: 'pointer',
@@ -621,11 +624,12 @@ export default function CharacterPage() {
                                         style={{
                                             padding: '8px 18px',
                                             borderRadius: '8px',
-                                            backgroundColor: '#38bdf8',
+                                            backgroundColor: '#F5C542',
                                             color: '#050505',
                                             border: 'none',
                                             fontSize: '12px',
                                             fontWeight: 700,
+                                            fontFamily: 'var(--font-heading)',
                                             cursor: 'pointer',
                                         }}
                                     >
@@ -637,62 +641,139 @@ export default function CharacterPage() {
                                     {filteredInventory.map((item) => {
                                         const isEquipped = equipped[item.slot] === item.id
                                         const rarity = RARITY_CONFIG[item.rarity]
+                                        const slotMeta = SLOT_LABELS[item.slot]
 
                                         return (
                                             <div
                                                 key={item.id}
                                                 style={{
-                                                    padding: '14px',
+                                                    padding: '12px',
                                                     borderRadius: '12px',
-                                                    backgroundColor: isEquipped ? `${rarity.bg}` : 'rgba(255, 255, 255, 0.03)',
-                                                    border: `1px solid ${isEquipped ? rarity.color : rarity.border}`,
+                                                    backgroundColor: '#161616',
+                                                    border: `1px solid ${isEquipped ? 'rgba(245, 197, 66, 0.45)' : 'rgba(255, 255, 255, 0.08)'}`,
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     justifyContent: 'space-between',
                                                     gap: '10px',
+                                                    position: 'relative',
                                                 }}
                                             >
                                                 <div>
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                                        <span style={{ fontSize: '24px' }}>{item.icon}</span>
+                                                    {/* Header: Slot Badge & Rarity / Equipped status */}
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
                                                         <span
                                                             style={{
                                                                 fontSize: '10px',
-                                                                fontWeight: 700,
+                                                                color: 'var(--color-steel)',
+                                                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                                                 padding: '2px 6px',
                                                                 borderRadius: '4px',
-                                                                color: rarity.color,
-                                                                backgroundColor: rarity.bg,
-                                                                border: `1px solid ${rarity.border}`,
+                                                                border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                                whiteSpace: 'nowrap',
                                                             }}
                                                         >
-                                                            {rarity.label}
+                                                            {slotMeta?.emoji} {slotMeta?.name}
                                                         </span>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                            {isEquipped && (
+                                                                <span
+                                                                    style={{
+                                                                        fontSize: '9.5px',
+                                                                        fontWeight: 700,
+                                                                        padding: '1px 6px',
+                                                                        borderRadius: '4px',
+                                                                        color: '#F5C542',
+                                                                        backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                                                        border: '1px solid rgba(245, 197, 66, 0.3)',
+                                                                        whiteSpace: 'nowrap',
+                                                                    }}
+                                                                >
+                                                                    Terpasang
+                                                                </span>
+                                                            )}
+                                                            <span
+                                                                style={{
+                                                                    fontSize: '9.5px',
+                                                                    fontWeight: 600,
+                                                                    padding: '1px 6px',
+                                                                    borderRadius: '4px',
+                                                                    color: rarity.color,
+                                                                    backgroundColor: rarity.bg,
+                                                                    border: `1px solid ${rarity.border}`,
+                                                                    whiteSpace: 'nowrap',
+                                                                }}
+                                                            >
+                                                                {rarity.label}
+                                                            </span>
+                                                        </div>
                                                     </div>
 
-                                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, color: '#ffffff', marginBottom: '4px' }}>
-                                                        {item.name}
+                                                    {/* Item Icon & Title */}
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                                                        <div
+                                                            style={{
+                                                                width: '38px',
+                                                                height: '38px',
+                                                                borderRadius: '8px',
+                                                                backgroundColor: '#121212',
+                                                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                fontSize: '20px',
+                                                                flexShrink: 0,
+                                                            }}
+                                                        >
+                                                            {item.icon}
+                                                        </div>
+                                                        <div style={{ minWidth: 0 }}>
+                                                            <div
+                                                                style={{
+                                                                    fontFamily: 'var(--font-heading)',
+                                                                    fontSize: '13px',
+                                                                    fontWeight: 600,
+                                                                    color: '#ffffff',
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                }}
+                                                            >
+                                                                {item.name}
+                                                            </div>
+                                                            <div
+                                                                style={{
+                                                                    fontSize: '10.5px',
+                                                                    fontWeight: 600,
+                                                                    color: 'var(--color-vector-green)',
+                                                                    marginTop: '2px',
+                                                                    overflow: 'hidden',
+                                                                    textOverflow: 'ellipsis',
+                                                                    whiteSpace: 'nowrap',
+                                                                }}
+                                                            >
+                                                                ⚡ {item.buff.label}
+                                                            </div>
+                                                        </div>
                                                     </div>
 
-                                                    <p style={{ fontSize: '11px', color: 'var(--color-fog)', margin: '0 0 8px 0', lineHeight: 1.4 }}>
-                                                        {item.description}
-                                                    </p>
-
-                                                    <div
+                                                    <p
                                                         style={{
                                                             fontSize: '11px',
-                                                            fontWeight: 600,
-                                                            color: 'var(--color-vector-green)',
-                                                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                                                            padding: '4px 8px',
-                                                            borderRadius: '6px',
+                                                            color: 'var(--color-fog)',
+                                                            margin: '0 0 6px 0',
+                                                            lineHeight: 1.35,
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
                                                         }}
                                                     >
-                                                        ⚡ {item.buff.label}
-                                                    </div>
+                                                        {item.description}
+                                                    </p>
                                                 </div>
 
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
+                                                {/* Action Button */}
+                                                <div>
                                                     {isEquipped ? (
                                                         <button
                                                             type="button"
@@ -700,13 +781,13 @@ export default function CharacterPage() {
                                                             onClick={() => handleEquipToggle(item, 'unequip')}
                                                             style={{
                                                                 width: '100%',
-                                                                padding: '6px 12px',
+                                                                padding: '6px 10px',
                                                                 borderRadius: '6px',
                                                                 border: '1px solid rgba(239, 68, 68, 0.35)',
-                                                                backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                                                                 color: 'var(--accent-red)',
                                                                 fontSize: '11px',
-                                                                fontWeight: 700,
+                                                                fontWeight: 600,
                                                                 cursor: 'pointer',
                                                             }}
                                                         >
@@ -719,13 +800,14 @@ export default function CharacterPage() {
                                                             onClick={() => handleEquipToggle(item, 'equip')}
                                                             style={{
                                                                 width: '100%',
-                                                                padding: '6px 12px',
+                                                                padding: '6px 10px',
                                                                 borderRadius: '6px',
                                                                 border: 'none',
-                                                                backgroundColor: '#38bdf8',
+                                                                backgroundColor: '#F5C542',
                                                                 color: '#050505',
                                                                 fontSize: '11px',
                                                                 fontWeight: 700,
+                                                                fontFamily: 'var(--font-heading)',
                                                                 cursor: 'pointer',
                                                             }}
                                                         >
@@ -747,62 +829,118 @@ export default function CharacterPage() {
                             {filteredShopItems.map((item) => {
                                 const isOwned = ownedIds.has(item.id)
                                 const rarity = RARITY_CONFIG[item.rarity]
+                                const slotMeta = SLOT_LABELS[item.slot]
                                 const canAfford = (profile?.xp || 0) >= item.cost_xp
 
                                 return (
                                     <div
                                         key={item.id}
                                         style={{
-                                            padding: '14px',
+                                            padding: '12px',
                                             borderRadius: '12px',
-                                            backgroundColor: isOwned ? 'rgba(255, 255, 255, 0.02)' : 'rgba(15, 23, 42, 0.65)',
+                                            backgroundColor: '#161616',
                                             border: `1px solid ${rarity.border}`,
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'space-between',
-                                            gap: '12px',
+                                            gap: '10px',
                                             opacity: isOwned ? 0.75 : 1,
                                         }}
                                     >
                                         <div>
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                                                <span style={{ fontSize: '26px' }}>{item.icon}</span>
+                                            {/* Header: Slot Badge & Rarity */}
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
                                                 <span
                                                     style={{
                                                         fontSize: '10px',
-                                                        fontWeight: 700,
+                                                        color: 'var(--color-steel)',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                                         padding: '2px 6px',
+                                                        borderRadius: '4px',
+                                                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    {slotMeta?.emoji} {slotMeta?.name}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        fontSize: '9.5px',
+                                                        fontWeight: 600,
+                                                        padding: '1px 6px',
                                                         borderRadius: '4px',
                                                         color: rarity.color,
                                                         backgroundColor: rarity.bg,
                                                         border: `1px solid ${rarity.border}`,
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     {rarity.label}
                                                 </span>
                                             </div>
 
-                                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, color: '#ffffff', marginBottom: '4px' }}>
-                                                {item.name}
+                                            {/* Item Icon & Title */}
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                                                <div
+                                                    style={{
+                                                        width: '38px',
+                                                        height: '38px',
+                                                        borderRadius: '8px',
+                                                        backgroundColor: '#121212',
+                                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontSize: '20px',
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
+                                                    {item.icon}
+                                                </div>
+                                                <div style={{ minWidth: 0 }}>
+                                                    <div
+                                                        style={{
+                                                            fontFamily: 'var(--font-heading)',
+                                                            fontSize: '13px',
+                                                            fontWeight: 600,
+                                                            color: '#ffffff',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                        }}
+                                                    >
+                                                        {item.name}
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '10.5px',
+                                                            fontWeight: 600,
+                                                            color: 'var(--color-vector-green)',
+                                                            marginTop: '2px',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                        }}
+                                                    >
+                                                        ⚡ {item.buff.label}
+                                                    </div>
+                                                </div>
                                             </div>
 
-                                            <p style={{ fontSize: '11px', color: 'var(--color-fog)', margin: '0 0 8px 0', lineHeight: 1.4 }}>
-                                                {item.description}
-                                            </p>
-
-                                            <div
+                                            <p
                                                 style={{
                                                     fontSize: '11px',
-                                                    fontWeight: 600,
-                                                    color: 'var(--color-vector-green)',
-                                                    backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                                                    padding: '4px 8px',
-                                                    borderRadius: '6px',
-                                                    marginBottom: '10px',
+                                                    color: 'var(--color-fog)',
+                                                    margin: '0 0 6px 0',
+                                                    lineHeight: 1.35,
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
                                                 }}
                                             >
-                                                ⚡ {item.buff.label}
-                                            </div>
+                                                {item.description}
+                                            </p>
                                         </div>
 
                                         <div>
@@ -810,7 +948,7 @@ export default function CharacterPage() {
                                                 <div
                                                     style={{
                                                         textAlign: 'center',
-                                                        padding: '6px',
+                                                        padding: '7px',
                                                         borderRadius: '6px',
                                                         backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                                         color: 'var(--color-steel)',
@@ -827,12 +965,12 @@ export default function CharacterPage() {
                                                     onClick={() => handleBuyItem(item)}
                                                     style={{
                                                         width: '100%',
-                                                        padding: '8px 12px',
+                                                        padding: '7px 10px',
                                                         borderRadius: '6px',
                                                         border: 'none',
                                                         backgroundColor: canAfford ? '#F5C542' : 'rgba(255, 255, 255, 0.1)',
                                                         color: canAfford ? '#050505' : 'var(--color-steel)',
-                                                        fontSize: '12px',
+                                                        fontSize: '11px',
                                                         fontWeight: 700,
                                                         fontFamily: 'var(--font-heading)',
                                                         cursor: canAfford ? 'pointer' : 'not-allowed',
@@ -846,7 +984,7 @@ export default function CharacterPage() {
                                                         <span>Membeli...</span>
                                                     ) : (
                                                         <>
-                                                            <Coins size={14} />
+                                                            <Coins size={13} />
                                                             <span>Beli {item.cost_xp} XP</span>
                                                         </>
                                                     )}
@@ -861,7 +999,7 @@ export default function CharacterPage() {
 
                     {/* TAB 3: ROLE TRAITS & BATTLE GUIDE */}
                     {activeTab === 'perks' && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {(['warrior', 'mage', 'archer', 'healer'] as AvatarClass[]).map(rKey => {
                                 const r = CHARACTER_ROLES[rKey]
                                 const isCurrent = avatarClass === rKey
@@ -870,17 +1008,17 @@ export default function CharacterPage() {
                                     <div
                                         key={rKey}
                                         style={{
-                                            padding: '18px',
+                                            padding: '16px',
                                             borderRadius: '12px',
-                                            backgroundColor: isCurrent ? `${r.themeColor}12` : 'rgba(255, 255, 255, 0.03)',
-                                            border: `1px solid ${isCurrent ? r.themeColor : 'rgba(255, 255, 255, 0.08)'}`,
+                                            backgroundColor: '#161616',
+                                            border: `1px solid ${isCurrent ? 'rgba(245, 197, 66, 0.4)' : 'rgba(255, 255, 255, 0.08)'}`,
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                                <span style={{ fontSize: '24px' }}>{r.avatarEmoji}</span>
+                                                <span style={{ fontSize: '22px' }}>{r.avatarEmoji}</span>
                                                 <div>
-                                                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, color: '#ffffff' }}>
+                                                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
                                                         {r.name} — {r.title}
                                                     </span>
                                                     <span style={{ fontSize: '11px', color: 'var(--color-steel)', marginLeft: '8px' }}>
@@ -893,8 +1031,9 @@ export default function CharacterPage() {
                                                     style={{
                                                         padding: '2px 8px',
                                                         borderRadius: '6px',
-                                                        backgroundColor: r.themeColor,
-                                                        color: '#ffffff',
+                                                        backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                                                        color: '#F5C542',
+                                                        border: '1px solid rgba(245, 197, 66, 0.35)',
                                                         fontSize: '11px',
                                                         fontWeight: 700,
                                                     }}
@@ -904,7 +1043,7 @@ export default function CharacterPage() {
                                             )}
                                         </div>
 
-                                        <p style={{ fontSize: '12px', color: 'var(--color-fog)', margin: '0 0 10px 0', lineHeight: 1.5 }}>
+                                        <p style={{ fontSize: '12px', color: 'var(--color-fog)', margin: '0 0 8px 0', lineHeight: 1.5 }}>
                                             {r.description}
                                         </p>
 
