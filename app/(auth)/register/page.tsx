@@ -44,7 +44,16 @@ export default function RegisterPage() {
         const { data: authData, error: signUpError } = await supabase.auth.signUp({
             email: data.email,
             password: data.password,
-            options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+            options: {
+                emailRedirectTo: `${window.location.origin}/auth/callback`,
+                data: {
+                    username: data.username,
+                    full_name: data.full_name,
+                    school_name: data.school_name,
+                    city: data.city,
+                    avatar_class: data.avatar_class,
+                },
+            },
         })
 
         if (signUpError) {
@@ -53,21 +62,44 @@ export default function RegisterPage() {
             return
         }
 
+        // Jika Supabase belum mengembalikan session aktif, coba sign-in langsung
+        if (!authData.session) {
+            const { error: signInError } = await supabase.auth.signInWithPassword({
+                email: data.email,
+                password: data.password,
+            })
+            if (signInError && signInError.message.toLowerCase().includes('email not confirmed')) {
+                setError('Registrasi berhasil! Silakan periksa inbox email kamu untuk konfirmasi akun.')
+                setIsLoading(false)
+                return
+            }
+        }
+
+        // Upsert profil (trigger database handle_new_user juga otomatis membuatnya)
         if (authData.user) {
-            const { error: profileError } = await supabase.from('profiles').insert({
+            const { error: profileError } = await supabase.from('profiles').upsert({
                 id: authData.user.id,
                 username: data.username,
                 full_name: data.full_name,
                 school_name: data.school_name,
                 city: data.city,
                 avatar_class: data.avatar_class,
-            })
+            }, { onConflict: 'id' })
 
             if (profileError) {
-                console.error("Supabase Profile Insert Error:", profileError)
-                setError(`Gagal membuat profil. Detail: ${profileError.message}`)
-                setIsLoading(false)
-                return
+                // Abaikan error RLS jika trigger database sudah berhasil membuat row
+                const { data: existingProfile } = await supabase
+                    .from('profiles')
+                    .select('id')
+                    .eq('id', authData.user.id)
+                    .maybeSingle()
+
+                if (!existingProfile) {
+                    console.error("Supabase Profile Upsert Error:", profileError)
+                    setError(`Gagal membuat profil. Detail: ${profileError.message}`)
+                    setIsLoading(false)
+                    return
+                }
             }
         }
 
