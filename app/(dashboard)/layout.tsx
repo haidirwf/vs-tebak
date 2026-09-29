@@ -17,8 +17,10 @@ export default async function DashboardLayout({
     if (!user) redirect('/login')
 
     const today = format(new Date(), 'yyyy-MM-dd')
-
-    await ensureDailyQuestsAndProgress(supabase, user.id, today)
+    // Jalankan di background (non-blocking) agar navigasi halaman tidak tertahan detik-detik SQL
+    ensureDailyQuestsAndProgress(supabase, user.id, today).catch((err) => {
+        console.error('Background daily quest check error:', err)
+    })
 
     const { data: profile } = await supabase
         .from('profiles')

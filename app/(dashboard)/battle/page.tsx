@@ -44,22 +44,27 @@ export default function BattlePage() {
     // Fetch available rooms
     useEffect(() => {
         if (mode !== 'select') return
+        const controller = new AbortController()
+
         const fetchRooms = async () => {
             if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
             try {
-                const res = await fetch('/api/battle/list')
+                const res = await fetch('/api/battle/list', { signal: controller.signal })
                 if (res.ok) {
                     const data = await res.json()
                     const rooms = Array.isArray(data.rooms) ? data.rooms as AvailableRoom[] : []
                     setAvailableRooms(rooms)
                 }
-            } catch (e) {
-                console.error(e)
+            } catch (e: any) {
+                if (e.name !== 'AbortError') console.error(e)
             }
         }
         fetchRooms()
-        roomsPollingRef.current = setInterval(fetchRooms, 8000)
-        return () => clearInterval(roomsPollingRef.current!)
+        roomsPollingRef.current = setInterval(fetchRooms, 15000)
+        return () => {
+            controller.abort()
+            if (roomsPollingRef.current) clearInterval(roomsPollingRef.current)
+        }
     }, [mode])
 
     // When matchmaking, poll the battle row until an opponent joins

@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Format data biar gampang dipake frontend
-    const formattedRooms = openRooms.map(room => {
+    const formattedRooms = (openRooms || []).map(room => {
         const profs = room.profiles as { username?: string } | Array<{ username?: string }> | null
         return {
             id: room.id,
@@ -55,5 +55,12 @@ export async function GET(request: NextRequest) {
         }
     })
 
-    return NextResponse.json({ rooms: formattedRooms })
+    return NextResponse.json(
+        { rooms: formattedRooms },
+        {
+            headers: {
+                'Cache-Control': 'private, no-cache, no-store, must-revalidate',
+            },
+        }
+    )
 }

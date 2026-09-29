@@ -35,7 +35,7 @@ export function DashboardProvider({
 
     return (
         <>
-            <RefreshOnFocus />
+            {/* <RefreshOnFocus /> dinonaktifkan agar tidak memicu hard server refresh saat fokus window */}
             {children}
             {profile && !onboardingDisabled && (
                 <FirstTimeTutorial
