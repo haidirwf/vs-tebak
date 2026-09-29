@@ -38,7 +38,6 @@ const CLASSES_DATA = [
     title: 'The Code Vanguard',
     emoji: '⚔️',
     color: 'var(--accent-red)',
-    gradient: 'linear-gradient(135deg, rgba(232, 64, 64, 0.15), rgba(232, 64, 64, 0.05))',
     borderColor: 'rgba(232, 64, 64, 0.4)',
     tagline: 'Kuat dalam logika, backend, dan problem solving kompleks.',
     stats: [
@@ -57,7 +56,6 @@ const CLASSES_DATA = [
     title: 'The Design Alchemist',
     emoji: '🔮',
     color: 'var(--accent-cyan)',
-    gradient: 'linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 212, 255, 0.05))',
     borderColor: 'rgba(0, 212, 255, 0.4)',
     tagline: 'Penyihir visual, mahir estetika UI/UX, dan interaksi pengguna.',
     stats: [
@@ -76,7 +74,6 @@ const CLASSES_DATA = [
     title: 'The Battle Speedrunner',
     emoji: '🏹',
     color: 'var(--accent-green)',
-    gradient: 'linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(34, 197, 94, 0.05))',
     borderColor: 'rgba(34, 197, 94, 0.4)',
     tagline: 'Reaksi kilat, unggul dalam duel kuis battle 1v1 dan time-attack.',
     stats: [
@@ -95,7 +92,6 @@ const CLASSES_DATA = [
     title: 'The Productivity Sage',
     emoji: '✨',
     color: 'var(--accent-gold)',
-    gradient: 'linear-gradient(135deg, rgba(245, 197, 66, 0.15), rgba(245, 197, 66, 0.05))',
     borderColor: 'rgba(245, 197, 66, 0.4)',
     tagline: 'Fokus, konsisten, penguasa manajemen waktu dan daily streak.',
     stats: [
@@ -417,46 +413,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           overflow: 'hidden',
         }}
       >
-        {/* Ambient Glows */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '80px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '640px',
-            height: '360px',
-            background: 'radial-gradient(circle, rgba(245, 197, 66, 0.12) 0%, rgba(0, 212, 255, 0.06) 50%, transparent 75%)',
-            filter: 'blur(50px)',
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        />
-
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '960px', margin: '0 auto' }}>
-          {/* Pill Badge */}
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '6px 16px',
-              borderRadius: '999px',
-              backgroundColor: 'rgba(245, 197, 66, 0.08)',
-              border: '1px solid rgba(245, 197, 66, 0.28)',
-              marginBottom: '24px',
-              boxShadow: '0 0 20px rgba(245, 197, 66, 0.12)',
-            }}
-          >
-            <span style={{ display: 'inline-block', width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--accent-gold)', boxShadow: '0 0 8px var(--accent-gold)' }} />
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 700, color: 'var(--accent-gold)', letterSpacing: '0.06em' }}>
-              GAMIFIKASI BELAJAR DIGITAL · PELAJAR SMK/SMA INDONESIA
-            </span>
-          </motion.div>
-
           {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -473,13 +430,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           >
             Level Up Skill Digitalmu,
             <br />
-            <span
-              style={{
-                background: 'linear-gradient(90deg, #F5C542 0%, #FF9033 50%, #00D4FF 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
+            <span style={{ color: 'var(--accent-gold)' }}>
               Taklukkan Masa Depan.
             </span>
           </motion.h1>
@@ -1275,7 +1226,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         style={{
           padding: '80px 24px',
           borderTop: '1px solid var(--border)',
-          background: 'linear-gradient(180deg, rgba(20, 20, 26, 0.6) 0%, rgba(10, 10, 14, 0.95) 100%)',
+          backgroundColor: 'var(--bg-secondary)',
           textAlign: 'center',
         }}
       >
