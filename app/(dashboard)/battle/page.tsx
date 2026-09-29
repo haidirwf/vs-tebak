@@ -14,7 +14,8 @@ import {
     Zap, 
     Flame, 
     RefreshCw, 
-    Plus
+    Plus,
+    ArrowRight
 } from 'lucide-react'
 
 const CATEGORIES = [
@@ -242,6 +243,7 @@ export default function BattlePage() {
             label: 'Buat Room',
             icon: <Swords size={22} />,
             desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.',
+            cta: 'Atur Room',
             action: () => { setError(null); setMode('create') },
             color: '#F5C542',
             bg: 'rgba(245, 197, 66, 0.1)',
@@ -252,6 +254,7 @@ export default function BattlePage() {
             label: 'Join Room',
             icon: <KeyRound size={22} />,
             desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.',
+            cta: 'Input Kode',
             action: () => { setError(null); setMode('join') },
             color: '#38bdf8',
             bg: 'rgba(56, 189, 248, 0.1)',
@@ -262,6 +265,7 @@ export default function BattlePage() {
             label: 'Matchmaking',
             icon: <Flame size={22} />,
             desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.',
+            cta: 'Cari Lawan',
             action: handleMatchmaking,
             color: '#10b981',
             bg: 'rgba(16, 185, 129, 0.1)',
@@ -272,6 +276,7 @@ export default function BattlePage() {
             label: 'Vs Computer',
             icon: <Bot size={22} />,
             desc: 'Latihan cepat melawan AI bot tanpa harus menunggu lawan online.',
+            cta: 'Mulai Latihan',
             action: () => router.push('/battle/computer'),
             color: '#a855f7',
             bg: 'rgba(168, 85, 247, 0.1)',
@@ -358,6 +363,22 @@ export default function BattlePage() {
                                     >
                                         {item.desc}
                                     </p>
+                                </div>
+
+                                {/* Footer CTA with Arrow */}
+                                <div style={{ marginTop: 'auto', paddingTop: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <span
+                                        style={{
+                                            fontSize: '12px',
+                                            fontWeight: 600,
+                                            color: item.color,
+                                            fontFamily: 'var(--font-heading)',
+                                            letterSpacing: '0.02em',
+                                        }}
+                                    >
+                                        {item.cta}
+                                    </span>
+                                    <ArrowRight size={14} style={{ color: item.color }} />
                                 </div>
                             </div>
                         </motion.div>
