@@ -7,7 +7,6 @@ import DailyQuestList from '@/components/quest/DailyQuestList'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import QuickLeaderboard from '@/components/dashboard/QuickLeaderboard'
 import LearningAnalytics from '@/components/dashboard/LearningAnalytics'
-import WeeklyStreakCard from '@/components/dashboard/WeeklyStreakCard'
 import { format } from 'date-fns'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
@@ -108,20 +107,14 @@ export default function DashboardPage() {
 
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress) */}
+            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress, Kalender Streak 7 Hari) */}
             {profile && (
                 <HeroBanner
                     profile={profile}
                     modulesCompletedCount={completedModules.length}
+                    xpLogs={xpLogs}
                 />
             )}
-
-            {/* 2. Strip Kalender Streak 7 Hari Bergaya Duolingo di Atas */}
-            <WeeklyStreakCard
-                lastActive={profile?.last_active}
-                streakCount={profile?.streak_count}
-                xpLogs={xpLogs}
-            />
 
             {/* 3. Diagram Analisa Pembelajaran (Grafik Bar XP 7 Hari & Penguasaan Kategori Modul) */}
             <div>

@@ -1,16 +1,17 @@
 'use client'
 
+import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
-import { Flame, Shield, Sparkles, MapPin, School, Swords, BookOpen, Star } from 'lucide-react'
-import { isStreakActiveToday } from '@/lib/game/streak'
-import Link from 'next/link'
+import { Flame, Sparkles, MapPin, School } from 'lucide-react'
+import { startOfWeek, addDays, format, differenceInCalendarDays, parseISO, isSameDay } from 'date-fns'
 
 interface HeroBannerProps {
     profile: Profile
     modulesCompletedCount: number
     onQuickStart?: () => void
+    xpLogs?: Array<{ xp_amount: number; reason: string | null; created_at: string }>
 }
 
 const CLASS_CONFIG: Record<string, { color: string; bg: string; border: string; desc: string; roleBonus: string; icon: string }> = {
@@ -48,10 +49,9 @@ const CLASS_CONFIG: Record<string, { color: string; bg: string; border: string; 
     },
 }
 
-export default function HeroBanner({ profile, modulesCompletedCount }: HeroBannerProps) {
+export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerProps) {
     const classStat = AVATAR_CLASS_STATS[profile.avatar_class] || AVATAR_CLASS_STATS['warrior']
     const roleCfg = CLASS_CONFIG[profile.avatar_class] || CLASS_CONFIG['warrior']
-    const isStreakActive = isStreakActiveToday(profile.last_active, profile.streak_count)
 
     // Calculate XP progress within current level
     let xpInLevel = profile.xp
@@ -60,6 +60,56 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
     }
     const currentXpProgress = Math.max(0, xpInLevel)
     const progressPercent = getXpProgress(currentXpProgress, profile.xp_to_next_level)
+
+    // 7-day Duolingo-style streak calendar data
+    const weekDays = useMemo(() => {
+        const now = new Date()
+        const weekStart = startOfWeek(now, { weekStartsOn: 1 }) // Senin = 1
+
+        const activeDates = new Set<string>()
+        for (const log of xpLogs) {
+            if (log.created_at) {
+                activeDates.add(log.created_at.slice(0, 10))
+            }
+        }
+
+        if (profile.last_active && profile.streak_count > 0) {
+            try {
+                const lastActiveDate = parseISO(profile.last_active)
+                const daysSinceLastActive = differenceInCalendarDays(now, lastActiveDate)
+                if (daysSinceLastActive <= 1) {
+                    for (let i = 0; i < profile.streak_count; i++) {
+                        const d = addDays(lastActiveDate, -i)
+                        activeDates.add(format(d, 'yyyy-MM-dd'))
+                    }
+                }
+            } catch {
+                // Ignore parse errors
+            }
+        }
+
+        const daysLabels = ['SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB', 'MIN']
+        const days = []
+
+        for (let i = 0; i < 7; i++) {
+            const dayDate = addDays(weekStart, i)
+            const dateStr = format(dayDate, 'yyyy-MM-dd')
+            const isToday = isSameDay(dayDate, now)
+            const isPast = dayDate < now && !isToday
+            const hasActivity = activeDates.has(dateStr)
+
+            days.push({
+                dateStr,
+                dayName: daysLabels[i],
+                dayNumber: format(dayDate, 'd'),
+                isToday,
+                isPast,
+                hasActivity,
+            })
+        }
+
+        return days
+    }, [profile.last_active, profile.streak_count, xpLogs])
 
     return (
         <motion.div
@@ -174,33 +224,103 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
                         </div>
                     </div>
 
-                    {/* Streak & Level Info Pills */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        {isStreakActive && (
-                            <motion.div
-                                whileHover={{ scale: 1.04 }}
-                                style={{
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '8px',
-                                    padding: '8px 14px',
-                                    borderRadius: '8px',
-                                    backgroundColor: 'var(--accent-red-bg)',
-                                    border: '1px solid var(--accent-red-border)',
-                                }}
-                            >
-                                <Flame size={18} style={{ color: 'var(--accent-red)' }} />
-                                <div>
-                                    <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
-                                        Streak
-                                    </div>
-                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-red)' }}>
-                                        {profile.streak_count} Hari
-                                    </div>
-                                </div>
-                            </motion.div>
-                        )}
+                    {/* Kanan: Kalender Streak 7 Hari Duolingo & Total XP */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                        {/* Kalender 7 Hari Duolingo */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '6px 10px',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
+                                borderRadius: '8px',
+                            }}
+                        >
+                            {weekDays.map((day) => {
+                                const isLit = day.hasActivity
+                                const isTodayPending = day.isToday && !day.hasActivity
 
+                                return (
+                                    <div
+                                        key={day.dateStr}
+                                        style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            gap: '3px',
+                                            minWidth: '32px',
+                                        }}
+                                    >
+                                        {/* Nama Hari */}
+                                        <span
+                                            style={{
+                                                fontFamily: 'var(--font-mono)',
+                                                fontSize: '9.5px',
+                                                fontWeight: day.isToday ? 700 : 500,
+                                                color: day.isToday ? 'var(--color-gold)' : 'var(--color-ash)',
+                                                letterSpacing: '0.3px',
+                                            }}
+                                        >
+                                            {day.dayName}
+                                        </span>
+
+                                        {/* Flame Box Indicator */}
+                                        <div
+                                            style={{
+                                                width: '28px',
+                                                height: '28px',
+                                                borderRadius: '5px',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                backgroundColor: isLit
+                                                    ? 'rgba(245, 197, 66, 0.14)'
+                                                    : isTodayPending
+                                                    ? 'rgba(245, 197, 66, 0.05)'
+                                                    : 'rgba(255, 255, 255, 0.02)',
+                                                border: isLit
+                                                    ? '1px solid rgba(245, 197, 66, 0.45)'
+                                                    : isTodayPending
+                                                    ? '1.5px dashed var(--color-gold)'
+                                                    : '1px solid var(--surface-border)',
+                                            }}
+                                        >
+                                            {isLit ? (
+                                                <Flame size={15} fill="var(--color-gold)" style={{ color: 'var(--color-gold)' }} />
+                                            ) : isTodayPending ? (
+                                                <motion.div
+                                                    animate={{ opacity: [0.35, 0.9, 0.35] }}
+                                                    transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
+                                                    style={{ display: 'flex' }}
+                                                >
+                                                    <Flame size={14} style={{ color: 'var(--color-gold)' }} />
+                                                </motion.div>
+                                            ) : day.isPast ? (
+                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--color-smoke)' }} />
+                                            ) : (
+                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.08)' }} />
+                                            )}
+                                        </div>
+
+                                        {/* Nomor Tanggal */}
+                                        <span
+                                            style={{
+                                                fontFamily: 'var(--font-mono)',
+                                                fontSize: '9.5px',
+                                                fontWeight: day.isToday ? 700 : 400,
+                                                color: day.isToday ? 'var(--color-gold)' : day.hasActivity ? 'var(--color-bone)' : 'var(--color-ash)',
+                                            }}
+                                        >
+                                            {day.dayNumber}
+                                        </span>
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {/* Total XP Badge */}
                         <div
                             style={{
                                 display: 'flex',
@@ -210,6 +330,7 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
                                 borderRadius: '8px',
                                 backgroundColor: 'var(--accent-gold-bg)',
                                 border: '1px solid var(--accent-gold-border)',
+                                height: 'fit-content',
                             }}
                         >
                             <Sparkles size={18} style={{ color: 'var(--accent-gold)' }} />
@@ -217,7 +338,7 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
                                 <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
                                     Total XP
                                 </div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)' }}>
                                     {profile.xp.toLocaleString()} XP
                                 </div>
                             </div>
