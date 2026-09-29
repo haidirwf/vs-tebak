@@ -2,117 +2,29 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
+// Minimalist, elegant Skillungo swords favicon:
+// Dark background (#121216) + Pure Gold (#F5C542) swords emblem.
+// No rainbow colors, no multi-color gradients. Simple, crisp, iconic.
 const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <defs>
-    <!-- Background Gradient -->
-    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#181820" />
-      <stop offset="100%" stop-color="#0A0A0E" />
-    </linearGradient>
+  <!-- Dark Rounded Squircle Base -->
+  <rect width="512" height="512" rx="120" fill="#111114" />
+  <rect x="8" y="8" width="496" height="496" rx="112" fill="none" stroke="#222228" stroke-width="16" />
 
-    <!-- Border Gradient -->
-    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F5C542" />
-      <stop offset="50%" stop-color="#FF9033" />
-      <stop offset="100%" stop-color="#00D4FF" />
-    </linearGradient>
+  <!-- Clean Bold Swords Emblem in Pure Brand Gold -->
+  <g transform="translate(256, 256) scale(15.5)" stroke="#F5C542" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g transform="translate(-12, -12)">
+      <!-- Sword 1 (Top-Left to Bottom-Right) -->
+      <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" />
+      <line x1="13" y1="19" x2="19" y2="13" />
+      <line x1="16" y1="16" x2="20" y2="20" />
+      <line x1="19" y1="21" x2="21" y2="19" />
 
-    <!-- Gold Blade Gradient -->
-    <linearGradient id="goldLight" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFF3C4" />
-      <stop offset="40%" stop-color="#F5C542" />
-      <stop offset="100%" stop-color="#D49A16" />
-    </linearGradient>
-
-    <linearGradient id="goldDark" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#F5C542" />
-      <stop offset="60%" stop-color="#B37D0E" />
-      <stop offset="100%" stop-color="#6E4A02" />
-    </linearGradient>
-
-    <!-- Cyan Energy Gradient -->
-    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#B3F3FF" />
-      <stop offset="50%" stop-color="#00D4FF" />
-      <stop offset="100%" stop-color="#007A99" />
-    </linearGradient>
-
-    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#F5C542" stop-opacity="0.25" />
-      <stop offset="60%" stop-color="#00D4FF" stop-opacity="0.10" />
-      <stop offset="100%" stop-color="#000000" stop-opacity="0" />
-    </radialGradient>
-
-    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
-      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.6" />
-    </filter>
-  </defs>
-
-  <!-- Squircle Base -->
-  <rect x="24" y="24" width="464" height="464" rx="116" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="18" />
-
-  <!-- Center Glow -->
-  <circle cx="256" cy="256" r="210" fill="url(#centerGlow)" />
-
-  <!-- Single Sword Definition Reusable in Group -->
-  <g id="sword" filter="url(#dropShadow)">
-    <!-- Sword 1: Top-Left to Bottom-Right (-45deg) -->
-    <g transform="translate(256, 256) rotate(-45) translate(-256, -256)">
-      <!-- Blade Left Side (Lighter Gold) -->
-      <polygon points="256,60 256,330 240,330 242,100" fill="url(#goldLight)" />
-      <!-- Blade Right Side (Darker Gold) -->
-      <polygon points="256,60 270,100 272,330 256,330" fill="url(#goldDark)" />
-      <!-- Blade Tip Highlight -->
-      <polygon points="256,60 256,120 248,110" fill="#FFFFFF" opacity="0.6" />
-
-      <!-- Crossguard Wings -->
-      <path d="M 210,326 L 256,338 L 302,326 L 312,342 L 256,356 L 200,342 Z" fill="url(#cyanGrad)" />
-      <!-- Crossguard Gem -->
-      <circle cx="256" cy="344" r="6" fill="#FFFFFF" />
-
-      <!-- Grip / Handle -->
-      <rect x="251" y="356" width="10" height="58" rx="3" fill="#2A2A36" />
-      <line x1="251" y1="368" x2="261" y2="368" stroke="#F5C542" stroke-width="2" />
-      <line x1="251" y1="382" x2="261" y2="382" stroke="#F5C542" stroke-width="2" />
-      <line x1="251" y1="396" x2="261" y2="396" stroke="#F5C542" stroke-width="2" />
-
-      <!-- Pommel -->
-      <polygon points="256,416 266,428 256,440 246,428" fill="url(#goldLight)" stroke="#B37D0E" stroke-width="2" />
+      <!-- Sword 2 (Top-Right to Bottom-Left) -->
+      <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" />
+      <line x1="5" y1="14" x2="9" y2="18" />
+      <line x1="7" y1="17" x2="4" y2="20" />
+      <line x1="3" y1="19" x2="5" y2="21" />
     </g>
-
-    <!-- Sword 2: Top-Right to Bottom-Left (+45deg) -->
-    <g transform="translate(256, 256) rotate(45) translate(-256, -256)">
-      <!-- Blade Left Side -->
-      <polygon points="256,60 256,330 240,330 242,100" fill="url(#cyanGrad)" />
-      <!-- Blade Right Side -->
-      <polygon points="256,60 270,100 272,330 256,330" fill="#007A99" />
-      <!-- Blade Tip Highlight -->
-      <polygon points="256,60 256,120 248,110" fill="#FFFFFF" opacity="0.6" />
-
-      <!-- Crossguard Wings -->
-      <path d="M 210,326 L 256,338 L 302,326 L 312,342 L 256,356 L 200,342 Z" fill="url(#goldLight)" />
-      <!-- Crossguard Gem -->
-      <circle cx="256" cy="344" r="6" fill="#FFFFFF" />
-
-      <!-- Grip / Handle -->
-      <rect x="251" y="356" width="10" height="58" rx="3" fill="#2A2A36" />
-      <line x1="251" y1="368" x2="261" y2="368" stroke="#00D4FF" stroke-width="2" />
-      <line x1="251" y1="382" x2="261" y2="382" stroke="#00D4FF" stroke-width="2" />
-      <line x1="251" y1="396" x2="261" y2="396" stroke="#00D4FF" stroke-width="2" />
-
-      <!-- Pommel -->
-      <polygon points="256,416 266,428 256,440 246,428" fill="url(#cyanGrad)" stroke="#007A99" stroke-width="2" />
-    </g>
-  </g>
-
-  <!-- Central Shield Emblem Over Intersection -->
-  <g transform="translate(256, 256)">
-    <!-- Shield Outer -->
-    <polygon points="0,-36 32,-12 26,26 0,44 -26,26 -32,-12" fill="#14141A" stroke="url(#borderGrad)" stroke-width="5" />
-    <!-- 4-point Sparkle Star in Center -->
-    <path d="M 0,-24 Q 0,0 24,0 Q 0,0 0,24 Q 0,0 -24,0 Q 0,0 0,-24 Z" fill="url(#goldLight)" />
-    <!-- Center Point -->
-    <circle cx="0" cy="0" r="4" fill="#FFFFFF" />
   </g>
 </svg>`;
 
@@ -121,12 +33,11 @@ async function main() {
   const publicDir = path.join(root, 'public');
   const appDir = path.join(root, 'app');
 
-  // Write SVG files
+  // Write clean SVGs
   fs.writeFileSync(path.join(publicDir, 'favicon.svg'), svgContent, 'utf8');
   fs.writeFileSync(path.join(appDir, 'icon.svg'), svgContent, 'utf8');
-  console.log('Saved favicon.svg and app/icon.svg');
+  console.log('Saved simple favicon.svg and app/icon.svg');
 
-  // Generate PNGs using Sharp
   const svgBuffer = Buffer.from(svgContent);
 
   // 32x32 favicon.png
@@ -153,7 +64,7 @@ async function main() {
     .png()
     .toFile(path.join(appDir, 'favicon.ico'));
 
-  console.log('Generated PNGs and updated app/favicon.ico successfully!');
+  console.log('Generated all simple favicon assets successfully!');
 }
 
 main().catch(console.error);
