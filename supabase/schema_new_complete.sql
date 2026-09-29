@@ -209,25 +209,39 @@ ALTER TABLE public.voucher_catalog ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.voucher_redemptions ENABLE ROW LEVEL SECURITY;
 
 -- 3.1 Profiles Policies
+DROP POLICY IF EXISTS "profiles_public_read" ON public.profiles;
 CREATE POLICY "profiles_public_read" ON public.profiles FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "profiles_self_insert" ON public.profiles;
 CREATE POLICY "profiles_self_insert" ON public.profiles FOR INSERT WITH CHECK (auth.uid() = id);
+
+DROP POLICY IF EXISTS "profiles_self_update" ON public.profiles;
 CREATE POLICY "profiles_self_update" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
 -- 3.2 Modules Policies
+DROP POLICY IF EXISTS "modules_public_read" ON public.modules;
 CREATE POLICY "modules_public_read" ON public.modules FOR SELECT USING (is_published = true);
 
 -- 3.3 Questions Policies
+DROP POLICY IF EXISTS "questions_public_read" ON public.questions;
 CREATE POLICY "questions_public_read" ON public.questions FOR SELECT USING (true);
 
 -- 3.4 Battle Questions Policies
+DROP POLICY IF EXISTS "battle_questions_public_read" ON public.battle_questions;
 CREATE POLICY "battle_questions_public_read" ON public.battle_questions FOR SELECT USING (is_active = true);
 
 -- 3.5 User Modules Policies
+DROP POLICY IF EXISTS "user_modules_self" ON public.user_modules;
 CREATE POLICY "user_modules_self" ON public.user_modules FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- 3.6 Battles Policies
+DROP POLICY IF EXISTS "battles_read" ON public.battles;
 CREATE POLICY "battles_read" ON public.battles FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "battles_insert" ON public.battles;
 CREATE POLICY "battles_insert" ON public.battles FOR INSERT WITH CHECK (auth.uid() = player1_id);
+
+DROP POLICY IF EXISTS "battles_update" ON public.battles;
 CREATE POLICY "battles_update" ON public.battles FOR UPDATE
 USING (
   auth.uid() = player1_id
@@ -247,10 +261,15 @@ WITH CHECK (
     AND player2_score = 0
   )
 );
+
+DROP POLICY IF EXISTS "battles_delete" ON public.battles;
 CREATE POLICY "battles_delete" ON public.battles FOR DELETE USING (auth.uid() = player1_id);
 
 -- 3.7 Daily Quests Policies
+DROP POLICY IF EXISTS "daily_quests_public_read" ON public.daily_quests;
 CREATE POLICY "daily_quests_public_read" ON public.daily_quests FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "daily_quests_auth_insert_today" ON public.daily_quests;
 CREATE POLICY "daily_quests_auth_insert_today" ON public.daily_quests FOR INSERT WITH CHECK (
   auth.uid() IS NOT NULL 
   AND date = CURRENT_DATE
@@ -259,19 +278,32 @@ CREATE POLICY "daily_quests_auth_insert_today" ON public.daily_quests FOR INSERT
 );
 
 -- 3.8 User Daily Quests Policies
+DROP POLICY IF EXISTS "user_daily_quests_self" ON public.user_daily_quests;
 CREATE POLICY "user_daily_quests_self" ON public.user_daily_quests FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
 
 -- 3.9 Badges & User Badges Policies
+DROP POLICY IF EXISTS "badges_public_read" ON public.badges;
 CREATE POLICY "badges_public_read" ON public.badges FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "user_badges_read" ON public.user_badges;
 CREATE POLICY "user_badges_read" ON public.user_badges FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "user_badges_insert" ON public.user_badges;
 CREATE POLICY "user_badges_insert" ON public.user_badges FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- 3.10 XP Logs Policies (Immutable audit trail: Read and insert allowed, no manual edit/delete)
+DROP POLICY IF EXISTS "xp_logs_self" ON public.xp_logs;
+DROP POLICY IF EXISTS "xp_logs_self_read" ON public.xp_logs;
 CREATE POLICY "xp_logs_self_read" ON public.xp_logs FOR SELECT USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "xp_logs_self_insert" ON public.xp_logs;
 CREATE POLICY "xp_logs_self_insert" ON public.xp_logs FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- 3.11 Voucher Policies
+DROP POLICY IF EXISTS "voucher_catalog_public_read" ON public.voucher_catalog;
 CREATE POLICY "voucher_catalog_public_read" ON public.voucher_catalog FOR SELECT USING (is_active = true);
+
+DROP POLICY IF EXISTS "voucher_redemptions_self_read" ON public.voucher_redemptions;
 CREATE POLICY "voucher_redemptions_self_read" ON public.voucher_redemptions FOR SELECT USING (auth.uid() = user_id);
 
 -- ==============================================================================
