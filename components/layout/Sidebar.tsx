@@ -95,8 +95,8 @@ export default function Sidebar() {
                                     display: 'inline-flex',
                                     alignItems: 'center',
                                     gap: '4px',
-                                    borderRadius: '9999px',
-                                    padding: '4px 10px',
+                                    borderRadius: '8px',
+                                    padding: '4px 8px',
                                     border: '1px solid var(--accent-red-border)',
                                     backgroundColor: 'var(--accent-red-bg)',
                                     color: 'var(--accent-red)',
@@ -119,8 +119,8 @@ export default function Sidebar() {
                                 alignItems: 'center',
                                 gap: '6px',
                                 textDecoration: 'none',
-                                borderRadius: '9999px',
-                                padding: '4px 10px',
+                                borderRadius: '8px',
+                                padding: '4px 8px',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
                                 backgroundColor: 'rgba(255, 255, 255, 0.04)',
                             }}
@@ -136,7 +136,7 @@ export default function Sidebar() {
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
-                                    maxWidth: '90px',
+                                    maxWidth: '85px',
                                 }}>
                                     {profile.username}
                                 </span>
@@ -145,23 +145,6 @@ export default function Sidebar() {
                                 </span>
                             </span>
                         </Link>
-
-                        <div
-                            className="dashboard-mobile-xp"
-                            style={{
-                                borderRadius: '9999px',
-                                padding: '4px 10px',
-                                border: '1px solid rgba(245, 197, 66, 0.35)',
-                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                color: 'var(--color-gold)',
-                                fontFamily: 'var(--font-inter)',
-                                fontSize: '11px',
-                                fontWeight: 500,
-                                whiteSpace: 'nowrap',
-                            }}
-                        >
-                            {profile.xp.toLocaleString()} XP
-                        </div>
                     </div>
                 )}
             </div>
@@ -224,7 +207,7 @@ export default function Sidebar() {
                                 data-tour={`nav-${item.tour}`}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
-                                    padding: '8px 14px', borderRadius: '9999px', marginBottom: '4px',
+                                    padding: '8px 14px', borderRadius: '8px', marginBottom: '4px',
                                     backgroundColor: isActive ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
                                     border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
                                     position: 'relative',
@@ -233,18 +216,17 @@ export default function Sidebar() {
                                     boxShadow: isActive ? '0 0 16px rgba(245, 197, 66, 0.18)' : 'none',
                                 }}
                             >
-                                {/* Active indicator dot/pill */}
+                                {/* Active indicator */}
                                 {isActive && (
                                     <motion.div
                                         layoutId="sidebarActiveBar"
                                         style={{
                                             position: 'absolute',
                                             left: '4px',
-                                            width: '4px',
+                                            width: '3px',
                                             height: '14px',
-                                            borderRadius: '9999px',
+                                            borderRadius: '4px',
                                             backgroundColor: 'var(--color-gold)',
-                                            boxShadow: '0 0 8px var(--color-gold)',
                                         }}
                                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                     />
@@ -295,7 +277,7 @@ export default function Sidebar() {
                     whileHover={{ scale: 1.01 }}
                     style={{
                         width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                        padding: '8px 14px', borderRadius: '9999px', cursor: 'pointer',
+                        padding: '8px 14px', borderRadius: '8px', cursor: 'pointer',
                         backgroundColor: 'rgba(255, 51, 68, 0.08)',
                         border: '1px solid rgba(255, 51, 68, 0.25)',
                         color: 'var(--accent-red)',

@@ -747,28 +747,18 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     </p>
 
                     {/* Room Code Card */}
-                    <div
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '14px',
-                            padding: '12px 24px',
-                            borderRadius: '14px',
-                            backgroundColor: 'rgba(245, 197, 66, 0.08)',
-                            border: '1px solid rgba(245, 197, 66, 0.35)',
-                            marginBottom: '24px',
-                            boxShadow: '0 8px 24px rgba(0, 0, 0, 0.4)',
-                        }}
-                    >
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: 'var(--color-signal-orange)', letterSpacing: '6px' }}>
+                    <div className="battle-room-code-card">
+                        <span className="battle-room-code-text">
                             {battle.room_code}
                         </span>
                         <button
                             type="button"
                             onClick={handleCopyRoomCode}
+                            className="battle-room-code-btn"
                             style={{
-                                display: 'flex',
+                                display: 'inline-flex',
                                 alignItems: 'center',
+                                justifyContent: 'center',
                                 gap: '6px',
                                 padding: '8px 14px',
                                 borderRadius: '8px',
@@ -873,7 +863,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             color: myReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
                                         }}
                                     >
-                                        {myReady ? '✓ Siap Bertanding' : 'Menunggu Siap'}
+                                        {myReady ? '✓ Siap' : 'Menunggu'}
                                     </span>
                                 </div>
                             </div>
@@ -914,7 +904,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             color: oppReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
                                         }}
                                     >
-                                        {oppReady ? '✓ Lawan Siap' : 'Menunggu Lawan'}
+                                        {oppReady ? '✓ Siap' : 'Menunggu'}
                                     </span>
                                 </div>
                             </div>
@@ -943,10 +933,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 whileHover={{ scale: 1.03 }}
                                 whileTap={{ scale: 0.97 }}
                                 onClick={handleReady}
-                                className="btn-signal-orange"
-                                style={{ padding: '14px 44px', fontSize: '15px', fontWeight: 700 }}
+                                className="btn-signal-orange battle-ready-btn"
+                                style={{ padding: '12px 28px', fontSize: '14px', fontWeight: 700 }}
                             >
-                                <Swords size={18} /> SAYA SIAP BERTANDING!
+                                <Swords size={17} /> Saya Siap Bertanding
                             </motion.button>
                         ) : countdown !== null ? (
                             <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -1102,11 +1092,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '14px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
                         <button
                             type="button"
                             onClick={() => router.push('/battle')}
-                            className="btn-dark-outline"
+                            className="btn-dark-outline battle-finish-btn"
                             style={{ padding: '12px 24px', fontSize: '13px' }}
                         >
                             Kembali ke Lobby
@@ -1116,10 +1106,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={() => router.push('/battle')}
-                            className="btn-signal-orange"
+                            className="btn-signal-orange battle-finish-btn"
                             style={{ padding: '12px 28px', fontSize: '13px', fontWeight: 700 }}
                         >
-                            <Swords size={16} /> MAIN LAGI
+                            <Swords size={16} /> Main Lagi
                         </motion.button>
                     </div>
                 </motion.div>
@@ -1191,7 +1181,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     fontWeight: 600,
                                     backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'rgba(255, 255, 255, 0.06)',
                                     padding: '3px 10px',
-                                    borderRadius: '9999px',
+                                    borderRadius: '8px',
                                     border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'rgba(255, 255, 255, 0.12)'}`,
                                 }}
                             >
@@ -1478,15 +1468,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             borderRadius: '10px',
                             backgroundColor: 'rgba(255, 255, 255, 0.03)',
                             border: '1px solid rgba(255, 255, 255, 0.07)',
-                            marginBottom: '16px',
-                            fontSize: '12px',
+                            marginBottom: '14px',
+                            fontSize: '11.5px',
+                            lineHeight: 1.35,
                             color: 'var(--color-fog)',
                             textAlign: 'center',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            wordBreak: 'break-word',
                         }}
                     >
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{battleLog}</span>
+                        <span>{battleLog}</span>
                     </motion.div>
 
                     {/* Question Card (Linearity Frosted Block) */}

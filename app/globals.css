@@ -399,6 +399,15 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   padding: 24px;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 639px) {
+  .product-demo-panel,
+  .hero-banner-panel {
+    padding: 14px 12px !important;
+    border-radius: 14px !important;
+  }
 }
 
 /* Role Selector Chip (9999px radius pill on Near Black) */
@@ -532,8 +541,15 @@ input::placeholder, textarea::placeholder {
    =================================================== */
 
 .responsive-page {
-  padding: 16px !important;
+  padding: 12px 10px !important;
   width: 100%;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 640px) {
+  .responsive-page {
+    padding: 20px !important;
+  }
 }
 
 .two-col-grid {

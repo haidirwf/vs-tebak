@@ -119,13 +119,13 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                     </div>
                 </div>
 
-                {/* Switcher Tab Pill */}
+                {/* Switcher Tab */}
                 <div
                     style={{
                         display: 'flex',
                         backgroundColor: 'var(--surface-elevated)',
                         padding: '3px',
-                        borderRadius: '9999px',
+                        borderRadius: '8px',
                         border: '1px solid var(--surface-border)',
                     }}
                 >
@@ -133,11 +133,11 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                         type="button"
                         onClick={() => setViewMode('weekly')}
                         style={{
-                            padding: '5px 14px',
+                            padding: '5px 12px',
                             fontSize: '11px',
                             fontFamily: 'var(--font-heading)',
                             fontWeight: viewMode === 'weekly' ? 600 : 400,
-                            borderRadius: '9999px',
+                            borderRadius: '6px',
                             border: 'none',
                             cursor: 'pointer',
                             backgroundColor: viewMode === 'weekly' ? '#F5C542' : 'transparent',
@@ -151,11 +151,11 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                         type="button"
                         onClick={() => setViewMode('category')}
                         style={{
-                            padding: '5px 14px',
+                            padding: '5px 12px',
                             fontSize: '11px',
                             fontFamily: 'var(--font-heading)',
                             fontWeight: viewMode === 'category' ? 600 : 400,
-                            borderRadius: '9999px',
+                            borderRadius: '6px',
                             border: 'none',
                             cursor: 'pointer',
                             backgroundColor: viewMode === 'category' ? '#F5C542' : 'transparent',

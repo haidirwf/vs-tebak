@@ -32,18 +32,19 @@ export function DashboardProvider({
         dismissActivePopup,
     } = useUserStore()
 
+    const [hasCompletedCreation, setHasCompletedCreation] = useState(false)
+
+    // Akun baru maupun akun lama yang belum menyelesaikan kustomisasi karakter wajib melalui CharacterCreationModal
+    const activeProfile = useUserStore((s) => s.profile) || profile
     const needsCharacterCreation = Boolean(
-        profile && (
-            profile.character_created === false ||
-            (profile.character_created === null && profile.xp <= 0 && profile.level <= 1)
-        )
+        activeProfile && !activeProfile.character_created && !hasCompletedCreation
     )
     const [showCharacterModal, setShowCharacterModal] = useState(needsCharacterCreation)
 
     useEffect(() => {
         setProfile(profile)
         setLoading(false)
-        if (needsCharacterCreation) {
+        if (profile && !profile.character_created && !hasCompletedCreation) {
             setShowCharacterModal(true)
         }
 
@@ -59,7 +60,7 @@ export function DashboardProvider({
                 })
             }
         }
-    }, [profile, setProfile, setLoading])
+    }, [profile, setProfile, setLoading, hasCompletedCreation])
 
     return (
         <>
@@ -68,8 +69,11 @@ export function DashboardProvider({
             {profile && (
                 <CharacterCreationModal
                     isOpen={showCharacterModal}
-                    profile={profile}
-                    onComplete={() => setShowCharacterModal(false)}
+                    profile={activeProfile || profile}
+                    onComplete={() => {
+                        setHasCompletedCreation(true)
+                        setShowCharacterModal(false)
+                    }}
                 />
             )}
             {profile && !onboardingDisabled && (

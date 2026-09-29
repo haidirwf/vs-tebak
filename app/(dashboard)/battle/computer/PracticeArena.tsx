@@ -324,14 +324,14 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             onClick={startPractice}
                             disabled={availableQuestions.length === 0}
                             style={{
-                                padding: '10px 20px', borderRadius: '4px',
+                                padding: '10px 22px', borderRadius: '8px',
                                 cursor: availableQuestions.length > 0 ? 'pointer' : 'not-allowed',
                                 backgroundColor: 'var(--accent-gold)', border: 'none',
-                                color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
                                 opacity: availableQuestions.length > 0 ? 1 : 0.5,
                             }}
                         >
-                            MULAI LATIHAN
+                            Mulai Latihan
                         </motion.button>
                     </div>
                 </div>
@@ -427,10 +427,10 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
                             onClick={startPractice}
-                            className="btn-signal-orange"
+                            className="btn-signal-orange battle-finish-btn"
                             style={{ padding: '12px 28px', fontSize: '13px', fontWeight: 700 }}
                         >
-                            <Swords size={16} /> MAIN LAGI
+                            <Swords size={16} /> Main Lagi
                         </motion.button>
                     </div>
                 </motion.div>
@@ -502,7 +502,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                     fontWeight: 600,
                                     backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'rgba(255, 255, 255, 0.06)',
                                     padding: '3px 10px',
-                                    borderRadius: '9999px',
+                                    borderRadius: '8px',
                                     border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'rgba(255, 255, 255, 0.12)'}`,
                                 }}
                             >
@@ -777,15 +777,17 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             borderRadius: '10px',
                             backgroundColor: 'rgba(255, 255, 255, 0.03)',
                             border: '1px solid rgba(255, 255, 255, 0.07)',
-                            marginBottom: '16px',
-                            fontSize: '12px',
+                            marginBottom: '14px',
+                            fontSize: '11.5px',
+                            lineHeight: 1.35,
                             color: 'var(--color-fog)',
                             textAlign: 'center',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
+                            width: '100%',
+                            boxSizing: 'border-box',
+                            wordBreak: 'break-word',
                         }}
                     >
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{battleLog}</span>
+                        <span>{battleLog}</span>
                     </motion.div>
 
                     {/* Question Card */}

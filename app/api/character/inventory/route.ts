@@ -39,34 +39,37 @@ export async function GET() {
         const profEquipped = (profile.equipped_items as Partial<Record<ItemSlot, string>>) || {}
         equippedMap = profEquipped
 
-        // Give starter items
-        const starters = getStarterItemsForClass(avatarClass)
-        starters.forEach(it => ownedItemIds.add(it.id))
-        Object.values(profEquipped).forEach(id => {
-            if (id) ownedItemIds.add(id)
-        })
+        // Give starter items only if character was actually created
+        if (profile.character_created) {
+            const starters = getStarterItemsForClass(avatarClass)
+            starters.forEach(it => ownedItemIds.add(it.id))
+            Object.values(profEquipped).forEach(id => {
+                if (id) ownedItemIds.add(id)
+            })
+        }
     } else {
         if (!inventoryRows || inventoryRows.length === 0) {
-            // Auto-grant starter items
-            const starters = getStarterItemsForClass(avatarClass)
-            const insertPayload = starters.map(it => ({
-                user_id: user.id,
-                item_id: it.id,
-                slot: it.slot,
-                is_equipped: true,
-            }))
+            // Only auto-grant starter items if user has already created their character
+            if (profile.character_created) {
+                const starters = getStarterItemsForClass(avatarClass)
+                const insertPayload = starters.map(it => ({
+                    user_id: user.id,
+                    item_id: it.id,
+                    slot: it.slot,
+                    is_equipped: true,
+                }))
 
-            await supabase.from('user_inventory').upsert(insertPayload, { onConflict: 'user_id, item_id' })
-            starters.forEach(it => {
-                ownedItemIds.add(it.id)
-                equippedMap[it.slot] = it.id
-            })
+                await supabase.from('user_inventory').upsert(insertPayload, { onConflict: 'user_id, item_id' })
+                starters.forEach(it => {
+                    ownedItemIds.add(it.id)
+                    equippedMap[it.slot] = it.id
+                })
 
-            // Also sync to profile
-            await supabase.from('profiles').update({
-                equipped_items: equippedMap,
-                character_created: true,
-            }).eq('id', user.id)
+                // Also sync equipped_items to profile
+                await supabase.from('profiles').update({
+                    equipped_items: equippedMap,
+                }).eq('id', user.id)
+            }
         } else {
             inventoryRows.forEach(row => {
                 ownedItemIds.add(row.item_id)

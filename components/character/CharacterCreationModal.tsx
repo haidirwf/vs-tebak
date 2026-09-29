@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useRouter } from 'next/navigation'
 import { AvatarClass, Profile } from '@/types'
 import { CHARACTER_ROLES } from '@/lib/game/character'
 import { getStarterItemsForClass } from '@/lib/game/items'
@@ -22,6 +23,7 @@ export default function CharacterCreationModal({
     profile,
     onComplete,
 }: CharacterCreationModalProps) {
+    const router = useRouter()
     const [selectedRole, setSelectedRole] = useState<AvatarClass>(profile.avatar_class || 'warrior')
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -61,6 +63,7 @@ export default function CharacterCreationModal({
             }
 
             setConfirmedSuccess(true)
+            router.refresh()
             setTimeout(() => {
                 onComplete?.()
             }, 1200)
@@ -135,7 +138,7 @@ export default function CharacterCreationModal({
                             Pilih Pahlawan Belajarmu
                         </h2>
                         <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: 0 }}>
-                            Setiap role memiliki karakteristik, atribut tempur, dan buff unik untuk arena battle.
+                            Fitur karakter telah aktif! Pilih role tempur dan dapatkan paket perlengkapan starter gratis untuk akunmu.
                         </p>
                     </div>
 

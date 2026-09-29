@@ -19,6 +19,7 @@ import ThemeToggle from '@/components/layout/ThemeToggle'
 const PAGE_CONFIG: Record<string, { title: string; icon: any; color: string }> = {
     '/dashboard': { title: 'Dashboard', icon: LayoutDashboard, color: 'var(--accent-gold)' },
     '/modules': { title: 'Modul Belajar', icon: BookOpen, color: 'var(--accent-cyan)' },
+    '/character': { title: 'Karakter & Kostumisasi', icon: Swords, color: '#a855f7' },
     '/battle': { title: 'Battle Arena', icon: Swords, color: 'var(--accent-red)' },
     '/voucher': { title: 'Toko Voucher', icon: Ticket, color: 'var(--accent-gold)' },
     '/leaderboard': { title: 'Leaderboard', icon: Trophy, color: 'var(--accent-green)' },

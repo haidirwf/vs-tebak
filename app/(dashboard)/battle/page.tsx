@@ -606,7 +606,7 @@ export default function BattlePage() {
                                                 flexShrink: 0,
                                             }}
                                         >
-                                            <Swords size={13} /> {loading ? '...' : 'TANTANG DUEL'}
+                                            <Swords size={13} /> {loading ? '...' : 'Tantang Duel'}
                                         </motion.button>
                                     </div>
                                 )

@@ -62,7 +62,7 @@ export default function CharacterPage() {
 
     useEffect(() => {
         loadInventoryData()
-    }, [loadInventoryData])
+    }, [loadInventoryData, profile?.character_created, profile?.avatar_class])
 
     // Compute total character stats
     const characterStats = useMemo(() => {
