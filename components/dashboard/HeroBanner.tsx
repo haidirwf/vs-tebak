@@ -127,8 +127,8 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
         >
             <div style={{ display: 'flex', flexDirection: 'column', gap: '18px', position: 'relative', zIndex: 1 }}>
                 {/* Main Profile Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0, flex: 1 }}>
+                <div className="hero-banner-header">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', minWidth: 0, flex: '1 1 auto' }}>
                         {/* Avatar Frame */}
                         <div style={{ position: 'relative', flexShrink: 0 }}>
                             <motion.div
@@ -207,11 +207,7 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 </span>
                             </div>
 
-                            <p style={{ margin: '4px 0 6px', fontSize: '12px', color: 'var(--color-fog)', lineHeight: 1.4 }}>
-                                {roleCfg.desc} • <span style={{ color: roleCfg.color, fontWeight: 500 }}>{roleCfg.roleBonus}</span>
-                            </p>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11.5px', color: 'var(--color-steel)', flexWrap: 'wrap', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11.5px', color: 'var(--color-steel)', flexWrap: 'wrap', minWidth: 0, marginTop: '6px' }}>
                                 {profile.school_name && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         <School size={12} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
@@ -229,7 +225,7 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                     </div>
 
                     {/* Kanan: Kalender Streak 7 Hari Duolingo */}
-                    <div style={{ display: 'flex', alignItems: 'center', width: '100%', maxWidth: '100%' }}>
+                    <div className="hero-banner-streak" style={{ display: 'flex', alignItems: 'center' }}>
                         {/* Kalender 7 Hari Duolingo */}
                         <div
                             style={{
@@ -237,11 +233,12 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 alignItems: 'center',
                                 justifyContent: 'space-between',
                                 gap: '4px',
-                                padding: '8px 10px',
+                                padding: '6px 10px',
                                 backgroundColor: '#141414',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
                                 borderRadius: '12px',
                                 width: '100%',
+                                maxWidth: '320px',
                                 boxSizing: 'border-box',
                             }}
                         >
