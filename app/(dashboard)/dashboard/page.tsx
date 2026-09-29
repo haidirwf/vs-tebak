@@ -107,14 +107,21 @@ export default function DashboardPage() {
     }, [today, dashboardFetchedAt, setDashboardData, router])
 
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress tanpa STR/INT membingungkan) */}
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress) */}
             {profile && (
                 <HeroBanner
                     profile={profile}
                     modulesCompletedCount={completedModules.length}
                 />
             )}
+
+            {/* 2. Strip Kalender Streak 7 Hari Bergaya Duolingo di Atas */}
+            <WeeklyStreakCard
+                lastActive={profile?.last_active}
+                streakCount={profile?.streak_count}
+                xpLogs={xpLogs}
+            />
 
             {/* 3. Diagram Analisa Pembelajaran (Grafik Bar XP 7 Hari & Penguasaan Kategori Modul) */}
             <div>
@@ -134,13 +141,8 @@ export default function DashboardPage() {
                     <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
 
-                {/* Kolom Kanan: Streak Kalender Duolingo & Top Hero Leaderboard */}
+                {/* Kolom Kanan: Top Hero Leaderboard */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                    <WeeklyStreakCard
-                        lastActive={profile?.last_active}
-                        streakCount={profile?.streak_count}
-                        xpLogs={xpLogs}
-                    />
                     <QuickLeaderboard
                         currentUserId={profile?.id}
                         userStreak={profile?.streak_count}
