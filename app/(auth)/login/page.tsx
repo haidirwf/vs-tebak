@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import { Swords, Mail, Lock, Loader2 } from 'lucide-react'
+import { Flame, Mail, Lock, Loader2 } from 'lucide-react'
 
 const loginSchema = z.object({
     email: z.string().email('Email tidak valid'),
@@ -63,39 +63,75 @@ export default function LoginPage() {
     }
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-primary)', padding: '24px' }}>
+        <div
+            style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#000000',
+                backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(255, 72, 0, 0.08), transparent 60%)',
+                padding: '24px',
+            }}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4 }}
-                style={{ width: '100%', maxWidth: '400px' }}
+                style={{ width: '100%', maxWidth: '420px' }}
             >
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: '32px' }}>
                     <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                        <Swords size={32} style={{ color: 'var(--accent-gold)' }} />
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, color: 'var(--accent-gold)' }}>
+                        <div
+                            style={{
+                                width: '36px',
+                                height: '36px',
+                                borderRadius: '9999px',
+                                background: 'linear-gradient(135deg, #ff4800, #ffd900)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 0 16px rgba(255, 72, 0, 0.4)',
+                            }}
+                        >
+                            <Flame size={20} color="#000000" />
+                        </div>
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 400, letterSpacing: '-0.01em', color: '#ffffff' }}>
                             Skillungo
                         </span>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Masuk ke petualangan belajarmu</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>Masuk ke studio petualangan belajarmu</p>
                 </div>
 
                 {/* Form Card */}
-                <div className="card auth-card" style={{ padding: '32px' }}>
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, marginBottom: '24px' }}>Login</h1>
+                <div
+                    className="card auth-card"
+                    style={{
+                        padding: '36px',
+                        borderRadius: '17.1429px',
+                        backgroundColor: '#080808',
+                        border: '1px solid #292929',
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+                    }}
+                >
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '24px', color: '#ffffff' }}>
+                        Login
+                    </h1>
 
                     {error && (
-                        <div style={{ backgroundColor: 'rgba(232,64,64,0.1)', border: '1px solid var(--accent-red)', borderRadius: '4px', padding: '12px', marginBottom: '16px', fontSize: '13px', color: 'var(--accent-red)' }}>
+                        <div style={{ backgroundColor: 'rgba(255, 51, 85, 0.08)', border: '1px solid rgba(255, 51, 85, 0.3)', borderRadius: '12px', padding: '12px 14px', marginBottom: '20px', fontSize: '13px', color: '#ff3355' }}>
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
                         <div>
-                            <label htmlFor="login-email" style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500 }}>Email</label>
+                            <label htmlFor="login-email" style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 500 }}>
+                                Email
+                            </label>
                             <div style={{ position: 'relative' }}>
-                                <Mail size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                <Mail size={15} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                                 <input
                                     id="login-email"
                                     {...register('email')}
@@ -104,19 +140,30 @@ export default function LoginPage() {
                                     placeholder="hero@skillquest.id"
                                     aria-invalid={Boolean(errors.email)}
                                     style={{
-                                        width: '100%', paddingLeft: '36px', paddingRight: '12px', paddingTop: '10px', paddingBottom: '10px',
-                                        backgroundColor: 'var(--bg-tertiary)', border: `1px solid ${errors.email ? 'var(--accent-red)' : 'var(--border)'}`,
-                                        borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+                                        width: '100%',
+                                        paddingLeft: '40px',
+                                        paddingRight: '14px',
+                                        paddingTop: '11px',
+                                        paddingBottom: '11px',
+                                        backgroundColor: '#121212',
+                                        border: `1px solid ${errors.email ? '#ff3355' : '#292929'}`,
+                                        borderRadius: '12px',
+                                        color: '#ffffff',
+                                        fontSize: '14px',
+                                        outline: 'none',
+                                        transition: 'border-color 0.2s',
                                     }}
                                 />
                             </div>
-                            {errors.email && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.email.message}</p>}
+                            {errors.email && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '5px' }}>{errors.email.message}</p>}
                         </div>
 
                         <div>
-                            <label htmlFor="login-password" style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500 }}>Password</label>
+                            <label htmlFor="login-password" style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', fontWeight: 500 }}>
+                                Password
+                            </label>
                             <div style={{ position: 'relative' }}>
-                                <Lock size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                <Lock size={15} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                                 <input
                                     id="login-password"
                                     {...register('password')}
@@ -125,52 +172,75 @@ export default function LoginPage() {
                                     placeholder="••••••••"
                                     aria-invalid={Boolean(errors.password)}
                                     style={{
-                                        width: '100%', paddingLeft: '36px', paddingRight: '12px', paddingTop: '10px', paddingBottom: '10px',
-                                        backgroundColor: 'var(--bg-tertiary)', border: `1px solid ${errors.password ? 'var(--accent-red)' : 'var(--border)'}`,
-                                        borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+                                        width: '100%',
+                                        paddingLeft: '40px',
+                                        paddingRight: '14px',
+                                        paddingTop: '11px',
+                                        paddingBottom: '11px',
+                                        backgroundColor: '#121212',
+                                        border: `1px solid ${errors.password ? '#ff3355' : '#292929'}`,
+                                        borderRadius: '12px',
+                                        color: '#ffffff',
+                                        fontSize: '14px',
+                                        outline: 'none',
+                                        transition: 'border-color 0.2s',
                                     }}
                                 />
                             </div>
-                            {errors.password && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.password.message}</p>}
+                            {errors.password && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '5px' }}>{errors.password.message}</p>}
                         </div>
 
                         <motion.button
                             type="submit"
                             disabled={isLoading}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
                             style={{
-                                width: '100%', padding: '12px',
-                                backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
-                                border: 'none', borderRadius: '4px', fontFamily: 'var(--font-heading)',
-                                fontSize: '15px', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer',
-                                opacity: isLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                width: '100%',
+                                padding: '13px',
+                                backgroundColor: '#ff4800',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '9999px',
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                letterSpacing: '0.02em',
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                opacity: isLoading ? 0.7 : 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                boxShadow: '0 0 18px rgba(255, 72, 0, 0.4)',
+                                marginTop: '6px',
                             }}
                         >
                             {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Memuat...</> : 'MASUK'}
                         </motion.button>
                     </form>
 
-                    <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    <p style={{ textAlign: 'center', marginTop: '22px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                         Belum punya akun?{' '}
-                        <Link href="/register" style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 500 }}>
+                        <Link href="/register" style={{ color: '#ff4800', textDecoration: 'none', fontWeight: 500 }}>
                             Daftar sekarang
                         </Link>
                     </p>
 
-                    <div style={{ marginTop: '14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
+                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
                         <button
                             type="button"
                             onClick={fillDemoCredentials}
                             style={{
-                                padding: '9px 10px',
-                                borderRadius: '4px',
-                                border: '1px solid var(--border)',
-                                backgroundColor: 'var(--bg-tertiary)',
+                                padding: '10px 12px',
+                                borderRadius: '9999px',
+                                border: '1px solid #292929',
+                                backgroundColor: '#141414',
                                 color: 'var(--text-secondary)',
                                 cursor: 'pointer',
                                 fontSize: '12px',
-                                fontWeight: 600,
+                                fontWeight: 500,
+                                transition: 'all 0.2s',
                             }}
                         >
                             Isi Akun Demo
@@ -180,15 +250,16 @@ export default function LoginPage() {
                             onClick={handleDemoLogin}
                             disabled={isLoading}
                             style={{
-                                padding: '9px 10px',
-                                borderRadius: '4px',
-                                border: '1px solid rgba(34,197,94,0.35)',
-                                backgroundColor: 'rgba(34,197,94,0.12)',
-                                color: 'var(--accent-green)',
+                                padding: '10px 12px',
+                                borderRadius: '9999px',
+                                border: '1px solid rgba(8, 195, 128, 0.3)',
+                                backgroundColor: 'rgba(8, 195, 128, 0.1)',
+                                color: '#08c380',
                                 cursor: isLoading ? 'not-allowed' : 'pointer',
                                 opacity: isLoading ? 0.7 : 1,
                                 fontSize: '12px',
-                                fontWeight: 700,
+                                fontWeight: 600,
+                                transition: 'all 0.2s',
                             }}
                         >
                             Masuk Akun Demo (juri)

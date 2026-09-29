@@ -10,17 +10,17 @@ interface DailyQuestListProps {
 }
 
 const QUEST_ICONS = {
-    complete_module: <Book size={16} />,
-    win_battle: <Swords size={16} />,
-    maintain_streak: <StreakIcon size={16} />,
-    earn_xp: <Zap size={16} />,
+    complete_module: <Book size={15} />,
+    win_battle: <Swords size={15} />,
+    maintain_streak: <StreakIcon size={15} />,
+    earn_xp: <Zap size={15} />,
 }
 
 const QUEST_COLORS = {
-    complete_module: { color: 'var(--accent-cyan)', bg: 'var(--accent-cyan-bg)', border: 'var(--accent-cyan-border)' },
-    win_battle: { color: 'var(--accent-red)', bg: 'var(--accent-red-bg)', border: 'var(--accent-red-border)' },
-    maintain_streak: { color: 'var(--accent-green)', bg: 'var(--accent-green-bg)', border: 'var(--accent-green-border)' },
-    earn_xp: { color: 'var(--accent-gold)', bg: 'var(--accent-gold-bg)', border: 'var(--accent-gold-border)' },
+    complete_module: { color: 'var(--accent-cyan)', bg: 'rgba(0, 229, 255, 0.08)', border: 'rgba(0, 229, 255, 0.25)' },
+    win_battle: { color: 'var(--accent-red)', bg: 'rgba(255, 51, 85, 0.08)', border: 'rgba(255, 51, 85, 0.25)' },
+    maintain_streak: { color: 'var(--accent-green)', bg: 'rgba(8, 195, 128, 0.08)', border: 'rgba(8, 195, 128, 0.25)' },
+    earn_xp: { color: 'var(--brand-orange)', bg: 'rgba(255, 72, 0, 0.08)', border: 'rgba(255, 72, 0, 0.25)' },
 }
 
 export default function DailyQuestList({ quests, userQuests }: DailyQuestListProps) {
@@ -32,17 +32,28 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
     const progressPercent = quests.length > 0 ? Math.round((completedCount / quests.length) * 100) : 0
 
     return (
-        <div className="card" style={{ padding: '20px', position: 'relative', overflow: 'hidden' }}>
-            {/* Header Box serasi dengan komponen lain */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div
+            className="card"
+            style={{
+                padding: '24px',
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '17.1429px',
+                backgroundColor: '#080808',
+                border: '1px solid #292929',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+            }}
+        >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div
                         style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--accent-green-bg)',
-                            border: '1px solid var(--accent-green-border)',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '9999px',
+                            backgroundColor: 'rgba(8, 195, 128, 0.1)',
+                            border: '1px solid rgba(8, 195, 128, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -52,7 +63,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                         <Target size={18} />
                     </div>
                     <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
                             Quest Harian
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -66,34 +77,35 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px',
-                        backgroundColor: 'var(--bg-tertiary)',
-                        padding: '4px 10px',
-                        borderRadius: '6px',
-                        border: '1px solid var(--border)',
+                        backgroundColor: '#121212',
+                        padding: '4px 12px',
+                        borderRadius: '9999px',
+                        border: '1px solid #292929',
                     }}
                 >
-                    <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
                         {completedCount} / {quests.length} Selesai
                     </span>
                 </div>
             </div>
 
             {/* Progress bar */}
-            <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '4px', marginBottom: '18px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+            <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '9999px', marginBottom: '20px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     style={{
                         height: '100%',
-                        background: 'linear-gradient(90deg, var(--accent-cyan) 0%, var(--accent-green) 100%)',
-                        boxShadow: '0 0 10px rgba(34, 197, 94, 0.35)',
+                        borderRadius: '9999px',
+                        background: 'linear-gradient(90deg, #ff4800 0%, #08c380 100%)',
+                        boxShadow: '0 0 12px rgba(255, 72, 0, 0.35)',
                     }}
                 />
             </div>
 
             {quests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', border: '1px dashed var(--border)' }}>
+                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: '#121212', borderRadius: '12px', border: '1px dashed #292929' }}>
                     Belum ada quest hari ini. Istirahat sejenak, Hero! ☕
                 </div>
             ) : (
@@ -103,7 +115,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                         const isCompleted = progress?.is_completed ?? false
                         const currentVal = progress?.current_value ?? 0
                         const qMeta = QUEST_COLORS[quest.quest_type as keyof typeof QUEST_COLORS] || QUEST_COLORS.complete_module
-                        const icon = QUEST_ICONS[quest.quest_type as keyof typeof QUEST_ICONS] || <Zap size={16} />
+                        const icon = QUEST_ICONS[quest.quest_type as keyof typeof QUEST_ICONS] || <Zap size={15} />
 
                         return (
                             <motion.div
@@ -111,26 +123,26 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.05 }}
-                                whileHover={{ x: 3, borderColor: isCompleted ? 'rgba(34,197,94,0.4)' : qMeta.color }}
+                                whileHover={{ x: 3, borderColor: isCompleted ? 'rgba(8,195,128,0.4)' : qMeta.color }}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '14px',
                                     padding: '12px 14px',
-                                    borderRadius: '8px',
-                                    backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.03)' : 'var(--bg-tertiary)',
-                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'var(--border)'}`,
+                                    borderRadius: '12px',
+                                    backgroundColor: isCompleted ? 'rgba(8, 195, 128, 0.04)' : '#0d0d0d',
+                                    border: `1px solid ${isCompleted ? 'rgba(8,195,128,0.25)' : '#222222'}`,
                                     position: 'relative',
                                     transition: 'border-color 0.2s ease, background-color 0.2s ease',
                                 }}
                             >
                                 <div
                                     style={{
-                                        width: '36px',
-                                        height: '36px',
-                                        borderRadius: '8px',
-                                        backgroundColor: isCompleted ? 'rgba(34,197,94,0.12)' : qMeta.bg,
-                                        border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : qMeta.border}`,
+                                        width: '34px',
+                                        height: '34px',
+                                        borderRadius: '8.57143px',
+                                        backgroundColor: isCompleted ? 'rgba(8,195,128,0.12)' : qMeta.bg,
+                                        border: `1px solid ${isCompleted ? 'rgba(8,195,128,0.3)' : qMeta.border}`,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -138,14 +150,14 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                         flexShrink: 0,
                                     }}
                                 >
-                                    {isCompleted ? <CheckCircle size={18} /> : icon}
+                                    {isCompleted ? <CheckCircle size={16} /> : icon}
                                 </div>
 
                                 <div style={{ flex: 1, minWidth: 0 }}>
                                     <div
                                         style={{
                                             fontSize: '13px',
-                                            fontWeight: 700,
+                                            fontWeight: 500,
                                             color: isCompleted ? 'var(--text-muted)' : 'var(--text-primary)',
                                             fontFamily: 'var(--font-heading)',
                                             textDecoration: isCompleted ? 'line-through' : 'none',
@@ -162,11 +174,11 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                     </div>
 
                                     {quest.target_value > 1 && !isCompleted && (
-                                        <div style={{ height: '4px', backgroundColor: 'var(--bg-secondary)', borderRadius: '2px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                                        <div style={{ height: '4px', backgroundColor: '#181818', borderRadius: '9999px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${Math.min((currentVal / quest.target_value) * 100, 100)}%` }}
-                                                style={{ height: '100%', backgroundColor: qMeta.color }}
+                                                style={{ height: '100%', borderRadius: '9999px', backgroundColor: qMeta.color }}
                                             />
                                         </div>
                                     )}
@@ -175,20 +187,20 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                 <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
                                     <span
                                         style={{
-                                            backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'var(--accent-gold-bg)',
-                                            border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : 'var(--accent-gold-border)'}`,
-                                            borderRadius: '4px',
-                                            padding: '3px 8px',
+                                            backgroundColor: isCompleted ? 'rgba(8,195,128,0.1)' : 'rgba(255, 72, 0, 0.1)',
+                                            border: `1px solid ${isCompleted ? 'rgba(8,195,128,0.25)' : 'rgba(255, 72, 0, 0.25)'}`,
+                                            borderRadius: '9999px',
+                                            padding: '3px 10px',
                                             fontFamily: 'var(--font-heading)',
                                             fontSize: '11px',
-                                            color: isCompleted ? 'var(--accent-green)' : 'var(--accent-gold)',
-                                            fontWeight: 800,
+                                            color: isCompleted ? 'var(--accent-green)' : 'var(--brand-orange)',
+                                            fontWeight: 600,
                                         }}
                                     >
                                         +{quest.xp_reward} XP
                                     </span>
                                     {quest.target_value > 1 && !isCompleted && (
-                                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+                                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500, fontFamily: 'var(--font-heading)' }}>
                                             {currentVal}/{quest.target_value}
                                         </span>
                                     )}

@@ -116,31 +116,31 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35, ease: 'easeOut' }}
-            className="card"
+            className="product-demo-panel"
             style={{
                 position: 'relative',
                 overflow: 'hidden',
-                padding: '24px',
-                border: '1px solid var(--surface-border)',
-                backgroundColor: 'var(--surface-card)',
-                borderRadius: '8px',
+                padding: '28px',
+                border: '1px solid rgba(255, 255, 255, 0.12)',
+                backgroundColor: '#080808',
+                borderRadius: '25.7143px',
+                boxShadow: 'var(--shadow-panel)',
             }}
         >
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', zIndex: 1 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '22px', position: 'relative', zIndex: 1 }}>
                 {/* Main Profile Header */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
                         {/* Avatar Frame */}
                         <div style={{ position: 'relative' }}>
                             <motion.div
-                                whileHover={{ scale: 1.06, rotate: 2 }}
+                                whileHover={{ scale: 1.05 }}
                                 style={{
-                                    width: '72px',
-                                    height: '72px',
-                                    borderRadius: '8px',
-                                    backgroundColor: 'var(--surface-elevated)',
-                                    border: '1px solid var(--surface-border)',
+                                    width: '74px',
+                                    height: '74px',
+                                    borderRadius: '17.1429px',
+                                    backgroundColor: '#161616',
+                                    border: '1px solid rgba(255, 255, 255, 0.14)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -150,20 +150,22 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                             >
                                 {classStat.emoji}
                             </motion.div>
-                            {/* Level Badge */}
+                            {/* Level Badge Pill */}
                             <div
                                 style={{
                                     position: 'absolute',
                                     bottom: '-4px',
                                     right: '-4px',
-                                    backgroundColor: 'var(--color-gold)',
-                                    color: '#0a0a0a',
-                                    fontWeight: 700,
+                                    backgroundColor: 'var(--color-signal-orange)',
+                                    color: '#ffffff',
+                                    fontWeight: 600,
                                     fontSize: '11px',
-                                    padding: '2px 6px',
-                                    borderRadius: '4px',
-                                    fontFamily: 'var(--font-mono)',
+                                    padding: '2px 8px',
+                                    borderRadius: '9999px',
+                                    fontFamily: 'var(--font-inter)',
                                     letterSpacing: '0.04em',
+                                    boxShadow: 'var(--shadow-signal-orange)',
+                                    border: '1px solid rgba(255, 255, 255, 0.4)',
                                 }}
                             >
                                 LV.{profile.level}
@@ -176,11 +178,11 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 <h1
                                     style={{
                                         fontFamily: 'var(--font-heading)',
-                                        fontSize: '24px',
-                                        fontWeight: 800,
+                                        fontSize: '26px',
+                                        fontWeight: 400,
                                         margin: 0,
-                                        color: 'var(--text-primary)',
-                                        letterSpacing: '0.01em',
+                                        color: '#ffffff',
+                                        letterSpacing: '-0.02em',
                                     }}
                                 >
                                     {profile.username}
@@ -188,13 +190,13 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 <span
                                     style={{
                                         fontSize: '11px',
-                                        fontWeight: 700,
-                                        fontFamily: 'var(--font-heading)',
+                                        fontWeight: 600,
+                                        fontFamily: 'var(--font-inter)',
                                         color: roleCfg.color,
                                         backgroundColor: roleCfg.bg,
                                         border: `1px solid ${roleCfg.border}`,
-                                        padding: '2px 8px',
-                                        borderRadius: '4px',
+                                        padding: '2px 10px',
+                                        borderRadius: '9999px',
                                         textTransform: 'uppercase',
                                         letterSpacing: '0.05em',
                                     }}
@@ -203,14 +205,14 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 </span>
                             </div>
 
-                            <p style={{ margin: '3px 0 6px', fontSize: '13px', color: 'var(--text-secondary)' }}>
-                                {roleCfg.desc} • <span style={{ color: roleCfg.color, fontWeight: 600 }}>{roleCfg.roleBonus}</span>
+                            <p style={{ margin: '4px 0 8px', fontSize: '13px', color: 'var(--color-fog)' }}>
+                                {roleCfg.desc} • <span style={{ color: roleCfg.color, fontWeight: 500 }}>{roleCfg.roleBonus}</span>
                             </p>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px', color: 'var(--text-muted)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px', color: 'var(--color-steel)' }}>
                                 {profile.school_name && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                        <School size={13} style={{ color: 'var(--accent-gold)' }} />
+                                        <School size={13} style={{ color: 'var(--color-signal-orange)' }} />
                                         <span>{profile.school_name}</span>
                                     </div>
                                 )}
@@ -225,17 +227,17 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                     </div>
 
                     {/* Kanan: Kalender Streak 7 Hari Duolingo & Total XP */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                         {/* Kalender 7 Hari Duolingo */}
                         <div
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '6px 10px',
-                                backgroundColor: 'var(--surface-elevated)',
-                                border: '1px solid var(--surface-border)',
-                                borderRadius: '8px',
+                                padding: '8px 12px',
+                                backgroundColor: '#141414',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '17.1429px',
                             }}
                         >
                             {weekDays.map((day) => {
@@ -249,18 +251,18 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                             display: 'flex',
                                             flexDirection: 'column',
                                             alignItems: 'center',
-                                            gap: '3px',
+                                            gap: '4px',
                                             minWidth: '32px',
                                         }}
                                     >
                                         {/* Nama Hari */}
                                         <span
                                             style={{
-                                                fontFamily: 'var(--font-mono)',
-                                                fontSize: '9.5px',
-                                                fontWeight: day.isToday ? 700 : 500,
-                                                color: day.isToday ? 'var(--color-gold)' : 'var(--color-ash)',
-                                                letterSpacing: '0.3px',
+                                                fontFamily: 'var(--font-inter)',
+                                                fontSize: '10px',
+                                                fontWeight: day.isToday ? 600 : 400,
+                                                color: day.isToday ? 'var(--color-signal-orange)' : 'var(--color-steel)',
+                                                letterSpacing: '0.5px',
                                             }}
                                         >
                                             {day.dayName}
@@ -271,46 +273,46 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                             style={{
                                                 width: '28px',
                                                 height: '28px',
-                                                borderRadius: '5px',
+                                                borderRadius: '8.57143px',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 backgroundColor: isLit
-                                                    ? 'rgba(245, 197, 66, 0.14)'
+                                                    ? 'rgba(255, 72, 0, 0.15)'
                                                     : isTodayPending
-                                                    ? 'rgba(245, 197, 66, 0.05)'
-                                                    : 'rgba(255, 255, 255, 0.02)',
+                                                    ? 'rgba(255, 72, 0, 0.06)'
+                                                    : 'rgba(255, 255, 255, 0.03)',
                                                 border: isLit
-                                                    ? '1px solid rgba(245, 197, 66, 0.45)'
+                                                    ? '1px solid rgba(255, 72, 0, 0.5)'
                                                     : isTodayPending
-                                                    ? '1.5px dashed var(--color-gold)'
-                                                    : '1px solid var(--surface-border)',
+                                                    ? '1.5px dashed var(--color-signal-orange)'
+                                                    : '1px solid rgba(255, 255, 255, 0.08)',
                                             }}
                                         >
                                             {isLit ? (
-                                                <Flame size={15} fill="var(--color-gold)" style={{ color: 'var(--color-gold)' }} />
+                                                <Flame size={15} fill="var(--color-signal-orange)" style={{ color: 'var(--color-signal-orange)' }} />
                                             ) : isTodayPending ? (
                                                 <motion.div
                                                     animate={{ opacity: [0.35, 0.9, 0.35] }}
                                                     transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                                                     style={{ display: 'flex' }}
                                                 >
-                                                    <Flame size={14} style={{ color: 'var(--color-gold)' }} />
+                                                    <Flame size={14} style={{ color: 'var(--color-signal-orange)' }} />
                                                 </motion.div>
                                             ) : day.isPast ? (
-                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--color-smoke)' }} />
+                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--color-steel)' }} />
                                             ) : (
-                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.08)' }} />
+                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
                                             )}
                                         </div>
 
                                         {/* Nomor Tanggal */}
                                         <span
                                             style={{
-                                                fontFamily: 'var(--font-mono)',
-                                                fontSize: '9.5px',
-                                                fontWeight: day.isToday ? 700 : 400,
-                                                color: day.isToday ? 'var(--color-gold)' : day.hasActivity ? 'var(--color-bone)' : 'var(--color-ash)',
+                                                fontFamily: 'var(--font-inter)',
+                                                fontSize: '10px',
+                                                fontWeight: day.isToday ? 600 : 400,
+                                                color: day.isToday ? 'var(--color-signal-orange)' : day.hasActivity ? '#ffffff' : 'var(--color-steel)',
                                             }}
                                         >
                                             {day.dayNumber}
@@ -320,25 +322,26 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                             })}
                         </div>
 
-                        {/* Total XP Badge */}
+                        {/* Total XP Badge Pill */}
                         <div
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '8px',
-                                padding: '8px 14px',
-                                borderRadius: '8px',
-                                backgroundColor: 'var(--accent-gold-bg)',
-                                border: '1px solid var(--accent-gold-border)',
+                                gap: '10px',
+                                padding: '8px 16px',
+                                borderRadius: '9999px',
+                                backgroundColor: 'rgba(255, 72, 0, 0.1)',
+                                border: '1px solid rgba(255, 72, 0, 0.35)',
                                 height: 'fit-content',
+                                boxShadow: '0 0 16px rgba(255, 72, 0, 0.15)',
                             }}
                         >
-                            <Sparkles size={18} style={{ color: 'var(--accent-gold)' }} />
+                            <Sparkles size={16} style={{ color: 'var(--color-signal-orange)' }} />
                             <div>
-                                <div style={{ fontSize: '10px', color: 'var(--text-secondary)', fontWeight: 600, textTransform: 'uppercase' }}>
-                                    Total XP
+                                <div style={{ fontSize: '9px', color: 'var(--color-steel)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
+                                    TOTAL XP
                                 </div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)' }}>
+                                <div style={{ fontFamily: 'var(--font-inter)', fontSize: '14px', fontWeight: 600, color: 'var(--color-signal-orange)' }}>
                                     {profile.xp.toLocaleString()} XP
                                 </div>
                             </div>
@@ -347,29 +350,29 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                 </div>
 
                 {/* Progress Bar & Quick Stats Strip */}
-                <div style={{ backgroundColor: 'var(--bg-tertiary)', borderRadius: '10px', padding: '16px', border: '1px solid var(--border)' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <span style={{ fontSize: '12px', fontWeight: 700, fontFamily: 'var(--font-heading)', color: 'var(--text-primary)' }}>
+                <div style={{ backgroundColor: '#141414', borderRadius: '17.1429px', padding: '16px 20px', border: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-inter)', color: '#ffffff', letterSpacing: '1px', textTransform: 'uppercase' }}>
                                 LEVEL PROGRESSION
                             </span>
-                            <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                            <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
                                 ({currentXpProgress.toLocaleString()} / {profile.xp_to_next_level.toLocaleString()} XP)
                             </span>
                         </div>
-                        <span style={{ fontSize: '12px', fontWeight: 700, color: roleCfg.color, fontFamily: 'var(--font-heading)' }}>
+                        <span style={{ fontSize: '11px', fontWeight: 600, color: roleCfg.color, fontFamily: 'var(--font-inter)' }}>
                             {progressPercent}% Menuju Level {profile.level + 1}
                         </span>
                     </div>
 
-                    <div style={{ height: '8px', backgroundColor: 'var(--bg-secondary)', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                    <div style={{ height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.06)', borderRadius: '9999px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progressPercent}%` }}
                             transition={{ duration: 0.9, ease: 'easeOut' }}
                             style={{
                                 height: '100%',
-                                background: `linear-gradient(90deg, ${roleCfg.color} 0%, var(--accent-gold) 100%)`,
+                                background: `linear-gradient(90deg, ${roleCfg.color} 0%, var(--color-signal-orange) 100%)`,
                                 boxShadow: `0 0 12px ${roleCfg.color}60`,
                             }}
                         />

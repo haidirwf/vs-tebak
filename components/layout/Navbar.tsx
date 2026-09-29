@@ -44,10 +44,10 @@ export default function Navbar() {
             className="dashboard-navbar"
             style={{
                 height: '56px',
-                backgroundColor: 'rgba(10, 10, 10, 0.85)',
+                backgroundColor: 'rgba(0, 0, 0, 0.88)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
-                borderBottom: '1px solid var(--surface-border)',
+                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -110,11 +110,11 @@ export default function Navbar() {
                             className="dashboard-navbar-title"
                             style={{
                                 fontFamily: 'var(--font-heading)',
-                                fontSize: '18px',
-                                fontWeight: 700,
+                                fontSize: '17px',
+                                fontWeight: 400,
                                 color: 'var(--text-primary)',
                                 margin: 0,
-                                letterSpacing: '0.02em',
+                                letterSpacing: '-0.015em',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px',
@@ -137,8 +137,8 @@ export default function Navbar() {
                             display: 'flex',
                             alignItems: 'center',
                             gap: '6px',
-                            padding: '4px 10px',
-                            borderRadius: '6px',
+                            padding: '4px 12px',
+                            borderRadius: '9999px',
                             backgroundColor: 'var(--accent-red-bg)',
                             border: '1px solid var(--accent-red-border)',
                             cursor: 'default',
@@ -156,15 +156,14 @@ export default function Navbar() {
                             }}
                             style={{ display: 'flex', alignItems: 'center' }}
                         >
-                            <Flame size={15} style={{ color: 'var(--accent-red)' }} />
+                            <Flame size={14} style={{ color: 'var(--accent-red)' }} />
                         </motion.div>
                         <span
                             style={{
-                                fontSize: '13px',
-                                fontWeight: 700,
+                                fontSize: '12px',
+                                fontWeight: 500,
                                 color: 'var(--accent-red)',
-                                fontFamily: 'var(--font-heading)',
-                                letterSpacing: '0.02em',
+                                fontFamily: 'var(--font-inter)',
                             }}
                         >
                             {profile.streak_count} Hari
@@ -176,23 +175,23 @@ export default function Navbar() {
                 {profile && (
                     <motion.div
                         className="dashboard-navbar-xp"
-                        whileHover={{ scale: 1.05, borderColor: 'var(--accent-gold)' }}
+                        whileHover={{ scale: 1.05, borderColor: 'var(--color-signal-orange)' }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                         style={{
-                            backgroundColor: 'var(--accent-gold-bg)',
-                            border: '1px solid var(--accent-gold-border)',
-                            borderRadius: '6px',
-                            padding: '4px 12px',
+                            backgroundColor: 'rgba(255, 72, 0, 0.1)',
+                            border: '1px solid rgba(255, 72, 0, 0.35)',
+                            borderRadius: '9999px',
+                            padding: '4px 14px',
                             fontSize: '12px',
-                            fontFamily: 'var(--font-heading)',
-                            fontWeight: 700,
-                            color: 'var(--accent-gold)',
+                            fontFamily: 'var(--font-inter)',
+                            fontWeight: 500,
+                            color: 'var(--color-signal-orange)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '6px',
                             cursor: 'default',
-                            boxShadow: '0 2px 8px rgba(245, 197, 66, 0.08)',
+                            boxShadow: '0 0 14px rgba(255, 72, 0, 0.15)',
                         }}
                     >
                         <motion.div
@@ -200,7 +199,7 @@ export default function Navbar() {
                             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                             style={{ display: 'inline-flex' }}
                         >
-                            <Sparkles size={13} style={{ color: 'var(--accent-gold)' }} />
+                            <Sparkles size={12} style={{ color: 'var(--color-signal-orange)' }} />
                         </motion.div>
                         <span>{profile.xp.toLocaleString()} XP</span>
                     </motion.div>

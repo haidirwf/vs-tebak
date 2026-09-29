@@ -51,28 +51,28 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
     ]
 
     return (
-        <div className="card" style={{ padding: '20px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div className="card" style={{ padding: '22px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: '#080808' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--color-bone)' }}>
-                    <TrendingUp size={16} style={{ color: 'var(--color-gold)' }} />
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
+                    <TrendingUp size={16} style={{ color: 'var(--color-signal-orange)' }} />
                     Statistik Hero
                 </h3>
-                <span className="section-eyebrow" style={{ fontSize: '11px', color: 'var(--color-ash)' }}>REAL-TIME</span>
+                <span className="section-eyebrow" style={{ fontSize: '10px', color: 'var(--color-steel)' }}>REAL-TIME</span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 {stats.map((stat, i) => (
                     <motion.div
                         key={stat.label}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -2, borderColor: 'var(--color-smoke)' }}
+                        whileHover={{ y: -2, borderColor: 'rgba(255, 255, 255, 0.22)' }}
                         transition={{ type: 'spring', stiffness: 350, damping: 20, delay: i * 0.04 }}
                         style={{
-                            backgroundColor: 'var(--surface-elevated)',
-                            border: '1px solid var(--surface-border)',
-                            borderRadius: '8px',
-                            padding: '12px',
+                            backgroundColor: '#121212',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            borderRadius: '12px',
+                            padding: '14px',
                             position: 'relative',
                             overflow: 'hidden',
                             cursor: 'default',
@@ -84,7 +84,7 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
                                 style={{
                                     width: '28px',
                                     height: '28px',
-                                    borderRadius: '6px',
+                                    borderRadius: '8.57143px',
                                     backgroundColor: stat.bg,
                                     border: `1px solid ${stat.border}`,
                                     display: 'flex',
@@ -95,15 +95,15 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
                             >
                                 {stat.icon}
                             </div>
-                            <span className="section-eyebrow" style={{ fontSize: '10px', color: 'var(--color-ash)' }}>
+                            <span className="section-eyebrow" style={{ fontSize: '9.5px', color: 'var(--color-steel)' }}>
                                 {stat.sublabel}
                             </span>
                         </div>
 
-                        <div style={{ fontSize: '12px', color: 'var(--color-ash)', fontWeight: 500, marginBottom: '2px' }}>
+                        <div style={{ fontSize: '12px', color: 'var(--color-fog)', fontWeight: 400, marginBottom: '2px' }}>
                             {stat.label}
                         </div>
-                        <div style={{ fontSize: '20px', fontWeight: 600, color: 'var(--color-bone)', letterSpacing: '-0.02em' }}>
+                        <div style={{ fontSize: '20px', fontWeight: 600, color: '#ffffff', letterSpacing: '-0.02em', fontFamily: 'var(--font-inter)' }}>
                             {stat.value}
                         </div>
                     </motion.div>

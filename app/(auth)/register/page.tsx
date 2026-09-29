@@ -10,7 +10,7 @@ import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { AVATAR_CLASS_STATS } from '@/lib/game/xp'
 import { AvatarClass } from '@/types'
-import { Swords, Mail, Lock, User, School, Loader2 } from 'lucide-react'
+import { Flame, Mail, Lock, User, School, Loader2 } from 'lucide-react'
 
 const registerSchema = z.object({
     email: z.string().email('Email tidak valid'),
@@ -107,44 +107,93 @@ export default function RegisterPage() {
     }
 
     const inputStyle = (hasError?: boolean) => ({
-        width: '100%', paddingLeft: '36px', paddingRight: '12px', paddingTop: '10px', paddingBottom: '10px',
-        backgroundColor: 'var(--bg-tertiary)', border: `1px solid ${hasError ? 'var(--accent-red)' : 'var(--border)'}`,
-        borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', fontSize: '14px', outline: 'none',
+        width: '100%',
+        paddingLeft: '38px',
+        paddingRight: '12px',
+        paddingTop: '10px',
+        paddingBottom: '10px',
+        backgroundColor: '#121212',
+        border: `1px solid ${hasError ? '#ff3355' : '#292929'}`,
+        borderRadius: '12px',
+        color: '#ffffff',
+        fontSize: '13px',
+        outline: 'none',
+        transition: 'border-color 0.2s',
     })
 
     const labelStyle = {
-        display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', fontWeight: 500,
+        display: 'block',
+        fontSize: '12px',
+        color: 'var(--text-secondary)',
+        marginBottom: '6px',
+        fontWeight: 500,
     }
 
     return (
-        <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--bg-primary)', padding: '24px' }}>
+        <div
+            style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: '#000000',
+                backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(255, 72, 0, 0.08), transparent 60%)',
+                padding: '32px 24px',
+            }}
+        >
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{ width: '100%', maxWidth: '480px' }}
             >
                 {/* Logo */}
-                <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                        <Swords size={28} style={{ color: 'var(--accent-gold)' }} />
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, color: 'var(--accent-gold)' }}>Skillungo</span>
+                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                        <div
+                            style={{
+                                width: '34px',
+                                height: '34px',
+                                borderRadius: '9999px',
+                                background: 'linear-gradient(135deg, #ff4800, #ffd900)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                boxShadow: '0 0 16px rgba(255, 72, 0, 0.4)',
+                            }}
+                        >
+                            <Flame size={18} color="#000000" />
+                        </div>
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, letterSpacing: '-0.01em', color: '#ffffff' }}>
+                            Skillungo
+                        </span>
                     </div>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '12px' }}>Mulai petualangan belajarmu hari ini</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>Mulai petualangan belajarmu hari ini</p>
                 </div>
 
-                <div className="card auth-card" style={{ padding: '32px' }}>
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, marginBottom: '24px' }}>Buat Akun</h1>
+                <div
+                    className="card auth-card"
+                    style={{
+                        padding: '36px',
+                        borderRadius: '17.1429px',
+                        backgroundColor: '#080808',
+                        border: '1px solid #292929',
+                        boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+                    }}
+                >
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '24px', color: '#ffffff' }}>
+                        Buat Akun
+                    </h1>
 
                     {error && (
-                        <div style={{ backgroundColor: 'rgba(232,64,64,0.1)', border: '1px solid var(--accent-red)', borderRadius: '4px', padding: '12px', marginBottom: '16px', fontSize: '13px', color: 'var(--accent-red)' }}>
+                        <div style={{ backgroundColor: 'rgba(255, 51, 85, 0.08)', border: '1px solid rgba(255, 51, 85, 0.3)', borderRadius: '12px', padding: '12px 14px', marginBottom: '18px', fontSize: '13px', color: '#ff3355' }}>
                             {error}
                         </div>
                     )}
 
-                    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                         {/* Avatar Class Selection */}
                         <div>
-                            <label style={labelStyle}>Pilih Kelas Karaktermu</label>
+                            <label style={labelStyle}>Pilih Role / Kelas Karakter</label>
                             <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
                                 {(Object.keys(AVATAR_CLASS_STATS) as AvatarClass[]).map((cls) => {
                                     const stat = AVATAR_CLASS_STATS[cls]
@@ -153,26 +202,35 @@ export default function RegisterPage() {
                                         <motion.button
                                             key={cls}
                                             type="button"
-                                            whileHover={{ scale: 1.03 }}
-                                            whileTap={{ scale: 0.97 }}
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
                                             onClick={() => { setSelectedClass(cls); setValue('avatar_class', cls) }}
                                             style={{
-                                                padding: '10px 6px', borderRadius: '4px', cursor: 'pointer',
-                                                backgroundColor: isSelected ? 'var(--accent-gold-bg)' : 'var(--bg-tertiary)',
-                                                border: `1px solid ${isSelected ? 'var(--accent-gold)' : 'var(--border)'}`,
-                                                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
+                                                padding: '10px 6px',
+                                                borderRadius: '12px',
+                                                cursor: 'pointer',
+                                                backgroundColor: isSelected ? 'rgba(255, 72, 0, 0.12)' : '#121212',
+                                                border: `1px solid ${isSelected ? '#ff4800' : '#292929'}`,
+                                                boxShadow: isSelected ? '0 0 12px rgba(255, 72, 0, 0.25)' : 'none',
+                                                display: 'flex',
+                                                flexDirection: 'column',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                transition: 'all 0.2s',
                                             }}
                                         >
                                             <span style={{ fontSize: '20px' }}>{stat.emoji}</span>
                                             <span style={{
-                                                fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 700,
-                                                color: isSelected ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                                                fontFamily: 'var(--font-heading)',
+                                                fontSize: '11px',
+                                                fontWeight: 500,
+                                                color: isSelected ? '#ff4800' : 'var(--text-secondary)',
                                             }}>{stat.label}</span>
                                         </motion.button>
                                     )
                                 })}
                             </div>
-                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '6px' }}>
+                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px', marginBottom: 0 }}>
                                 {AVATAR_CLASS_STATS[selectedClass].description}
                             </p>
                         </div>
@@ -181,20 +239,20 @@ export default function RegisterPage() {
                         <div>
                             <label htmlFor="register-email" style={labelStyle}>Email</label>
                             <div style={{ position: 'relative' }}>
-                                <Mail size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                <Mail size={14} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                                 <input id="register-email" {...register('email')} type="email" autoComplete="email" aria-invalid={Boolean(errors.email)} placeholder="hero@skillquest.id" style={inputStyle(!!errors.email)} />
                             </div>
-                            {errors.email && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.email.message}</p>}
+                            {errors.email && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '4px' }}>{errors.email.message}</p>}
                         </div>
 
                         {/* Password */}
                         <div>
                             <label htmlFor="register-password" style={labelStyle}>Password</label>
                             <div style={{ position: 'relative' }}>
-                                <Lock size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                                <Lock size={14} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                                 <input id="register-password" {...register('password')} type="password" autoComplete="new-password" aria-invalid={Boolean(errors.password)} placeholder="••••••••" style={inputStyle(!!errors.password)} />
                             </div>
-                            {errors.password && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.password.message}</p>}
+                            {errors.password && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '4px' }}>{errors.password.message}</p>}
                         </div>
 
                         {/* Username & Full Name */}
@@ -202,18 +260,18 @@ export default function RegisterPage() {
                             <div>
                                 <label htmlFor="register-username" style={labelStyle}>Username</label>
                                 <div style={{ position: 'relative' }}>
-                                    <User size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
+                                    <User size={14} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
                                     <input id="register-username" {...register('username')} autoComplete="username" aria-invalid={Boolean(errors.username)} placeholder="hero123" style={inputStyle(!!errors.username)} />
                                 </div>
-                                {errors.username && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.username.message}</p>}
+                                {errors.username && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '4px' }}>{errors.username.message}</p>}
                             </div>
                             <div>
                                 <label htmlFor="register-full-name" style={labelStyle}>Nama Lengkap</label>
                                 <div style={{ position: 'relative' }}>
-                                    <User size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
+                                    <User size={14} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
                                     <input id="register-full-name" {...register('full_name')} autoComplete="name" aria-invalid={Boolean(errors.full_name)} placeholder="Budi Santoso" style={inputStyle(!!errors.full_name)} />
                                 </div>
-                                {errors.full_name && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.full_name.message}</p>}
+                                {errors.full_name && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '4px' }}>{errors.full_name.message}</p>}
                             </div>
                         </div>
 
@@ -222,41 +280,54 @@ export default function RegisterPage() {
                             <div>
                                 <label htmlFor="register-school-name" style={labelStyle}>Nama Sekolah</label>
                                 <div style={{ position: 'relative' }}>
-                                    <School size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
+                                    <School size={14} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
                                     <input id="register-school-name" {...register('school_name')} aria-invalid={Boolean(errors.school_name)} placeholder="SMK N 1 Jakarta" style={inputStyle(!!errors.school_name)} />
                                 </div>
-                                {errors.school_name && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.school_name.message}</p>}
+                                {errors.school_name && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '4px' }}>{errors.school_name.message}</p>}
                             </div>
                             <div>
                                 <label htmlFor="register-city" style={labelStyle}>Kota</label>
                                 <div style={{ position: 'relative' }}>
-                                    <School size={14} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
+                                    <School size={14} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)', zIndex: 1 }} />
                                     <input id="register-city" {...register('city')} autoComplete="address-level2" aria-invalid={Boolean(errors.city)} placeholder="Jakarta" style={inputStyle(!!errors.city)} />
                                 </div>
-                                {errors.city && <p style={{ color: 'var(--accent-red)', fontSize: '11px', marginTop: '4px' }}>{errors.city.message}</p>}
+                                {errors.city && <p style={{ color: '#ff3355', fontSize: '11px', marginTop: '4px' }}>{errors.city.message}</p>}
                             </div>
                         </div>
 
                         <motion.button
                             type="submit"
                             disabled={isLoading}
-                            whileHover={{ scale: 1.02 }}
-                            whileTap={{ scale: 0.98 }}
+                            whileHover={{ scale: 1.01 }}
+                            whileTap={{ scale: 0.99 }}
                             style={{
-                                width: '100%', padding: '12px', marginTop: '8px',
-                                backgroundColor: 'var(--accent-gold)', color: 'var(--bg-primary)',
-                                border: 'none', borderRadius: '4px', fontFamily: 'var(--font-heading)',
-                                fontSize: '15px', fontWeight: 700, cursor: isLoading ? 'not-allowed' : 'pointer',
-                                opacity: isLoading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                width: '100%',
+                                padding: '13px',
+                                marginTop: '10px',
+                                backgroundColor: '#ff4800',
+                                color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '9999px',
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '14px',
+                                fontWeight: 500,
+                                letterSpacing: '0.02em',
+                                cursor: isLoading ? 'not-allowed' : 'pointer',
+                                opacity: isLoading ? 0.7 : 1,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px',
+                                boxShadow: '0 0 18px rgba(255, 72, 0, 0.4)',
                             }}
                         >
                             {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</> : 'MULAI PETUALANGAN'}
                         </motion.button>
                     </form>
 
-                    <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '13px', color: 'var(--text-secondary)' }}>
+                    <p style={{ textAlign: 'center', marginTop: '22px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                         Sudah punya akun?{' '}
-                        <Link href="/login" style={{ color: 'var(--accent-cyan)', textDecoration: 'none', fontWeight: 500 }}>
+                        <Link href="/login" style={{ color: '#ff4800', textDecoration: 'none', fontWeight: 500 }}>
                             Masuk sekarang
                         </Link>
                     </p>

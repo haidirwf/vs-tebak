@@ -1,158 +1,150 @@
 @import "tailwindcss";
 
 /* ==========================================================================
-   DOVETAIL DESIGN SYSTEM — DARK COMMAND-CENTER THEME (RETAINING GOLD ACCENT)
-   Reference: DOVETAIL.md
-   Palette: Carbon (#0a0a0a), Graphite (#141414), Iron (#1e1e1e), Slate Edge (#313131),
-            Smoke (#454545), Mist (#7c7c7c), Ash (#a7a7a7), Bone (#ffffff),
-            with Gold (#F5C542) as the single functional chromatic spark.
+   LINEARITY DESIGN SYSTEM — GLOWING STUDIO CONSOLE
+   Reference: Linearity.md
+   Theme: Sparse black workspaces (#000000 Void) with precise white interface chrome,
+          Carbon controls, hairline borders, and isolated bursts of Molten Signal Orange.
    ========================================================================== */
 
 :root {
-  /* --- DOVETAIL CHROMATIC SPARK (RETAINED GOLD) --- */
-  --color-gold: #F5C542;
-  --color-gold-hover: #EAB308;
-  --accent-gold: var(--color-gold);
-  --accent-gold-bg: rgba(245, 197, 66, 0.08);
-  --accent-gold-border: rgba(245, 197, 66, 0.28);
-  --color-spark: var(--color-gold);
+  /* --- LINEARITY CORE COLOR TOKENS --- */
+  --color-void: #000000;              /* Page canvas, full-bleed section backgrounds */
+  --color-near-black: #050505;        /* Subtle recessed surface and dark overlay layer */
+  --color-carbon: #292929;            /* Raised dark controls, prompt-composer depth */
+  --color-graphite: #4d4d4d;          /* Secondary dark surface fills & inactive internal UI */
+  --color-ash: #666666;               /* Low-emphasis metadata, tiny helper copy */
+  --color-steel: #808080;             /* Muted labels, inactive controls */
+  --color-fog: #999999;               /* Supporting body copy on black */
+  --color-silver: #bfbfbf;            /* Navigation text, higher-emphasis secondary copy */
+  --color-white: #ffffff;             /* Headlines, button labels, prominent UI text */
+  --color-signal-orange: #ff4800;     /* Filled conversion buttons & circular submit controls */
+  --color-ember: #ff5e23;             /* Orange hover treatment, active link fill */
+  --color-burnt-orange: #ca4e17;      /* Warm product-preview card fill & campaign surface */
+  --color-electric-yellow: #ffd900;   /* Orange-button glow halo, bright decorative borders */
+  --color-vector-green: #08c380;      /* Editorial line accents & gradient rail */
+  --gradient-vector-green: linear-gradient(to right, #08c380 0%, #fd7c0f 31.73%, #ff2b2b 62.5%, #9500ff 100%);
+  --gradient-spectrum-rail: linear-gradient(to right, #08c380 0%, #fd7c0f 31.73%, #ff2b2b 62.5%, #9500ff 100%);
 
-  /* --- DOVETAIL ACHROMATIC SURFACE & COLOR TOKENS --- */
-  --color-pure-black: #000000;
-  --color-carbon: #0a0a0a;
-  --color-graphite: #141414;
-  --color-iron: #1e1e1e;
-  --color-slate-edge: #313131;
-  --color-smoke: #454545;
-  --color-mist: #7c7c7c;
-  --color-ash: #a7a7a7;
-  --color-bone: #ffffff;
+  /* --- CODEBASE COMPATIBILITY ALIASES (GOLD -> SIGNAL ORANGE) --- */
+  --color-gold: #ff4800;
+  --color-gold-hover: #ff5e23;
+  --accent-gold: var(--color-signal-orange);
+  --accent-gold-bg: rgba(255, 72, 0, 0.1);
+  --accent-gold-border: rgba(255, 72, 0, 0.35);
+  --color-spark: var(--color-signal-orange);
 
-  /* --- SEMANTIC SURFACES --- */
-  --surface-canvas: var(--color-carbon);       /* Level 0: #0a0a0a (Full-page canvas) */
-  --surface-card: var(--color-graphite);       /* Level 1: #141414 (Cards, content blocks) */
-  --surface-elevated: var(--color-iron);       /* Level 2: #1e1e1e (Hover states, table headers, popovers) */
-  --surface-border: var(--color-slate-edge);   /* Level 3: #313131 (Hairline dividers, borders) */
-  --surface-inverted: var(--color-bone);       /* Level 4: #ffffff (Filled primary CTAs) */
+  /* --- SURFACES (VOID CANVAS & TRANSLUCENT OVERLAYS) --- */
+  --surface-canvas: var(--color-void);         /* Level 0: #000000 Void Canvas */
+  --surface-card: #080808;                    /* Level 1: Deep Near-Black Recess */
+  --surface-elevated: #161616;                /* Level 2: Carbon raised control */
+  --surface-border: rgba(255, 255, 255, 0.12);/* Level 3: Hairline white 12% border */
+  --surface-border-subtle: rgba(255, 255, 255, 0.07);
+  --surface-inverted: var(--color-white);      /* Level 4: Pure White */
+  --surface-frosted: rgba(255, 255, 255, 0.05);
 
-  /* Aliases for codebase compatibility */
+  /* Semantic aliases */
   --bg-primary: var(--surface-canvas);
   --bg-secondary: var(--surface-card);
   --bg-tertiary: var(--surface-elevated);
   --border: var(--surface-border);
 
-  /* --- FUNCTIONAL STATUS TOKENS (RESTYLED TO DOVETAIL ELEVATION) --- */
-  --accent-red: #EF4444;
-  --accent-red-bg: rgba(239, 68, 68, 0.08);
-  --accent-red-border: rgba(239, 68, 68, 0.24);
+  /* --- FUNCTIONAL STATUS TOKENS --- */
+  --accent-red: #ff3344;
+  --accent-red-bg: rgba(255, 51, 68, 0.1);
+  --accent-red-border: rgba(255, 51, 68, 0.28);
 
-  --accent-cyan: #38BDF8;
-  --accent-cyan-bg: rgba(56, 189, 248, 0.08);
-  --accent-cyan-border: rgba(56, 189, 248, 0.24);
+  --accent-cyan: #00d4ff;
+  --accent-cyan-bg: rgba(0, 212, 255, 0.1);
+  --accent-cyan-border: rgba(0, 212, 255, 0.28);
 
-  --accent-green: #22C55E;
-  --accent-green-bg: rgba(34, 197, 94, 0.08);
-  --accent-green-border: rgba(34, 197, 94, 0.24);
+  --accent-green: #08c380;
+  --accent-green-bg: rgba(8, 195, 128, 0.1);
+  --accent-green-border: rgba(8, 195, 128, 0.28);
 
-  /* --- TYPOGRAPHY (DOVETAIL SPEC) --- */
+  /* --- TYPOGRAPHY (LINEARITY SPEC) --- */
   --font-inter: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-acidgrotesk: var(--font-acidgrotesk), 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-jetbrains-mono: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  --font-heading: var(--font-inter);
+  --font-heading: var(--font-acidgrotesk);
   --font-body: var(--font-inter);
   --font-mono: var(--font-jetbrains-mono);
 
-  /* Legacy font aliases to prevent regressions in existing components */
-  --font-rajdhani: var(--font-inter);
-  --font-dm-sans: var(--font-inter);
+  /* Text Contrast */
+  --text-primary: var(--color-white);         /* #ffffff */
+  --text-secondary: var(--color-fog);         /* #999999 Fog */
+  --text-muted: var(--color-steel);           /* #808080 Steel */
+  --text-silver: var(--color-silver);         /* #bfbfbf Silver */
 
-  /* --- TEXT CONTRAST --- */
-  --text-primary: var(--color-bone);           /* #ffffff */
-  --text-secondary: var(--color-ash);         /* #a7a7a7 */
-  --text-muted: var(--color-mist);             /* #7c7c7c */
-
-  /* --- SPACING SCALE (8px Base Unit) --- */
-  --spacing-unit: 8px;
+  /* --- SPACING SCALE (4px Base Unit per Linearity) --- */
+  --spacing-unit: 4px;
+  --spacing-4: 4px;
   --spacing-8: 8px;
+  --spacing-12: 12px;
   --spacing-16: 16px;
   --spacing-24: 24px;
-  --spacing-32: 32px;
-  --spacing-40: 40px;
-  --spacing-64: 64px;
-  --spacing-96: 96px;
-  --spacing-200: 200px;
+  --spacing-56: 56px;
+  --spacing-168: 168px;
 
-  /* Legacy spacing variables */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 20px;
-  --space-6: 24px;
-
-  /* --- SHAPES & RADII (DOVETAIL 8px SIGNATURE) --- */
-  --radius: 8px;
-  --radius-tags: 4px;
-  --radius-cards: 8px;
-  --radius-inputs: 8px;
-  --radius-buttons: 8px;
+  /* --- SHAPES & RADII (LINEARITY EXACT SPEC) --- */
+  --radius: 17.1429px;
+  --radius-cards: 17.1429px;
+  --radius-buttons: 9999px;
+  --radius-pills: 9999px;
+  --radius-links: 9999px;
+  --radius-inputs: 17.1429px;
+  --radius-product-panels: 25.7143px;
+  --radius-campaign-tiles: 12px;
+  --radius-images: 8.57143px;
   --radius-navpills: 9999px;
 
-  --radius-sm: 4px;
-  --radius-lg: 8px;
+  --radius-sm: 8.57143px;
+  --radius-md: 12px;
+  --radius-lg: 17.1429px;
+  --radius-xl: 25.7143px;
+  --radius-full: 9999px;
 
-  /* --- FOCUS & TONAL ELEVATION --- */
-  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.4);
-  --shadow-sm: none;
-  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.5);
+  /* --- ELEVATION & GLOW --- */
+  --focus-ring: 0 0 0 2px rgba(255, 72, 0, 0.45), 0 0 10px rgba(255, 217, 0, 0.25);
+  --shadow-signal-orange: 0 0 22px rgba(255, 72, 0, 0.42), 0 0 8px rgba(255, 217, 0, 0.28);
+  --shadow-subtle: rgba(255, 94, 35, 0.4) 0px 0px 0px 1px inset;
+  --shadow-panel: 0 1.71429px 1.71429px rgba(0, 0, 0, 0.2), inset 0 0 9.42857px rgba(255, 255, 255, 0.12);
   --shadow-card: none;
-  --shadow-modal: 0 16px 36px rgba(0, 0, 0, 0.65);
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
 }
 
-/* ===================================================
-   LIGHT MODE SYSTEM (Clean Dovetail Inversion)
-   =================================================== */
-
+/* Optional Light Inversion with Linearity Clean Restraint */
 [data-theme="light"] {
   color-scheme: light;
+  --color-void: #f8fafc;
+  --color-near-black: #ffffff;
+  --color-carbon: #f1f5f9;
+  --color-graphite: #e2e8f0;
+  --color-ash: #94a3b8;
+  --color-steel: #64748b;
+  --color-fog: #475569;
+  --color-silver: #334155;
+  --color-white: #0f172a;
 
-  --color-pure-black: #000000;
-  --color-carbon: #F8FAFC;
-  --color-graphite: #FFFFFF;
-  --color-iron: #F1F5F9;
-  --color-slate-edge: #E2E8F0;
-  --color-smoke: #CBD5E1;
-  --color-mist: #94A3B8;
-  --color-ash: #475569;
-  --color-bone: #0F172A;
+  --surface-canvas: #f8fafc;
+  --surface-card: #ffffff;
+  --surface-elevated: #f1f5f9;
+  --surface-border: #e2e8f0;
+  --surface-inverted: #0f172a;
 
-  --surface-canvas: var(--color-carbon);
-  --surface-card: var(--color-graphite);
-  --surface-elevated: var(--color-iron);
-  --surface-border: var(--color-slate-edge);
-  --surface-inverted: var(--color-bone);
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #f1f5f9;
+  --border: #e2e8f0;
 
-  --bg-primary: var(--surface-canvas);
-  --bg-secondary: var(--surface-card);
-  --bg-tertiary: var(--surface-elevated);
-  --border: var(--surface-border);
-
-  --color-gold: #D97706;
-  --accent-gold: var(--color-gold);
-  --accent-gold-bg: #FEF3C7;
-  --accent-gold-border: #FDE68A;
-
-  --text-primary: #0F172A;
+  --text-primary: #0f172a;
   --text-secondary: #475569;
-  --text-muted: #94A3B8;
-
-  --focus-ring: 0 0 0 2px rgba(217, 119, 6, 0.35);
-  --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --text-muted: #64748b;
 }
 
 /* ===================================================
-   BASE HTML RESETS & BLUEPRINT GRID
+   BASE HTML RESETS & LINEARITY STUDIO CANVAS
    =================================================== */
 
 * {
@@ -171,27 +163,27 @@ body {
   color: var(--text-primary);
   font-family: var(--font-body);
   font-size: 14px;
-  line-height: 1.57;
-  letter-spacing: -0.25px;
+  line-height: 1.5;
+  letter-spacing: -0.15px;
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
 
-/* Dovetail Blueprint Grid: 1px lines at 48px cell spacing */
+/* Linearity Studio Grid: Sparse 64px hairline matrix on Void */
 .bg-blueprint-grid {
   background-color: var(--surface-canvas);
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
 [data-theme="light"] .bg-blueprint-grid {
   background-color: var(--surface-canvas);
   background-image:
-    linear-gradient(to right, rgba(15, 23, 42, 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.04) 1px, transparent 1px);
-  background-size: 48px 48px;
+    linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
 .judge-mode *,
@@ -202,17 +194,17 @@ body {
   scroll-behavior: auto !important;
 }
 
-/* Dovetail Headings: Tight negative letter-spacing scaling with size */
+/* Linearity Headings: AcidGrotesk / Space Grotesk at weight 400 (open, conversational) */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   color: var(--text-primary);
-  font-weight: 500;
-  letter-spacing: -0.025em;
+  font-weight: 400;
+  letter-spacing: -0.015em;
 }
 
-h1 { letter-spacing: -0.036em; line-height: 1.15; }
-h2 { letter-spacing: -0.03em; line-height: 1.2; }
-h3 { letter-spacing: -0.022em; line-height: 1.28; }
+h1 { letter-spacing: -0.02em; line-height: 1.15; font-size: 34px; }
+h2 { letter-spacing: -0.015em; line-height: 1.2; font-size: 28px; }
+h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 
 /* Scrollbar */
 ::-webkit-scrollbar {
@@ -223,24 +215,24 @@ h3 { letter-spacing: -0.022em; line-height: 1.28; }
   background: var(--surface-canvas);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-slate-edge);
-  border-radius: 4px;
+  background: var(--color-carbon);
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-smoke);
+  background: var(--color-graphite);
 }
 
-/* Selection with Gold Spark */
+/* Selection with Linearity Signal Orange */
 ::selection {
-  background-color: rgba(245, 197, 66, 0.25);
+  background-color: rgba(255, 72, 0, 0.35);
   color: #ffffff;
 }
 
 /* ===================================================
-   DOVETAIL COMPONENTS & UTILITIES
+   LINEARITY COMPONENTS & UTILITIES
    =================================================== */
 
-/* Dovetail Card: Charcoal graphite with hairline slate-edge border */
+/* Standard Card: 17.1429px radius, hairline white border on Near-Black */
 .card {
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
@@ -249,140 +241,220 @@ h3 { letter-spacing: -0.022em; line-height: 1.28; }
 }
 
 .card:hover {
-  border-color: var(--color-smoke);
+  border-color: rgba(255, 255, 255, 0.22);
 }
 
-/* Dovetail Section Eyebrow Label: JetBrains Mono stamped metadata */
+/* Linearity Micro Eyebrow Label: 10px uppercase, tracking 1.5px-2px, Steel */
 .section-eyebrow,
-.eyebrow-label {
-  font-family: var(--font-mono);
-  font-size: 12px;
+.eyebrow-label,
+.micro-eyebrow {
+  font-family: var(--font-inter);
+  font-size: 10px;
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.85px;
-  color: var(--color-ash);
+  letter-spacing: 1.5px;
+  color: var(--color-steel);
   line-height: 1.4;
 }
 
-.section-eyebrow-gold {
-  font-family: var(--font-mono);
-  font-size: 12px;
+.section-eyebrow-gold,
+.section-eyebrow-orange {
+  font-family: var(--font-inter);
+  font-size: 10px;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.85px;
-  color: var(--color-gold);
+  letter-spacing: 1.5px;
+  color: var(--color-signal-orange);
   line-height: 1.4;
 }
 
-/* Primary Button (Inverted White Fill per Dovetail) */
-.btn-primary {
+/* Linearity Signal Orange Conversion Button (9999px pill + Electric Yellow glow) */
+.btn-signal-orange,
+.btn-primary,
+.btn-gold {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: var(--color-bone);
-  color: var(--color-carbon) !important;
-  font-family: var(--font-body);
-  font-size: 14px;
+  background-color: var(--color-signal-orange);
+  color: #ffffff !important;
+  font-family: var(--font-inter);
+  font-size: 13px;
   font-weight: 500;
   border-radius: var(--radius-buttons);
-  padding: 8px 16px;
-  border: 1px solid var(--color-bone);
+  padding: 10px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  box-shadow: var(--shadow-signal-orange);
   cursor: pointer;
   text-decoration: none;
-  transition: opacity 0.15s ease, transform 0.15s ease;
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
 }
 
-.btn-primary:hover {
-  opacity: 0.92;
+.btn-signal-orange:hover,
+.btn-primary:hover,
+.btn-gold:hover {
+  background-color: var(--color-ember);
   transform: translateY(-1px);
+  box-shadow: 0 0 28px rgba(255, 72, 0, 0.55), 0 0 12px rgba(255, 217, 0, 0.4);
 }
 
-/* Secondary Button (Ghost Border per Dovetail) */
+/* Linearity Dark Outline Pill Button (9999px pill + 5% white fill) */
+.btn-dark-outline,
 .btn-secondary,
 .btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: transparent;
-  color: var(--color-bone) !important;
-  font-family: var(--font-body);
-  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.05);
+  color: #ffffff !important;
+  font-family: var(--font-inter);
+  font-size: 13px;
   font-weight: 500;
   border-radius: var(--radius-buttons);
-  padding: 8px 16px;
-  border: 1px solid var(--color-smoke);
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
 }
 
+.btn-dark-outline:hover,
 .btn-secondary:hover,
 .btn-ghost:hover {
-  background-color: var(--surface-elevated);
-  border-color: var(--color-mist);
+  background-color: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.28);
   transform: translateY(-1px);
 }
 
-/* Retained Gold Action Button */
-.btn-gold {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  background-color: var(--color-gold);
-  color: #0a0a0a !important;
-  font-family: var(--font-body);
-  font-size: 14px;
-  font-weight: 600;
-  border-radius: var(--radius-buttons);
-  padding: 8px 16px;
-  border: 1px solid var(--color-gold);
-  cursor: pointer;
-  text-decoration: none;
-  transition: background-color 0.15s ease, transform 0.15s ease;
-}
-
-.btn-gold:hover {
-  background-color: var(--color-gold-hover);
-  transform: translateY(-1px);
-}
-
-/* Navigation Pill */
+/* Navigation Pill (Pill-shaped 9999px) */
 .nav-pill {
   border-radius: var(--radius-navpills);
-  padding: 6px 14px;
-  font-size: 14px;
+  padding: 6px 16px;
+  font-size: 13px;
   font-weight: 500;
-  color: var(--text-secondary);
-  transition: color 0.15s ease, background-color 0.15s ease;
+  color: var(--color-silver);
+  transition: color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease;
   text-decoration: none;
+  border: 1px solid transparent;
 }
 
 .nav-pill:hover,
 .nav-pill.active {
-  color: var(--color-bone);
-  background-color: var(--surface-card);
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* Forms & Inputs */
+/* Hero Prompt Composer (Carbon #292929 shell, 17.1429px radius) */
+.hero-prompt-composer {
+  background-color: var(--color-carbon);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-inputs);
+  padding: 10px 14px 10px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-prompt-composer:focus-within {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Prompt Submit Orb (Circular Signal Orange #ff4800, 9999px radius) */
+.prompt-submit-orb {
+  width: 38px;
+  height: 38px;
+  border-radius: 9999px;
+  background-color: var(--color-signal-orange);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow-signal-orange);
+  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.prompt-submit-orb:hover {
+  background-color: var(--color-ember);
+  transform: scale(1.05);
+  box-shadow: 0 0 26px rgba(255, 72, 0, 0.6), 0 0 10px rgba(255, 217, 0, 0.4);
+}
+
+/* Linearity Product Demonstration Panel (25.7143px radius, frosted translucency) */
+.product-demo-panel {
+  background-color: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--radius-product-panels);
+  box-shadow: var(--shadow-panel);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  padding: 24px;
+}
+
+/* Role Selector Chip (9999px radius pill on Near Black) */
+.role-selector-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(5, 5, 5, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 9999px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #ffffff;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
+}
+
+.role-selector-chip:hover,
+.role-selector-chip.active {
+  border-color: rgba(255, 255, 255, 0.35);
+  background-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+/* Spectrum Rail Gradient Line */
+.spectrum-rail-line {
+  height: 2px;
+  background: var(--gradient-vector-green);
+  border-radius: 9999px;
+}
+
+/* Campaign Asset Tile (12px radius, Burnt Orange or Carbon block) */
+.campaign-asset-tile {
+  border-radius: var(--radius-campaign-tiles);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  background-color: var(--color-carbon);
+}
+
+/* Forms & Inputs: Linearity 17.1429px radius */
 input, select, textarea {
-  background-color: var(--surface-card);
+  background-color: var(--color-near-black);
   border: 1px solid var(--surface-border);
   color: var(--text-primary);
   border-radius: var(--radius-inputs);
   font-family: var(--font-body);
-  padding: 8px 12px;
+  padding: 10px 16px;
   font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: var(--color-gold);
+  border-color: var(--color-signal-orange);
   box-shadow: var(--focus-ring);
 }
 
 input::placeholder, textarea::placeholder {
-  color: var(--color-mist);
+  color: var(--color-steel);
 }
 
 /* Subtle Hover Lift without blur artifacts */
@@ -392,17 +464,17 @@ input::placeholder, textarea::placeholder {
 
 .hover-lift:hover {
   transform: translateY(-2px);
-  border-color: var(--color-smoke) !important;
+  border-color: rgba(255, 255, 255, 0.24) !important;
 }
 
 /* Skeleton shimmer */
 .sq-skeleton {
-  border-radius: 4px;
+  border-radius: 8px;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.03) 0%,
-    rgba(255, 255, 255, 0.08) 50%,
-    rgba(255, 255, 255, 0.03) 100%
+    rgba(255, 255, 255, 0.02) 0%,
+    rgba(255, 255, 255, 0.06) 50%,
+    rgba(255, 255, 255, 0.02) 100%
   );
   background-size: 220% 100%;
   animation: sqShimmer 1.4s ease-in-out infinite;
@@ -434,17 +506,17 @@ input::placeholder, textarea::placeholder {
 .ticket-card::after { right: -8px; border-left: 1px dashed var(--surface-border); }
 
 /* RPG Tonal Borders (Replaces muddy glow shadows) */
-.glow-warrior { border-color: rgba(239, 68, 68, 0.45) !important; background-color: rgba(239, 68, 68, 0.04); }
-.glow-mage { border-color: rgba(56, 189, 248, 0.45) !important; background-color: rgba(56, 189, 248, 0.04); }
-.glow-archer { border-color: rgba(34, 197, 94, 0.45) !important; background-color: rgba(34, 197, 94, 0.04); }
-.glow-healer { border-color: rgba(245, 197, 66, 0.45) !important; background-color: rgba(245, 197, 66, 0.04); }
+.glow-warrior { border-color: rgba(255, 51, 68, 0.45) !important; background-color: rgba(255, 51, 68, 0.05); }
+.glow-mage { border-color: rgba(0, 212, 255, 0.45) !important; background-color: rgba(0, 212, 255, 0.05); }
+.glow-archer { border-color: rgba(8, 195, 128, 0.45) !important; background-color: rgba(8, 195, 128, 0.05); }
+.glow-healer { border-color: rgba(255, 72, 0, 0.45) !important; background-color: rgba(255, 72, 0, 0.05); }
 
 /* Typography Utility Classes */
 .font-heading { font-family: var(--font-heading); }
 .font-body { font-family: var(--font-body); }
 .font-mono { font-family: var(--font-mono); }
 
-.text-gold { color: var(--color-gold); }
+.text-gold, .text-orange { color: var(--color-signal-orange); }
 .text-red { color: var(--accent-red); }
 .text-cyan { color: var(--accent-cyan); }
 .text-green { color: var(--accent-green); }
@@ -1016,50 +1088,58 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ===================================================
-   TAILWIND V4 THEME EXTENSIONS (DOVETAIL + GOLD ACCENT)
+   TAILWIND V4 THEME EXTENSIONS (LINEARITY SPEC)
    =================================================== */
 
 @theme {
-  --color-soft-indigo: #F5C542; /* Substituted with Gold Spark */
-  --color-gold: #F5C542;
-  --color-pure-black: #000000;
-  --color-carbon: #0a0a0a;
-  --color-graphite: #141414;
-  --color-iron: #1e1e1e;
-  --color-slate-edge: #313131;
-  --color-smoke: #454545;
-  --color-mist: #7c7c7c;
-  --color-ash: #a7a7a7;
-  --color-bone: #ffffff;
+  --color-void: #000000;
+  --color-near-black: #050505;
+  --color-carbon: #292929;
+  --color-graphite: #4d4d4d;
+  --color-ash: #666666;
+  --color-steel: #808080;
+  --color-fog: #999999;
+  --color-silver: #bfbfbf;
+  --color-white: #ffffff;
+  --color-signal-orange: #ff4800;
+  --color-ember: #ff5e23;
+  --color-burnt-orange: #ca4e17;
+  --color-electric-yellow: #ffd900;
+  --color-vector-green: #08c380;
 
-  --color-background: #0a0a0a;
+  --color-gold: #ff4800;
+  --color-soft-indigo: #ff4800;
+  --color-background: #000000;
   --color-foreground: #ffffff;
-  --color-card: #141414;
+  --color-card: #080808;
   --color-card-foreground: #ffffff;
-  --color-popover: #141414;
+  --color-popover: #0c0c0c;
   --color-popover-foreground: #ffffff;
-  --color-primary: #F5C542;
-  --color-primary-foreground: #0a0a0a;
-  --color-secondary: #1e1e1e;
+  --color-primary: #ff4800;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #161616;
   --color-secondary-foreground: #ffffff;
-  --color-muted: #1e1e1e;
-  --color-muted-foreground: #a7a7a7;
-  --color-accent: #F5C542;
-  --color-accent-foreground: #0a0a0a;
-  --color-destructive: #EF4444;
+  --color-muted: #161616;
+  --color-muted-foreground: #808080;
+  --color-accent: #ff4800;
+  --color-accent-foreground: #ffffff;
+  --color-destructive: #ff3344;
   --color-destructive-foreground: #ffffff;
-  --color-border: #313131;
-  --color-input: #1e1e1e;
-  --color-ring: #F5C542;
+  --color-border: rgba(255, 255, 255, 0.12);
+  --color-input: #161616;
+  --color-ring: #ff4800;
 
   --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-acidgrotesk: 'Space Grotesk', 'AcidGrotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-jetbrains-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Space Grotesk', 'AcidGrotesk', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --radius-sm: 4px;
-  --radius-md: 4px;
-  --radius-lg: 8px;
+  --radius-sm: 8.57143px;
+  --radius-md: 12px;
+  --radius-lg: 17.1429px;
+  --radius-xl: 25.7143px;
   --radius-full: 9999px;
-  --radius: 8px;
+  --radius: 17.1429px;
 }

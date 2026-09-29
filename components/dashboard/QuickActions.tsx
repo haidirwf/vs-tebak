@@ -70,19 +70,20 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.35, delay: i * 0.06 }}
-                            whileHover={{ y: -4, borderColor: action.color }}
+                            whileHover={{ y: -3, borderColor: 'rgba(255, 255, 255, 0.3)' }}
                             whileTap={{ scale: 0.98 }}
                             className="card hover-lift"
                             style={{
-                                padding: '18px',
+                                padding: '20px',
                                 height: '100%',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 justifyContent: 'space-between',
                                 position: 'relative',
                                 overflow: 'hidden',
-                                backgroundColor: 'var(--bg-secondary)',
-                                border: '1px solid var(--border)',
+                                backgroundColor: '#080808',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '17.1429px',
                                 cursor: 'pointer',
                             }}
                         >
@@ -94,57 +95,57 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                     right: '-20px',
                                     width: '80px',
                                     height: '80px',
-                                    background: `radial-gradient(circle, ${action.color}20 0%, transparent 70%)`,
+                                    background: `radial-gradient(circle, ${action.color}25 0%, transparent 70%)`,
                                     pointerEvents: 'none',
                                 }}
                             />
 
                             <div>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                                     <div
                                         style={{
-                                            width: '40px',
-                                            height: '40px',
-                                            borderRadius: '8px',
+                                            width: '38px',
+                                            height: '38px',
+                                            borderRadius: '8.57143px',
                                             backgroundColor: action.bg,
                                             border: `1px solid ${action.border}`,
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
                                             color: action.color,
-                                            boxShadow: `0 4px 12px ${action.color}15`,
                                         }}
                                     >
-                                        <Icon size={20} />
+                                        <Icon size={18} />
                                     </div>
 
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <span
                                             style={{
                                                 fontSize: '10px',
-                                                fontFamily: 'var(--font-heading)',
-                                                fontWeight: 700,
+                                                fontFamily: 'var(--font-inter)',
+                                                fontWeight: 600,
                                                 color: action.color,
                                                 backgroundColor: action.bg,
                                                 border: `1px solid ${action.border}`,
-                                                padding: '2px 6px',
-                                                borderRadius: '4px',
+                                                padding: '2px 8px',
+                                                borderRadius: '9999px',
                                                 textTransform: 'uppercase',
+                                                letterSpacing: '0.04em',
                                             }}
                                         >
                                             {action.badge}
                                         </span>
-                                        <ArrowUpRight size={15} style={{ color: 'var(--text-muted)' }} />
+                                        <ArrowUpRight size={14} style={{ color: 'var(--color-steel)' }} />
                                     </div>
                                 </div>
 
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '2px' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, color: '#ffffff', marginBottom: '4px', letterSpacing: '-0.015em' }}>
                                     {action.title}
                                 </div>
-                                <div style={{ fontSize: '11px', color: action.color, fontWeight: 600, marginBottom: '6px' }}>
+                                <div style={{ fontSize: '11px', color: action.color, fontWeight: 500, marginBottom: '6px', fontFamily: 'var(--font-inter)' }}>
                                     {action.subtitle}
                                 </div>
-                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: 0, lineHeight: 1.4 }}>
+                                <p style={{ fontSize: '12px', color: 'var(--color-fog)', margin: 0, lineHeight: 1.5 }}>
                                     {action.desc}
                                 </p>
                             </div>
@@ -153,13 +154,13 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                 style={{
                                     marginTop: '16px',
                                     paddingTop: '12px',
-                                    borderTop: '1px solid var(--border)',
+                                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
                                     fontSize: '12px',
-                                    fontWeight: 700,
-                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 500,
+                                    fontFamily: 'var(--font-inter)',
                                     color: action.color,
                                 }}
                             >

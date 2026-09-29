@@ -16,7 +16,6 @@ import {
   Users,
   Gift,
   CheckCircle,
-  HelpCircle,
   Sparkles,
   ArrowRight,
   Gamepad2,
@@ -25,6 +24,12 @@ import {
   ChevronDown,
   Menu,
   X,
+  Send,
+  Terminal,
+  Play,
+  Layers,
+  Code,
+  Compass,
 } from 'lucide-react'
 
 interface LandingClientProps {
@@ -37,9 +42,9 @@ const CLASSES_DATA = [
     name: 'Warrior',
     title: 'The Code Vanguard',
     emoji: '⚔️',
-    color: 'var(--accent-red)',
-    borderColor: 'rgba(232, 64, 64, 0.4)',
-    tagline: 'Kuat dalam logika, backend, dan problem solving kompleks.',
+    color: '#ff3344',
+    accent: '#ff4800',
+    tagline: 'Kuat dalam logika sistem, arsitektur backend, dan problem solving kompleks.',
     stats: [
       { label: 'Logika & Backend', value: 95 },
       { label: 'Ketahanan Debugging', value: 90 },
@@ -47,17 +52,18 @@ const CLASSES_DATA = [
       { label: 'Kreativitas Desain', value: 65 },
     ],
     perk: 'Clean Code Slash',
-    perkDesc: '+20% bonus XP saat menyelesaikan modul pemrograman dan database.',
-    suitable: 'Pelajar SMK RPL/SIJA yang menyukai backend, API, dan problem solving.',
+    perkDesc: '+25% bonus XP saat menyelesaikan modul pemrograman dan basis data.',
+    suitable: 'Pelajar SMK RPL/SIJA yang menyukai backend, database SQL, dan API engineering.',
+    tileBg: '#ca4e17', // Burnt Orange
   },
   {
     id: 'mage',
     name: 'Mage',
     title: 'The Design Alchemist',
     emoji: '🔮',
-    color: 'var(--accent-cyan)',
-    borderColor: 'rgba(0, 212, 255, 0.4)',
-    tagline: 'Penyihir visual, mahir estetika UI/UX, dan interaksi pengguna.',
+    color: '#00d4ff',
+    accent: '#ff4800',
+    tagline: 'Penyihir estetika visual, tata letak UI/UX, dan interaksi pengguna kelas dunia.',
     stats: [
       { label: 'Estetika UI/UX', value: 98 },
       { label: 'Kreativitas Visual', value: 92 },
@@ -65,17 +71,18 @@ const CLASSES_DATA = [
       { label: 'Ketahanan Debugging', value: 78 },
     ],
     perk: 'Pixel Perfection',
-    perkDesc: '+20% bonus XP untuk materi wireframing, prototipe, dan design system.',
+    perkDesc: '+25% bonus XP untuk materi wireframing, design system, dan prototipe.',
     suitable: 'Pelajar SMK DKV/Multimedia & UI designer yang fokus pada user experience.',
+    tileBg: '#1e1e24',
   },
   {
     id: 'archer',
     name: 'Archer',
     title: 'The Battle Speedrunner',
     emoji: '🏹',
-    color: 'var(--accent-green)',
-    borderColor: 'rgba(34, 197, 94, 0.4)',
-    tagline: 'Reaksi kilat, unggul dalam duel kuis battle 1v1 dan time-attack.',
+    color: '#08c380',
+    accent: '#ff4800',
+    tagline: 'Reaksi kilat, unggul dalam duel kuis battle 1v1 dan arena time-attack.',
     stats: [
       { label: 'Kecepatan Respon', value: 98 },
       { label: 'Akurasi Kuis', value: 90 },
@@ -85,15 +92,16 @@ const CLASSES_DATA = [
     perk: 'Rapid Arrow Shot',
     perkDesc: 'Double multiplier bonus combo pada mode duel kuis 1v1 real-time.',
     suitable: 'Pelajar kompetitif yang menyukai adu kecepatan kuis dan time-attack.',
+    tileBg: '#11221a',
   },
   {
     id: 'healer',
     name: 'Healer',
     title: 'The Productivity Sage',
     emoji: '✨',
-    color: 'var(--accent-gold)',
-    borderColor: 'rgba(245, 197, 66, 0.4)',
-    tagline: 'Fokus, konsisten, penguasa manajemen waktu dan daily streak.',
+    color: '#ff4800',
+    accent: '#ffd900',
+    tagline: 'Fokus, konsisten, penguasa manajemen waktu dan daily streak tanpa henti.',
     stats: [
       { label: 'Konsistensi Belajar', value: 99 },
       { label: 'Manajemen Waktu', value: 95 },
@@ -103,6 +111,7 @@ const CLASSES_DATA = [
     perk: 'Continuous Flow',
     perkDesc: 'Perlindungan streak otomatis (+1 Streak Freeze gratis tiap minggu).',
     suitable: 'Pelajar yang mengutamakan rutinitas belajar teratur dan disiplin konsisten.',
+    tileBg: '#2a1a0f',
   },
 ]
 
@@ -112,93 +121,69 @@ const FEATURES_DATA = [
     title: 'Modul Interaktif Step-by-Step',
     desc: 'Kurikulum ringkas pemrograman, UI/UX, dan AI modern dengan materi teks padat, tutorial YouTube pilihan, dan kuis cek pemahaman.',
     tag: 'Kurikulum Terpadu',
-    color: 'var(--accent-cyan)',
+    accent: 'var(--color-signal-orange)',
   },
   {
     icon: Zap,
     title: 'Duel Kuis Battle 1v1 Real-Time',
     desc: 'Tantang teman satu sekolah atau cari lawan acak se-Indonesia dalam arena kuis live dengan socket real-time dan combo multiplier.',
     tag: 'Live Multiplayer',
-    color: 'var(--accent-red)',
+    accent: 'var(--accent-red)',
   },
   {
     icon: Trophy,
     title: 'Leaderboard Siswa & Sekolah',
     desc: 'Papan reputasi nasional berdasarkan total XP dan kemenangan battle. Bawa nama sekolahmu mendominasi puncak ranking!',
     tag: 'Kompetisi Nasional',
-    color: 'var(--accent-gold)',
+    accent: 'var(--color-signal-orange)',
   },
   {
     icon: Flame,
     title: 'Daily Streak & Quest Harian',
     desc: 'Misi harian yang diperbarui setiap 24 jam. Bangun konsistensi belajar setiap hari untuk mendapatkan bonus XP dan Gold koin ekstra.',
     tag: 'Gamifikasi Harian',
-    color: 'var(--accent-red)',
+    accent: 'var(--accent-red)',
   },
   {
     icon: Gift,
     title: 'Toko Voucher & Reward Nyata',
-    desc: 'Kumpulkan koin dari kemenangan battle dan quest untuk ditukarkan dengan voucher digital nyata di toko hadiah Skillungo.',
-    tag: 'Hadiah Riil',
-    color: 'var(--accent-gold)',
+    desc: 'Tukarkan Gold yang kamu kumpulkan dari modul dan battle dengan kupon diskon kursus, merchandise, atau voucher menarik.',
+    tag: 'Reward Store',
+    accent: 'var(--color-electric-yellow)',
   },
   {
     icon: Shield,
-    title: 'Profil RPG & Koleksi Badge',
-    desc: 'Kustomisasi karakter avatar, pantau statistik XP, dan pamerkan lencana pencapaian eksklusif yang kamu buka sepanjang perjalanan.',
-    tag: 'Karakter RPG',
-    color: 'var(--accent-green)',
-  },
-]
-
-const HOW_IT_WORKS = [
-  {
-    step: '01',
-    title: 'Pilih Kelas & Sekolah',
-    desc: 'Daftar gratis dalam hitungan detik, tentukan kelas karakter RPG favoritmu, dan pilih sekolah asalmu.',
-    icon: Shield,
-    color: 'var(--accent-cyan)',
-  },
-  {
-    step: '02',
-    title: 'Selesaikan Quest Modul',
-    desc: 'Pelajari skill digital esensial lewat modul terstruktur, pelajari teori ringkas, dan selesaikan quiz uji kemampuan.',
-    icon: BookOpen,
-    color: 'var(--accent-gold)',
-  },
-  {
-    step: '03',
-    title: 'Adu Cerdas di Arena 1v1',
-    desc: 'Masuki Battle Arena untuk menantang teman atau rival secara real-time. Buktikan siapa yang tercepat dan tertepat!',
-    icon: Zap,
-    color: 'var(--accent-red)',
-  },
-  {
-    step: '04',
-    title: 'Raih Puncak & Tukar Hadiah',
-    desc: 'Kumpulkan XP untuk menaikkan level karaktermu, bawa sekolah ke Top 10, dan tukar reward di Voucher Shop.',
-    icon: Trophy,
-    color: 'var(--accent-green)',
+    title: 'Sertifikat & Profil Kompetensi',
+    desc: 'Profil portofolio publik yang memamerkan badge pencapaian, level hero, dan rekam jejak penyelesaian modul yang valid.',
+    tag: 'Portofolio Digital',
+    accent: 'var(--accent-green)',
   },
 ]
 
 const FAQS = [
   {
-    q: 'Apakah Skillungo sepenuhnya gratis untuk pelajar?',
-    a: 'Ya, Skillungo 100% gratis digunakan oleh pelajar SMK, SMA, maupun MA di seluruh Indonesia. Semua modul belajar, mode kuis 1v1, dan fitur leaderboard dapat diakses tanpa biaya.',
+    q: 'Apakah Skillungo gratis untuk digunakan?',
+    a: 'Ya, Skillungo 100% gratis untuk seluruh pelajar di Indonesia. Kamu bisa mempelajari modul, mengikuti duel kuis battle 1v1, mengklaim quest harian, dan naik ranking tanpa biaya.',
   },
   {
-    q: 'Bagaimana cara mendaftarkan sekolah saya di Leaderboard?',
-    a: 'Saat mendaftar akun pertama kali, cukup pilih atau masukkan nama sekolahmu. Seluruh XP yang kamu dan teman-teman satu sekolahmu dapatkan akan otomatis terakumulasi ke poin sekolah di leaderboard nasional.',
+    q: 'Bagaimana cara kerja sistem duel battle 1v1?',
+    a: 'Kamu bisa menantang lawan acak secara matchmaking atau membuat private room dan membagikan kode ruangan ke temanmu. Pertandingan berlangsung dalam 5 ronde kuis cepat dengan sistem waktu dan combo multiplier.',
   },
   {
-    q: 'Apakah saya bisa membuat duel kuis khusus bersama teman sekelas?',
-    a: 'Tentu saja! Di Battle Arena tersedia fitur "Buat Room Private" dengan kode kamar unik. Kamu cukup membagikan kode 6 digit tersebut kepada temanmu untuk langsung bertanding duel 1v1.',
+    q: 'Apa fungsi pemilihan kelas karakter (Warrior, Mage, Archer, Healer)?',
+    a: 'Setiap kelas memberikan bonus multiplier XP khusus pada kategori modul dan mode belajar tertentu. Kamu bisa menyesuaikan kelas dengan passion dan fokus belajarmu.',
   },
   {
-    q: 'Materi skill digital apa saja yang tersedia di dalam modul?',
-    a: 'Skillungo berfokus pada skill masa depan: Web Development (Frontend/Backend/JavaScript), UI/UX Design, Algoritma Pemrograman, dan Produktivitas Digital yang dirancang relevan dengan kebutuhan industri saat ini.',
+    q: 'Materi apa saja yang tersedia di Skillungo?',
+    a: 'Skillungo berfokus pada skill industri digital: Web Development (Frontend/Backend/JavaScript), UI/UX Design, Algoritma Pemrograman, dan Produktivitas Modern yang dirancang relevan dengan kebutuhan industri saat ini.',
   },
+]
+
+const PROMPT_SUGGESTIONS = [
+  'Belajar JavaScript Async/Await',
+  'Mulai Duel 1v1 Algoritma',
+  'Eksplor UI/UX Wireframing',
+  'Jalankan Quest Harian',
 ]
 
 export default function LandingClient({ isLoggedIn }: LandingClientProps) {
@@ -206,20 +191,31 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
+  // Interactive Prompt Composer state
+  const [promptInput, setPromptInput] = useState('')
+  const [promptSubmitted, setPromptSubmitted] = useState(false)
+
   // Interactive Battle Quiz Preview state
   const [quizAnswered, setQuizAnswered] = useState<number | null>(null)
   const [comboCount, setComboCount] = useState(1)
 
   const handleQuizAnswer = (index: number) => {
     setQuizAnswered(index)
-    if (index === 2) {
+    if (index === 0 || index === 2) {
       setComboCount((prev) => prev + 1)
     }
   }
 
+  const handlePromptSubmit = (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
+    if (!promptInput.trim()) return
+    setPromptSubmitted(true)
+    setTimeout(() => setPromptSubmitted(false), 3000)
+  }
+
   return (
-    <div className="bg-blueprint-grid" style={{ minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}>
-      {/* ── Fixed Header Navbar ── */}
+    <div style={{ backgroundColor: 'var(--color-void)', minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}>
+      {/* ── Fixed Header Navbar (Floating on Void per Linearity spec) ── */}
       <header
         style={{
           position: 'fixed',
@@ -227,156 +223,145 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           left: 0,
           right: 0,
           zIndex: 100,
-          height: '64px',
+          height: '60px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 28px',
-          backgroundColor: 'rgba(10, 10, 10, 0.85)',
+          padding: '0 32px',
+          backgroundColor: 'rgba(0, 0, 0, 0.82)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1px solid var(--surface-border)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
         }}
       >
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
           <div
             style={{
-              width: '36px',
-              height: '36px',
-              borderRadius: '8px',
-              backgroundColor: 'rgba(245, 197, 66, 0.12)',
-              border: '1px solid rgba(245, 197, 66, 0.35)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '9999px',
+              backgroundColor: 'rgba(255, 72, 0, 0.12)',
+              border: '1px solid rgba(255, 72, 0, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 16px rgba(245, 197, 66, 0.2)',
+              boxShadow: '0 0 14px rgba(255, 72, 0, 0.3)',
             }}
           >
-            <Swords size={20} style={{ color: 'var(--accent-gold)' }} />
+            <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
           </div>
           <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 800, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>
-              Skill<span style={{ color: 'var(--accent-gold)' }}>ungo</span>
+            <span
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '18px',
+                fontWeight: 500,
+                color: '#ffffff',
+                letterSpacing: '-0.02em',
+              }}
+            >
+              Skillungo
             </span>
             <span
               style={{
-                fontSize: '10px',
-                fontFamily: 'var(--font-heading)',
-                fontWeight: 700,
-                color: 'var(--accent-cyan)',
-                backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                padding: '2px 6px',
-                borderRadius: '4px',
-                border: '1px solid rgba(0, 212, 255, 0.25)',
+                fontSize: '9px',
+                fontFamily: 'var(--font-inter)',
+                fontWeight: 600,
+                color: 'var(--color-signal-orange)',
+                backgroundColor: 'rgba(255, 72, 0, 0.12)',
+                padding: '1px 6px',
+                borderRadius: '9999px',
+                border: '1px solid rgba(255, 72, 0, 0.3)',
+                letterSpacing: '0.05em',
+                textTransform: 'uppercase',
               }}
             >
-              RPG v2.0
+              Studio
             </span>
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
+        {/* Desktop Navigation Links (Linearity floating text on Void) */}
         <nav className="desktop-only" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
           <a
             href="#hero"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
           >
-            Beranda
+            Studio
           </a>
           <a
             href="#preview"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
           >
-            Arena Demo
+            Arena Console
           </a>
           <a
             href="#kelas"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
           >
-            Kelas RPG
+            Roles & Classes
           </a>
           <a
             href="#fitur"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
           >
-            Fitur
+            Features
           </a>
           <a
             href="#faq"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px', fontWeight: 500, transition: 'color 0.2s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
           >
             FAQ
           </a>
         </nav>
 
-        {/* Action Buttons */}
+        {/* Action Buttons (Pill conversion control per Linearity spec) */}
         <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
           {isLoggedIn ? (
             <Link
               href="/dashboard"
+              className="btn-signal-orange"
               style={{
-                padding: '8px 20px',
-                borderRadius: '6px',
+                padding: '8px 18px',
+                fontSize: '12px',
                 textDecoration: 'none',
-                backgroundColor: 'var(--accent-gold)',
-                color: 'var(--bg-primary)',
-                fontFamily: 'var(--font-heading)',
-                fontSize: '13px',
-                fontWeight: 700,
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                boxShadow: '0 0 16px rgba(245, 197, 66, 0.3)',
               }}
             >
-              <LayoutDashboard size={15} /> Dashboard <ChevronRight size={14} />
+              <LayoutDashboard size={14} /> Dashboard <ChevronRight size={13} />
             </Link>
           ) : (
             <>
               <Link
                 href="/login"
+                className="btn-dark-outline"
                 style={{
-                  padding: '8px 18px',
-                  borderRadius: '6px',
+                  padding: '7px 16px',
+                  fontSize: '12px',
                   textDecoration: 'none',
-                  backgroundColor: 'transparent',
-                  border: '1px solid var(--border)',
-                  color: 'var(--text-primary)',
-                  fontSize: '13px',
-                  fontWeight: 600,
-                  transition: 'all 0.2s',
                 }}
               >
                 Masuk
               </Link>
               <Link
                 href="/register"
+                className="btn-signal-orange"
                 style={{
-                  padding: '8px 20px',
-                  borderRadius: '6px',
+                  padding: '8px 18px',
+                  fontSize: '12px',
                   textDecoration: 'none',
-                  backgroundColor: 'var(--accent-gold)',
-                  color: 'var(--bg-primary)',
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '13px',
-                  fontWeight: 700,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 0 16px rgba(245, 197, 66, 0.25)',
                 }}
               >
-                Mulai Petualangan <ChevronRight size={14} />
+                Mulai Gratis <ChevronRight size={13} />
               </Link>
             </>
           )}
@@ -387,359 +372,649 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             className="mobile-only-btn"
             style={{
               backgroundColor: 'transparent',
-              border: '1px solid var(--border)',
-              borderRadius: '6px',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+              borderRadius: '9999px',
               padding: '6px',
-              color: 'var(--text-primary)',
+              color: '#ffffff',
               cursor: 'pointer',
               display: 'none',
             }}
           >
-            {mobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+            {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
         </div>
       </header>
 
-      {/* ── Hero Section ── */}
+      {/* Mobile Drawer */}
+      {mobileMenuOpen && (
+        <div
+          style={{
+            position: 'fixed',
+            top: '60px',
+            left: 0,
+            right: 0,
+            backgroundColor: '#050505',
+            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '20px 24px',
+            zIndex: 99,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '14px',
+          }}
+        >
+          <a
+            href="#hero"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+          >
+            Studio
+          </a>
+          <a
+            href="#preview"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+          >
+            Arena Console
+          </a>
+          <a
+            href="#kelas"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+          >
+            Roles & Classes
+          </a>
+          <a
+            href="#fitur"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+          >
+            Features
+          </a>
+          <a
+            href="#faq"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+          >
+            FAQ
+          </a>
+          <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+            <Link
+              href="/login"
+              className="btn-dark-outline"
+              style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
+            >
+              Masuk
+            </Link>
+            <Link
+              href="/register"
+              className="btn-signal-orange"
+              style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
+            >
+              Daftar
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* ── 1. Centered Black Hero (Exact Linearity Spec) ── */}
       <section
         id="hero"
         style={{
           position: 'relative',
-          paddingTop: '130px',
-          paddingBottom: '80px',
+          paddingTop: '140px',
+          paddingBottom: '60px',
           paddingLeft: '24px',
           paddingRight: '24px',
           textAlign: 'center',
           overflow: 'hidden',
+          backgroundColor: 'var(--color-void)',
         }}
       >
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '960px', margin: '0 auto' }}>
-          {/* Dovetail Eyebrow Label */}
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1040px', margin: '0 auto' }}>
+          {/* Micro Eyebrow Label (10px uppercase, Steel #808080) */}
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4 }}
-            style={{ marginBottom: '20px' }}
+            style={{ marginBottom: '18px' }}
           >
             <span
-              className="section-eyebrow"
+              className="micro-eyebrow"
               style={{
                 display: 'inline-flex',
                 alignItems: 'center',
                 gap: '8px',
-                padding: '4px 12px',
+                padding: '4px 14px',
                 borderRadius: '9999px',
-                backgroundColor: 'var(--surface-card)',
-                border: '1px solid var(--surface-border)',
-                color: 'var(--color-ash)',
+                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                color: 'var(--color-steel)',
               }}
             >
-              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-gold)' }} />
-              GAMIFIED LEARNING PLATFORM · RPG v2.0
+              <span
+                style={{
+                  width: '6px',
+                  height: '6px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'var(--color-signal-orange)',
+                  boxShadow: '0 0 8px var(--color-signal-orange)',
+                }}
+              />
+              GAMIFIED LEARNING STUDIO · RPG CONSOLE V2.0
             </span>
           </motion.div>
 
-          {/* Main Headline */}
+          {/* Main Display Headline (AcidGrotesk / Space Grotesk at weight 400 with -0.01em tracking) */}
           <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             style={{
               fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(36px, 6vw, 64px)',
-              fontWeight: 800,
-              lineHeight: 1.12,
+              fontSize: 'clamp(32px, 5.2vw, 56px)',
+              fontWeight: 400,
+              lineHeight: 1.15,
               marginBottom: '20px',
-              letterSpacing: '-0.01em',
+              letterSpacing: '-0.02em',
+              color: '#ffffff',
             }}
           >
-            Level Up Skill Digitalmu,
+            Level Up Skill Digitalmu.
             <br />
-            <span style={{ color: 'var(--accent-gold)' }}>
+            <span style={{ position: 'relative', display: 'inline-block' }}>
               Taklukkan Masa Depan.
+              {/* Spectrum Rail underline beneath emphasized line */}
+              <span
+                className="spectrum-rail-line"
+                style={{
+                  position: 'absolute',
+                  bottom: '-6px',
+                  left: '10%',
+                  right: '10%',
+                  height: '2px',
+                }}
+              />
             </span>
           </motion.h1>
 
-          {/* Subtitle */}
+          {/* Supporting Subtitle (Fog #999999, Inter 14-15px) */}
           <motion.p
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
             style={{
-              fontSize: 'clamp(15px, 2vw, 18px)',
-              color: 'var(--text-secondary)',
-              maxWidth: '680px',
+              fontSize: '15px',
+              color: 'var(--color-fog)',
+              maxWidth: '640px',
               margin: '0 auto 36px',
-              lineHeight: 1.7,
+              lineHeight: 1.65,
+              fontWeight: 400,
             }}
           >
-            Platform edukasi berbasis RPG interaktif untuk pelajar SMK dan SMA. Asah skill coding, UI/UX, dan AI modern, bertanding dalam{' '}
-            <strong style={{ color: 'var(--text-primary)' }}>Duel Kuis 1v1 Real-time</strong>, jaga{' '}
-            <strong style={{ color: 'var(--accent-red)' }}>Daily Streak</strong>, dan bawa nama sekolahmu ke puncak Leaderboard Nasional!
+            Platform studio gamifikasi untuk pelajar SMK dan SMA Indonesia. Asah skill coding, UI/UX, dan AI modern, bertarung dalam duel kuis real-time, dan bangun reputasi sekolahmu di leaderboard nasional.
           </motion.p>
 
-          {/* CTA Buttons */}
+          {/* ── Linearity Hero Prompt Composer ── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.25 }}
+            style={{ maxWidth: '640px', margin: '0 auto 36px' }}
+          >
+            <form onSubmit={handlePromptSubmit} className="hero-prompt-composer">
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
+                <div
+                  style={{
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '6px',
+                    backgroundColor: 'rgba(202, 78, 23, 0.25)', // Burnt orange brand token
+                    border: '1px solid rgba(202, 78, 23, 0.5)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Terminal size={12} style={{ color: 'var(--color-signal-orange)' }} />
+                </div>
+                <input
+                  type="text"
+                  value={promptInput}
+                  onChange={(e) => setPromptInput(e.target.value)}
+                  placeholder="Ketik topik belajarmu: JavaScript, CSS Grid, Figma, atau Duel 1v1..."
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    padding: 0,
+                    outline: 'none',
+                    fontSize: '13px',
+                    color: '#ffffff',
+                    width: '100%',
+                    fontFamily: 'var(--font-inter)',
+                  }}
+                />
+              </div>
+
+              {/* Prompt Submit Orb (Circular Signal Orange) */}
+              <button
+                type="submit"
+                className="prompt-submit-orb"
+                title="Eksplor Modul & Mulai Kuis"
+                aria-label="Submit Prompt"
+              >
+                <ArrowRight size={16} />
+              </button>
+            </form>
+
+            {/* Quick Prompt Preset Chips */}
+            <div
+              style={{
+                display: 'flex',
+                gap: '8px',
+                justifyContent: 'center',
+                flexWrap: 'wrap',
+                marginTop: '12px',
+              }}
+            >
+              {PROMPT_SUGGESTIONS.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setPromptInput(preset)}
+                  style={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    borderRadius: '9999px',
+                    padding: '3px 10px',
+                    fontSize: '11px',
+                    color: 'var(--color-steel)',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.color = '#ffffff'
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.color = 'var(--color-steel)'
+                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'
+                  }}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+
+            {promptSubmitted && (
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                style={{
+                  marginTop: '10px',
+                  fontSize: '12px',
+                  color: 'var(--color-signal-orange)',
+                }}
+              >
+                ✨ Modul siap! Masuk atau daftar akun untuk menyimpan progres belajarmu.
+              </motion.div>
+            )}
+          </motion.div>
+
+          {/* Paired Conversion Row (Linearity Spec) */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            style={{ display: 'flex', gap: '14px', justifyContent: 'center', flexWrap: 'wrap', marginBottom: '48px' }}
+            style={{
+              display: 'flex',
+              gap: '14px',
+              justifyContent: 'center',
+              flexWrap: 'wrap',
+              marginBottom: '48px',
+            }}
           >
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
-                style={{
-                  padding: '16px 36px',
-                  borderRadius: '8px',
-                  textDecoration: 'none',
-                  backgroundColor: 'var(--accent-gold)',
-                  color: 'var(--bg-primary)',
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '17px',
-                  fontWeight: 800,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '10px',
-                  boxShadow: '0 0 24px rgba(245, 197, 66, 0.4)',
-                }}
+                className="btn-signal-orange"
+                style={{ padding: '12px 28px', fontSize: '13px' }}
               >
-                <LayoutDashboard size={20} /> LANJUT KE DASHBOARD <ChevronRight size={18} />
+                <LayoutDashboard size={16} /> BUKA DASHBOARD STUDIO <ChevronRight size={14} />
               </Link>
             ) : (
               <>
                 <Link
                   href="/register"
-                  style={{
-                    padding: '16px 36px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    backgroundColor: 'var(--accent-gold)',
-                    color: 'var(--bg-primary)',
-                    fontFamily: 'var(--font-heading)',
-                    fontSize: '17px',
-                    fontWeight: 800,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '10px',
-                    boxShadow: '0 0 24px rgba(245, 197, 66, 0.4)',
-                  }}
+                  className="btn-signal-orange"
+                  style={{ padding: '12px 28px', fontSize: '13px' }}
                 >
-                  <Swords size={20} /> MULAI PETUALANGAN GRATIS <ChevronRight size={18} />
+                  <Swords size={16} /> MULAI PETUALANGAN GRATIS <ChevronRight size={14} />
                 </Link>
                 <a
                   href="#preview"
-                  style={{
-                    padding: '16px 30px',
-                    borderRadius: '8px',
-                    textDecoration: 'none',
-                    backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                    border: '1px solid var(--border)',
-                    color: 'var(--text-primary)',
-                    fontSize: '15px',
-                    fontWeight: 600,
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: '8px',
-                    backdropFilter: 'blur(8px)',
-                  }}
+                  className="btn-dark-outline"
+                  style={{ padding: '12px 24px', fontSize: '13px' }}
                 >
-                  <Gamepad2 size={18} style={{ color: 'var(--accent-cyan)' }} /> Coba Simulasi Duel 1v1
+                  <Gamepad2 size={16} style={{ color: 'var(--color-signal-orange)' }} />
+                  Buka Console Arena 1v1
                 </a>
               </>
             )}
           </motion.div>
+        </div>
 
-          {/* Micro Stats Banner */}
+        {/* ── Linearity Low-Contrast Trust Marquee on Void ── */}
+        <div
+          style={{
+            maxWidth: '1080px',
+            margin: '0 auto',
+            paddingTop: '28px',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <span
+              style={{
+                width: '6px',
+                height: '6px',
+                borderRadius: '9999px',
+                backgroundColor: 'var(--color-signal-orange)',
+              }}
+            />
+            <span
+              style={{
+                fontFamily: 'var(--font-inter)',
+                fontSize: '11px',
+                color: 'var(--color-steel)',
+                letterSpacing: '1px',
+                textTransform: 'uppercase',
+              }}
+            >
+              DIPERCAYA SISWA & KOMUNITAS PENDIDIKAN
+            </span>
+          </div>
+
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-              gap: '16px',
-              padding: '20px 24px',
-              backgroundColor: 'var(--bg-secondary)',
-              borderRadius: '12px',
-              border: '1px solid var(--border)',
-              maxWidth: '840px',
-              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '24px',
+              flexWrap: 'wrap',
+              fontSize: '12px',
+              color: 'var(--color-silver)',
+              fontWeight: 500,
             }}
           >
-            <div>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--accent-cyan)' }}>10+ Modul</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Coding, Desain, & AI</div>
-            </div>
-            <div>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--accent-gold)' }}>1v1 Battle</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Duel Kuis Live Multiplayer</div>
-            </div>
-            <div>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--accent-red)' }}>Daily Streak</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Bonus XP & Badge Unik</div>
-            </div>
-            <div>
-              <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 800, color: 'var(--accent-green)' }}>100% Gratis</div>
-              <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Untuk Seluruh Pelajar</div>
-            </div>
+            <span>SMK BISA HEBAT</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>/</span>
+            <span>RPL & SIJA INDONESIA</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>/</span>
+            <span>MULTIMEDIA & DKV</span>
+            <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>/</span>
+            <span style={{ color: 'var(--color-signal-orange)' }}>50+ SEKOLAH TERDAFTAR</span>
           </div>
-        </div>
-      </section>
 
-      {/* ── Interactive Gameplay Showcase (Live Preview) ── */}
-      <section
-        id="preview"
-        style={{
-          padding: '40px 24px 80px',
-          maxWidth: '1080px',
-          margin: '0 auto',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <span
+          <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               gap: '6px',
-              fontSize: '12px',
-              fontFamily: 'var(--font-heading)',
-              fontWeight: 700,
-              color: 'var(--accent-cyan)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              marginBottom: '8px',
+              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '9999px',
+              padding: '4px 12px',
+              fontSize: '11px',
+              color: 'var(--color-silver)',
             }}
           >
-            <Sparkles size={14} /> LIVE GAMEPLAY EXPERIENCE
+            <Play size={10} style={{ color: 'var(--color-signal-orange)' }} /> Interactive Demo
+          </div>
+        </div>
+      </section>
+
+      {/* ── 2. Product Demonstration Panel: Interactive 1v1 Battle Arena ── */}
+      <section
+        id="preview"
+        style={{
+          padding: '60px 24px 80px',
+          maxWidth: '1120px',
+          margin: '0 auto',
+          backgroundColor: 'var(--color-void)',
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '8px' }}>
+            PRODUCT DEMONSTRATION PANEL
           </span>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, marginBottom: '8px' }}>
-            Sensasi Belajar Layaknya Game RPG Kompetitif
+          <h2
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '32px',
+              fontWeight: 400,
+              marginBottom: '10px',
+              letterSpacing: '-0.015em',
+            }}
+          >
+            Console Arena: Duel Kuis 1v1 Real-Time
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '580px', margin: '0 auto' }}>
-            Coba simulasi interaktif duel kuis di bawah ini. Jawab dengan benar untuk memicu combo XP!
+          <p style={{ color: 'var(--color-fog)', fontSize: '14px', maxWidth: '560px', margin: '0 auto' }}>
+            Uji kecepatan logika dan ketepatan analisismu melawan siswa lain. Klik opsi jawaban di bawah untuk melancarkan serangan combo!
           </p>
         </div>
 
-        {/* Live Arena Simulation Card */}
-        <div
-          style={{
-            backgroundColor: 'var(--bg-secondary)',
-            borderRadius: '16px',
-            border: '1px solid rgba(0, 212, 255, 0.3)',
-            boxShadow: '0 20px 60px -15px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 212, 255, 0.1)',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Top Bar of Arena */}
+        {/* Linearity Frosted Product Demonstration Panel (25.7143px radius) */}
+        <div className="product-demo-panel">
+          {/* Panel Chrome Topbar */}
           <div
             style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
-              padding: '12px 20px',
-              backgroundColor: 'rgba(20, 20, 26, 0.95)',
-              borderBottom: '1px solid var(--border)',
+              paddingBottom: '16px',
+              marginBottom: '20px',
+              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span style={{ display: 'inline-block', width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#22c55e', boxShadow: '0 0 8px #22c55e' }} />
-              <span style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '0.04em' }}>
-                ARENA DUEL 1v1 · ALGORITMA & JAVASCRIPT
+              <span
+                style={{
+                  width: '8px',
+                  height: '8px',
+                  borderRadius: '9999px',
+                  backgroundColor: 'var(--color-vector-green)',
+                  boxShadow: '0 0 8px var(--color-vector-green)',
+                }}
+              />
+              <span
+                style={{
+                  fontFamily: 'var(--font-inter)',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  color: '#ffffff',
+                  letterSpacing: '0.04em',
+                }}
+              >
+                LIVE ARENA · ALGORITMA & JAVASCRIPT
               </span>
             </div>
+
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <span style={{ fontSize: '12px', color: 'var(--accent-gold)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Siap Bertanding'}
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--color-signal-orange)',
+                  fontWeight: 600,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                }}
+              >
+                <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Active Round'}
               </span>
-              <span style={{ fontSize: '12px', color: 'var(--accent-red)', fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
-                ⏳ 00:08
+              <span
+                style={{
+                  fontSize: '12px',
+                  color: 'var(--accent-red)',
+                  fontFamily: 'var(--font-mono)',
+                  fontWeight: 600,
+                  backgroundColor: 'rgba(255, 51, 68, 0.1)',
+                  padding: '2px 8px',
+                  borderRadius: '9999px',
+                  border: '1px solid rgba(255, 51, 68, 0.3)',
+                }}
+              >
+                00:08s
               </span>
             </div>
           </div>
 
-          {/* Versus Header */}
+          {/* Versus Contestant Row */}
           <div
             style={{
               display: 'grid',
               gridTemplateColumns: '1fr auto 1fr',
               gap: '16px',
               alignItems: 'center',
-              padding: '24px 28px',
-              borderBottom: '1px solid var(--border)',
-              backgroundColor: 'rgba(0, 0, 0, 0.25)',
+              padding: '16px 20px',
+              borderRadius: '17.1429px',
+              backgroundColor: 'rgba(5, 5, 5, 0.8)',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              marginBottom: '20px',
             }}
           >
             {/* Player 1 (You) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '10px',
-                  backgroundColor: 'rgba(232, 64, 64, 0.15)',
-                  border: '2px solid var(--accent-red)',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '8.57143px',
+                  backgroundColor: 'rgba(255, 72, 0, 0.12)',
+                  border: '1px solid rgba(255, 72, 0, 0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '22px',
+                  fontSize: '20px',
                 }}
               >
                 ⚔️
               </div>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700 }}>Kamu (Hero)</span>
-                  <span style={{ fontSize: '10px', padding: '1px 5px', borderRadius: '3px', backgroundColor: 'var(--accent-red)', color: 'var(--bg-primary)', fontWeight: 700 }}>
-                    Lv. 12
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff' }}>Kamu (Hero)</span>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      padding: '1px 6px',
+                      borderRadius: '9999px',
+                      backgroundColor: 'var(--color-signal-orange)',
+                      color: '#ffffff',
+                      fontWeight: 600,
+                    }}
+                  >
+                    LV.12
                   </span>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>SMK Telkom Malang · Warrior</div>
+                <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>SMK Telkom Malang · Warrior</div>
                 {/* Health Bar */}
-                <div style={{ width: '120px', height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', marginTop: '6px', overflow: 'hidden' }}>
-                  <div style={{ width: '92%', height: '100%', backgroundColor: 'var(--accent-green)' }} />
+                <div
+                  style={{
+                    width: '120px',
+                    height: '4px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '9999px',
+                    marginTop: '5px',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div style={{ width: '92%', height: '100%', backgroundColor: 'var(--color-vector-green)' }} />
                 </div>
               </div>
             </div>
 
-            {/* VS Badge */}
+            {/* VS Pill */}
             <div
               style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: '18px',
-                fontWeight: 900,
-                color: 'var(--accent-gold)',
-                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                padding: '6px 14px',
-                borderRadius: '8px',
-                border: '1px solid rgba(245, 197, 66, 0.3)',
+                fontFamily: 'var(--font-inter)',
+                fontSize: '11px',
+                fontWeight: 700,
+                color: 'var(--color-signal-orange)',
+                backgroundColor: 'rgba(255, 72, 0, 0.1)',
+                padding: '4px 12px',
+                borderRadius: '9999px',
+                border: '1px solid rgba(255, 72, 0, 0.3)',
+                letterSpacing: '0.05em',
               }}
             >
               VS
             </div>
 
             {/* Player 2 (Opponent) */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '14px', textAlign: 'right' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
               <div>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
-                  <span style={{ fontSize: '10px', padding: '1px 5px', borderRadius: '3px', backgroundColor: 'var(--accent-cyan)', color: 'var(--bg-primary)', fontWeight: 700 }}>
-                    Lv. 14
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      padding: '1px 6px',
+                      borderRadius: '9999px',
+                      backgroundColor: 'rgba(0, 212, 255, 0.2)',
+                      color: '#00d4ff',
+                      fontWeight: 600,
+                    }}
+                  >
+                    LV.14
                   </span>
-                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700 }}>Dina Alchemist</span>
+                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff' }}>Dina Alchemist</span>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>SMAN 1 Yogyakarta · Mage</div>
+                <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>SMAN 1 Yogyakarta · Mage</div>
                 {/* Health Bar */}
-                <div style={{ width: '120px', height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', marginTop: '6px', marginLeft: 'auto', overflow: 'hidden' }}>
-                  <div style={{ width: quizAnswered === 2 ? '55%' : '85%', height: '100%', backgroundColor: 'var(--accent-red)', transition: 'width 0.4s' }} />
+                <div
+                  style={{
+                    width: '120px',
+                    height: '4px',
+                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                    borderRadius: '9999px',
+                    marginTop: '5px',
+                    marginLeft: 'auto',
+                    overflow: 'hidden',
+                  }}
+                >
+                  <div
+                    style={{
+                      width: quizAnswered === 0 || quizAnswered === 2 ? '52%' : '84%',
+                      height: '100%',
+                      backgroundColor: 'var(--accent-red)',
+                      transition: 'width 0.4s ease',
+                    }}
+                  />
                 </div>
               </div>
               <div
                 style={{
-                  width: '48px',
-                  height: '48px',
-                  borderRadius: '10px',
-                  backgroundColor: 'rgba(0, 212, 255, 0.15)',
-                  border: '2px solid var(--accent-cyan)',
+                  width: '44px',
+                  height: '44px',
+                  borderRadius: '8.57143px',
+                  backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                  border: '1px solid rgba(0, 212, 255, 0.35)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '22px',
+                  fontSize: '20px',
                 }}
               >
                 🔮
@@ -747,22 +1022,38 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             </div>
           </div>
 
-          {/* Interactive Question Body */}
-          <div style={{ padding: '28px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ fontSize: '11px', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)' }}>
-                RONDE 3 DARI 5
+          {/* Interactive Question Card */}
+          <div
+            style={{
+              padding: '20px',
+              backgroundColor: 'var(--color-carbon)',
+              borderRadius: '17.1429px',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
+              <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 600, letterSpacing: '1px' }}>
+                ROUND 3 OF 5
               </span>
-              <span style={{ color: 'var(--text-muted)' }}>•</span>
-              <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Klik jawaban yang tepat untuk menyerang:</span>
+              <span style={{ color: 'var(--color-steel)' }}>•</span>
+              <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi yang benar untuk menyerang lawan:</span>
             </div>
 
-            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, marginBottom: '20px', lineHeight: 1.4 }}>
-              Manakah di antara kode berikut yang mengembalikan nilai boolean bernilai <code style={{ color: 'var(--accent-cyan)', backgroundColor: 'var(--bg-tertiary)', padding: '2px 6px', borderRadius: '4px' }}>true</code>?
+            <h3
+              style={{
+                fontFamily: 'var(--font-inter)',
+                fontSize: '16px',
+                fontWeight: 500,
+                marginBottom: '18px',
+                color: '#ffffff',
+                lineHeight: 1.5,
+              }}
+            >
+              Manakah ekspresi JavaScript yang mengembalikan nilai boolean <code style={{ color: 'var(--color-signal-orange)', backgroundColor: 'rgba(255, 72, 0, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>true</code>?
             </h3>
 
-            {/* Answer Options */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '12px', marginBottom: '20px' }}>
+            {/* Answer Options Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', marginBottom: '16px' }}>
               {[
                 { id: 0, text: "typeof NaN === 'number'", correct: true },
                 { id: 1, text: "Boolean('') === true", correct: false },
@@ -770,17 +1061,17 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 { id: 3, text: "'5' === 5", correct: false },
               ].map((opt) => {
                 const isSelected = quizAnswered === opt.id
-                let bg = 'var(--bg-tertiary)'
-                let border = 'var(--border)'
-                let textColor = 'var(--text-primary)'
+                let bg = 'rgba(255, 255, 255, 0.04)'
+                let border = 'rgba(255, 255, 255, 0.1)'
+                let textColor = '#ffffff'
 
                 if (isSelected) {
                   if (opt.correct) {
-                    bg = 'rgba(34, 197, 94, 0.15)'
-                    border = 'var(--accent-green)'
-                    textColor = 'var(--accent-green)'
+                    bg = 'rgba(8, 195, 128, 0.15)'
+                    border = 'var(--color-vector-green)'
+                    textColor = 'var(--color-vector-green)'
                   } else {
-                    bg = 'rgba(232, 64, 64, 0.15)'
+                    bg = 'rgba(255, 51, 68, 0.15)'
                     border = 'var(--accent-red)'
                     textColor = 'var(--accent-red)'
                   }
@@ -791,23 +1082,26 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                     key={opt.id}
                     onClick={() => handleQuizAnswer(opt.id)}
                     style={{
-                      padding: '14px 18px',
-                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
                       border: `1px solid ${border}`,
                       backgroundColor: bg,
                       color: textColor,
                       fontSize: '13px',
-                      fontWeight: 600,
+                      fontWeight: 500,
                       textAlign: 'left',
                       cursor: 'pointer',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      transition: 'all 0.2s',
+                      transition: 'all 0.15s ease',
                     }}
                   >
-                    <span>{String.fromCharCode(65 + opt.id)}. <code>{opt.text}</code></span>
-                    {isSelected && (opt.correct ? <CheckCircle size={16} /> : <X size={16} />)}
+                    <span>
+                      <strong style={{ color: 'var(--color-steel)', marginRight: '8px' }}>{String.fromCharCode(65 + opt.id)}</strong>
+                      <code>{opt.text}</code>
+                    </span>
+                    {isSelected && (opt.correct ? <CheckCircle size={15} /> : <X size={15} />)}
                   </button>
                 )
               })}
@@ -816,14 +1110,14 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             {/* Result Feedback message */}
             {quizAnswered !== null && (
               <motion.div
-                initial={{ opacity: 0, y: 8 }}
+                initial={{ opacity: 0, y: 6 }}
                 animate={{ opacity: 1, y: 0 }}
                 style={{
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  backgroundColor: quizAnswered === 0 || quizAnswered === 2 ? 'rgba(34, 197, 94, 0.1)' : 'rgba(232, 64, 64, 0.1)',
-                  border: `1px solid ${quizAnswered === 0 || quizAnswered === 2 ? 'var(--accent-green)' : 'var(--accent-red)'}`,
-                  fontSize: '13px',
+                  padding: '10px 14px',
+                  borderRadius: '9999px',
+                  backgroundColor: quizAnswered === 0 || quizAnswered === 2 ? 'rgba(8, 195, 128, 0.12)' : 'rgba(255, 51, 68, 0.12)',
+                  border: `1px solid ${quizAnswered === 0 || quizAnswered === 2 ? 'var(--color-vector-green)' : 'var(--accent-red)'}`,
+                  fontSize: '12px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
@@ -831,10 +1125,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               >
                 <span>
                   {quizAnswered === 0 || quizAnswered === 2
-                    ? '⚔️ Serangan Telak Berhasil! +120 XP didapatkan dan health lawan berkurang!'
-                    : '🛡️ Salah sasaran! Lawan menangkis seranganmu.'}
+                    ? '⚔️ Serangan Combo Berhasil! Health lawan berkurang drastis.'
+                    : '🛡️ Salah sasaran! Lawan berhasil menangkis seranganmu.'}
                 </span>
-                <span style={{ fontWeight: 700, color: 'var(--accent-gold)' }}>
+                <span style={{ fontWeight: 600, color: 'var(--color-signal-orange)' }}>
                   +120 XP
                 </span>
               </motion.div>
@@ -843,357 +1137,435 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         </div>
       </section>
 
-      {/* ── Character Classes Section ── */}
+      {/* ── 3. Asymmetric Workflow & Roles Section (Exact Linearity Spec) ── */}
       <section
         id="kelas"
         style={{
           padding: '80px 24px',
-          borderTop: '1px solid var(--border)',
-          borderBottom: '1px solid var(--border)',
-          backgroundColor: 'rgba(20, 20, 26, 0.5)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'var(--color-void)',
         }}
       >
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-            <span style={{ fontSize: '12px', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', letterSpacing: '0.08em' }}>
-              RPG ROLE SYSTEM
-            </span>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 800, marginBottom: '8px' }}>
-              Pilih Kelas Karakter Petualangmu
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '580px', margin: '0 auto' }}>
-              Setiap kelas memiliki spesialisasi statistik, keahlian unik, dan bonus XP untuk mendukung gaya belajarmu.
-            </p>
-          </div>
-
-          {/* Class Select Tabs */}
+        <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
+          {/* Asymmetric 3-part layout: Copy on left, Role chips in center, Frosted Panel on right */}
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(4, 1fr)',
-              gap: '12px',
-              marginBottom: '28px',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+              gap: '36px',
+              alignItems: 'start',
             }}
           >
-            {CLASSES_DATA.map((cls) => {
-              const isSelected = selectedClass.id === cls.id
-              return (
-                <button
-                  key={cls.id}
-                  onClick={() => setSelectedClass(cls)}
-                  style={{
-                    padding: '16px 12px',
-                    borderRadius: '10px',
-                    border: `1px solid ${isSelected ? cls.color : 'var(--border)'}`,
-                    backgroundColor: isSelected ? 'var(--bg-secondary)' : 'rgba(255, 255, 255, 0.02)',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: isSelected ? `0 0 20px ${cls.borderColor}` : 'none',
-                    transition: 'all 0.25s',
-                  }}
-                >
-                  <span style={{ fontSize: '28px' }}>{cls.emoji}</span>
-                  <span style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, color: isSelected ? cls.color : 'var(--text-primary)' }}>
-                    {cls.name}
-                  </span>
-                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{cls.title}</span>
-                </button>
-              )
-            })}
-          </div>
-
-          {/* Active Class Showcase Card */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selectedClass.id}
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -15 }}
-              transition={{ duration: 0.3 }}
-              style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderRadius: '14px',
-                border: `1px solid ${selectedClass.borderColor}`,
-                padding: '32px',
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                gap: '32px',
-                alignItems: 'center',
-                boxShadow: `0 10px 40px -10px ${selectedClass.borderColor}`,
-              }}
-            >
-              {/* Left Column: Avatar & Overview */}
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-                  <div
-                    style={{
-                      width: '64px',
-                      height: '64px',
-                      borderRadius: '14px',
-                      backgroundColor: 'var(--bg-tertiary)',
-                      border: `2px solid ${selectedClass.color}`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      fontSize: '32px',
-                    }}
-                  >
-                    {selectedClass.emoji}
-                  </div>
-                  <div>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 800, color: selectedClass.color }}>
-                      {selectedClass.name} — {selectedClass.title}
-                    </h3>
-                    <p style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{selectedClass.tagline}</p>
-                  </div>
-                </div>
-
-                <div
-                  style={{
-                    padding: '14px 18px',
-                    borderRadius: '8px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid var(--border)',
-                    marginBottom: '16px',
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-                    <Sparkles size={16} style={{ color: selectedClass.color }} />
-                    <span style={{ fontSize: '13px', fontWeight: 700, color: selectedClass.color }}>
-                      Perk Spesial: {selectedClass.perk}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-                    {selectedClass.perkDesc}
-                  </p>
-                </div>
-
-                <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-                  🎯 <strong>Rekomendasi:</strong> {selectedClass.suitable}
-                </div>
-              </div>
-
-              {/* Right Column: Attribute Stat Bars */}
-              <div>
-                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>
-                  DISTRIBUSI STATISTIK KELAS
-                </h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                  {selectedClass.stats.map((st) => (
-                    <div key={st.label}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '5px' }}>
-                        <span style={{ color: 'var(--text-secondary)' }}>{st.label}</span>
-                        <span style={{ fontWeight: 700, color: selectedClass.color }}>{st.value}/100</span>
-                      </div>
-                      <div style={{ height: '7px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'hidden' }}>
-                        <motion.div
-                          initial={{ width: 0 }}
-                          animate={{ width: `${st.value}%` }}
-                          transition={{ duration: 0.5 }}
-                          style={{ height: '100%', backgroundColor: selectedClass.color, borderRadius: '4px' }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </AnimatePresence>
-        </div>
-      </section>
-
-      {/* ── How It Works (Quest Roadmap) ── */}
-      <section
-        id="cara-kerja"
-        style={{
-          padding: '80px 24px',
-          maxWidth: '1080px',
-          margin: '0 auto',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span style={{ fontSize: '12px', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-cyan)', letterSpacing: '0.08em' }}>
-            QUEST ROADMAP
-          </span>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 800, marginBottom: '8px' }}>
-            Cara Kerja Petualangan di Skillungo
-          </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '580px', margin: '0 auto' }}>
-            4 langkah sederhana untuk bertransformasi dari pelajar biasa menjadi pahlawan digital berprestasi.
-          </p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(230px, 1fr))', gap: '20px' }}>
-          {HOW_IT_WORKS.map((item, idx) => (
-            <div
-              key={item.step}
-              style={{
-                backgroundColor: 'var(--bg-secondary)',
-                borderRadius: '12px',
-                border: '1px solid var(--border)',
-                padding: '28px 22px',
-                position: 'relative',
-              }}
-            >
-              <div
+            {/* Left: Headline & Editorial Context */}
+            <div>
+              <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '10px' }}>
+                RPG WORKFLOW & CLASS ARCHITECTURE
+              </span>
+              <h2
                 style={{
                   fontFamily: 'var(--font-heading)',
-                  fontSize: '28px',
-                  fontWeight: 900,
-                  color: 'rgba(255, 255, 255, 0.1)',
-                  position: 'absolute',
-                  top: '16px',
-                  right: '20px',
+                  fontSize: '38px',
+                  fontWeight: 400,
+                  lineHeight: 1.15,
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  color: '#ffffff',
                 }}
               >
-                {item.step}
-              </div>
-
-              <div
+                Pilih Role.
+                <br />
+                Kuasai Domain Belajarmu.
+              </h2>
+              <p
                 style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '10px',
-                  backgroundColor: 'var(--bg-tertiary)',
-                  border: `1px solid ${item.color}`,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  color: item.color,
-                  marginBottom: '18px',
+                  color: 'var(--color-fog)',
+                  fontSize: '14px',
+                  lineHeight: 1.65,
+                  marginBottom: '24px',
                 }}
               >
-                <item.icon size={22} />
-              </div>
-
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>
-                {item.title}
-              </h3>
-              <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.65 }}>
-                {item.desc}
+                Setiap karakter memiliki spesialisasi statistik, peran unik di battle arena, dan pengali XP untuk memandu akselerasi skill digitalmu di SMK/SMA.
               </p>
+
+              {/* Four Outlined Role Chips (Linearity Spec) */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                {CLASSES_DATA.map((cls) => {
+                  const isSelected = selectedClass.id === cls.id
+                  return (
+                    <button
+                      key={cls.id}
+                      onClick={() => setSelectedClass(cls)}
+                      className={`role-selector-chip ${isSelected ? 'active' : ''}`}
+                      style={{
+                        justifyContent: 'space-between',
+                        padding: '10px 16px',
+                        border: isSelected
+                          ? '1px solid var(--color-signal-orange)'
+                          : '1px solid rgba(255, 255, 255, 0.12)',
+                        boxShadow: isSelected
+                          ? '0 0 16px rgba(255, 72, 0, 0.25)'
+                          : 'none',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <span style={{ fontSize: '18px' }}>{cls.emoji}</span>
+                        <div style={{ textAlign: 'left' }}>
+                          <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
+                            {cls.name}
+                          </span>
+                          <span style={{ display: 'block', fontSize: '11px', color: 'var(--color-steel)' }}>
+                            {cls.title}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                        <span
+                          style={{
+                            width: '8px',
+                            height: '8px',
+                            borderRadius: '9999px',
+                            backgroundColor: isSelected ? 'var(--color-signal-orange)' : 'var(--color-graphite)',
+                            boxShadow: isSelected ? '0 0 8px var(--color-signal-orange)' : 'none',
+                          }}
+                        />
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
             </div>
-          ))}
+
+            {/* Right: Linearity Frosted Product Demonstration Panel */}
+            <div className="product-demo-panel">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedClass.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  {/* Campaign Asset Tile inside panel (Linearity Spec) */}
+                  <div
+                    className="campaign-asset-tile"
+                    style={{
+                      padding: '20px',
+                      marginBottom: '20px',
+                      backgroundColor: selectedClass.tileBg,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '10px' }}>
+                      <div
+                        style={{
+                          width: '48px',
+                          height: '48px',
+                          borderRadius: '8.57143px',
+                          backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          fontSize: '26px',
+                          border: '1px solid rgba(255, 255, 255, 0.15)',
+                        }}
+                      >
+                        {selectedClass.emoji}
+                      </div>
+                      <div>
+                        <h3
+                          style={{
+                            fontFamily: 'var(--font-heading)',
+                            fontSize: '20px',
+                            fontWeight: 400,
+                            margin: 0,
+                            color: '#ffffff',
+                          }}
+                        >
+                          {selectedClass.name} — {selectedClass.title}
+                        </h3>
+                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-silver)' }}>
+                          {selectedClass.tagline}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div
+                      style={{
+                        padding: '10px 14px',
+                        borderRadius: '8.57143px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'space-between',
+                      }}
+                    >
+                      <div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Role Perk:</div>
+                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-signal-orange)' }}>
+                          {selectedClass.perk}
+                        </div>
+                      </div>
+                      <span
+                        style={{
+                          fontSize: '11px',
+                          color: '#ffffff',
+                          backgroundColor: 'rgba(255, 72, 0, 0.2)',
+                          padding: '3px 8px',
+                          borderRadius: '9999px',
+                          border: '1px solid rgba(255, 72, 0, 0.35)',
+                        }}
+                      >
+                        +25% XP Bonus
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Stat Progress Bars */}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+                    {selectedClass.stats.map((st) => (
+                      <div key={st.label}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
+                          <span style={{ color: 'var(--color-silver)' }}>{st.label}</span>
+                          <span style={{ color: '#ffffff', fontFamily: 'var(--font-mono)' }}>{st.value}%</span>
+                        </div>
+                        <div
+                          style={{
+                            height: '4px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                            borderRadius: '9999px',
+                            overflow: 'hidden',
+                          }}
+                        >
+                          <motion.div
+                            initial={{ width: 0 }}
+                            animate={{ width: `${st.value}%` }}
+                            transition={{ duration: 0.5, ease: 'easeOut' }}
+                            style={{
+                              height: '100%',
+                              backgroundColor: 'var(--color-signal-orange)',
+                              boxShadow: '0 0 8px rgba(255, 72, 0, 0.4)',
+                            }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '12px',
+                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                      border: '1px solid rgba(255, 255, 255, 0.08)',
+                      fontSize: '12px',
+                      color: 'var(--color-fog)',
+                    }}
+                  >
+                    <strong style={{ color: '#ffffff' }}>Target Profil: </strong>
+                    {selectedClass.suitable}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* ── Features Matrix ── */}
+      {/* ── 4. Centered Editorial Statement with Spectrum Rail Underline (Linearity Spec) ── */}
+      <section
+        style={{
+          padding: '90px 24px',
+          textAlign: 'center',
+          backgroundColor: 'var(--color-void)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+        }}
+      >
+        <div style={{ maxWidth: '860px', margin: '0 auto' }}>
+          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '14px' }}>
+            EDUCATIONAL EXCELLENCE
+          </span>
+          <h2
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: 'clamp(28px, 4.5vw, 45px)',
+              fontWeight: 400,
+              lineHeight: 1.25,
+              color: '#ffffff',
+              letterSpacing: '-0.02em',
+              marginBottom: '24px',
+            }}
+          >
+            Satu ekosistem belajar gamifikasi untuk mencetak talenta digital Indonesia{' '}
+            <span style={{ position: 'relative', display: 'inline-block' }}>
+              yang siap industri.
+              <span
+                className="spectrum-rail-line"
+                style={{
+                  position: 'absolute',
+                  bottom: '-4px',
+                  left: 0,
+                  right: 0,
+                  height: '2px',
+                }}
+              />
+            </span>
+          </h2>
+          <p style={{ color: 'var(--color-fog)', fontSize: '15px', maxWidth: '600px', margin: '0 auto' }}>
+            Dari fondasi logika pemrograman hingga arsitektur UI modern, setiap materi dirancang ringkas, aplikatif, dan memicu motivasi belajar intrinsik melalui mekanika game.
+          </p>
+        </div>
+      </section>
+
+      {/* ── 5. Features Grid (17.1429px Cards, Hairline Outlines) ── */}
       <section
         id="fitur"
         style={{
           padding: '80px 24px',
-          borderTop: '1px solid var(--border)',
-          backgroundColor: 'rgba(20, 20, 26, 0.4)',
+          maxWidth: '1120px',
+          margin: '0 auto',
+          backgroundColor: 'var(--color-void)',
         }}
       >
-        <div style={{ maxWidth: '1080px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <span style={{ fontSize: '12px', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-red)', letterSpacing: '0.08em' }}>
-              POWERFUL CAPABILITIES
-            </span>
-            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 800, marginBottom: '8px' }}>
-              Fitur Lengkap untuk Belajar Lebih Seru
-            </h2>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '14px', maxWidth: '580px', margin: '0 auto' }}>
-              Dirancang dengan perpaduan pedagogi modern dan mekanik game adiktif agar kamu tidak cepat bosan.
-            </p>
-          </div>
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '8px' }}>
+            STUDIO CAPABILITIES
+          </span>
+          <h2
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '32px',
+              fontWeight: 400,
+              marginBottom: '8px',
+              letterSpacing: '-0.015em',
+            }}
+          >
+            Fitur Utama Ekosistem Skillungo
+          </h2>
+          <p style={{ color: 'var(--color-fog)', fontSize: '14px' }}>
+            Dirancang khusus untuk mendukung ritme belajar mandiri dan kompetisi sekolah.
+          </p>
+        </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(310px, 1fr))', gap: '20px' }}>
-            {FEATURES_DATA.map((feat) => (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gap: '20px',
+          }}
+        >
+          {FEATURES_DATA.map((feat) => {
+            const Icon = feat.icon
+            return (
               <div
                 key={feat.title}
+                className="card hover-lift"
                 style={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  borderRadius: '12px',
-                  border: '1px solid var(--border)',
-                  padding: '28px',
+                  padding: '24px',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  transition: 'border-color 0.2s',
+                  backgroundColor: 'rgba(8, 8, 8, 0.95)',
                 }}
               >
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '18px',
+                    }}
+                  >
                     <div
                       style={{
-                        width: '42px',
-                        height: '42px',
-                        borderRadius: '8px',
-                        backgroundColor: 'var(--bg-tertiary)',
-                        border: `1px solid ${feat.color}`,
+                        width: '38px',
+                        height: '38px',
+                        borderRadius: '9999px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid rgba(255, 255, 255, 0.1)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: feat.color,
+                        color: feat.accent,
                       }}
                     >
-                      <feat.icon size={20} />
+                      <Icon size={18} />
                     </div>
                     <span
                       style={{
-                        fontSize: '11px',
-                        fontFamily: 'var(--font-heading)',
-                        fontWeight: 700,
-                        color: feat.color,
-                        padding: '3px 8px',
-                        borderRadius: '4px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                        border: '1px solid var(--border)',
+                        fontSize: '10px',
+                        fontFamily: 'var(--font-inter)',
+                        color: 'var(--color-steel)',
+                        letterSpacing: '1px',
+                        textTransform: 'uppercase',
                       }}
                     >
                       {feat.tag}
                     </span>
                   </div>
 
-                  <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: '18px',
+                      fontWeight: 400,
+                      marginBottom: '8px',
+                      color: '#ffffff',
+                    }}
+                  >
                     {feat.title}
                   </h3>
-                  <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.65 }}>
+                  <p style={{ fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.6 }}>
                     {feat.desc}
                   </p>
                 </div>
               </div>
-            ))}
-          </div>
+            )
+          })}
         </div>
       </section>
 
-      {/* ── FAQ Section ── */}
+      {/* ── 6. FAQ Section ── */}
       <section
         id="faq"
         style={{
           padding: '80px 24px',
-          maxWidth: '840px',
+          maxWidth: '820px',
           margin: '0 auto',
+          backgroundColor: 'var(--color-void)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <span style={{ fontSize: '12px', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', letterSpacing: '0.08em' }}>
-            FREQUENTLY ASKED QUESTIONS
+          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '8px' }}>
+            HELP & DOCUMENTATION
           </span>
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '36px', fontWeight: 800, marginBottom: '8px' }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '32px',
+              fontWeight: 400,
+              marginBottom: '8px',
+              letterSpacing: '-0.015em',
+            }}
+          >
             Pertanyaan yang Sering Diajukan
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
-            Punya pertanyaan seputar petualangan di Skillungo? Simak penjelasan berikut.
+          <p style={{ color: 'var(--color-fog)', fontSize: '14px' }}>
+            Informasi lengkap seputar mekanisme belajar dan duel di Skillungo.
           </p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
           {FAQS.map((faq, i) => {
             const isOpen = activeFaq === i
             return (
               <div
                 key={i}
+                className="card"
                 style={{
-                  backgroundColor: 'var(--bg-secondary)',
-                  borderRadius: '10px',
-                  border: '1px solid var(--border)',
+                  backgroundColor: 'rgba(8, 8, 8, 0.95)',
                   overflow: 'hidden',
                 }}
               >
@@ -1201,27 +1573,28 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   onClick={() => setActiveFaq(isOpen ? null : i)}
                   style={{
                     width: '100%',
-                    padding: '18px 22px',
+                    padding: '16px 20px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     backgroundColor: 'transparent',
                     border: 'none',
-                    color: 'var(--text-primary)',
-                    fontFamily: 'var(--font-heading)',
-                    fontSize: '16px',
-                    fontWeight: 700,
+                    color: '#ffffff',
+                    fontFamily: 'var(--font-inter)',
+                    fontSize: '14px',
+                    fontWeight: 500,
                     textAlign: 'left',
                     cursor: 'pointer',
                   }}
                 >
                   <span>{faq.q}</span>
                   <ChevronDown
-                    size={18}
+                    size={16}
                     style={{
-                      color: isOpen ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                      color: isOpen ? 'var(--color-signal-orange)' : 'var(--color-steel)',
                       transform: isOpen ? 'rotate(180deg)' : 'none',
-                      transition: 'transform 0.25s',
+                      transition: 'transform 0.2s ease',
+                      flexShrink: 0,
                     }}
                   />
                 </button>
@@ -1229,12 +1602,12 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 {isOpen && (
                   <div
                     style={{
-                      padding: '0 22px 20px',
-                      fontSize: '14px',
-                      color: 'var(--text-secondary)',
-                      lineHeight: 1.7,
-                      borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                      paddingTop: '14px',
+                      padding: '0 20px 18px',
+                      fontSize: '13px',
+                      color: 'var(--color-fog)',
+                      lineHeight: 1.65,
+                      borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                      paddingTop: '12px',
                     }}
                   >
                     {faq.a}
@@ -1246,83 +1619,92 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         </div>
       </section>
 
-      {/* ── Final Call to Action ── */}
+      {/* ── 7. Final Call to Action on Void ── */}
       <section
         style={{
           padding: '80px 24px',
-          borderTop: '1px solid var(--border)',
-          backgroundColor: 'var(--bg-secondary)',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'var(--color-void)',
           textAlign: 'center',
         }}
       >
-        <div style={{ maxWidth: '720px', margin: '0 auto' }}>
+        <div style={{ maxWidth: '680px', margin: '0 auto' }}>
           <div
             style={{
-              width: '56px',
-              height: '56px',
-              borderRadius: '12px',
-              backgroundColor: 'rgba(245, 197, 66, 0.12)',
-              border: '1px solid rgba(245, 197, 66, 0.35)',
+              width: '48px',
+              height: '48px',
+              borderRadius: '9999px',
+              backgroundColor: 'rgba(255, 72, 0, 0.12)',
+              border: '1px solid rgba(255, 72, 0, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 20px',
-              boxShadow: '0 0 24px rgba(245, 197, 66, 0.2)',
+              boxShadow: 'var(--shadow-signal-orange)',
             }}
           >
-            <Swords size={28} style={{ color: 'var(--accent-gold)' }} />
+            <Swords size={22} style={{ color: 'var(--color-signal-orange)' }} />
           </div>
 
-          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: 'clamp(28px, 4vw, 42px)', fontWeight: 800, marginBottom: '14px' }}>
-            {isLoggedIn ? 'Karaktermu Sudah Siap Bertanding!' : 'Karaktermu Menunggu di Gerbang Petualangan.'}
+          <h2
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: 'clamp(28px, 4vw, 40px)',
+              fontWeight: 400,
+              marginBottom: '12px',
+              letterSpacing: '-0.02em',
+              color: '#ffffff',
+            }}
+          >
+            {isLoggedIn ? 'Karaktermu Siap Masuk Arena.' : 'Mulai Petualangan Skill Digitalmu.'}
           </h2>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '15px', maxWidth: '520px', margin: '0 auto 32px', lineHeight: 1.6 }}>
+          <p
+            style={{
+              color: 'var(--color-fog)',
+              fontSize: '14px',
+              maxWidth: '500px',
+              margin: '0 auto 32px',
+              lineHeight: 1.6,
+            }}
+          >
             {isLoggedIn
-              ? 'Lanjutkan progress belajarmu, taklukkan kuis hari ini, dan raih posisi terbaik di Leaderboard!'
-              : 'Daftar sekarang secara gratis, bentuk squad sekolahmu, dan jadilah legenda digital berikutnya di Skillungo.'}
+              ? 'Lanjutkan modul belajar, selesaikan quest harian, dan pertahankan posisi terbaik di Leaderboard.'
+              : 'Daftar gratis dalam hitungan detik. Kumpulkan XP, kuasai modul coding & desain, dan raih prestasi untuk sekolahmu.'}
           </p>
 
           <Link
             href={isLoggedIn ? '/dashboard' : '/register'}
+            className="btn-signal-orange"
             style={{
-              padding: '16px 42px',
-              borderRadius: '8px',
+              padding: '14px 34px',
+              fontSize: '14px',
               textDecoration: 'none',
-              backgroundColor: 'var(--accent-gold)',
-              color: 'var(--bg-primary)',
-              fontFamily: 'var(--font-heading)',
-              fontSize: '18px',
-              fontWeight: 800,
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '10px',
-              boxShadow: '0 0 28px rgba(245, 197, 66, 0.4)',
             }}
           >
             {isLoggedIn ? (
               <>
-                <LayoutDashboard size={20} /> BUKA DASHBOARD SEKARANG
+                <LayoutDashboard size={18} /> BUKA DASHBOARD STUDIO
               </>
             ) : (
               <>
-                <Swords size={20} /> DAFTAR SEKARANG — 100% GRATIS!
+                <Swords size={18} /> DAFTAR GRATIS SEKARANG <ChevronRight size={16} />
               </>
             )}
           </Link>
         </div>
       </section>
 
-      {/* ── Footer ── */}
+      {/* ── 8. Footer (Floating text on Void per Linearity spec) ── */}
       <footer
         style={{
-          padding: '40px 28px',
-          borderTop: '1px solid var(--border)',
-          backgroundColor: 'var(--bg-secondary)',
+          padding: '36px 32px',
+          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          backgroundColor: 'var(--color-void)',
         }}
       >
         <div
           style={{
-            maxWidth: '1080px',
+            maxWidth: '1120px',
             margin: '0 auto',
             display: 'flex',
             flexDirection: 'column',
@@ -1332,22 +1714,47 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Swords size={18} style={{ color: 'var(--accent-gold)' }} />
-            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, color: 'var(--text-primary)' }}>
-              Skill<span style={{ color: 'var(--accent-gold)' }}>ungo</span>
+            <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
+            <span
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: '16px',
+                fontWeight: 500,
+                color: '#ffffff',
+              }}
+            >
+              Skill<span style={{ color: 'var(--color-signal-orange)' }}>ungo</span>
             </span>
           </div>
 
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', justifyContent: 'center', fontSize: '13px' }}>
-            <Link href="/modules" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Modul Belajar</Link>
-            <Link href="/battle" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Battle Arena 1v1</Link>
-            <Link href="/leaderboard" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Leaderboard Sekolah</Link>
-            <Link href="/voucher" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Toko Voucher</Link>
-            <Link href="/login" style={{ color: 'var(--text-secondary)', textDecoration: 'none' }}>Masuk Akun</Link>
+          <div
+            style={{
+              display: 'flex',
+              gap: '20px',
+              flexWrap: 'wrap',
+              justifyContent: 'center',
+              fontSize: '12px',
+            }}
+          >
+            <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+              Modul Belajar
+            </Link>
+            <Link href="/battle" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+              Battle Arena 1v1
+            </Link>
+            <Link href="/leaderboard" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+              Leaderboard Sekolah
+            </Link>
+            <Link href="/voucher" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+              Toko Voucher
+            </Link>
+            <Link href="/login" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+              Masuk Akun
+            </Link>
           </div>
 
-          <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-            © 2026 Skillungo. &quot;Level Up Your Skills, Conquer Your Future&quot; · Platform Gamifikasi Edukasi Pelajar Indonesia.
+          <p style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
+            © 2026 Skillungo. &quot;Level Up Your Skills, Conquer Your Future&quot; · Glowing Studio Console Edition.
           </p>
         </div>
       </footer>

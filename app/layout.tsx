@@ -1,11 +1,18 @@
 import type { Metadata } from 'next'
-import { Inter, JetBrains_Mono } from 'next/font/google'
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
 const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
+  display: 'swap',
+})
+
+const spaceGrotesk = Space_Grotesk({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-acidgrotesk',
   display: 'swap',
 })
 
@@ -44,7 +51,7 @@ export default function RootLayout({
   const judgeMode = process.env.NEXT_PUBLIC_JUDGE_MODE === 'true'
   return (
     <html lang="id">
-      <body className={`${inter.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
     </html>
   )
 }

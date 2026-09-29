@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react'
 import { motion } from 'framer-motion'
-import { BarChart3, TrendingUp, BookOpen, Swords, Zap, CheckCircle2 } from 'lucide-react'
+import { BarChart3, TrendingUp } from 'lucide-react'
 
 interface LearningAnalyticsProps {
     completedModules: Array<{
@@ -15,13 +15,13 @@ interface LearningAnalyticsProps {
 }
 
 const CATEGORY_META: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    coding: { label: 'Coding', color: 'var(--accent-cyan)', bg: 'var(--accent-cyan-bg)', border: 'var(--accent-cyan-border)' },
-    design: { label: 'Desain', color: 'var(--accent-gold)', bg: 'var(--accent-gold-bg)', border: 'var(--accent-gold-border)' },
-    productivity: { label: 'Produktivitas', color: 'var(--accent-green)', bg: 'var(--accent-green-bg)', border: 'var(--accent-green-border)' },
-    business: { label: 'Bisnis', color: 'var(--accent-red)', bg: 'var(--accent-red-bg)', border: 'var(--accent-red-border)' },
+    coding: { label: 'Coding', color: '#ff4800', bg: 'rgba(255, 72, 0, 0.1)', border: 'rgba(255, 72, 0, 0.25)' },
+    design: { label: 'Desain', color: '#ffd900', bg: 'rgba(255, 217, 0, 0.1)', border: 'rgba(255, 217, 0, 0.25)' },
+    productivity: { label: 'Produktivitas', color: '#08c380', bg: 'rgba(8, 195, 128, 0.1)', border: 'rgba(8, 195, 128, 0.25)' },
+    business: { label: 'Bisnis', color: '#00e5ff', bg: 'rgba(0, 229, 255, 0.1)', border: 'rgba(0, 229, 255, 0.25)' },
 }
 
-export default function LearningAnalytics({ completedModules, xpLogs, totalXp, level }: LearningAnalyticsProps) {
+export default function LearningAnalytics({ completedModules, xpLogs, totalXp }: LearningAnalyticsProps) {
     const [viewMode, setViewMode] = useState<'weekly' | 'category'>('weekly')
 
     // 1. Hitung distribusi XP 7 hari terakhir (Senin - Minggu)
@@ -79,58 +79,69 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
     }, [completedModules])
 
     return (
-        <div className="card" style={{ padding: '20px', position: 'relative', overflow: 'hidden' }}>
+        <div
+            className="card"
+            style={{
+                padding: '24px',
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '17.1429px',
+                backgroundColor: '#080808',
+                border: '1px solid #292929',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+            }}
+        >
             {/* Header & Tabs */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div
                         style={{
-                            width: '32px',
-                            height: '32px',
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--accent-cyan-bg)',
-                            border: '1px solid var(--accent-cyan-border)',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '9999px',
+                            backgroundColor: 'rgba(255, 72, 0, 0.1)',
+                            border: '1px solid rgba(255, 72, 0, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'var(--accent-cyan)',
+                            color: '#ff4800',
                         }}
                     >
                         <BarChart3 size={18} />
                     </div>
                     <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
-                            Diagram Analisa Pembelajaran
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
+                            Analisa Pembelajaran
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                            Metrik & performa keaktifan hero
+                            Metrik konsistensi & performa hero
                         </span>
                     </div>
                 </div>
 
-                {/* Switcher Tab */}
+                {/* Switcher Tab Pill */}
                 <div
                     style={{
                         display: 'flex',
-                        backgroundColor: 'var(--bg-tertiary)',
+                        backgroundColor: '#121212',
                         padding: '3px',
-                        borderRadius: '6px',
-                        border: '1px solid var(--border)',
+                        borderRadius: '9999px',
+                        border: '1px solid #292929',
                     }}
                 >
                     <button
                         type="button"
                         onClick={() => setViewMode('weekly')}
                         style={{
-                            padding: '4px 12px',
+                            padding: '5px 14px',
                             fontSize: '11px',
                             fontFamily: 'var(--font-heading)',
-                            fontWeight: 700,
-                            borderRadius: '4px',
+                            fontWeight: viewMode === 'weekly' ? 600 : 400,
+                            borderRadius: '9999px',
                             border: 'none',
                             cursor: 'pointer',
-                            backgroundColor: viewMode === 'weekly' ? 'var(--accent-cyan)' : 'transparent',
-                            color: viewMode === 'weekly' ? '#000000' : 'var(--text-secondary)',
+                            backgroundColor: viewMode === 'weekly' ? '#ff4800' : 'transparent',
+                            color: viewMode === 'weekly' ? '#ffffff' : 'var(--text-secondary)',
                             transition: 'all 0.2s ease',
                         }}
                     >
@@ -140,15 +151,15 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
                         type="button"
                         onClick={() => setViewMode('category')}
                         style={{
-                            padding: '4px 12px',
+                            padding: '5px 14px',
                             fontSize: '11px',
                             fontFamily: 'var(--font-heading)',
-                            fontWeight: 700,
-                            borderRadius: '4px',
+                            fontWeight: viewMode === 'category' ? 600 : 400,
+                            borderRadius: '9999px',
                             border: 'none',
                             cursor: 'pointer',
-                            backgroundColor: viewMode === 'category' ? 'var(--accent-cyan)' : 'transparent',
-                            color: viewMode === 'category' ? '#000000' : 'var(--text-secondary)',
+                            backgroundColor: viewMode === 'category' ? '#ff4800' : 'transparent',
+                            color: viewMode === 'category' ? '#ffffff' : 'var(--text-secondary)',
                             transition: 'all 0.2s ease',
                         }}
                     >
@@ -160,9 +171,9 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
             {/* TAB 1: Diagram Batang XP 7 Hari */}
             {viewMode === 'weekly' && (
                 <div>
-                    <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px', padding: '0 4px 10px', borderBottom: '1px solid var(--border)' }}>
-                        {weeklyData.items.map((item, idx) => {
-                            const barHeightPercent = Math.max(12, Math.round((item.xp / weeklyData.maxXp) * 100))
+                    <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px', padding: '0 4px 10px', borderBottom: '1px solid #222222' }}>
+                        {weeklyData.items.map((item) => {
+                            const barHeightPercent = Math.max(10, Math.round((item.xp / weeklyData.maxXp) * 100))
                             return (
                                 <div
                                     key={item.date}
@@ -177,7 +188,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
                                     }}
                                 >
                                     {/* Tooltip / value */}
-                                    <span style={{ fontSize: '10px', color: item.xp > 0 ? 'var(--accent-gold)' : 'var(--text-muted)', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
+                                    <span style={{ fontSize: '10px', color: item.xp > 0 ? '#ff4800' : 'var(--text-muted)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
                                         {item.xp > 0 ? `+${item.xp}` : '0'}
                                     </span>
 
@@ -185,13 +196,13 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
                                     <div
                                         style={{
                                             width: '100%',
-                                            maxWidth: '32px',
+                                            maxWidth: '30px',
                                             height: `${barHeightPercent}%`,
-                                            backgroundColor: item.isToday ? 'var(--accent-cyan)' : item.xp > 0 ? 'rgba(0, 212, 255, 0.45)' : 'var(--bg-tertiary)',
+                                            backgroundColor: item.isToday ? '#ff4800' : item.xp > 0 ? 'rgba(255, 72, 0, 0.45)' : '#181818',
                                             borderRadius: '6px 6px 2px 2px',
-                                            border: `1px solid ${item.isToday ? 'var(--accent-cyan)' : 'var(--border)'}`,
+                                            border: `1px solid ${item.isToday ? '#ff5e23' : '#292929'}`,
                                             transition: 'height 0.6s cubic-bezier(0.2, 0, 0, 1)',
-                                            boxShadow: item.isToday ? '0 0 12px rgba(0, 212, 255, 0.3)' : 'none',
+                                            boxShadow: item.isToday ? '0 0 14px rgba(255, 72, 0, 0.35)' : 'none',
                                         }}
                                     />
 
@@ -200,8 +211,8 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
                                         style={{
                                             fontSize: '11px',
                                             fontFamily: 'var(--font-heading)',
-                                            fontWeight: item.isToday ? 800 : 600,
-                                            color: item.isToday ? 'var(--accent-cyan)' : 'var(--text-secondary)',
+                                            fontWeight: item.isToday ? 600 : 400,
+                                            color: item.isToday ? '#ff4800' : 'var(--text-secondary)',
                                         }}
                                     >
                                         {item.day}
@@ -211,12 +222,12 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
                         })}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '12px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <TrendingUp size={14} style={{ color: 'var(--accent-green)' }} />
-                            <span>Konsistensi belajar harian kamu tercatat otomatis</span>
+                            <TrendingUp size={14} style={{ color: '#08c380' }} />
+                            <span>Konsistensi belajar harian tercatat otomatis</span>
                         </div>
-                        <span style={{ fontWeight: 700, color: 'var(--accent-gold)', fontFamily: 'var(--font-heading)' }}>
+                        <span style={{ fontWeight: 600, color: '#ff4800', fontFamily: 'var(--font-heading)' }}>
                             Total: {totalXp.toLocaleString()} XP
                         </span>
                     </div>
@@ -225,28 +236,29 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
 
             {/* TAB 2: Progress Distribusi Kategori Modul */}
             {viewMode === 'category' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                     {categoryStats.map(stat => (
                         <div key={stat.category}>
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                                     <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: stat.color }} />
-                                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, color: 'var(--text-primary)' }}>
                                         {stat.label}
                                     </span>
                                 </div>
-                                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'var(--text-secondary)', fontSize: '11px' }}>
+                                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, color: 'var(--text-secondary)', fontSize: '11px' }}>
                                     {stat.count} Modul Tuntas ({stat.percent}%)
                                 </span>
                             </div>
 
-                            <div style={{ height: '7px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                            <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '9999px', overflow: 'hidden', border: '1px solid #222222' }}>
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${Math.max(stat.percent > 0 ? stat.percent : 4, 0)}%` }}
                                     transition={{ duration: 0.6, ease: 'easeOut' }}
                                     style={{
                                         height: '100%',
+                                        borderRadius: '9999px',
                                         backgroundColor: stat.color,
                                         boxShadow: `0 0 8px ${stat.color}40`,
                                     }}
@@ -255,7 +267,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp, l
                         </div>
                     ))}
 
-                    <p style={{ margin: '6px 0 0', fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
+                    <p style={{ margin: '8px 0 0', fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.4 }}>
                         *Selesaikan beragam kategori modul untuk memperluas portofolio keahlian digital kamu.
                     </p>
                 </div>
