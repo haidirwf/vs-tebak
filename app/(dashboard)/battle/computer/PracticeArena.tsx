@@ -486,23 +486,13 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span
                                 style={{
-                                    width: '8px',
-                                    height: '8px',
-                                    borderRadius: '9999px',
-                                    backgroundColor: 'var(--color-vector-green)',
-                                    boxShadow: '0 0 8px var(--color-vector-green)',
-                                }}
-                            />
-                            <span
-                                style={{
                                     fontFamily: 'var(--font-inter)',
-                                    fontSize: '12px',
+                                    fontSize: '13px',
                                     fontWeight: 500,
-                                    color: '#ffffff',
-                                    letterSpacing: '0.04em',
+                                    color: 'var(--text-secondary)',
                                 }}
                             >
-                                SIMULASI BATTLE VS BOT · SOAL {currentQ + 1} DARI {questions.length}
+                                Soal {currentQ + 1} dari {questions.length}
                             </span>
                         </div>
 

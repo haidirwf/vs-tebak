@@ -663,13 +663,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     style={{ width: '100%', maxWidth: '640px', textAlign: 'center' }}
                 >
                     {/* Topbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ width: '8px', height: '8px', borderRadius: '9999px', backgroundColor: 'var(--color-signal-orange)', boxShadow: '0 0 8px var(--color-signal-orange)' }} />
-                            <span style={{ fontFamily: 'var(--font-inter)', fontSize: '12px', fontWeight: 500, color: '#ffffff', letterSpacing: '0.04em' }}>
-                                MENUNGGU PENANTANG BATTLE 1V1
-                            </span>
-                        </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
                         <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
                             ID: {battle.id.slice(0, 8)}
                         </span>
@@ -787,13 +781,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     style={{ width: '100%', maxWidth: '720px' }}
                 >
                     {/* Topbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <span style={{ width: '8px', height: '8px', borderRadius: '9999px', backgroundColor: 'var(--color-vector-green)', boxShadow: '0 0 8px var(--color-vector-green)' }} />
-                            <span style={{ fontFamily: 'var(--font-inter)', fontSize: '12px', fontWeight: 500, color: '#ffffff', letterSpacing: '0.04em' }}>
-                                LOBBY PERSIAPAN BATTLE 1V1
-                            </span>
-                        </div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
                         <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
                             ROOM: {battle.room_code}
                         </span>
@@ -973,7 +961,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 </div>
                             </motion.div>
                         ) : (
-                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 20px', borderRadius: '9999px', backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid rgba(34, 197, 94, 0.3)', color: 'var(--color-vector-green)', fontSize: '13px', fontWeight: 600 }}>
+                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', borderRadius: '10px', backgroundColor: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.25)', color: 'var(--color-vector-green)', fontSize: '13px', fontWeight: 500 }}>
                                 <CheckCircle size={16} /> Menunggu lawan menekan tombol siap...
                             </div>
                         )}
@@ -1192,23 +1180,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <span
                                 style={{
-                                    width: '8px',
-                                    height: '8px',
-                                    borderRadius: '9999px',
-                                    backgroundColor: 'var(--color-vector-green)',
-                                    boxShadow: '0 0 8px var(--color-vector-green)',
-                                }}
-                            />
-                            <span
-                                style={{
                                     fontFamily: 'var(--font-inter)',
-                                    fontSize: '12px',
+                                    fontSize: '13px',
                                     fontWeight: 500,
-                                    color: '#ffffff',
-                                    letterSpacing: '0.04em',
+                                    color: 'var(--text-secondary)',
                                 }}
                             >
-                                {battle.category ? battle.category.toUpperCase() : 'ARENA DUEL 1V1'} · SOAL {safeQuestionIndex + 1} DARI {questions.length}
+                                Soal {safeQuestionIndex + 1} dari {questions.length}
                             </span>
                         </div>
 
