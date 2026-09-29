@@ -87,7 +87,7 @@ export default function LoginPage() {
                             style={{
                                 width: '36px',
                                 height: '36px',
-                                borderRadius: '9999px',
+                                borderRadius: '10px',
                                 background: 'linear-gradient(135deg, #F5C542, #EAB308)',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -201,7 +201,7 @@ export default function LoginPage() {
                                 backgroundColor: '#F5C542',
                                 color: '#0a0a0a',
                                 border: 'none',
-                                borderRadius: '9999px',
+                                borderRadius: '10px',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '14px',
                                 fontWeight: 600,
@@ -216,7 +216,7 @@ export default function LoginPage() {
                                 marginTop: '6px',
                             }}
                         >
-                            {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Memuat...</> : 'MASUK'}
+                            {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Memuat...</> : 'Masuk'}
                         </motion.button>
                     </form>
 
@@ -233,7 +233,7 @@ export default function LoginPage() {
                             onClick={fillDemoCredentials}
                             style={{
                                 padding: '10px 12px',
-                                borderRadius: '9999px',
+                                borderRadius: '8px',
                                 border: '1px solid var(--surface-border)',
                                 backgroundColor: 'var(--surface-elevated)',
                                 color: 'var(--text-secondary)',
@@ -251,7 +251,7 @@ export default function LoginPage() {
                             disabled={isLoading}
                             style={{
                                 padding: '10px 12px',
-                                borderRadius: '9999px',
+                                borderRadius: '8px',
                                 border: '1px solid rgba(8, 195, 128, 0.3)',
                                 backgroundColor: 'rgba(8, 195, 128, 0.1)',
                                 color: '#08c380',

@@ -138,7 +138,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                                 </div>
                             </div>
 
-                            <div style={{ textAlign: 'right' }}>
+                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
                                 <span
                                     style={{
                                         fontFamily: 'var(--font-heading)',

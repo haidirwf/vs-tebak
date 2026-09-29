@@ -717,7 +717,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             style={{
                                 position: 'absolute',
                                 inset: 0,
-                                borderRadius: '9999px',
+                                borderRadius: '50%',
                                 border: '2px dashed rgba(245, 197, 66, 0.4)',
                             }}
                         />
@@ -993,7 +993,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '20px' }}>
                         Menunggu {opponent?.username || 'Lawan'} menyelesaikan pertanyaan terakhirnya...
                     </p>
-                    <div style={{ height: '4px', width: '140px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '9999px', overflow: 'hidden', margin: '0 auto 24px' }}>
+                    <div style={{ height: '4px', width: '140px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '4px', overflow: 'hidden', margin: '0 auto 24px' }}>
                         <motion.div animate={{ x: [-140, 140] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }} style={{ height: '100%', width: '60px', backgroundColor: 'var(--color-signal-orange)' }} />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '28px', color: 'var(--color-steel)', fontSize: '13px' }}>
@@ -1296,7 +1296,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             maxWidth: '120px',
                                             height: '3px',
                                             backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                            borderRadius: '9999px',
+                                            borderRadius: '4px',
                                             overflow: 'hidden',
                                         }}
                                     >
@@ -1403,7 +1403,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             maxWidth: '120px',
                                             height: '3px',
                                             backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                            borderRadius: '9999px',
+                                            borderRadius: '4px',
                                             overflow: 'hidden',
                                         }}
                                     >
@@ -1683,7 +1683,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     style={{
                                         flex: 1,
                                         padding: '10px',
-                                        borderRadius: '9999px',
+                                        borderRadius: '8px',
                                         border: '1px solid rgba(232, 64, 64, 0.6)',
                                         backgroundColor: 'rgba(232, 64, 64, 0.2)',
                                         color: 'var(--accent-red)',

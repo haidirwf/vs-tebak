@@ -147,7 +147,7 @@ export default function RegisterPage() {
                             style={{
                                 width: '34px',
                                 height: '34px',
-                                borderRadius: '9999px',
+                                borderRadius: '10px',
                                 background: 'linear-gradient(135deg, #F5C542, #EAB308)',
                                 display: 'flex',
                                 alignItems: 'center',
@@ -258,7 +258,7 @@ export default function RegisterPage() {
                                 backgroundColor: '#F5C542',
                                 color: '#0a0a0a',
                                 border: 'none',
-                                borderRadius: '9999px',
+                                borderRadius: '10px',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '14px',
                                 fontWeight: 600,
@@ -272,7 +272,7 @@ export default function RegisterPage() {
                                 boxShadow: '0 0 18px rgba(245, 197, 66, 0.4)',
                             }}
                         >
-                            {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</> : 'MULAI PETUALANGAN'}
+                            {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</> : 'Mulai Petualangan'}
                         </motion.button>
                     </form>
 

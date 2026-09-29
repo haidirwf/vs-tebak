@@ -121,16 +121,14 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                                         <span
                                             style={{
-                                                fontSize: '10px',
+                                                fontSize: '11px',
                                                 fontFamily: 'var(--font-inter)',
-                                                fontWeight: 600,
+                                                fontWeight: 500,
                                                 color: action.color,
                                                 backgroundColor: action.bg,
                                                 border: `1px solid ${action.border}`,
                                                 padding: '2px 8px',
-                                                borderRadius: '9999px',
-                                                textTransform: 'uppercase',
-                                                letterSpacing: '0.04em',
+                                                borderRadius: '6px',
                                             }}
                                         >
                                             {action.badge}

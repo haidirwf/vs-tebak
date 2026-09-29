@@ -347,7 +347,7 @@ export default function Sidebar() {
                                 style={{
                                     flex: 1,
                                     padding: '8px 14px',
-                                    borderRadius: '9999px',
+                                    borderRadius: '8px',
                                     border: '1px solid rgba(255, 51, 68, 0.4)',
                                     backgroundColor: 'rgba(255, 51, 68, 0.15)',
                                     color: 'var(--accent-red)',

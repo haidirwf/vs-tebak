@@ -67,8 +67,8 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
             </div>
 
             {/* Controls Row */}
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-                <div style={{ position: 'relative', flex: 1, minWidth: '280px' }}>
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ position: 'relative', flex: 1, minWidth: '200px' }}>
                     <Search size={16} style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
                     <input
                         aria-label="Cari modul"
@@ -77,9 +77,9 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                         placeholder="Cari modul atau topik..."
                         style={{
                             width: '100%', paddingLeft: '44px', paddingRight: '16px',
-                            paddingTop: '12px', paddingBottom: '12px',
+                            paddingTop: '10px', paddingBottom: '10px',
                             backgroundColor: 'var(--surface-canvas)', border: '1px solid var(--surface-border)',
-                            borderRadius: '9999px', color: 'var(--text-primary)', fontSize: '14px',
+                            borderRadius: '10px', color: 'var(--text-primary)', fontSize: '14px',
                             outline: 'none', transition: 'border-color 0.2s',
                         }}
                         onFocus={(e) => e.target.style.borderColor = '#F5C542'}
@@ -95,7 +95,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                             whileTap={{ scale: 0.98 }}
                             onClick={() => setActiveCategory(cat.value)}
                             style={{
-                                padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
+                                padding: '7px 14px', borderRadius: '8px', cursor: 'pointer',
                                 backgroundColor: activeCategory === cat.value ? '#F5C542' : 'var(--surface-elevated)',
                                 border: `1px solid ${activeCategory === cat.value ? '#EAB308' : 'var(--surface-border)'}`,
                                 color: activeCategory === cat.value ? '#0a0a0a' : 'var(--text-secondary)',
@@ -113,13 +113,13 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
 
             {/* Modules Grid */}
             {filtered.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: 'var(--surface-card)', borderRadius: '17.1429px', border: '1px dashed var(--surface-border)' }}>
+                <div style={{ textAlign: 'center', padding: '60px 20px', backgroundColor: 'var(--surface-card)', borderRadius: '14px', border: '1px dashed var(--surface-border)' }}>
                     <BookOpen size={48} style={{ margin: '0 auto 16px', color: 'var(--text-muted)', opacity: 0.2 }} />
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, marginBottom: '8px' }}>Tidak Ada Modul</h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Coba ubah kata kunci atau pilih kategori lain.</p>
                 </div>
             ) : (
-                <div className="modules-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '24px' }}>
+                <div className="modules-grid">
                     {filtered.map((module, i) => {
                         const userModule = getUserModule(module.id)
                         const isCompleted = userModule?.status === 'completed'
@@ -157,11 +157,11 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                         </div>
 
                                         {/* Top Section: Category & Badge */}
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '20px' }}>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', gap: '8px', flexWrap: 'wrap' }}>
                                             <div style={{
                                                 display: 'flex', alignItems: 'center', gap: '8px',
-                                                padding: '5px 12px', backgroundColor: `${catColor}12`,
-                                                borderRadius: '9999px', border: `1px solid ${catColor}28`
+                                                padding: '4px 10px', backgroundColor: `${catColor}12`,
+                                                borderRadius: '6px', border: `1px solid ${catColor}28`
                                             }}>
                                                 <div style={{ color: catColor }}>{icon}</div>
                                                 <span style={{
@@ -177,7 +177,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                                     <div style={{
                                                         backgroundColor: 'rgba(8, 195, 128, 0.1)',
                                                         color: 'var(--accent-green)',
-                                                        padding: '4px 10px', borderRadius: '9999px',
+                                                        padding: '4px 10px', borderRadius: '6px',
                                                         border: '1px solid rgba(8, 195, 128, 0.25)',
                                                         display: 'flex', alignItems: 'center', gap: '4px',
                                                         fontSize: '11px', fontWeight: 600
@@ -189,7 +189,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                                     <div style={{
                                                         fontSize: '10px', fontWeight: 600, color: '#F5C542',
                                                         backgroundColor: 'rgba(245, 197, 66, 0.1)', border: '1px solid rgba(245, 197, 66, 0.25)',
-                                                        padding: '4px 10px', borderRadius: '9999px', fontFamily: 'var(--font-heading)',
+                                                        padding: '4px 10px', borderRadius: '6px', fontFamily: 'var(--font-heading)',
                                                         display: 'flex', alignItems: 'center', gap: '4px'
                                                     }}>
                                                         <Flame size={12} fill="currentColor" /> BONUS
@@ -227,11 +227,11 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                                          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>PROGRES</span>
                                                          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)' }}>{progress}%</span>
                                                      </div>
-                                                     <div style={{ height: '4px', backgroundColor: '#141414', borderRadius: '9999px', overflow: 'hidden' }}>
+                                                     <div style={{ height: '4px', backgroundColor: '#141414', borderRadius: '4px', overflow: 'hidden' }}>
                                                          <motion.div
                                                              initial={{ width: 0 }}
                                                              animate={{ width: `${progress}%` }}
-                                                             style={{ height: '100%', borderRadius: '9999px', backgroundColor: '#F5C542' }}
+                                                             style={{ height: '100%', borderRadius: '4px', backgroundColor: '#F5C542' }}
                                                          />
                                                      </div>
                                                  </div>
@@ -254,8 +254,8 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                              <div style={{
                                                  fontSize: '11px', color: DIFFICULTY_COLORS[module.difficulty],
                                                  fontFamily: 'var(--font-heading)', fontWeight: 600, textTransform: 'uppercase',
-                                                 marginLeft: 'auto', padding: '3px 10px', backgroundColor: `${DIFFICULTY_COLORS[module.difficulty]}10`,
-                                                 borderRadius: '9999px', border: `1px solid ${DIFFICULTY_COLORS[module.difficulty]}25`
+                                                 marginLeft: 'auto', padding: '3px 8px', backgroundColor: `${DIFFICULTY_COLORS[module.difficulty]}10`,
+                                                 borderRadius: '6px', border: `1px solid ${DIFFICULTY_COLORS[module.difficulty]}25`
                                              }}>
                                                  {module.difficulty}
                                              </div>

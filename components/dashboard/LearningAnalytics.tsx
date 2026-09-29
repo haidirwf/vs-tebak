@@ -172,7 +172,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
             {/* TAB 1: Diagram Batang XP 7 Hari */}
             {viewMode === 'weekly' && (
                 <div>
-                    <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '8px', padding: '0 4px 10px', borderBottom: '1px solid #222222' }}>
+                    <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '4px', padding: '0 2px 10px', borderBottom: '1px solid #222222' }}>
                         {weeklyData.items.map((item) => {
                             const barHeightPercent = Math.max(10, Math.round((item.xp / weeklyData.maxXp) * 100))
                             return (

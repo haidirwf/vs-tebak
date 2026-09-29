@@ -914,7 +914,7 @@ export default function BattlePage() {
                                     style={{
                                         position: 'absolute',
                                         inset: 0,
-                                        borderRadius: '9999px',
+                                        borderRadius: '50%',
                                         border: '2px solid rgba(16, 185, 129, 0.5)',
                                     }}
                                 />

@@ -228,7 +228,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                                 color: '#08c380',
                                                 backgroundColor: 'rgba(8, 195, 128, 0.1)',
                                                 border: '1px solid rgba(8, 195, 128, 0.25)',
-                                                borderRadius: '9999px',
+                                                borderRadius: '6px',
                                                 padding: '2px 8px',
                                                 fontWeight: 600,
                                             }}>
@@ -250,7 +250,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                             disabled={!canRedeem || loadingId === voucher.id}
                                             style={{
                                                 border: 'none',
-                                                borderRadius: '9999px',
+                                                borderRadius: '8px',
                                                 padding: '8px 16px',
                                                 cursor: canRedeem ? 'pointer' : 'not-allowed',
                                                 fontFamily: 'var(--font-heading)',
@@ -393,7 +393,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                     style={{
                                         flex: 1,
                                         border: '1px solid var(--surface-border)',
-                                        borderRadius: '9999px',
+                                        borderRadius: '8px',
                                         backgroundColor: 'var(--surface-elevated)',
                                         color: '#ffffff',
                                         padding: '11px 16px',
@@ -416,7 +416,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                     style={{
                                         flex: 1,
                                         border: 'none',
-                                        borderRadius: '9999px',
+                                        borderRadius: '8px',
                                         backgroundColor: '#F5C542',
                                         color: '#0a0a0a',
                                         padding: '11px 16px',

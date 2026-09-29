@@ -60,7 +60,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
             <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
                 {tabs.map(t => (
                     <button key={t.key} type="button" aria-pressed={tab === t.key} onClick={() => setTab(t.key)} style={{
-                        padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
+                        padding: '7px 16px', borderRadius: '8px', cursor: 'pointer',
                         backgroundColor: tab === t.key ? '#F5C542' : 'var(--surface-elevated)',
                         border: `1px solid ${tab === t.key ? '#EAB308' : 'var(--surface-border)'}`,
                         color: tab === t.key ? '#0a0a0a' : 'var(--text-secondary)',
@@ -78,7 +78,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 <>
                     {/* Podium for Top 3 */}
                     {(tab === 'all' ? allTime : weekly).length >= 3 && (
-                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '16px', marginBottom: '28px', padding: '16px 0' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '8px', marginBottom: '28px', padding: '16px 0', width: '100%', boxSizing: 'border-box' }}>
                             {/* Rank 2 (Silver) */}
                             {(() => {
                                 const list = tab === 'all' ? allTime : weekly
@@ -86,7 +86,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 if (!u2) return null
                                 return (
                                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-                                        style={{ flex: 1, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        style={{ flex: 1, minWidth: 0, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥈</div>
                                         <div style={{
                                             width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
@@ -109,7 +109,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 if (!u1) return null
                                 return (
                                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                                        style={{ flex: 1, maxWidth: '180px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        style={{ flex: 1, minWidth: 0, maxWidth: '180px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ fontSize: '32px', marginBottom: '4px' }}>👑 🥇</div>
                                         <div style={{
                                             width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#141414',
@@ -132,7 +132,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 if (!u3) return null
                                 return (
                                     <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-                                        style={{ flex: 1, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                        style={{ flex: 1, minWidth: 0, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥉</div>
                                         <div style={{
                                             width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
@@ -231,11 +231,11 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 {MEDAL[i] ? <span style={{ fontSize: '18px' }}>{MEDAL[i]}</span> :
                                     <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, color: 'var(--text-muted)', fontSize: '14px' }}>{i + 1}</span>}
                             </div>
-                            <div style={{ flex: 1 }}>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500 }}>{school.school}</div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{school.city} · {school.members ?? 0} siswa</div>
+                            <div style={{ flex: 1, minWidth: 0, overflow: 'hidden' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{school.school}</div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{school.city} · {school.members ?? 0} siswa</div>
                             </div>
-                            <div style={{ textAlign: 'right' }}>
+                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#F5C542' }}>
                                     {(school.totalXp ?? (school as any).totalxp ?? 0).toLocaleString()} XP
                                 </div>
@@ -263,20 +263,20 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                         borderRadius: '8px', padding: '12px 18px', display: 'flex', alignItems: 'center',
                         justifyContent: 'space-between', boxShadow: '0 8px 30px rgba(245, 197, 66, 0.25)',
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0 }}>
                                 #{myIndex + 1}
                             </div>
-                            <div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700 }}>
+                            <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {me.username} (Peringkat Kamu)
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     Lv.{me.level} · {CLASS_EMOJIS[me.avatar_class]} {me.avatar_class}
                                 </div>
                             </div>
                         </div>
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)' }}>
+                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0, marginLeft: '12px' }}>
                             {tab === 'all' ? `${me.xp.toLocaleString()} XP` : `${me.streak_count} Hari 🔥`}
                         </div>
                     </div>

@@ -610,7 +610,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                             maxWidth: '120px',
                                             height: '3px',
                                             backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                            borderRadius: '9999px',
+                                            borderRadius: '4px',
                                             overflow: 'hidden',
                                         }}
                                     >
@@ -717,7 +717,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                             maxWidth: '120px',
                                             height: '3px',
                                             backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                            borderRadius: '9999px',
+                                            borderRadius: '4px',
                                             overflow: 'hidden',
                                         }}
                                     >

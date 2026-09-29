@@ -267,14 +267,7 @@ export default function CharacterPage() {
             </AnimatePresence>
 
             {/* Main 2-Column Customization Grid */}
-            <div
-                style={{
-                    display: 'grid',
-                    gridTemplateColumns: 'minmax(300px, 380px) 1fr',
-                    gap: '24px',
-                    alignItems: 'start',
-                }}
-            >
+            <div className="character-main-grid">
                 {/* LEFT COLUMN: Character Stage & Equipment Slots */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {/* Character Stage Card */}
@@ -504,17 +497,9 @@ export default function CharacterPage() {
                 </div>
 
                 {/* RIGHT COLUMN: Tabs (Inventory, Shop, Role Traits) */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', minWidth: 0, maxWidth: '100%' }}>
                     {/* Navigation Tabs */}
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-                            paddingBottom: '8px',
-                        }}
-                    >
+                    <div className="character-nav-tabs">
                         <button
                             type="button"
                             onClick={() => setActiveTab('inventory')}
@@ -648,7 +633,7 @@ export default function CharacterPage() {
                                     </button>
                                 </div>
                             ) : (
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+                                <div className="character-items-grid">
                                     {filteredInventory.map((item) => {
                                         const isEquipped = equipped[item.slot] === item.id
                                         const rarity = RARITY_CONFIG[item.rarity]
@@ -758,7 +743,7 @@ export default function CharacterPage() {
 
                     {/* TAB 2: SHOP (Beli dengan XP) */}
                     {activeTab === 'shop' && (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+                        <div className="character-items-grid">
                             {filteredShopItems.map((item) => {
                                 const isOwned = ownedIds.has(item.id)
                                 const rarity = RARITY_CONFIG[item.rarity]
