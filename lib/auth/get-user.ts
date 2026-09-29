@@ -1,6 +1,7 @@
 // lib/auth/get-user.ts — Request-deduplicated auth & profile helper using React cache()
 import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { Profile } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { measureAsync } from '@/lib/utils/timing'
@@ -12,6 +13,21 @@ import { measureAsync } from '@/lib/utils/timing'
  */
 export const getAuthenticatedUser = cache(async (): Promise<User | null> => {
     return measureAsync('auth:getUser (cached)', async () => {
+        try {
+            const cookieStore = await cookies()
+            const allCookies = cookieStore.getAll()
+            const hasAuthCookie = allCookies.some(
+                c => c.name.includes('auth-token') && c.value.length > 20
+            )
+            // Fast-path: jika tidak ada cookie auth sama sekali, user dipastikan belum login
+            // Return null dalam 0ms tanpa membuat request HTTPS ke Supabase!
+            if (!hasAuthCookie) {
+                return null
+            }
+        } catch {
+            // Ignore jika dipanggil di luar request context
+        }
+
         const supabase = await createClient()
         const { data: { user }, error } = await supabase.auth.getUser()
         if (error || !user) {

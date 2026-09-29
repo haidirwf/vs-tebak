@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
         }, { status: 429 })
     }
     const today = format(new Date(), 'yyyy-MM-dd')
-    await ensureDailyQuestsAndProgress(supabase, user.id, today)
 
     const body = await request.json() as { action?: XpAction; moduleId?: string; battleId?: string }
     const action = body.action
@@ -102,28 +101,20 @@ export async function POST(request: NextRequest) {
             return NextResponse.json({ error: 'Module not found' }, { status: 404 })
         }
 
-        // Enforce one-time XP claim by checking xp_logs marker first.
-        // This still works even if user_modules table/constraints were modified manually.
         const marker = `[module:${moduleRow.id}]`
-        const { data: existingModuleXp } = await supabase
-            .from('xp_logs')
-            .select('id')
-            .eq('user_id', user.id)
-            .ilike('reason', `%${marker}%`)
-            .limit(1)
 
-        if (existingModuleXp && existingModuleXp.length > 0) {
+        // Cek indexed user_modules untuk mencegah re-claim XP (O(1) via B-Tree index)
+        const { data: userModuleRow } = await supabase
+            .from('user_modules')
+            .select('id, status, xp_granted_at')
+            .eq('user_id', user.id)
+            .eq('module_id', moduleRow.id)
+            .maybeSingle()
+
+        if (userModuleRow && (userModuleRow.xp_granted_at || userModuleRow.status === 'completed')) {
             skipAward = true
         } else {
-            // Best-effort sync to user_modules; do not block XP flow if table was altered.
             try {
-                const { data: userModuleRow } = await supabase
-                    .from('user_modules')
-                    .select('id, xp_granted_at')
-                    .eq('user_id', user.id)
-                    .eq('module_id', moduleRow.id)
-                    .maybeSingle()
-
                 if (!userModuleRow) {
                     await supabase
                         .from('user_modules')
@@ -135,7 +126,7 @@ export async function POST(request: NextRequest) {
                             completed_at: new Date().toISOString(),
                             xp_granted_at: new Date().toISOString(),
                         })
-                } else if (!userModuleRow.xp_granted_at) {
+                } else {
                     await supabase
                         .from('user_modules')
                         .update({
@@ -147,7 +138,7 @@ export async function POST(request: NextRequest) {
                         .eq('id', userModuleRow.id)
                 }
             } catch {
-                // ignore: user_modules can be missing in some custom DB states
+                // ignore
             }
         }
 
@@ -257,35 +248,37 @@ export async function POST(request: NextRequest) {
         reason: bonusAmount > 0 ? `${reason} (+${bonusAmount} class bonus)` : reason,
     })
 
-    // --- QUEST LOGS ---
-    let questBonusAwarded = 0
-    // Update "earn_xp" quest
-    questBonusAwarded += await updateQuestProgress(supabase, user.id, 'earn_xp', totalAmount, today)
-
-    // Update "complete_module" quest if reason suggests it
+    // --- QUEST LOGS & PROFILE REFRESH (PARALEL) ---
+    const questPromises: Promise<number>[] = [
+        updateQuestProgress(supabase, user.id, 'earn_xp', totalAmount, today),
+    ]
     if (action === 'complete_module' && !skipAward) {
-        questBonusAwarded += await updateQuestProgress(supabase, user.id, 'complete_module', 1, today)
+        questPromises.push(updateQuestProgress(supabase, user.id, 'complete_module', 1, today))
     }
-
-    // Update "win_battle" quest only for battle_win
     if (action === 'battle_win') {
-        questBonusAwarded += await updateQuestProgress(supabase, user.id, 'win_battle', 1, today)
+        questPromises.push(updateQuestProgress(supabase, user.id, 'win_battle', 1, today))
     }
     if (streakStatus.isActive) {
-        questBonusAwarded += await updateQuestProgress(supabase, user.id, 'maintain_streak', streakStatus.streakCount, today)
+        questPromises.push(updateQuestProgress(supabase, user.id, 'maintain_streak', streakStatus.streakCount, today))
     }
 
-    const { data: finalProfile } = await supabase
-        .from('profiles')
-        .select('xp, level, xp_to_next_level')
-        .eq('id', user.id)
-        .single()
+    const [questBonusResults, finalProfileRes, earnedBadges] = await Promise.all([
+        Promise.all(questPromises),
+        supabase
+            .from('profiles')
+            .select('xp, level, xp_to_next_level')
+            .eq('id', user.id)
+            .single(),
+        ensureUserBadges(supabase, user.id).catch(() => []),
+    ])
+
+    const questBonusAwarded = questBonusResults.reduce((sum, v) => sum + v, 0)
+    const finalProfile = finalProfileRes.data
 
     const finalXp = finalProfile?.xp ?? newTotalXp
     const finalLevel = finalProfile?.level ?? level
     const finalXpToNext = finalProfile?.xp_to_next_level ?? xpToNext
     const leveledUpFinal = finalLevel > profile.level
-    const earnedBadges = await ensureUserBadges(supabase, user.id)
 
     return NextResponse.json({
         success: true,

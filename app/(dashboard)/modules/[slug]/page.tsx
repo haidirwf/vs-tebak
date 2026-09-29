@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
 import ModuleDetail from './ModuleDetail'
+import { getAuthenticatedUser, getAuthenticatedProfile } from '@/lib/auth/get-user'
 
 interface PageProps {
     params: Promise<{ slug: string }>
@@ -8,29 +9,40 @@ interface PageProps {
 
 export default async function ModulePage({ params }: PageProps) {
     const { slug } = await params
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) redirect('/login')
+    const user = await getAuthenticatedUser()
+    if (!user) {
+        redirect('/login')
+    }
 
-    const moduleRes = await supabase.from('modules').select('*').eq('slug', slug).single()
-    if (!moduleRes.data) notFound()
-
-    const moduleId = moduleRes.data.id
-    const [profileRes, userModuleRes, questionsRes] = await Promise.all([
-        supabase.from('profiles').select('avatar_class').eq('id', user.id).maybeSingle(),
-        supabase.from('user_modules').select('*').eq('user_id', user.id).eq('module_id', moduleId).maybeSingle(),
-        supabase.from('questions').select('*').eq('module_id', moduleId),
+    const [profile, supabase] = await Promise.all([
+        getAuthenticatedProfile(user.id),
+        createClient(),
     ])
 
-    const isCompleted = userModuleRes.data?.status === 'completed'
+    // PostgREST 1-roundtrip relational join: ambil module + questions + status user dalam 1 query!
+    const { data: moduleData, error } = await supabase
+        .from('modules')
+        .select(`
+            *,
+            questions(*),
+            user_modules(*)
+        `)
+        .eq('slug', slug)
+        .single()
+
+    if (error || !moduleData) notFound()
+
+    const { questions, user_modules: userModulesList, ...module } = moduleData
+    const userModule = (userModulesList as any[])?.[0] || null
+    const isCompleted = userModule?.status === 'completed'
 
     return (
         <ModuleDetail
-            module={moduleRes.data}
-            userModule={userModuleRes.data || null}
+            module={module}
+            userModule={userModule}
             completedFromLog={isCompleted}
-            questions={questionsRes.data || []}
-            avatarClass={profileRes.data?.avatar_class || 'warrior'}
+            questions={(questions as any[]) || []}
+            avatarClass={profile?.avatar_class || 'warrior'}
         />
     )
 }
