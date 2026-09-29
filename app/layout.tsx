@@ -1,18 +1,18 @@
 import type { Metadata } from 'next'
-import { DM_Sans, Rajdhani } from 'next/font/google'
+import { Inter, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const headingFont = Rajdhani({
+const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-rajdhani',
+  variable: '--font-inter',
   display: 'swap',
 })
 
-const bodyFont = DM_Sans({
+const jetbrainsMono = JetBrains_Mono({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-dm-sans',
+  weight: ['400', '500'],
+  variable: '--font-jetbrains-mono',
   display: 'swap',
 })
 
@@ -44,7 +44,7 @@ export default function RootLayout({
   const judgeMode = process.env.NEXT_PUBLIC_JUDGE_MODE === 'true'
   return (
     <html lang="id">
-      <body className={`${headingFont.variable} ${bodyFont.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
+      <body className={`${inter.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
     </html>
   )
 }

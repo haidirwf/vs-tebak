@@ -218,7 +218,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)', overflowX: 'hidden' }}>
+    <div className="bg-blueprint-grid" style={{ minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}>
       {/* ── Fixed Header Navbar ── */}
       <header
         style={{
@@ -227,15 +227,15 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           left: 0,
           right: 0,
           zIndex: 100,
-          height: '68px',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 28px',
-          backgroundColor: 'rgba(13, 13, 17, 0.85)',
+          backgroundColor: 'rgba(10, 10, 10, 0.85)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1px solid var(--border)',
+          borderBottom: '1px solid var(--surface-border)',
         }}
       >
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
@@ -414,6 +414,31 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         }}
       >
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '960px', margin: '0 auto' }}>
+          {/* Dovetail Eyebrow Label */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            style={{ marginBottom: '20px' }}
+          >
+            <span
+              className="section-eyebrow"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '4px 12px',
+                borderRadius: '9999px',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--surface-border)',
+                color: 'var(--color-ash)',
+              }}
+            >
+              <span style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: 'var(--color-gold)' }} />
+              GAMIFIED LEARNING PLATFORM · RPG v2.0
+            </span>
+          </motion.div>
+
           {/* Main Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 20 }}

@@ -44,10 +44,10 @@ export default function Navbar() {
             className="dashboard-navbar"
             style={{
                 height: '56px',
-                backgroundColor: 'rgba(20, 20, 20, 0.88)',
+                backgroundColor: 'rgba(10, 10, 10, 0.85)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
-                borderBottom: '1px solid var(--border)',
+                borderBottom: '1px solid var(--surface-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
@@ -55,7 +55,7 @@ export default function Navbar() {
                 position: 'sticky',
                 top: 0,
                 zIndex: 10,
-                transition: 'background-color 0.3s ease, border-color 0.3s ease',
+                transition: 'background-color 0.2s ease, border-color 0.2s ease',
             }}
         >
             {/* Ambient subtle glow line saat pindah halaman */}

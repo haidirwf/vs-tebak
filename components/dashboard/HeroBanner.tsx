@@ -63,33 +63,19 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 15 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
-            className={`card glow-${profile.avatar_class}`}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+            className="card"
             style={{
                 position: 'relative',
                 overflow: 'hidden',
                 padding: '24px',
-                border: `1px solid ${roleCfg.color}40`,
-                background: `linear-gradient(135deg, var(--bg-secondary) 0%, ${roleCfg.color}08 100%)`,
-                borderRadius: '12px',
+                border: '1px solid var(--surface-border)',
+                backgroundColor: 'var(--surface-card)',
+                borderRadius: '8px',
             }}
         >
-            {/* Background Ambient Glow Orbs */}
-            <div
-                style={{
-                    position: 'absolute',
-                    top: '-60px',
-                    right: '-40px',
-                    width: '240px',
-                    height: '240px',
-                    borderRadius: '50%',
-                    background: `radial-gradient(circle, ${roleCfg.color}25 0%, transparent 70%)`,
-                    filter: 'blur(30px)',
-                    pointerEvents: 'none',
-                }}
-            />
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', position: 'relative', zIndex: 1 }}>
                 {/* Main Profile Header */}
@@ -102,10 +88,9 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
                                 style={{
                                     width: '72px',
                                     height: '72px',
-                                    borderRadius: '12px',
-                                    backgroundColor: 'var(--bg-tertiary)',
-                                    border: `2px solid ${roleCfg.color}`,
-                                    boxShadow: `0 4px 20px ${roleCfg.color}35`,
+                                    borderRadius: '8px',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -119,16 +104,15 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
                             <div
                                 style={{
                                     position: 'absolute',
-                                    bottom: '-6px',
-                                    right: '-6px',
-                                    backgroundColor: roleCfg.color,
-                                    color: '#000000',
-                                    fontWeight: 900,
+                                    bottom: '-4px',
+                                    right: '-4px',
+                                    backgroundColor: 'var(--color-gold)',
+                                    color: '#0a0a0a',
+                                    fontWeight: 700,
                                     fontSize: '11px',
-                                    padding: '2px 7px',
-                                    borderRadius: '6px',
-                                    fontFamily: 'var(--font-heading)',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                                    padding: '2px 6px',
+                                    borderRadius: '4px',
+                                    fontFamily: 'var(--font-mono)',
                                     letterSpacing: '0.04em',
                                 }}
                             >
