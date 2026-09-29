@@ -86,8 +86,8 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                 position: 'relative',
                 overflow: 'hidden',
                 borderRadius: '17.1429px',
-                backgroundColor: '#080808',
-                border: '1px solid #292929',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--surface-border)',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
             }}
         >
@@ -123,10 +123,10 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                 <div
                     style={{
                         display: 'flex',
-                        backgroundColor: '#121212',
+                        backgroundColor: 'var(--surface-elevated)',
                         padding: '3px',
                         borderRadius: '9999px',
-                        border: '1px solid #292929',
+                        border: '1px solid var(--surface-border)',
                     }}
                 >
                     <button
@@ -200,7 +200,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                             height: `${barHeightPercent}%`,
                                             backgroundColor: item.isToday ? '#F5C542' : item.xp > 0 ? 'rgba(245, 197, 66, 0.45)' : '#181818',
                                             borderRadius: '6px 6px 2px 2px',
-                                            border: `1px solid ${item.isToday ? '#EAB308' : '#292929'}`,
+                                            border: `1px solid ${item.isToday ? '#EAB308' : 'var(--surface-border)'}`,
                                             transition: 'height 0.6s cubic-bezier(0.2, 0, 0, 1)',
                                             boxShadow: item.isToday ? '0 0 14px rgba(245, 197, 66, 0.35)' : 'none',
                                         }}

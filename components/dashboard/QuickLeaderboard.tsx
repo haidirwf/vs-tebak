@@ -18,7 +18,7 @@ const TOP_PLAYERS = [
 
 export default function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
     return (
-        <div className="card" style={{ padding: '22px', position: 'relative', overflow: 'hidden', backgroundColor: '#080808', border: '1px solid rgba(255, 255, 255, 0.1)' }}>
+        <div className="card" style={{ padding: '22px', position: 'relative', overflow: 'hidden', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <div

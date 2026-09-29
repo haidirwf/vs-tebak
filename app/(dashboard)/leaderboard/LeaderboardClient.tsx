@@ -61,8 +61,8 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 {tabs.map(t => (
                     <button key={t.key} type="button" aria-pressed={tab === t.key} onClick={() => setTab(t.key)} style={{
                         padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
-                        backgroundColor: tab === t.key ? '#F5C542' : '#121212',
-                        border: `1px solid ${tab === t.key ? '#EAB308' : '#292929'}`,
+                        backgroundColor: tab === t.key ? '#F5C542' : 'var(--surface-elevated)',
+                        border: `1px solid ${tab === t.key ? '#EAB308' : 'var(--surface-border)'}`,
                         color: tab === t.key ? '#0a0a0a' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: tab === t.key ? 600 : 400,
                         boxShadow: tab === t.key ? '0 0 16px rgba(245, 197, 66, 0.35)' : 'none',
@@ -150,7 +150,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                         </div>
                     )}
 
-                    <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: '#080808', border: '1px solid #292929', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                    <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                         {(tab === 'all' ? allTime : weekly).map((user, i) => {
                             const isMe = user.id === currentUserId
                             return (
@@ -220,7 +220,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
 
             {/* School Ranking */}
             {tab === 'school' && (
-                <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: '#080808', border: '1px solid #292929', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                     {schoolRanking.map((school, i) => (
                         <motion.div key={school.school} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                             style={{

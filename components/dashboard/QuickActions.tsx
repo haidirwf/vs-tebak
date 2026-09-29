@@ -81,8 +81,8 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                 justifyContent: 'space-between',
                                 position: 'relative',
                                 overflow: 'hidden',
-                                backgroundColor: '#080808',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                backgroundColor: 'var(--surface-card)',
+                                border: '1px solid var(--surface-border)',
                                 borderRadius: '17.1429px',
                                 cursor: 'pointer',
                             }}

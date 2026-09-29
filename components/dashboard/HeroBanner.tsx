@@ -121,8 +121,8 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                 position: 'relative',
                 overflow: 'hidden',
                 padding: '28px',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
-                backgroundColor: '#080808',
+                border: '1px solid var(--surface-border)',
+                backgroundColor: 'var(--surface-card)',
                 borderRadius: '25.7143px',
                 boxShadow: 'var(--shadow-panel)',
             }}

@@ -36,8 +36,8 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                 position: 'relative',
                 overflow: 'hidden',
                 borderRadius: '17.1429px',
-                backgroundColor: '#080808',
-                border: '1px solid #292929',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--surface-border)',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
             }}
         >
@@ -74,10 +74,10 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px',
-                        backgroundColor: '#121212',
+                        backgroundColor: 'var(--surface-elevated)',
                         padding: '4px 12px',
                         borderRadius: '9999px',
-                        border: '1px solid #292929',
+                        border: '1px solid var(--surface-border)',
                     }}
                 >
                     <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
@@ -87,7 +87,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
             </div>
 
             {xpLogs.length === 0 && modules.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: '#121212', borderRadius: '12px', border: '1px dashed #292929' }}>
+                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: 'var(--surface-elevated)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
                     Belum ada aktivitas. Mulai petualangan modul atau duel arena sekarang! 🚀
                 </div>
             ) : (

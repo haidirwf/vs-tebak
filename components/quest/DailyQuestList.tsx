@@ -39,8 +39,8 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                 position: 'relative',
                 overflow: 'hidden',
                 borderRadius: '17.1429px',
-                backgroundColor: '#080808',
-                border: '1px solid #292929',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--surface-border)',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
             }}
         >
@@ -77,10 +77,10 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                         display: 'flex',
                         alignItems: 'center',
                         gap: '6px',
-                        backgroundColor: '#121212',
+                        backgroundColor: 'var(--surface-elevated)',
                         padding: '4px 12px',
                         borderRadius: '9999px',
-                        border: '1px solid #292929',
+                        border: '1px solid var(--surface-border)',
                     }}
                 >
                     <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
@@ -90,7 +90,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             </div>
 
             {/* Progress bar */}
-            <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '9999px', marginBottom: '20px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '9999px', marginBottom: '20px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
@@ -105,7 +105,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             </div>
 
             {quests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: '#121212', borderRadius: '12px', border: '1px dashed #292929' }}>
+                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: 'var(--surface-elevated)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
                     Belum ada quest hari ini. Istirahat sejenak, Hero! ☕
                 </div>
             ) : (

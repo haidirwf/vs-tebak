@@ -78,12 +78,12 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                         style={{
                             width: '100%', paddingLeft: '44px', paddingRight: '16px',
                             paddingTop: '12px', paddingBottom: '12px',
-                            backgroundColor: '#0a0a0a', border: '1px solid #292929',
+                            backgroundColor: 'var(--surface-canvas)', border: '1px solid var(--surface-border)',
                             borderRadius: '9999px', color: 'var(--text-primary)', fontSize: '14px',
                             outline: 'none', transition: 'border-color 0.2s',
                         }}
                         onFocus={(e) => e.target.style.borderColor = '#F5C542'}
-                        onBlur={(e) => e.target.style.borderColor = '#292929'}
+                        onBlur={(e) => e.target.style.borderColor = 'var(--surface-border)'}
                     />
                 </div>
 
@@ -96,8 +96,8 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                             onClick={() => setActiveCategory(cat.value)}
                             style={{
                                 padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
-                                backgroundColor: activeCategory === cat.value ? '#F5C542' : '#121212',
-                                border: `1px solid ${activeCategory === cat.value ? '#EAB308' : '#292929'}`,
+                                backgroundColor: activeCategory === cat.value ? '#F5C542' : 'var(--surface-elevated)',
+                                border: `1px solid ${activeCategory === cat.value ? '#EAB308' : 'var(--surface-border)'}`,
                                 color: activeCategory === cat.value ? '#0a0a0a' : 'var(--text-secondary)',
                                 fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: activeCategory === cat.value ? 600 : 400,
                                 display: 'flex', alignItems: 'center', gap: '8px',
@@ -113,7 +113,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
 
             {/* Modules Grid */}
             {filtered.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: '#080808', borderRadius: '17.1429px', border: '1px dashed #292929' }}>
+                <div style={{ textAlign: 'center', padding: '80px 20px', backgroundColor: 'var(--surface-card)', borderRadius: '17.1429px', border: '1px dashed var(--surface-border)' }}>
                     <BookOpen size={48} style={{ margin: '0 auto 16px', color: 'var(--text-muted)', opacity: 0.2 }} />
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, marginBottom: '8px' }}>Tidak Ada Modul</h3>
                     <p style={{ color: 'var(--text-muted)', fontSize: '14px' }}>Coba ubah kata kunci atau pilih kategori lain.</p>
@@ -142,8 +142,8 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                         padding: '24px', cursor: 'pointer', height: '100%',
                                         position: 'relative',
                                         borderRadius: '17.1429px',
-                                        backgroundColor: '#080808',
-                                        border: `1px solid ${isCompleted ? 'rgba(8, 195, 128, 0.4)' : '#292929'}`,
+                                        backgroundColor: 'var(--surface-card)',
+                                        border: `1px solid ${isCompleted ? 'rgba(8, 195, 128, 0.4)' : 'var(--surface-border)'}`,
                                         overflow: 'hidden',
                                         transition: 'all 0.3s ease',
                                         boxShadow: '0 12px 30px rgba(0,0,0,0.5)'

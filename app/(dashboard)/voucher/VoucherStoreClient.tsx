@@ -174,7 +174,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                 </p>
             </div>
 
-            <div className="card" style={{ padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '17.1429px', backgroundColor: '#080808', border: '1px solid #292929', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+            <div className="card" style={{ padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                 <Zap size={16} style={{ color: '#F5C542' }} />
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>XP kamu saat ini:</span>
                 <strong style={{ color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600 }}>
@@ -197,7 +197,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
             )}
 
             <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
-                <div className="card" style={{ padding: '24px', borderRadius: '17.1429px', backgroundColor: '#080808', border: '1px solid #292929', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                <div className="card" style={{ padding: '24px', borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '16px', color: '#ffffff' }}>
                         Pilih Voucher
                     </h3>
@@ -272,7 +272,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                     </div>
                 </div>
 
-                <div className="card" style={{ padding: '24px', borderRadius: '17.1429px', backgroundColor: '#080808', border: '1px solid #292929', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                <div className="card" style={{ padding: '24px', borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '16px', color: '#ffffff' }}>
                         Riwayat Kode Voucher
                     </h3>

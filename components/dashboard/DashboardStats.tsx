@@ -51,7 +51,7 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
     ]
 
     return (
-        <div className="card" style={{ padding: '22px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: '#080808' }}>
+        <div className="card" style={{ padding: '22px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--surface-card)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                 <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
                     <TrendingUp size={16} style={{ color: 'var(--color-gold)' }} />

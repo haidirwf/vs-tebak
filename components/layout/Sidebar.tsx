@@ -57,13 +57,13 @@ export default function Sidebar() {
     return (
         <aside className="dashboard-sidebar" style={{
             width: '220px', flexShrink: 0,
-            backgroundColor: '#000000',
-            borderRight: '1px solid rgba(255, 255, 255, 0.08)',
+            backgroundColor: 'var(--surface-canvas)',
+            borderRight: '1px solid var(--surface-border)',
             display: 'flex', flexDirection: 'column',
             height: '100vh', position: 'sticky', top: 0,
         }}>
             {/* Logo */}
-            <div className="dashboard-logo-row" style={{ padding: '20px 16px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div className="dashboard-logo-row" style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--surface-border)' }}>
                 <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                     <div
                         style={{
@@ -167,7 +167,7 @@ export default function Sidebar() {
 
             {/* Character Preview */}
             {profile && (
-                <div className="dashboard-character-preview" style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                <div className="dashboard-character-preview" style={{ padding: '12px 16px', borderBottom: '1px solid var(--surface-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                         <div style={{
                             width: '36px', height: '36px', borderRadius: '8.57143px',
@@ -287,7 +287,7 @@ export default function Sidebar() {
             </nav>
 
             {/* Logout */}
-            <div className="dashboard-bottom-logout" style={{ padding: '12px 10px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+            <div className="dashboard-bottom-logout" style={{ padding: '12px 10px', borderTop: '1px solid var(--surface-border)' }}>
                 <motion.button
                     className="dashboard-sidebar-logout"
                     onClick={() => setShowLogoutConfirm(true)}

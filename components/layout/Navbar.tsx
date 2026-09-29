@@ -44,10 +44,10 @@ export default function Navbar() {
             className="dashboard-navbar"
             style={{
                 height: '56px',
-                backgroundColor: 'rgba(0, 0, 0, 0.88)',
+                backgroundColor: 'rgba(10, 10, 10, 0.85)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
-                borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                borderBottom: '1px solid var(--surface-border)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'space-between',
