@@ -269,34 +269,6 @@ export default function HeroBanner({ profile, modulesCompletedCount }: HeroBanne
                             }}
                         />
                     </div>
-
-                    {/* Combat Attributes (STR, INT, AGI, WIS) */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px', marginTop: '14px' }}>
-                        {[
-                            { label: 'STR', name: 'Kekuatan', value: classStat.str + Math.floor(profile.level / 3) },
-                            { label: 'INT', name: 'Intelegensi', value: classStat.int + Math.floor(profile.level / 3) },
-                            { label: 'AGI', name: 'Kelincahan', value: classStat.agi + Math.floor(profile.level / 3) },
-                            { label: 'WIS', name: 'Kebijaksanaan', value: classStat.wis + Math.floor(profile.level / 3) },
-                        ].map((stat) => (
-                            <div
-                                key={stat.label}
-                                style={{
-                                    backgroundColor: 'var(--bg-secondary)',
-                                    borderRadius: '6px',
-                                    padding: '8px 10px',
-                                    border: '1px solid var(--border)',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
-                                    {stat.label} • {stat.name}
-                                </div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 800, color: roleCfg.color, marginTop: '2px' }}>
-                                    +{stat.value}
-                                </div>
-                            </div>
-                        ))}
-                    </div>
                 </div>
             </div>
         </motion.div>

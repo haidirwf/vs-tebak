@@ -7,10 +7,9 @@ import QuickActions from '@/components/dashboard/QuickActions'
 import DailyQuestList from '@/components/quest/DailyQuestList'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import QuickLeaderboard from '@/components/dashboard/QuickLeaderboard'
-import MotivationQuote from '@/components/dashboard/MotivationQuote'
+import LearningAnalytics from '@/components/dashboard/LearningAnalytics'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
-import { isStreakActiveToday } from '@/lib/game/streak'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
@@ -108,11 +107,9 @@ export default function DashboardPage() {
         }
     }, [today, dashboardFetchedAt, setDashboardData, router])
 
-    const dateStr = format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale })
-
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
-            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress, Atribut Hero) */}
+            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress tanpa STR/INT membingungkan) */}
             {profile && (
                 <HeroBanner
                     profile={profile}
@@ -125,21 +122,30 @@ export default function DashboardPage() {
                 <QuickActions modulesCompletedCount={completedModules.length} />
             </div>
 
-            {/* 3. Grid Dua Kolom Utama (Quest Harian, Aktivitas, Leaderboard, Motivasi) */}
+            {/* 3. Diagram Analisa Pembelajaran (Grafik Bar XP 7 Hari & Penguasaan Kategori Modul) */}
+            <div>
+                <LearningAnalytics
+                    completedModules={completedModules}
+                    xpLogs={xpLogs}
+                    totalXp={profile?.xp || 0}
+                    level={profile?.level || 1}
+                />
+            </div>
+
+            {/* 4. Grid Dua Kolom Utama (Quest Harian & Aktivitas di Kiri, Top Hero Leaderboard di Kanan) */}
             <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: '20px', alignItems: 'start' }}>
-                {/* Kolom Kiri: Quest Harian & Aktivitas Terbaru */}
+                {/* Kolom Kiri: Quest Harian & Aktivitas XP Terbaru */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     <DailyQuestList quests={quests} userQuests={userQuests} />
                     <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
 
-                {/* Kolom Kanan: Top Hero Leaderboard & Motivasi Belajar Harian */}
+                {/* Kolom Kanan: Top Hero Leaderboard */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     <QuickLeaderboard
                         currentUserId={profile?.id}
                         userStreak={profile?.streak_count}
                     />
-                    <MotivationQuote />
                 </div>
             </div>
         </div>

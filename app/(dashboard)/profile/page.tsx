@@ -95,7 +95,7 @@ export default function ProfilePage() {
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
             <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                 <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
-                    <CharacterCard profile={profile} showStats={true} />
+                    <CharacterCard profile={profile} showStats={false} />
                 </motion.div>
 
                 {/* Detailed Stats */}
