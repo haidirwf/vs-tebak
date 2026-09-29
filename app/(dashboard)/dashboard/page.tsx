@@ -7,8 +7,8 @@ import DailyQuestList from '@/components/quest/DailyQuestList'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import QuickLeaderboard from '@/components/dashboard/QuickLeaderboard'
 import LearningAnalytics from '@/components/dashboard/LearningAnalytics'
+import WeeklyStreakCard from '@/components/dashboard/WeeklyStreakCard'
 import { format } from 'date-fns'
-import { id as idLocale } from 'date-fns/locale'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
@@ -134,8 +134,13 @@ export default function DashboardPage() {
                     <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
 
-                {/* Kolom Kanan: Top Hero Leaderboard */}
+                {/* Kolom Kanan: Streak Kalender Duolingo & Top Hero Leaderboard */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <WeeklyStreakCard
+                        lastActive={profile?.last_active}
+                        streakCount={profile?.streak_count}
+                        xpLogs={xpLogs}
+                    />
                     <QuickLeaderboard
                         currentUserId={profile?.id}
                         userStreak={profile?.streak_count}
