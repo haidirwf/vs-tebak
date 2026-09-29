@@ -112,7 +112,7 @@ export default function DashboardPage() {
 
     if (!mounted) {
         return (
-            <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="responsive-page" style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
                 <div
                     className="card"
                     style={{
@@ -136,7 +136,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div className="responsive-page" style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
             {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress, Kalender Streak 7 Hari) */}
             {profile ? (
                 <HeroBanner
@@ -157,7 +157,7 @@ export default function DashboardPage() {
             )}
 
             {/* 3. Diagram Analisa Pembelajaran (Grafik Bar XP 7 Hari & Penguasaan Kategori Modul) */}
-            <div>
+            <div style={{ width: '100%', minWidth: 0 }}>
                 <LearningAnalytics
                     completedModules={completedModules}
                     xpLogs={xpLogs}
@@ -167,15 +167,15 @@ export default function DashboardPage() {
             </div>
 
             {/* 4. Grid Dua Kolom Utama (Quest Harian & Aktivitas di Kiri, Top Hero Leaderboard di Kanan) */}
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: '20px', alignItems: 'start' }}>
+            <div className="two-col-grid" style={{ display: 'grid', gap: '20px', alignItems: 'start', width: '100%', minWidth: 0 }}>
                 {/* Kolom Kiri: Quest Harian & Aktivitas XP Terbaru */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
                     <DailyQuestList quests={quests} userQuests={userQuests} />
                     <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
 
                 {/* Kolom Kanan: Top Hero Leaderboard */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
                     <QuickLeaderboard
                         currentUserId={profile?.id}
                         userStreak={profile?.streak_count}

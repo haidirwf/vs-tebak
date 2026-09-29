@@ -217,13 +217,12 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             style={{
               width: '32px',
               height: '32px',
-              borderRadius: '9999px',
+              borderRadius: '8px',
               backgroundColor: 'rgba(245, 197, 66, 0.12)',
               border: '1px solid rgba(245, 197, 66, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 14px rgba(245, 197, 66, 0.3)',
             }}
           >
             <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
@@ -239,22 +238,6 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               }}
             >
               Skillungo
-            </span>
-            <span
-              style={{
-                fontSize: '9px',
-                fontFamily: 'var(--font-inter)',
-                fontWeight: 600,
-                color: 'var(--color-signal-orange)',
-                backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                padding: '1px 6px',
-                borderRadius: '9999px',
-                border: '1px solid rgba(245, 197, 66, 0.3)',
-                letterSpacing: '0.05em',
-                textTransform: 'uppercase',
-              }}
-            >
-              Studio
             </span>
           </div>
         </Link>
@@ -351,7 +334,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             style={{
               backgroundColor: 'transparent',
               border: '1px solid rgba(255, 255, 255, 0.15)',
-              borderRadius: '9999px',
+              borderRadius: '8px',
               padding: '6px',
               color: '#ffffff',
               cursor: 'pointer',
@@ -571,30 +554,24 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <span
-                style={{
-                  width: '8px',
-                  height: '8px',
-                  borderRadius: '9999px',
-                  backgroundColor: 'var(--color-vector-green)',
-                  boxShadow: '0 0 8px var(--color-vector-green)',
-                }}
-              />
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
               <span
                 style={{
                   fontFamily: 'var(--font-inter)',
                   fontSize: '12px',
                   fontWeight: 500,
                   color: '#ffffff',
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.02em',
+                  whiteSpace: 'nowrap',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
                 }}
               >
                 Algoritma & JavaScript
               </span>
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
               <span
                 style={{
                   fontSize: '12px',
@@ -603,6 +580,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   display: 'flex',
                   alignItems: 'center',
                   gap: '4px',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Active Round'}
@@ -615,8 +593,9 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   fontWeight: 600,
                   backgroundColor: 'rgba(255, 51, 68, 0.1)',
                   padding: '2px 8px',
-                  borderRadius: '9999px',
+                  borderRadius: '6px',
                   border: '1px solid rgba(255, 51, 68, 0.3)',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 00:08s
@@ -627,59 +606,69 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           {/* Versus Contestant Row */}
           <div
             style={{
-              display: 'grid',
-              gridTemplateColumns: '1fr auto 1fr',
-              gap: '16px',
+              display: 'flex',
               alignItems: 'center',
-              padding: '16px 20px',
-              borderRadius: '17.1429px',
+              justifyContent: 'space-between',
+              gap: '8px',
+              padding: '12px 14px',
+              borderRadius: '12px',
               backgroundColor: 'var(--surface-elevated)',
               border: '1px solid var(--surface-border)',
               marginBottom: '20px',
+              minWidth: 0,
+              width: '100%',
+              boxSizing: 'border-box',
             }}
           >
             {/* Player 1 (You) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
               <div
                 style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '8.57143px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
                   backgroundColor: 'rgba(245, 197, 66, 0.12)',
                   border: '1px solid rgba(245, 197, 66, 0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '20px',
+                  fontSize: '16px',
+                  flexShrink: 0,
                 }}
               >
                 ⚔️
               </div>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff' }}>Kamu (Hero)</span>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    Kamu (Hero)
+                  </span>
                   <span
                     style={{
-                      fontSize: '10px',
-                      padding: '1px 6px',
-                      borderRadius: '9999px',
+                      fontSize: '9px',
+                      padding: '1px 5px',
+                      borderRadius: '4px',
                       backgroundColor: 'var(--color-signal-orange)',
-                      color: '#ffffff',
-                      fontWeight: 600,
+                      color: '#0a0a0a',
+                      fontWeight: 700,
+                      flexShrink: 0,
                     }}
                   >
                     LV.12
                   </span>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>SMK Telkom Malang · Warrior</div>
+                <div style={{ fontSize: '10.5px', color: 'var(--color-steel)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  SMK Telkom Malang
+                </div>
                 {/* Health Bar */}
                 <div
                   style={{
-                    width: '120px',
+                    width: '100%',
+                    maxWidth: '100px',
                     height: '4px',
                     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '9999px',
-                    marginTop: '5px',
+                    borderRadius: '4px',
+                    marginTop: '4px',
                     overflow: 'hidden',
                   }}
                 >
@@ -688,50 +677,57 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               </div>
             </div>
 
-            {/* VS Pill */}
+            {/* VS Badge */}
             <div
               style={{
                 fontFamily: 'var(--font-inter)',
-                fontSize: '11px',
+                fontSize: '10px',
                 fontWeight: 700,
                 color: 'var(--color-signal-orange)',
                 backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                padding: '4px 12px',
-                borderRadius: '9999px',
+                padding: '4px 8px',
+                borderRadius: '6px',
                 border: '1px solid rgba(245, 197, 66, 0.3)',
-                letterSpacing: '0.05em',
+                letterSpacing: '0.04em',
+                flexShrink: 0,
               }}
             >
               VS
             </div>
 
             {/* Player 2 (Opponent) */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '12px', textAlign: 'right' }}>
-              <div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', minWidth: 0, flex: 1, textAlign: 'right' }}>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px' }}>
                   <span
                     style={{
-                      fontSize: '10px',
-                      padding: '1px 6px',
-                      borderRadius: '9999px',
+                      fontSize: '9px',
+                      padding: '1px 5px',
+                      borderRadius: '4px',
                       backgroundColor: 'rgba(0, 212, 255, 0.2)',
                       color: '#00d4ff',
-                      fontWeight: 600,
+                      fontWeight: 700,
+                      flexShrink: 0,
                     }}
                   >
                     LV.14
                   </span>
-                  <span style={{ fontSize: '14px', fontWeight: 500, color: '#ffffff' }}>Dina Alchemist</span>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    Dina Alchemist
+                  </span>
                 </div>
-                <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>SMAN 1 Yogyakarta · Mage</div>
+                <div style={{ fontSize: '10.5px', color: 'var(--color-steel)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  SMAN 1 Yogyakarta
+                </div>
                 {/* Health Bar */}
                 <div
                   style={{
-                    width: '120px',
+                    width: '100%',
+                    maxWidth: '100px',
                     height: '4px',
                     backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '9999px',
-                    marginTop: '5px',
+                    borderRadius: '4px',
+                    marginTop: '4px',
                     marginLeft: 'auto',
                     overflow: 'hidden',
                   }}
@@ -748,15 +744,16 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               </div>
               <div
                 style={{
-                  width: '44px',
-                  height: '44px',
-                  borderRadius: '8.57143px',
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '8px',
                   backgroundColor: 'rgba(0, 212, 255, 0.1)',
                   border: '1px solid rgba(0, 212, 255, 0.35)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  fontSize: '20px',
+                  fontSize: '16px',
+                  flexShrink: 0,
                 }}
               >
                 🔮
@@ -856,7 +853,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 animate={{ opacity: 1, y: 0 }}
                 style={{
                   padding: '10px 14px',
-                  borderRadius: '9999px',
+                  borderRadius: '8px',
                   backgroundColor: quizAnswered === 0 || quizAnswered === 2 ? 'rgba(8, 195, 128, 0.12)' : 'rgba(255, 51, 68, 0.12)',
                   border: `1px solid ${quizAnswered === 0 || quizAnswered === 2 ? 'var(--color-vector-green)' : 'var(--accent-red)'}`,
                   fontSize: '12px',
@@ -962,16 +959,16 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                         </div>
                       </div>
 
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <span
                           style={{
-                            width: '8px',
-                            height: '8px',
-                            borderRadius: '9999px',
-                            backgroundColor: isSelected ? 'var(--color-signal-orange)' : 'var(--color-graphite)',
-                            boxShadow: isSelected ? '0 0 8px var(--color-signal-orange)' : 'none',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: isSelected ? 'var(--color-signal-orange)' : 'var(--color-steel)',
                           }}
-                        />
+                        >
+                          {isSelected ? 'Aktif' : 'Pilih'}
+                        </span>
                       </div>
                     </button>
                   )
@@ -1055,7 +1052,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                           color: '#ffffff',
                           backgroundColor: 'rgba(245, 197, 66, 0.2)',
                           padding: '3px 8px',
-                          borderRadius: '9999px',
+                          borderRadius: '6px',
                           border: '1px solid rgba(245, 197, 66, 0.35)',
                         }}
                       >
@@ -1076,7 +1073,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                           style={{
                             height: '4px',
                             backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                            borderRadius: '9999px',
+                            borderRadius: '4px',
                             overflow: 'hidden',
                           }}
                         >
@@ -1224,7 +1221,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       style={{
                         width: '38px',
                         height: '38px',
-                        borderRadius: '9999px',
+                        borderRadius: '10px',
                         backgroundColor: 'rgba(255, 255, 255, 0.05)',
                         border: '1px solid rgba(255, 255, 255, 0.1)',
                         display: 'flex',
@@ -1375,14 +1372,13 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             style={{
               width: '48px',
               height: '48px',
-              borderRadius: '9999px',
+              borderRadius: '12px',
               backgroundColor: 'rgba(245, 197, 66, 0.12)',
               border: '1px solid rgba(245, 197, 66, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 20px',
-              boxShadow: 'var(--shadow-signal-orange)',
             }}
           >
             <Swords size={22} style={{ color: 'var(--color-signal-orange)' }} />
