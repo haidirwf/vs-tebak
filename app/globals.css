@@ -462,6 +462,15 @@ input::placeholder, textarea::placeholder {
   display: none;
 }
 
+@media (max-width: 767px) {
+  .desktop-only {
+    display: none !important;
+  }
+  .mobile-only-btn {
+    display: block !important;
+  }
+}
+
 .landing-nav {
   padding: 12px 16px !important;
   gap: 12px;
