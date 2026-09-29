@@ -26,12 +26,12 @@ export default function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardPro
                             width: '32px',
                             height: '32px',
                             borderRadius: '8.57143px',
-                            backgroundColor: 'rgba(255, 72, 0, 0.12)',
-                            border: '1px solid rgba(255, 72, 0, 0.35)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                            border: '1px solid rgba(245, 197, 66, 0.35)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'var(--color-signal-orange)',
+                            color: 'var(--color-gold)',
                         }}
                     >
                         <Trophy size={16} />
@@ -113,9 +113,9 @@ export default function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardPro
                                     fontFamily: 'var(--font-inter)',
                                     fontSize: '11px',
                                     fontWeight: 600,
-                                    color: 'var(--color-signal-orange)',
-                                    backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                                    border: '1px solid rgba(255, 72, 0, 0.3)',
+                                    color: 'var(--color-gold)',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                    border: '1px solid rgba(245, 197, 66, 0.3)',
                                     padding: '2px 8px',
                                     borderRadius: '9999px',
                                 }}

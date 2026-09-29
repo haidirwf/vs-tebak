@@ -6,11 +6,11 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-[#ff4800] focus-visible:ring-2 focus-visible:ring-[#ff4800]/40 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-full border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-[#F5C542] focus-visible:ring-2 focus-visible:ring-[#F5C542]/40 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-[#ff4800] text-white hover:bg-[#ff5e23] shadow-[0_0_16px_rgba(255,72,0,0.35)] active:scale-[0.98]",
+        default: "bg-[#F5C542] text-[#0a0a0a] font-semibold hover:bg-[#EAB308] shadow-[0_0_16px_rgba(245,197,66,0.35)] active:scale-[0.98]",
         outline:
           "border-[#292929] bg-transparent text-white hover:bg-[#181818] hover:border-[#444444] aria-expanded:bg-[#181818] aria-expanded:text-white",
         secondary:
@@ -19,7 +19,7 @@ const buttonVariants = cva(
           "hover:bg-[#181818] hover:text-white aria-expanded:bg-[#181818]",
         destructive:
           "bg-destructive/15 text-destructive border border-destructive/30 hover:bg-destructive/25 focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
-        link: "text-[#ff4800] underline-offset-4 hover:underline",
+        link: "text-[#F5C542] underline-offset-4 hover:underline",
       },
       size: {
         default:

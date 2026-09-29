@@ -175,9 +175,9 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
             </div>
 
             <div className="card" style={{ padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '17.1429px', backgroundColor: '#080808', border: '1px solid #292929', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
-                <Zap size={16} style={{ color: '#ff4800' }} />
+                <Zap size={16} style={{ color: '#F5C542' }} />
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>XP kamu saat ini:</span>
-                <strong style={{ color: '#ff4800', fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600 }}>
+                <strong style={{ color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600 }}>
                     {displayXp.toLocaleString()} XP
                 </strong>
             </div>
@@ -219,7 +219,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <Ticket size={15} style={{ color: '#ff4800' }} />
+                                            <Ticket size={15} style={{ color: '#F5C542' }} />
                                             <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500, color: '#ffffff' }}>{cleanVoucherName}</strong>
                                         </div>
                                         {showValueBadge && (
@@ -240,7 +240,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                         {voucher.description || 'Voucher kantin untuk penukaran makanan/minuman.'}
                                     </p>
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                        <span style={{ fontSize: '12px', color: '#ff4800', fontWeight: 600 }}>
+                                        <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
                                             Syarat: {voucher.xp_cost} XP
                                         </span>
                                         <motion.button
@@ -254,11 +254,11 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                                 padding: '8px 16px',
                                                 cursor: canRedeem ? 'pointer' : 'not-allowed',
                                                 fontFamily: 'var(--font-heading)',
-                                                fontWeight: 500,
+                                                fontWeight: 600,
                                                 fontSize: '12px',
-                                                backgroundColor: canRedeem ? '#ff4800' : '#141414',
-                                                color: canRedeem ? '#ffffff' : 'var(--text-muted)',
-                                                boxShadow: canRedeem ? '0 0 14px rgba(255, 72, 0, 0.35)' : 'none',
+                                                backgroundColor: canRedeem ? '#F5C542' : '#141414',
+                                                color: canRedeem ? '#0a0a0a' : 'var(--text-muted)',
+                                                boxShadow: canRedeem ? '0 0 14px rgba(245, 197, 66, 0.35)' : 'none',
                                                 opacity: loadingId === voucher.id ? 0.75 : 1,
                                                 transition: 'all 0.2s',
                                             }}
@@ -311,7 +311,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
                                         <strong style={{ fontSize: '13px', fontFamily: 'var(--font-heading)', fontWeight: 500, color: '#ffffff' }}>{item.voucherName}</strong>
-                                        <span style={{ fontSize: '11px', color: '#ff4800', fontWeight: 600 }}>
+                                        <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>
                                             Syarat {item.xp_spent} XP
                                         </span>
                                     </div>
@@ -373,17 +373,17 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                 Tunjukkan kode ini ke kantin untuk ditukarkan.
                             </p>
                             <div style={{
-                                border: '1px dashed #ff4800',
+                                border: '1px dashed #F5C542',
                                 borderRadius: '12px',
                                 padding: '16px',
                                 textAlign: 'center',
                                 marginBottom: '18px',
-                                backgroundColor: 'rgba(255, 72, 0, 0.06)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.08)',
                             }}>
                                 <div style={{ color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px', letterSpacing: '0.05em' }}>
                                     KODE VOUCHER
                                 </div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', letterSpacing: '2px', fontWeight: 600, color: '#ff4800' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', letterSpacing: '2px', fontWeight: 600, color: '#F5C542' }}>
                                     {redeemResult.code}
                                 </div>
                             </div>
@@ -417,14 +417,14 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                         flex: 1,
                                         border: 'none',
                                         borderRadius: '9999px',
-                                        backgroundColor: '#ff4800',
-                                        color: '#ffffff',
+                                        backgroundColor: '#F5C542',
+                                        color: '#0a0a0a',
                                         padding: '11px 16px',
                                         cursor: 'pointer',
-                                        fontWeight: 500,
+                                        fontWeight: 600,
                                         fontFamily: 'var(--font-heading)',
                                         fontSize: '13px',
-                                        boxShadow: '0 0 14px rgba(255, 72, 0, 0.35)',
+                                        boxShadow: '0 0 14px rgba(245, 197, 66, 0.35)',
                                         transition: 'all 0.2s',
                                     }}
                                 >

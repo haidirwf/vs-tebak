@@ -156,16 +156,16 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                     position: 'absolute',
                                     bottom: '-4px',
                                     right: '-4px',
-                                    backgroundColor: 'var(--color-signal-orange)',
-                                    color: '#ffffff',
+                                    backgroundColor: 'var(--color-gold)',
+                                    color: '#0a0a0a',
                                     fontWeight: 600,
                                     fontSize: '11px',
                                     padding: '2px 8px',
                                     borderRadius: '9999px',
                                     fontFamily: 'var(--font-inter)',
                                     letterSpacing: '0.04em',
-                                    boxShadow: 'var(--shadow-signal-orange)',
-                                    border: '1px solid rgba(255, 255, 255, 0.4)',
+                                    boxShadow: 'var(--shadow-gold)',
+                                    border: '1px solid rgba(245, 197, 66, 0.4)',
                                 }}
                             >
                                 LV.{profile.level}
@@ -212,7 +212,7 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                             <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px', color: 'var(--color-steel)' }}>
                                 {profile.school_name && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                        <School size={13} style={{ color: 'var(--color-signal-orange)' }} />
+                                        <School size={13} style={{ color: 'var(--color-gold)' }} />
                                         <span>{profile.school_name}</span>
                                     </div>
                                 )}
@@ -278,26 +278,26 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 backgroundColor: isLit
-                                                    ? 'rgba(255, 72, 0, 0.15)'
+                                                    ? 'rgba(245, 197, 66, 0.15)'
                                                     : isTodayPending
-                                                    ? 'rgba(255, 72, 0, 0.06)'
+                                                    ? 'rgba(245, 197, 66, 0.06)'
                                                     : 'rgba(255, 255, 255, 0.03)',
                                                 border: isLit
-                                                    ? '1px solid rgba(255, 72, 0, 0.5)'
+                                                    ? '1px solid rgba(245, 197, 66, 0.5)'
                                                     : isTodayPending
-                                                    ? '1.5px dashed var(--color-signal-orange)'
+                                                    ? '1.5px dashed var(--color-gold)'
                                                     : '1px solid rgba(255, 255, 255, 0.08)',
                                             }}
                                         >
                                             {isLit ? (
-                                                <Flame size={15} fill="var(--color-signal-orange)" style={{ color: 'var(--color-signal-orange)' }} />
+                                                <Flame size={15} fill="var(--color-gold)" style={{ color: 'var(--color-gold)' }} />
                                             ) : isTodayPending ? (
                                                 <motion.div
                                                     animate={{ opacity: [0.35, 0.9, 0.35] }}
                                                     transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                                                     style={{ display: 'flex' }}
                                                 >
-                                                    <Flame size={14} style={{ color: 'var(--color-signal-orange)' }} />
+                                                    <Flame size={14} style={{ color: 'var(--color-gold)' }} />
                                                 </motion.div>
                                             ) : day.isPast ? (
                                                 <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--color-steel)' }} />
@@ -312,7 +312,7 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                                 fontFamily: 'var(--font-inter)',
                                                 fontSize: '10px',
                                                 fontWeight: day.isToday ? 600 : 400,
-                                                color: day.isToday ? 'var(--color-signal-orange)' : day.hasActivity ? '#ffffff' : 'var(--color-steel)',
+                                                color: day.isToday ? 'var(--color-gold)' : day.hasActivity ? '#ffffff' : 'var(--color-steel)',
                                             }}
                                         >
                                             {day.dayNumber}
@@ -330,18 +330,18 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 gap: '10px',
                                 padding: '8px 16px',
                                 borderRadius: '9999px',
-                                backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                                border: '1px solid rgba(255, 72, 0, 0.35)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                border: '1px solid rgba(245, 197, 66, 0.35)',
                                 height: 'fit-content',
-                                boxShadow: '0 0 16px rgba(255, 72, 0, 0.15)',
+                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.15)',
                             }}
                         >
-                            <Sparkles size={16} style={{ color: 'var(--color-signal-orange)' }} />
+                            <Sparkles size={16} style={{ color: 'var(--color-gold)' }} />
                             <div>
                                 <div style={{ fontSize: '9px', color: 'var(--color-steel)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
                                     TOTAL XP
                                 </div>
-                                <div style={{ fontFamily: 'var(--font-inter)', fontSize: '14px', fontWeight: 600, color: 'var(--color-signal-orange)' }}>
+                                <div style={{ fontFamily: 'var(--font-inter)', fontSize: '14px', fontWeight: 600, color: 'var(--color-gold)' }}>
                                     {profile.xp.toLocaleString()} XP
                                 </div>
                             </div>
@@ -372,7 +372,7 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                             transition={{ duration: 0.9, ease: 'easeOut' }}
                             style={{
                                 height: '100%',
-                                background: `linear-gradient(90deg, ${roleCfg.color} 0%, var(--color-signal-orange) 100%)`,
+                                background: `linear-gradient(90deg, ${roleCfg.color} 0%, var(--color-gold) 100%)`,
                                 boxShadow: `0 0 12px ${roleCfg.color}60`,
                             }}
                         />

@@ -15,10 +15,10 @@ interface LearningAnalyticsProps {
 }
 
 const CATEGORY_META: Record<string, { label: string; color: string; bg: string; border: string }> = {
-    coding: { label: 'Coding', color: '#ff4800', bg: 'rgba(255, 72, 0, 0.1)', border: 'rgba(255, 72, 0, 0.25)' },
-    design: { label: 'Desain', color: '#ffd900', bg: 'rgba(255, 217, 0, 0.1)', border: 'rgba(255, 217, 0, 0.25)' },
-    productivity: { label: 'Produktivitas', color: '#08c380', bg: 'rgba(8, 195, 128, 0.1)', border: 'rgba(8, 195, 128, 0.25)' },
-    business: { label: 'Bisnis', color: '#00e5ff', bg: 'rgba(0, 229, 255, 0.1)', border: 'rgba(0, 229, 255, 0.25)' },
+    coding: { label: 'Coding', color: '#F5C542', bg: 'rgba(245, 197, 66, 0.1)', border: 'rgba(245, 197, 66, 0.25)' },
+    design: { label: 'Desain', color: '#38BDF8', bg: 'rgba(56, 189, 248, 0.1)', border: 'rgba(56, 189, 248, 0.25)' },
+    productivity: { label: 'Produktivitas', color: '#22C55E', bg: 'rgba(34, 197, 94, 0.1)', border: 'rgba(34, 197, 94, 0.25)' },
+    business: { label: 'Bisnis', color: '#A855F7', bg: 'rgba(168, 85, 247, 0.1)', border: 'rgba(168, 85, 247, 0.25)' },
 }
 
 export default function LearningAnalytics({ completedModules, xpLogs, totalXp }: LearningAnalyticsProps) {
@@ -91,7 +91,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                 boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
             }}
         >
-            {/* Header & Tabs */}
+            {/* Header */}
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     <div
@@ -99,12 +99,12 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                             width: '36px',
                             height: '36px',
                             borderRadius: '9999px',
-                            backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                            border: '1px solid rgba(255, 72, 0, 0.28)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                            border: '1px solid rgba(245, 197, 66, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#ff4800',
+                            color: '#F5C542',
                         }}
                     >
                         <BarChart3 size={18} />
@@ -140,8 +140,8 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                             borderRadius: '9999px',
                             border: 'none',
                             cursor: 'pointer',
-                            backgroundColor: viewMode === 'weekly' ? '#ff4800' : 'transparent',
-                            color: viewMode === 'weekly' ? '#ffffff' : 'var(--text-secondary)',
+                            backgroundColor: viewMode === 'weekly' ? '#F5C542' : 'transparent',
+                            color: viewMode === 'weekly' ? '#0a0a0a' : 'var(--text-secondary)',
                             transition: 'all 0.2s ease',
                         }}
                     >
@@ -158,8 +158,8 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                             borderRadius: '9999px',
                             border: 'none',
                             cursor: 'pointer',
-                            backgroundColor: viewMode === 'category' ? '#ff4800' : 'transparent',
-                            color: viewMode === 'category' ? '#ffffff' : 'var(--text-secondary)',
+                            backgroundColor: viewMode === 'category' ? '#F5C542' : 'transparent',
+                            color: viewMode === 'category' ? '#0a0a0a' : 'var(--text-secondary)',
                             transition: 'all 0.2s ease',
                         }}
                     >
@@ -188,7 +188,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                     }}
                                 >
                                     {/* Tooltip / value */}
-                                    <span style={{ fontSize: '10px', color: item.xp > 0 ? '#ff4800' : 'var(--text-muted)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+                                    <span style={{ fontSize: '10px', color: item.xp > 0 ? '#F5C542' : 'var(--text-muted)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
                                         {item.xp > 0 ? `+${item.xp}` : '0'}
                                     </span>
 
@@ -198,11 +198,11 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                             width: '100%',
                                             maxWidth: '30px',
                                             height: `${barHeightPercent}%`,
-                                            backgroundColor: item.isToday ? '#ff4800' : item.xp > 0 ? 'rgba(255, 72, 0, 0.45)' : '#181818',
+                                            backgroundColor: item.isToday ? '#F5C542' : item.xp > 0 ? 'rgba(245, 197, 66, 0.45)' : '#181818',
                                             borderRadius: '6px 6px 2px 2px',
-                                            border: `1px solid ${item.isToday ? '#ff5e23' : '#292929'}`,
+                                            border: `1px solid ${item.isToday ? '#EAB308' : '#292929'}`,
                                             transition: 'height 0.6s cubic-bezier(0.2, 0, 0, 1)',
-                                            boxShadow: item.isToday ? '0 0 14px rgba(255, 72, 0, 0.35)' : 'none',
+                                            boxShadow: item.isToday ? '0 0 14px rgba(245, 197, 66, 0.35)' : 'none',
                                         }}
                                     />
 
@@ -212,7 +212,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                             fontSize: '11px',
                                             fontFamily: 'var(--font-heading)',
                                             fontWeight: item.isToday ? 600 : 400,
-                                            color: item.isToday ? '#ff4800' : 'var(--text-secondary)',
+                                            color: item.isToday ? '#F5C542' : 'var(--text-secondary)',
                                         }}
                                     >
                                         {item.day}
@@ -224,10 +224,10 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <TrendingUp size={14} style={{ color: '#08c380' }} />
+                            <TrendingUp size={14} style={{ color: '#22C55E' }} />
                             <span>Konsistensi belajar harian tercatat otomatis</span>
                         </div>
-                        <span style={{ fontWeight: 600, color: '#ff4800', fontFamily: 'var(--font-heading)' }}>
+                        <span style={{ fontWeight: 600, color: '#F5C542', fontFamily: 'var(--font-heading)' }}>
                             Total: {totalXp.toLocaleString()} XP
                         </span>
                     </div>

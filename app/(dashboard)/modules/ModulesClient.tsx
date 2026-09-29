@@ -82,7 +82,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                             borderRadius: '9999px', color: 'var(--text-primary)', fontSize: '14px',
                             outline: 'none', transition: 'border-color 0.2s',
                         }}
-                        onFocus={(e) => e.target.style.borderColor = '#ff4800'}
+                        onFocus={(e) => e.target.style.borderColor = '#F5C542'}
                         onBlur={(e) => e.target.style.borderColor = '#292929'}
                     />
                 </div>
@@ -96,13 +96,13 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                             onClick={() => setActiveCategory(cat.value)}
                             style={{
                                 padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
-                                backgroundColor: activeCategory === cat.value ? '#ff4800' : '#121212',
-                                border: `1px solid ${activeCategory === cat.value ? '#ff5e23' : '#292929'}`,
-                                color: activeCategory === cat.value ? '#ffffff' : 'var(--text-secondary)',
+                                backgroundColor: activeCategory === cat.value ? '#F5C542' : '#121212',
+                                border: `1px solid ${activeCategory === cat.value ? '#EAB308' : '#292929'}`,
+                                color: activeCategory === cat.value ? '#0a0a0a' : 'var(--text-secondary)',
                                 fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: activeCategory === cat.value ? 600 : 400,
                                 display: 'flex', alignItems: 'center', gap: '8px',
                                 transition: 'all 0.2s ease',
-                                boxShadow: activeCategory === cat.value ? '0 0 16px rgba(255, 72, 0, 0.35)' : 'none',
+                                boxShadow: activeCategory === cat.value ? '0 0 16px rgba(245, 197, 66, 0.35)' : 'none',
                             }}
                         >
                             <span style={{ fontSize: '15px' }}>{cat.emoji}</span> {cat.label}
@@ -187,8 +187,8 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                                 )}
                                                 {!isCompleted && classHasBonusForCategory(avatarClass, module.category) && (
                                                     <div style={{
-                                                        fontSize: '10px', fontWeight: 600, color: '#ff4800',
-                                                        backgroundColor: 'rgba(255, 72, 0, 0.1)', border: '1px solid rgba(255, 72, 0, 0.25)',
+                                                        fontSize: '10px', fontWeight: 600, color: '#F5C542',
+                                                        backgroundColor: 'rgba(245, 197, 66, 0.1)', border: '1px solid rgba(245, 197, 66, 0.25)',
                                                         padding: '4px 10px', borderRadius: '9999px', fontFamily: 'var(--font-heading)',
                                                         display: 'flex', alignItems: 'center', gap: '4px'
                                                     }}>
@@ -201,72 +201,72 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                         <div className="modules-card-body" style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative', zIndex: 1 }}>
                                             {/* Title */}
                                             <h3 style={{
-                                                fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400,
-                                                lineHeight: 1.3, marginBottom: '8px', color: 'var(--text-primary)',
-                                                letterSpacing: '-0.01em'
-                                            }}>
-                                                {module.title}
-                                            </h3>
+                                                 fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400,
+                                                 lineHeight: 1.3, marginBottom: '8px', color: 'var(--text-primary)',
+                                                 letterSpacing: '-0.01em'
+                                             }}>
+                                                 {module.title}
+                                             </h3>
 
-                                            {/* Description */}
-                                            {module.description && (
-                                                <p className="modules-card-description-fill" style={{
-                                                    fontSize: '13px', color: 'var(--text-secondary)',
-                                                    marginBottom: '20px', lineHeight: 1.6,
-                                                    display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
-                                                    overflow: 'hidden'
-                                                }}>
-                                                    {module.description}
-                                                </p>
-                                            )}
+                                             {/* Description */}
+                                             {module.description && (
+                                                 <p className="modules-card-description-fill" style={{
+                                                     fontSize: '13px', color: 'var(--text-secondary)',
+                                                     marginBottom: '20px', lineHeight: 1.6,
+                                                     display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical',
+                                                     overflow: 'hidden'
+                                                 }}>
+                                                     {module.description}
+                                                 </p>
+                                             )}
 
-                                            {/* Progress Bar (if in progress) */}
-                                            {isInProgress && (
-                                                <div style={{ marginBottom: '20px' }}>
-                                                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                                                        <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>PROGRES</span>
-                                                        <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)' }}>{progress}%</span>
-                                                    </div>
-                                                    <div style={{ height: '4px', backgroundColor: '#141414', borderRadius: '9999px', overflow: 'hidden' }}>
-                                                        <motion.div
-                                                            initial={{ width: 0 }}
-                                                            animate={{ width: `${progress}%` }}
-                                                            style={{ height: '100%', borderRadius: '9999px', backgroundColor: '#ff4800' }}
-                                                        />
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
+                                             {/* Progress Bar (if in progress) */}
+                                             {isInProgress && (
+                                                 <div style={{ marginBottom: '20px' }}>
+                                                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                                                         <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>PROGRES</span>
+                                                         <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)' }}>{progress}%</span>
+                                                     </div>
+                                                     <div style={{ height: '4px', backgroundColor: '#141414', borderRadius: '9999px', overflow: 'hidden' }}>
+                                                         <motion.div
+                                                             initial={{ width: 0 }}
+                                                             animate={{ width: `${progress}%` }}
+                                                             style={{ height: '100%', borderRadius: '9999px', backgroundColor: '#F5C542' }}
+                                                         />
+                                                     </div>
+                                                 </div>
+                                             )}
+                                         </div>
 
-                                        {/* Meta Footer */}
-                                        <div className="modules-card-meta-row" style={{
-                                            display: 'flex', gap: '16px', marginTop: 'auto',
-                                            paddingTop: '16px', borderTop: '1px solid #222222',
-                                            position: 'relative', zIndex: 1
-                                        }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                                                <Clock size={14} className="text-muted" /> {module.duration_minutes}m
-                                            </div>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#ff4800', fontWeight: 600 }}>
-                                                <Zap size={14} fill="currentColor" /> {module.xp_reward} XP
-                                            </div>
+                                         {/* Meta Footer */}
+                                         <div className="modules-card-meta-row" style={{
+                                             display: 'flex', gap: '16px', marginTop: 'auto',
+                                             paddingTop: '16px', borderTop: '1px solid #222222',
+                                             position: 'relative', zIndex: 1
+                                         }}>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                                                 <Clock size={14} className="text-muted" /> {module.duration_minutes}m
+                                             </div>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
+                                                 <Zap size={14} fill="currentColor" /> {module.xp_reward} XP
+                                             </div>
 
-                                            <div style={{
-                                                fontSize: '11px', color: DIFFICULTY_COLORS[module.difficulty],
-                                                fontFamily: 'var(--font-heading)', fontWeight: 600, textTransform: 'uppercase',
-                                                marginLeft: 'auto', padding: '3px 10px', backgroundColor: `${DIFFICULTY_COLORS[module.difficulty]}10`,
-                                                borderRadius: '9999px', border: `1px solid ${DIFFICULTY_COLORS[module.difficulty]}25`
-                                            }}>
-                                                {module.difficulty}
-                                            </div>
-                                        </div>
+                                             <div style={{
+                                                 fontSize: '11px', color: DIFFICULTY_COLORS[module.difficulty],
+                                                 fontFamily: 'var(--font-heading)', fontWeight: 600, textTransform: 'uppercase',
+                                                 marginLeft: 'auto', padding: '3px 10px', backgroundColor: `${DIFFICULTY_COLORS[module.difficulty]}10`,
+                                                 borderRadius: '9999px', border: `1px solid ${DIFFICULTY_COLORS[module.difficulty]}25`
+                                             }}>
+                                                 {module.difficulty}
+                                             </div>
+                                         </div>
 
-                                        {/* Bottom Highlight Line */}
-                                        <div style={{
-                                            position: 'absolute', bottom: 0, left: 0, right: 0,
-                                            height: '2px', backgroundColor: isCompleted ? '#08c380' : '#ff4800',
-                                            opacity: isCompleted ? 1 : 0.4
-                                        }} />
+                                         {/* Bottom Highlight Line */}
+                                         <div style={{
+                                             position: 'absolute', bottom: 0, left: 0, right: 0,
+                                             height: '2px', backgroundColor: isCompleted ? '#22C55E' : '#F5C542',
+                                             opacity: isCompleted ? 1 : 0.4
+                                         }} />
                                     </div>
                                 </Link>
                             </motion.div>

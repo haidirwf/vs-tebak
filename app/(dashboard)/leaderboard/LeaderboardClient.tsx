@@ -61,11 +61,11 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 {tabs.map(t => (
                     <button key={t.key} type="button" aria-pressed={tab === t.key} onClick={() => setTab(t.key)} style={{
                         padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
-                        backgroundColor: tab === t.key ? '#ff4800' : '#121212',
-                        border: `1px solid ${tab === t.key ? '#ff5e23' : '#292929'}`,
-                        color: tab === t.key ? '#ffffff' : 'var(--text-secondary)',
+                        backgroundColor: tab === t.key ? '#F5C542' : '#121212',
+                        border: `1px solid ${tab === t.key ? '#EAB308' : '#292929'}`,
+                        color: tab === t.key ? '#0a0a0a' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: tab === t.key ? 600 : 400,
-                        boxShadow: tab === t.key ? '0 0 16px rgba(255, 72, 0, 0.35)' : 'none',
+                        boxShadow: tab === t.key ? '0 0 16px rgba(245, 197, 66, 0.35)' : 'none',
                         transition: 'all 0.2s ease',
                     }}>
                         {t.label}
@@ -96,7 +96,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                             {CLASS_EMOJIS[u2.avatar_class] || '🎮'}
                                         </div>
                                         <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u2.username}</div>
-                                        <div style={{ fontSize: '11px', color: '#ff4800', fontWeight: 600 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
+                                        <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
                                         <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(192,192,192,0.08)', border: '1px solid rgba(192,192,192,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#C0C0C0' }}>2</div>
                                     </motion.div>
                                 )
@@ -113,14 +113,14 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                         <div style={{ fontSize: '32px', marginBottom: '4px' }}>👑 🥇</div>
                                         <div style={{
                                             width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#141414',
-                                            border: '3px solid #ff4800', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px',
-                                            boxShadow: '0 0 24px rgba(255, 72, 0, 0.45)', marginBottom: '8px',
+                                            border: '3px solid #F5C542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px',
+                                            boxShadow: '0 0 24px rgba(245, 197, 66, 0.45)', marginBottom: '8px',
                                         }}>
                                             {CLASS_EMOJIS[u1.avatar_class] || '🎮'}
                                         </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, color: '#ff4800', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
-                                        <div style={{ fontSize: '12px', color: '#ffd900', fontWeight: 600 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '95px', width: '100%', backgroundColor: 'rgba(255, 72, 0, 0.12)', border: '1px solid rgba(255, 72, 0, 0.35)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 400, color: '#ff4800', boxShadow: '0 -4px 16px rgba(255, 72, 0, 0.2)' }}>1</div>
+                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, color: '#F5C542', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
+                                        <div style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
+                                        <div style={{ height: '95px', width: '100%', backgroundColor: 'rgba(245, 197, 66, 0.12)', border: '1px solid rgba(245, 197, 66, 0.35)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 400, color: '#F5C542', boxShadow: '0 -4px 16px rgba(245, 197, 66, 0.2)' }}>1</div>
                                     </motion.div>
                                 )
                             })()}
@@ -142,7 +142,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                             {CLASS_EMOJIS[u3.avatar_class] || '🎮'}
                                         </div>
                                         <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u3.username}</div>
-                                        <div style={{ fontSize: '11px', color: '#ff4800', fontWeight: 600 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
+                                        <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
                                         <div style={{ height: '55px', width: '100%', backgroundColor: 'rgba(205,127,50,0.08)', border: '1px solid rgba(205,127,50,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#CD7F32' }}>3</div>
                                     </motion.div>
                                 )
@@ -236,7 +236,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{school.city} · {school.members} siswa</div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#ff4800' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#F5C542' }}>
                                     {school.totalXp.toLocaleString()} XP
                                 </div>
                             </div>

@@ -49,12 +49,12 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                             width: '36px',
                             height: '36px',
                             borderRadius: '9999px',
-                            backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                            border: '1px solid rgba(255, 72, 0, 0.28)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                            border: '1px solid rgba(245, 197, 66, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: '#ff4800',
+                            color: '#F5C542',
                         }}
                     >
                         <History size={18} />
@@ -80,7 +80,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                         border: '1px solid #292929',
                     }}
                 >
-                    <span style={{ fontSize: '11px', color: '#ff4800', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+                    <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
                         {xpLogs.length} Log
                     </span>
                 </div>
@@ -98,7 +98,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                             initial={{ opacity: 0, y: 8 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.04 }}
-                            whileHover={{ x: 3, borderColor: '#ff4800' }}
+                            whileHover={{ x: 3, borderColor: '#F5C542' }}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -115,12 +115,12 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                                     width: '32px',
                                     height: '32px',
                                     borderRadius: '8.57143px',
-                                    backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                                    border: '1px solid rgba(255, 72, 0, 0.25)',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                    border: '1px solid rgba(245, 197, 66, 0.25)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    color: '#ff4800',
+                                    color: '#F5C542',
                                     flexShrink: 0,
                                 }}
                             >
@@ -142,9 +142,9 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                                         fontFamily: 'var(--font-heading)',
                                         fontSize: '11px',
                                         fontWeight: 600,
-                                        color: '#ff4800',
-                                        backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                                        border: '1px solid rgba(255, 72, 0, 0.25)',
+                                        color: '#F5C542',
+                                        backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                        border: '1px solid rgba(245, 197, 66, 0.25)',
                                         padding: '3px 10px',
                                         borderRadius: '9999px',
                                     }}

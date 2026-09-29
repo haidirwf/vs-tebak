@@ -17,10 +17,10 @@ const QUEST_ICONS = {
 }
 
 const QUEST_COLORS = {
-    complete_module: { color: 'var(--accent-cyan)', bg: 'rgba(0, 229, 255, 0.08)', border: 'rgba(0, 229, 255, 0.25)' },
-    win_battle: { color: 'var(--accent-red)', bg: 'rgba(255, 51, 85, 0.08)', border: 'rgba(255, 51, 85, 0.25)' },
-    maintain_streak: { color: 'var(--accent-green)', bg: 'rgba(8, 195, 128, 0.08)', border: 'rgba(8, 195, 128, 0.25)' },
-    earn_xp: { color: 'var(--brand-orange)', bg: 'rgba(255, 72, 0, 0.08)', border: 'rgba(255, 72, 0, 0.25)' },
+    complete_module: { color: 'var(--accent-cyan)', bg: 'rgba(56, 189, 248, 0.08)', border: 'rgba(56, 189, 248, 0.25)' },
+    win_battle: { color: 'var(--accent-red)', bg: 'rgba(239, 68, 68, 0.08)', border: 'rgba(239, 68, 68, 0.25)' },
+    maintain_streak: { color: 'var(--accent-green)', bg: 'rgba(34, 197, 94, 0.08)', border: 'rgba(34, 197, 94, 0.25)' },
+    earn_xp: { color: 'var(--color-gold)', bg: 'rgba(245, 197, 66, 0.08)', border: 'rgba(245, 197, 66, 0.25)' },
 }
 
 export default function DailyQuestList({ quests, userQuests }: DailyQuestListProps) {
@@ -52,8 +52,8 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                             width: '36px',
                             height: '36px',
                             borderRadius: '9999px',
-                            backgroundColor: 'rgba(8, 195, 128, 0.1)',
-                            border: '1px solid rgba(8, 195, 128, 0.28)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            border: '1px solid rgba(34, 197, 94, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -64,7 +64,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                     </div>
                     <div>
                         <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
-                            Quest Harian
+                            Misi Harian
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
                             Reset tiap tengah malam
@@ -98,8 +98,8 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                     style={{
                         height: '100%',
                         borderRadius: '9999px',
-                        background: 'linear-gradient(90deg, #ff4800 0%, #08c380 100%)',
-                        boxShadow: '0 0 12px rgba(255, 72, 0, 0.35)',
+                        background: 'linear-gradient(90deg, #F5C542 0%, #22C55E 100%)',
+                        boxShadow: '0 0 12px rgba(245, 197, 66, 0.35)',
                     }}
                 />
             </div>
@@ -123,15 +123,15 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.05 }}
-                                whileHover={{ x: 3, borderColor: isCompleted ? 'rgba(8,195,128,0.4)' : qMeta.color }}
+                                whileHover={{ x: 3, borderColor: isCompleted ? 'rgba(34,197,94,0.4)' : qMeta.color }}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '14px',
                                     padding: '12px 14px',
                                     borderRadius: '12px',
-                                    backgroundColor: isCompleted ? 'rgba(8, 195, 128, 0.04)' : '#0d0d0d',
-                                    border: `1px solid ${isCompleted ? 'rgba(8,195,128,0.25)' : '#222222'}`,
+                                    backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.04)' : '#0d0d0d',
+                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : '#222222'}`,
                                     position: 'relative',
                                     transition: 'border-color 0.2s ease, background-color 0.2s ease',
                                 }}
@@ -141,8 +141,8 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                         width: '34px',
                                         height: '34px',
                                         borderRadius: '8.57143px',
-                                        backgroundColor: isCompleted ? 'rgba(8,195,128,0.12)' : qMeta.bg,
-                                        border: `1px solid ${isCompleted ? 'rgba(8,195,128,0.3)' : qMeta.border}`,
+                                        backgroundColor: isCompleted ? 'rgba(34,197,94,0.12)' : qMeta.bg,
+                                        border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : qMeta.border}`,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -187,13 +187,13 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                 <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
                                     <span
                                         style={{
-                                            backgroundColor: isCompleted ? 'rgba(8,195,128,0.1)' : 'rgba(255, 72, 0, 0.1)',
-                                            border: `1px solid ${isCompleted ? 'rgba(8,195,128,0.25)' : 'rgba(255, 72, 0, 0.25)'}`,
+                                            backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'rgba(245, 197, 66, 0.1)',
+                                            border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'rgba(245, 197, 66, 0.25)'}`,
                                             borderRadius: '9999px',
                                             padding: '3px 10px',
                                             fontFamily: 'var(--font-heading)',
                                             fontSize: '11px',
-                                            color: isCompleted ? 'var(--accent-green)' : 'var(--brand-orange)',
+                                            color: isCompleted ? 'var(--accent-green)' : 'var(--color-gold)',
                                             fontWeight: 600,
                                         }}
                                     >
@@ -213,4 +213,5 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
         </div>
     )
 }
+
 

@@ -70,7 +70,7 @@ export default function LoginPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#000000',
-                backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(255, 72, 0, 0.08), transparent 60%)',
+                backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(245, 197, 66, 0.08), transparent 60%)',
                 padding: '24px',
             }}
         >
@@ -88,11 +88,11 @@ export default function LoginPage() {
                                 width: '36px',
                                 height: '36px',
                                 borderRadius: '9999px',
-                                background: 'linear-gradient(135deg, #ff4800, #ffd900)',
+                                background: 'linear-gradient(135deg, #F5C542, #EAB308)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 0 16px rgba(255, 72, 0, 0.4)',
+                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.4)',
                             }}
                         >
                             <Flame size={20} color="#000000" />
@@ -198,13 +198,13 @@ export default function LoginPage() {
                             style={{
                                 width: '100%',
                                 padding: '13px',
-                                backgroundColor: '#ff4800',
-                                color: '#ffffff',
+                                backgroundColor: '#F5C542',
+                                color: '#0a0a0a',
                                 border: 'none',
                                 borderRadius: '9999px',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '14px',
-                                fontWeight: 500,
+                                fontWeight: 600,
                                 letterSpacing: '0.02em',
                                 cursor: isLoading ? 'not-allowed' : 'pointer',
                                 opacity: isLoading ? 0.7 : 1,
@@ -212,7 +212,7 @@ export default function LoginPage() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '8px',
-                                boxShadow: '0 0 18px rgba(255, 72, 0, 0.4)',
+                                boxShadow: '0 0 18px rgba(245, 197, 66, 0.4)',
                                 marginTop: '6px',
                             }}
                         >
@@ -222,7 +222,7 @@ export default function LoginPage() {
 
                     <p style={{ textAlign: 'center', marginTop: '22px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                         Belum punya akun?{' '}
-                        <Link href="/register" style={{ color: '#ff4800', textDecoration: 'none', fontWeight: 500 }}>
+                        <Link href="/register" style={{ color: '#F5C542', textDecoration: 'none', fontWeight: 500 }}>
                             Daftar sekarang
                         </Link>
                     </p>

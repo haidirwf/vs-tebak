@@ -175,23 +175,23 @@ export default function Navbar() {
                 {profile && (
                     <motion.div
                         className="dashboard-navbar-xp"
-                        whileHover={{ scale: 1.05, borderColor: 'var(--color-signal-orange)' }}
+                        whileHover={{ scale: 1.05, borderColor: 'var(--color-gold)' }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 17 }}
                         style={{
-                            backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                            border: '1px solid rgba(255, 72, 0, 0.35)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                            border: '1px solid rgba(245, 197, 66, 0.35)',
                             borderRadius: '9999px',
                             padding: '4px 14px',
                             fontSize: '12px',
                             fontFamily: 'var(--font-inter)',
-                            fontWeight: 500,
-                            color: 'var(--color-signal-orange)',
+                            fontWeight: 600,
+                            color: 'var(--color-gold)',
                             display: 'flex',
                             alignItems: 'center',
                             gap: '6px',
                             cursor: 'default',
-                            boxShadow: '0 0 14px rgba(255, 72, 0, 0.15)',
+                            boxShadow: '0 0 14px rgba(245, 197, 66, 0.15)',
                         }}
                     >
                         <motion.div
@@ -199,7 +199,7 @@ export default function Navbar() {
                             transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
                             style={{ display: 'inline-flex' }}
                         >
-                            <Sparkles size={12} style={{ color: 'var(--color-signal-orange)' }} />
+                            <Sparkles size={12} style={{ color: 'var(--color-gold)' }} />
                         </motion.div>
                         <span>{profile.xp.toLocaleString()} XP</span>
                     </motion.div>

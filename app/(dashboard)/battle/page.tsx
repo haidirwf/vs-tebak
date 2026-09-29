@@ -244,7 +244,7 @@ export default function BattlePage() {
                     minHeight: 'calc(100vh - 200px)', width: '100%', gap: '24px', textAlign: 'center',
                 }}>
                     <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1.5, ease: 'linear' }}>
-                        <Loader2 size={56} style={{ color: '#ff4800' }} />
+                        <Loader2 size={56} style={{ color: '#F5C542' }} />
                     </motion.div>
                     <div>
                         <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '8px', color: '#ffffff' }}>
@@ -267,10 +267,10 @@ export default function BattlePage() {
                                 disabled={loading}
                                 style={{
                                     padding: '10px 24px', borderRadius: '9999px', cursor: loading ? 'not-allowed' : 'pointer',
-                                    backgroundColor: '#ff4800', border: 'none',
-                                    color: '#ffffff', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500,
+                                    backgroundColor: '#F5C542', border: 'none',
+                                    color: '#0a0a0a', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 600,
                                     display: 'flex', alignItems: 'center', gap: '8px',
-                                    boxShadow: '0 0 14px rgba(255, 72, 0, 0.35)',
+                                    boxShadow: '0 0 14px rgba(245, 197, 66, 0.35)',
                                 }}
                             >
                                 <Clock size={16} /> Coba Lagi
@@ -314,7 +314,7 @@ export default function BattlePage() {
                         marginBottom: '32px'
                     }}>
                         {[
-                            { key: 'create', label: 'Buat Room', icon: <Sword size={22} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: '#ff4800', accent: 'rgba(255, 72, 0, 0.1)' },
+                            { key: 'create', label: 'Buat Room', icon: <Sword size={22} />, desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.', action: () => setMode('create'), color: '#F5C542', accent: 'rgba(245, 197, 66, 0.1)' },
                             { key: 'join', label: 'Join Room', icon: <Hash size={22} />, desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.', action: () => setMode('join'), color: '#ffd900', accent: 'rgba(255, 217, 0, 0.1)' },
                             { key: 'matchmaking', label: 'Matchmaking', icon: <Shuffle size={22} />, desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.', action: handleMatchmaking, color: '#08c380', accent: 'rgba(8, 195, 128, 0.1)' },
                             { key: 'practice', label: 'Vs Computer', icon: <Zap size={22} />, desc: 'Latihan cepat melawan AI bot tanpa harus menunggu lawan online.', action: () => router.push('/battle/computer'), color: '#00e5ff', accent: 'rgba(0, 229, 255, 0.1)' },
@@ -431,8 +431,8 @@ export default function BattlePage() {
                                                     </div>
                                                     <div className="battle-room-meta" style={{ fontSize: '12px', color: 'var(--text-secondary)', display: 'flex', gap: '12px', fontWeight: 500 }}>
                                                         <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={12} /> {roomTime}</span>
-                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Zap size={12} style={{ color: '#ff4800' }} /> {catLabel}</span>
-                                                        <span style={{ backgroundColor: '#181818', padding: '2px 8px', borderRadius: '9999px', fontFamily: 'var(--font-heading)', fontWeight: 600, color: '#ff4800' }}>#{room.room_code}</span>
+                                                        <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Zap size={12} style={{ color: '#F5C542' }} /> {catLabel}</span>
+                                                        <span style={{ backgroundColor: '#181818', padding: '2px 8px', borderRadius: '9999px', fontFamily: 'var(--font-heading)', fontWeight: 600, color: '#F5C542' }}>#{room.room_code}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -445,9 +445,9 @@ export default function BattlePage() {
                                                 disabled={loading}
                                                 style={{
                                                     padding: '9px 20px', borderRadius: '9999px', cursor: loading ? 'not-allowed' : 'pointer',
-                                                    backgroundColor: '#ff4800', border: 'none',
-                                                    color: '#ffffff', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500,
-                                                    position: 'relative', zIndex: 1, boxShadow: '0 0 14px rgba(255, 72, 0, 0.35)'
+                                                    backgroundColor: '#F5C542', border: 'none',
+                                                    color: '#0a0a0a', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 600,
+                                                    position: 'relative', zIndex: 1, boxShadow: '0 0 14px rgba(245, 197, 66, 0.35)'
                                                 }}
                                             >
                                                 {loading ? '...' : 'TANTANG'}
@@ -474,12 +474,12 @@ export default function BattlePage() {
                             {CATEGORIES.map(cat => (
                                 <button key={cat.value} onClick={() => setCategory(cat.value)} style={{
                                     padding: '14px 10px', borderRadius: '12px', cursor: 'pointer',
-                                    backgroundColor: category === cat.value ? 'rgba(255, 72, 0, 0.12)' : '#121212',
-                                    border: `1px solid ${category === cat.value ? '#ff4800' : '#292929'}`,
-                                    color: category === cat.value ? '#ff4800' : 'var(--text-secondary)',
+                                    backgroundColor: category === cat.value ? 'rgba(245, 197, 66, 0.12)' : '#121212',
+                                    border: `1px solid ${category === cat.value ? '#F5C542' : '#292929'}`,
+                                    color: category === cat.value ? '#F5C542' : 'var(--text-secondary)',
                                     fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 500,
                                     display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px',
-                                    boxShadow: category === cat.value ? '0 0 12px rgba(255, 72, 0, 0.25)' : 'none',
+                                    boxShadow: category === cat.value ? '0 0 12px rgba(245, 197, 66, 0.25)' : 'none',
                                     transition: 'all 0.2s',
                                 }}>
                                     <span style={{ fontSize: '20px' }}>{cat.emoji}</span>
@@ -496,9 +496,9 @@ export default function BattlePage() {
                         }}>Batal</button>
                         <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleCreate} disabled={loading} style={{
                             flex: 1, padding: '11px', borderRadius: '9999px', cursor: loading ? 'not-allowed' : 'pointer',
-                            backgroundColor: '#ff4800', border: 'none',
-                            color: '#ffffff', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500,
-                            boxShadow: '0 0 16px rgba(255, 72, 0, 0.35)',
+                            backgroundColor: '#F5C542', border: 'none',
+                            color: '#0a0a0a', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600,
+                            boxShadow: '0 0 16px rgba(245, 197, 66, 0.35)',
                         }}>
                             {loading ? 'Membuat...' : 'BUAT ROOM'}
                         </motion.button>
@@ -524,7 +524,7 @@ export default function BattlePage() {
                             style={{
                                 width: '100%', padding: '14px 16px',
                                 backgroundColor: '#121212', border: '1px solid #292929',
-                                borderRadius: '12px', color: '#ff4800', fontSize: '22px',
+                                borderRadius: '12px', color: '#F5C542', fontSize: '22px',
                                 fontFamily: 'var(--font-heading)', fontWeight: 600, textAlign: 'center',
                                 letterSpacing: '6px', outline: 'none', boxSizing: 'border-box',
                             }}
@@ -538,9 +538,9 @@ export default function BattlePage() {
                         }}>Batal</button>
                         <motion.button whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }} onClick={handleJoin} disabled={loading} style={{
                             flex: 1, padding: '11px', borderRadius: '9999px', cursor: loading ? 'not-allowed' : 'pointer',
-                            backgroundColor: '#ff4800', border: 'none',
-                            color: '#ffffff', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500,
-                            boxShadow: '0 0 16px rgba(255, 72, 0, 0.35)',
+                            backgroundColor: '#F5C542', border: 'none',
+                            color: '#0a0a0a', fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600,
+                            boxShadow: '0 0 16px rgba(245, 197, 66, 0.35)',
                         }}>
                             {loading ? 'Bergabung...' : 'JOIN ROOM'}
                         </motion.button>

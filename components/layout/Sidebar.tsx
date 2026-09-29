@@ -70,17 +70,17 @@ export default function Sidebar() {
                             width: '28px',
                             height: '28px',
                             borderRadius: '9999px',
-                            backgroundColor: 'rgba(255, 72, 0, 0.15)',
-                            border: '1px solid rgba(255, 72, 0, 0.4)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                            border: '1px solid rgba(245, 197, 66, 0.4)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                         }}
                     >
-                        <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
+                        <Swords size={16} style={{ color: 'var(--color-gold)' }} />
                     </div>
                     <span style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 500, color: '#ffffff', letterSpacing: '-0.02em' }}>
-                        Skill<span style={{ color: 'var(--color-signal-orange)' }}>ungo</span>
+                        Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
                     </span>
                 </Link>
 
@@ -139,7 +139,7 @@ export default function Sidebar() {
                                 }}>
                                     {profile.username}
                                 </span>
-                                <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-signal-orange)', fontWeight: 500, lineHeight: 1 }}>
+                                <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 500, lineHeight: 1 }}>
                                     Lv.{profile.level}
                                 </span>
                             </span>
@@ -150,9 +150,9 @@ export default function Sidebar() {
                             style={{
                                 borderRadius: '9999px',
                                 padding: '4px 10px',
-                                border: '1px solid rgba(255, 72, 0, 0.35)',
-                                backgroundColor: 'rgba(255, 72, 0, 0.1)',
-                                color: 'var(--color-signal-orange)',
+                                border: '1px solid rgba(245, 197, 66, 0.35)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                color: 'var(--color-gold)',
                                 fontFamily: 'var(--font-inter)',
                                 fontSize: '11px',
                                 fontWeight: 500,
@@ -181,7 +181,7 @@ export default function Sidebar() {
                             <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {profile.username}
                             </div>
-                            <div style={{ fontSize: '11px', color: 'var(--color-signal-orange)' }}>
+                            <div style={{ fontSize: '11px', color: 'var(--color-gold)' }}>
                                 Level {profile.level} {profile.avatar_class.charAt(0).toUpperCase() + profile.avatar_class.slice(1)}
                             </div>
                         </div>
@@ -192,7 +192,7 @@ export default function Sidebar() {
                             initial={{ width: 0 }}
                             animate={{ width: `${xpProgress}%` }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
-                            style={{ height: '100%', backgroundColor: 'var(--color-signal-orange)', boxShadow: '0 0 8px rgba(255, 72, 0, 0.4)' }}
+                            style={{ height: '100%', backgroundColor: 'var(--color-gold)', boxShadow: '0 0 8px rgba(245, 197, 66, 0.4)' }}
                         />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>
@@ -224,12 +224,12 @@ export default function Sidebar() {
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
                                     padding: '8px 14px', borderRadius: '9999px', marginBottom: '4px',
-                                    backgroundColor: isActive ? 'rgba(255, 72, 0, 0.12)' : 'transparent',
-                                    border: `1px solid ${isActive ? 'rgba(255, 72, 0, 0.35)' : 'transparent'}`,
+                                    backgroundColor: isActive ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
+                                    border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
                                     position: 'relative',
                                     overflow: 'hidden',
                                     cursor: 'pointer',
-                                    boxShadow: isActive ? '0 0 16px rgba(255, 72, 0, 0.18)' : 'none',
+                                    boxShadow: isActive ? '0 0 16px rgba(245, 197, 66, 0.18)' : 'none',
                                 }}
                             >
                                 {/* Active indicator dot/pill */}
@@ -242,8 +242,8 @@ export default function Sidebar() {
                                             width: '4px',
                                             height: '14px',
                                             borderRadius: '9999px',
-                                            backgroundColor: 'var(--color-signal-orange)',
-                                            boxShadow: '0 0 8px var(--color-signal-orange)',
+                                            backgroundColor: 'var(--color-gold)',
+                                            boxShadow: '0 0 8px var(--color-gold)',
                                         }}
                                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                     />
@@ -257,8 +257,8 @@ export default function Sidebar() {
                                     <Icon
                                         size={15}
                                         style={{
-                                            color: isActive ? 'var(--color-signal-orange)' : 'var(--color-silver)',
-                                            filter: isActive ? 'drop-shadow(0 0 6px rgba(255, 72, 0, 0.5))' : 'none',
+                                            color: isActive ? 'var(--color-gold)' : 'var(--color-silver)',
+                                            filter: isActive ? 'drop-shadow(0 0 6px rgba(245, 197, 66, 0.5))' : 'none',
                                             flexShrink: 0,
                                         }}
                                     />
@@ -277,7 +277,7 @@ export default function Sidebar() {
                                         transition={{ duration: 0.2 }}
                                         style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}
                                     >
-                                        <ChevronRight size={13} style={{ color: 'var(--color-signal-orange)' }} />
+                                        <ChevronRight size={13} style={{ color: 'var(--color-gold)' }} />
                                     </motion.div>
                                 )}
                             </motion.div>

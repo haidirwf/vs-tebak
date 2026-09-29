@@ -137,7 +137,7 @@ export default function RegisterPage() {
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: '#000000',
-                backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(255, 72, 0, 0.08), transparent 60%)',
+                backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(245, 197, 66, 0.08), transparent 60%)',
                 padding: '32px 24px',
             }}
         >
@@ -154,11 +154,11 @@ export default function RegisterPage() {
                                 width: '34px',
                                 height: '34px',
                                 borderRadius: '9999px',
-                                background: 'linear-gradient(135deg, #ff4800, #ffd900)',
+                                background: 'linear-gradient(135deg, #F5C542, #EAB308)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 0 16px rgba(255, 72, 0, 0.4)',
+                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.4)',
                             }}
                         >
                             <Flame size={18} color="#000000" />
@@ -209,9 +209,9 @@ export default function RegisterPage() {
                                                 padding: '10px 6px',
                                                 borderRadius: '12px',
                                                 cursor: 'pointer',
-                                                backgroundColor: isSelected ? 'rgba(255, 72, 0, 0.12)' : '#121212',
-                                                border: `1px solid ${isSelected ? '#ff4800' : '#292929'}`,
-                                                boxShadow: isSelected ? '0 0 12px rgba(255, 72, 0, 0.25)' : 'none',
+                                                backgroundColor: isSelected ? 'rgba(245, 197, 66, 0.12)' : '#121212',
+                                                border: `1px solid ${isSelected ? '#F5C542' : '#292929'}`,
+                                                boxShadow: isSelected ? '0 0 12px rgba(245, 197, 66, 0.25)' : 'none',
                                                 display: 'flex',
                                                 flexDirection: 'column',
                                                 alignItems: 'center',
@@ -224,7 +224,7 @@ export default function RegisterPage() {
                                                 fontFamily: 'var(--font-heading)',
                                                 fontSize: '11px',
                                                 fontWeight: 500,
-                                                color: isSelected ? '#ff4800' : 'var(--text-secondary)',
+                                                color: isSelected ? '#F5C542' : 'var(--text-secondary)',
                                             }}>{stat.label}</span>
                                         </motion.button>
                                     )
@@ -304,13 +304,13 @@ export default function RegisterPage() {
                                 width: '100%',
                                 padding: '13px',
                                 marginTop: '10px',
-                                backgroundColor: '#ff4800',
-                                color: '#ffffff',
+                                backgroundColor: '#F5C542',
+                                color: '#0a0a0a',
                                 border: 'none',
                                 borderRadius: '9999px',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '14px',
-                                fontWeight: 500,
+                                fontWeight: 600,
                                 letterSpacing: '0.02em',
                                 cursor: isLoading ? 'not-allowed' : 'pointer',
                                 opacity: isLoading ? 0.7 : 1,
@@ -318,7 +318,7 @@ export default function RegisterPage() {
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '8px',
-                                boxShadow: '0 0 18px rgba(255, 72, 0, 0.4)',
+                                boxShadow: '0 0 18px rgba(245, 197, 66, 0.4)',
                             }}
                         >
                             {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</> : 'MULAI PETUALANGAN'}
@@ -327,7 +327,7 @@ export default function RegisterPage() {
 
                     <p style={{ textAlign: 'center', marginTop: '22px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                         Sudah punya akun?{' '}
-                        <Link href="/login" style={{ color: '#ff4800', textDecoration: 'none', fontWeight: 500 }}>
+                        <Link href="/login" style={{ color: '#F5C542', textDecoration: 'none', fontWeight: 500 }}>
                             Masuk sekarang
                         </Link>
                     </p>

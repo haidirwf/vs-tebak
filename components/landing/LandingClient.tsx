@@ -42,8 +42,8 @@ const CLASSES_DATA = [
     name: 'Warrior',
     title: 'The Code Vanguard',
     emoji: '⚔️',
-    color: '#ff3344',
-    accent: '#ff4800',
+    color: '#EF4444',
+    accent: '#EF4444',
     tagline: 'Kuat dalam logika sistem, arsitektur backend, dan problem solving kompleks.',
     stats: [
       { label: 'Logika & Backend', value: 95 },
@@ -54,15 +54,15 @@ const CLASSES_DATA = [
     perk: 'Clean Code Slash',
     perkDesc: '+25% bonus XP saat menyelesaikan modul pemrograman dan basis data.',
     suitable: 'Pelajar SMK RPL/SIJA yang menyukai backend, database SQL, dan API engineering.',
-    tileBg: '#ca4e17', // Burnt Orange
+    tileBg: '#1c1212',
   },
   {
     id: 'mage',
     name: 'Mage',
     title: 'The Design Alchemist',
     emoji: '🔮',
-    color: '#00d4ff',
-    accent: '#ff4800',
+    color: '#38BDF8',
+    accent: '#38BDF8',
     tagline: 'Penyihir estetika visual, tata letak UI/UX, dan interaksi pengguna kelas dunia.',
     stats: [
       { label: 'Estetika UI/UX', value: 98 },
@@ -73,15 +73,15 @@ const CLASSES_DATA = [
     perk: 'Pixel Perfection',
     perkDesc: '+25% bonus XP untuk materi wireframing, design system, dan prototipe.',
     suitable: 'Pelajar SMK DKV/Multimedia & UI designer yang fokus pada user experience.',
-    tileBg: '#1e1e24',
+    tileBg: '#101722',
   },
   {
     id: 'archer',
     name: 'Archer',
     title: 'The Battle Speedrunner',
     emoji: '🏹',
-    color: '#08c380',
-    accent: '#ff4800',
+    color: '#22C55E',
+    accent: '#22C55E',
     tagline: 'Reaksi kilat, unggul dalam duel kuis battle 1v1 dan arena time-attack.',
     stats: [
       { label: 'Kecepatan Respon', value: 98 },
@@ -92,15 +92,15 @@ const CLASSES_DATA = [
     perk: 'Rapid Arrow Shot',
     perkDesc: 'Double multiplier bonus combo pada mode duel kuis 1v1 real-time.',
     suitable: 'Pelajar kompetitif yang menyukai adu kecepatan kuis dan time-attack.',
-    tileBg: '#11221a',
+    tileBg: '#101c14',
   },
   {
     id: 'healer',
     name: 'Healer',
     title: 'The Productivity Sage',
     emoji: '✨',
-    color: '#ff4800',
-    accent: '#ffd900',
+    color: '#F5C542',
+    accent: '#EAB308',
     tagline: 'Fokus, konsisten, penguasa manajemen waktu dan daily streak tanpa henti.',
     stats: [
       { label: 'Konsistensi Belajar', value: 99 },
@@ -111,7 +111,7 @@ const CLASSES_DATA = [
     perk: 'Continuous Flow',
     perkDesc: 'Perlindungan streak otomatis (+1 Streak Freeze gratis tiap minggu).',
     suitable: 'Pelajar yang mengutamakan rutinitas belajar teratur dan disiplin konsisten.',
-    tileBg: '#2a1a0f',
+    tileBg: '#221b10',
   },
 ]
 
@@ -240,12 +240,12 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               width: '32px',
               height: '32px',
               borderRadius: '9999px',
-              backgroundColor: 'rgba(255, 72, 0, 0.12)',
-              border: '1px solid rgba(255, 72, 0, 0.4)',
+              backgroundColor: 'rgba(245, 197, 66, 0.12)',
+              border: '1px solid rgba(245, 197, 66, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              boxShadow: '0 0 14px rgba(255, 72, 0, 0.3)',
+              boxShadow: '0 0 14px rgba(245, 197, 66, 0.3)',
             }}
           >
             <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
@@ -268,10 +268,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 fontFamily: 'var(--font-inter)',
                 fontWeight: 600,
                 color: 'var(--color-signal-orange)',
-                backgroundColor: 'rgba(255, 72, 0, 0.12)',
+                backgroundColor: 'rgba(245, 197, 66, 0.12)',
                 padding: '1px 6px',
                 borderRadius: '9999px',
-                border: '1px solid rgba(255, 72, 0, 0.3)',
+                border: '1px solid rgba(245, 197, 66, 0.3)',
                 letterSpacing: '0.05em',
                 textTransform: 'uppercase',
               }}
@@ -903,8 +903,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   width: '44px',
                   height: '44px',
                   borderRadius: '8.57143px',
-                  backgroundColor: 'rgba(255, 72, 0, 0.12)',
-                  border: '1px solid rgba(255, 72, 0, 0.4)',
+                  backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                  border: '1px solid rgba(245, 197, 66, 0.4)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
@@ -953,10 +953,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 fontSize: '11px',
                 fontWeight: 700,
                 color: 'var(--color-signal-orange)',
-                backgroundColor: 'rgba(255, 72, 0, 0.1)',
+                backgroundColor: 'rgba(245, 197, 66, 0.1)',
                 padding: '4px 12px',
                 borderRadius: '9999px',
-                border: '1px solid rgba(255, 72, 0, 0.3)',
+                border: '1px solid rgba(245, 197, 66, 0.3)',
                 letterSpacing: '0.05em',
               }}
             >
@@ -1049,7 +1049,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 lineHeight: 1.5,
               }}
             >
-              Manakah ekspresi JavaScript yang mengembalikan nilai boolean <code style={{ color: 'var(--color-signal-orange)', backgroundColor: 'rgba(255, 72, 0, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>true</code>?
+              Manakah ekspresi JavaScript yang mengembalikan nilai boolean <code style={{ color: 'var(--color-gold)', backgroundColor: 'rgba(245, 197, 66, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>true</code>?
             </h3>
 
             {/* Answer Options Grid */}
@@ -1204,7 +1204,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                           ? '1px solid var(--color-signal-orange)'
                           : '1px solid rgba(255, 255, 255, 0.12)',
                         boxShadow: isSelected
-                          ? '0 0 16px rgba(255, 72, 0, 0.25)'
+                          ? '0 0 16px rgba(245, 197, 66, 0.25)'
                           : 'none',
                       }}
                     >
@@ -1311,10 +1311,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                         style={{
                           fontSize: '11px',
                           color: '#ffffff',
-                          backgroundColor: 'rgba(255, 72, 0, 0.2)',
+                          backgroundColor: 'rgba(245, 197, 66, 0.2)',
                           padding: '3px 8px',
                           borderRadius: '9999px',
-                          border: '1px solid rgba(255, 72, 0, 0.35)',
+                          border: '1px solid rgba(245, 197, 66, 0.35)',
                         }}
                       >
                         +25% XP Bonus
@@ -1345,7 +1345,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                             style={{
                               height: '100%',
                               backgroundColor: 'var(--color-signal-orange)',
-                              boxShadow: '0 0 8px rgba(255, 72, 0, 0.4)',
+                              boxShadow: '0 0 8px rgba(245, 197, 66, 0.4)',
                             }}
                           />
                         </div>
@@ -1634,8 +1634,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               width: '48px',
               height: '48px',
               borderRadius: '9999px',
-              backgroundColor: 'rgba(255, 72, 0, 0.12)',
-              border: '1px solid rgba(255, 72, 0, 0.4)',
+              backgroundColor: 'rgba(245, 197, 66, 0.12)',
+              border: '1px solid rgba(245, 197, 66, 0.4)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',

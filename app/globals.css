@@ -18,21 +18,21 @@
   --color-fog: #999999;               /* Supporting body copy on black */
   --color-silver: #bfbfbf;            /* Navigation text, higher-emphasis secondary copy */
   --color-white: #ffffff;             /* Headlines, button labels, prominent UI text */
-  --color-signal-orange: #ff4800;     /* Filled conversion buttons & circular submit controls */
-  --color-ember: #ff5e23;             /* Orange hover treatment, active link fill */
-  --color-burnt-orange: #ca4e17;      /* Warm product-preview card fill & campaign surface */
-  --color-electric-yellow: #ffd900;   /* Orange-button glow halo, bright decorative borders */
-  --color-vector-green: #08c380;      /* Editorial line accents & gradient rail */
-  --gradient-vector-green: linear-gradient(to right, #08c380 0%, #fd7c0f 31.73%, #ff2b2b 62.5%, #9500ff 100%);
-  --gradient-spectrum-rail: linear-gradient(to right, #08c380 0%, #fd7c0f 31.73%, #ff2b2b 62.5%, #9500ff 100%);
+  --color-signal-orange: #F5C542;     /* Reverted to original Gold brand accent */
+  --color-ember: #EAB308;             /* Gold hover treatment */
+  --color-burnt-orange: #d97706;      /* Warm amber */
+  --color-electric-yellow: #fde047;   /* Gold halo glow */
+  --color-vector-green: #22C55E;      /* Editorial line accents & gradient rail */
+  --gradient-vector-green: linear-gradient(to right, #22C55E 0%, #F5C542 50%, #38BDF8 100%);
+  --gradient-spectrum-rail: linear-gradient(to right, #F5C542 0%, #38BDF8 50%, #22C55E 100%);
 
-  /* --- CODEBASE COMPATIBILITY ALIASES (GOLD -> SIGNAL ORANGE) --- */
-  --color-gold: #ff4800;
-  --color-gold-hover: #ff5e23;
-  --accent-gold: var(--color-signal-orange);
-  --accent-gold-bg: rgba(255, 72, 0, 0.1);
-  --accent-gold-border: rgba(255, 72, 0, 0.35);
-  --color-spark: var(--color-signal-orange);
+  /* --- BRAND ACCENT TOKENS (ORIGINAL GOLD PALETTE) --- */
+  --color-gold: #F5C542;
+  --color-gold-hover: #EAB308;
+  --accent-gold: var(--color-gold);
+  --accent-gold-bg: rgba(245, 197, 66, 0.1);
+  --accent-gold-border: rgba(245, 197, 66, 0.35);
+  --color-spark: var(--color-gold);
 
   /* --- SURFACES (VOID CANVAS & TRANSLUCENT OVERLAYS) --- */
   --surface-canvas: var(--color-void);         /* Level 0: #000000 Void Canvas */
@@ -50,17 +50,17 @@
   --border: var(--surface-border);
 
   /* --- FUNCTIONAL STATUS TOKENS --- */
-  --accent-red: #ff3344;
-  --accent-red-bg: rgba(255, 51, 68, 0.1);
-  --accent-red-border: rgba(255, 51, 68, 0.28);
+  --accent-red: #EF4444;
+  --accent-red-bg: rgba(239, 68, 68, 0.1);
+  --accent-red-border: rgba(239, 68, 68, 0.28);
 
-  --accent-cyan: #00d4ff;
-  --accent-cyan-bg: rgba(0, 212, 255, 0.1);
-  --accent-cyan-border: rgba(0, 212, 255, 0.28);
+  --accent-cyan: #38BDF8;
+  --accent-cyan-bg: rgba(56, 189, 248, 0.1);
+  --accent-cyan-border: rgba(56, 189, 248, 0.28);
 
-  --accent-green: #08c380;
-  --accent-green-bg: rgba(8, 195, 128, 0.1);
-  --accent-green-border: rgba(8, 195, 128, 0.28);
+  --accent-green: #22C55E;
+  --accent-green-bg: rgba(34, 197, 94, 0.1);
+  --accent-green-border: rgba(34, 197, 94, 0.28);
 
   /* --- TYPOGRAPHY (LINEARITY SPEC) --- */
   --font-inter: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -106,9 +106,10 @@
   --radius-full: 9999px;
 
   /* --- ELEVATION & GLOW --- */
-  --focus-ring: 0 0 0 2px rgba(255, 72, 0, 0.45), 0 0 10px rgba(255, 217, 0, 0.25);
-  --shadow-signal-orange: 0 0 22px rgba(255, 72, 0, 0.42), 0 0 8px rgba(255, 217, 0, 0.28);
-  --shadow-subtle: rgba(255, 94, 35, 0.4) 0px 0px 0px 1px inset;
+  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.45), 0 0 10px rgba(245, 197, 66, 0.25);
+  --shadow-signal-orange: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
+  --shadow-gold: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
+  --shadow-subtle: rgba(245, 197, 66, 0.3) 0px 0px 0px 1px inset;
   --shadow-panel: 0 1.71429px 1.71429px rgba(0, 0, 0, 0.2), inset 0 0 9.42857px rgba(255, 255, 255, 0.12);
   --shadow-card: none;
   --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
@@ -222,9 +223,9 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   background: var(--color-graphite);
 }
 
-/* Selection with Linearity Signal Orange */
+/* Selection with Linearity Gold Accent */
 ::selection {
-  background-color: rgba(255, 72, 0, 0.35);
+  background-color: rgba(245, 197, 66, 0.35);
   color: #ffffff;
 }
 
@@ -264,11 +265,11 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: var(--color-signal-orange);
+  color: var(--color-gold);
   line-height: 1.4;
 }
 
-/* Linearity Signal Orange Conversion Button (9999px pill + Electric Yellow glow) */
+/* Linearity Gold Conversion Button (9999px pill + Gold glow) */
 .btn-signal-orange,
 .btn-primary,
 .btn-gold {
@@ -276,15 +277,15 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: var(--color-signal-orange);
-  color: #ffffff !important;
+  background-color: var(--color-gold);
+  color: #0a0a0a !important;
   font-family: var(--font-inter);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   border-radius: var(--radius-buttons);
   padding: 10px 22px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  box-shadow: var(--shadow-signal-orange);
+  border: 1px solid rgba(245, 197, 66, 0.4);
+  box-shadow: var(--shadow-gold);
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
@@ -293,9 +294,10 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 .btn-signal-orange:hover,
 .btn-primary:hover,
 .btn-gold:hover {
-  background-color: var(--color-ember);
+  background-color: var(--color-gold-hover);
+  color: #0a0a0a !important;
   transform: translateY(-1px);
-  box-shadow: 0 0 28px rgba(255, 72, 0, 0.55), 0 0 12px rgba(255, 217, 0, 0.4);
+  box-shadow: 0 0 28px rgba(245, 197, 66, 0.55), 0 0 12px rgba(234, 179, 8, 0.4);
 }
 
 /* Linearity Dark Outline Pill Button (9999px pill + 5% white fill) */
@@ -363,27 +365,27 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
-/* Prompt Submit Orb (Circular Signal Orange #ff4800, 9999px radius) */
+/* Prompt Submit Orb (Circular Gold #F5C542, 9999px radius) */
 .prompt-submit-orb {
   width: 38px;
   height: 38px;
   border-radius: 9999px;
-  background-color: var(--color-signal-orange);
-  color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: var(--color-gold);
+  color: #0a0a0a;
+  border: 1px solid rgba(245, 197, 66, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: var(--shadow-signal-orange);
+  box-shadow: var(--shadow-gold);
   transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
   flex-shrink: 0;
 }
 
 .prompt-submit-orb:hover {
-  background-color: var(--color-ember);
+  background-color: var(--color-gold-hover);
   transform: scale(1.05);
-  box-shadow: 0 0 26px rgba(255, 72, 0, 0.6), 0 0 10px rgba(255, 217, 0, 0.4);
+  box-shadow: 0 0 26px rgba(245, 197, 66, 0.6), 0 0 10px rgba(234, 179, 8, 0.4);
 }
 
 /* Linearity Product Demonstration Panel (25.7143px radius, frosted translucency) */
@@ -506,17 +508,17 @@ input::placeholder, textarea::placeholder {
 .ticket-card::after { right: -8px; border-left: 1px dashed var(--surface-border); }
 
 /* RPG Tonal Borders (Replaces muddy glow shadows) */
-.glow-warrior { border-color: rgba(255, 51, 68, 0.45) !important; background-color: rgba(255, 51, 68, 0.05); }
-.glow-mage { border-color: rgba(0, 212, 255, 0.45) !important; background-color: rgba(0, 212, 255, 0.05); }
-.glow-archer { border-color: rgba(8, 195, 128, 0.45) !important; background-color: rgba(8, 195, 128, 0.05); }
-.glow-healer { border-color: rgba(255, 72, 0, 0.45) !important; background-color: rgba(255, 72, 0, 0.05); }
+.glow-warrior { border-color: rgba(239, 68, 68, 0.45) !important; background-color: rgba(239, 68, 68, 0.05); }
+.glow-mage { border-color: rgba(56, 189, 248, 0.45) !important; background-color: rgba(56, 189, 248, 0.05); }
+.glow-archer { border-color: rgba(34, 197, 94, 0.45) !important; background-color: rgba(34, 197, 94, 0.05); }
+.glow-healer { border-color: rgba(245, 197, 66, 0.45) !important; background-color: rgba(245, 197, 66, 0.05); }
 
 /* Typography Utility Classes */
 .font-heading { font-family: var(--font-heading); }
 .font-body { font-family: var(--font-body); }
 .font-mono { font-family: var(--font-mono); }
 
-.text-gold, .text-orange { color: var(--color-signal-orange); }
+.text-gold, .text-orange { color: var(--color-gold); }
 .text-red { color: var(--accent-red); }
 .text-cyan { color: var(--accent-cyan); }
 .text-green { color: var(--accent-green); }
@@ -1101,33 +1103,33 @@ input::placeholder, textarea::placeholder {
   --color-fog: #999999;
   --color-silver: #bfbfbf;
   --color-white: #ffffff;
-  --color-signal-orange: #ff4800;
-  --color-ember: #ff5e23;
-  --color-burnt-orange: #ca4e17;
-  --color-electric-yellow: #ffd900;
-  --color-vector-green: #08c380;
+  --color-signal-orange: #F5C542;
+  --color-ember: #EAB308;
+  --color-burnt-orange: #d97706;
+  --color-electric-yellow: #fde047;
+  --color-vector-green: #22C55E;
 
-  --color-gold: #ff4800;
-  --color-soft-indigo: #ff4800;
+  --color-gold: #F5C542;
+  --color-soft-indigo: #F5C542;
   --color-background: #000000;
   --color-foreground: #ffffff;
   --color-card: #080808;
   --color-card-foreground: #ffffff;
   --color-popover: #0c0c0c;
   --color-popover-foreground: #ffffff;
-  --color-primary: #ff4800;
-  --color-primary-foreground: #ffffff;
+  --color-primary: #F5C542;
+  --color-primary-foreground: #0a0a0a;
   --color-secondary: #161616;
   --color-secondary-foreground: #ffffff;
   --color-muted: #161616;
   --color-muted-foreground: #808080;
-  --color-accent: #ff4800;
-  --color-accent-foreground: #ffffff;
-  --color-destructive: #ff3344;
+  --color-accent: #F5C542;
+  --color-accent-foreground: #0a0a0a;
+  --color-destructive: #EF4444;
   --color-destructive-foreground: #ffffff;
   --color-border: rgba(255, 255, 255, 0.12);
   --color-input: #161616;
-  --color-ring: #ff4800;
+  --color-ring: #F5C542;
 
   --font-inter: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-acidgrotesk: 'Space Grotesk', 'AcidGrotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
