@@ -1,35 +1,46 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Flame, Sparkles } from 'lucide-react'
+import {
+    Flame,
+    Sparkles,
+    LayoutDashboard,
+    BookOpen,
+    Swords,
+    Ticket,
+    Trophy,
+    User,
+} from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
 import { isStreakActiveToday } from '@/lib/game/streak'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 
-const PAGE_TITLES: Record<string, string> = {
-    '/dashboard': 'Dashboard',
-    '/modules': 'Modul Belajar',
-    '/battle': 'Battle Arena',
-    '/voucher': 'Toko Voucher',
-    '/leaderboard': 'Leaderboard',
-    '/profile': 'Profil',
+const PAGE_CONFIG: Record<string, { title: string; icon: any; color: string }> = {
+    '/dashboard': { title: 'Dashboard', icon: LayoutDashboard, color: 'var(--accent-gold)' },
+    '/modules': { title: 'Modul Belajar', icon: BookOpen, color: 'var(--accent-cyan)' },
+    '/battle': { title: 'Battle Arena', icon: Swords, color: 'var(--accent-red)' },
+    '/voucher': { title: 'Toko Voucher', icon: Ticket, color: 'var(--accent-gold)' },
+    '/leaderboard': { title: 'Leaderboard', icon: Trophy, color: 'var(--accent-green)' },
+    '/profile': { title: 'Profil', icon: User, color: 'var(--accent-cyan)' },
 }
 
 export default function Navbar() {
     const pathname = usePathname()
     const { profile } = useUserStore()
 
-    const title = Object.entries(PAGE_TITLES).find(([key]) =>
+    const activeConfig = Object.entries(PAGE_CONFIG).find(([key]) =>
         key === pathname || pathname.startsWith(key + '/')
-    )?.[1] || 'Skillungo'
+    )?.[1] || { title: 'Skillungo', icon: LayoutDashboard, color: 'var(--accent-gold)' }
+
+    const Icon = activeConfig.icon
 
     return (
         <motion.header
             key={pathname}
-            initial={{ opacity: 0.8, y: -4 }}
+            initial={{ opacity: 0.85, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
+            transition={{ duration: 0.32, ease: 'easeOut' }}
             className="dashboard-navbar"
             style={{
                 height: '56px',
@@ -49,42 +60,52 @@ export default function Navbar() {
         >
             {/* Ambient subtle glow line saat pindah halaman */}
             <motion.div
-                initial={{ scaleX: 0, opacity: 0.8 }}
-                animate={{ scaleX: 1, opacity: [0.8, 1, 0] }}
-                transition={{ duration: 0.7, ease: 'easeInOut' }}
+                initial={{ scaleX: 0, opacity: 1 }}
+                animate={{ scaleX: 1, opacity: [1, 0.8, 0] }}
+                transition={{ duration: 0.8, ease: 'easeInOut' }}
                 style={{
                     position: 'absolute',
                     bottom: -1,
                     left: 0,
                     right: 0,
                     height: '2px',
-                    background: 'linear-gradient(90deg, transparent 0%, var(--accent-gold) 35%, var(--accent-cyan) 65%, transparent 100%)',
+                    background: `linear-gradient(90deg, transparent 0%, ${activeConfig.color} 40%, var(--accent-gold) 70%, transparent 100%)`,
                     transformOrigin: 'left',
                     pointerEvents: 'none',
                 }}
             />
 
-            {/* Animasi Title saat rute berpindah */}
-            <div style={{ position: 'relative', overflow: 'hidden', height: '28px', display: 'flex', alignItems: 'center' }}>
+            {/* Animasi Title & Icon saat rute berpindah */}
+            <div style={{ position: 'relative', overflow: 'hidden', height: '32px', display: 'flex', alignItems: 'center' }}>
                 <AnimatePresence mode="wait">
                     <motion.div
-                        key={title}
-                        initial={{ opacity: 0, x: -12, filter: 'blur(4px)' }}
-                        animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
-                        exit={{ opacity: 0, x: 12, filter: 'blur(4px)' }}
-                        transition={{ duration: 0.28, ease: [0.2, 0, 0, 1] }}
-                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                        key={pathname}
+                        initial={{ opacity: 0, x: -16, filter: 'blur(6px)', scale: 0.96 }}
+                        animate={{ opacity: 1, x: 0, filter: 'blur(0px)', scale: 1 }}
+                        exit={{ opacity: 0, x: 16, filter: 'blur(6px)', scale: 0.96 }}
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
                     >
-                        <span
+                        <motion.div
+                            initial={{ rotate: -15, scale: 0.8 }}
+                            animate={{ rotate: 0, scale: 1 }}
+                            transition={{ duration: 0.35, ease: 'easeOut' }}
                             style={{
-                                width: '6px',
-                                height: '6px',
-                                borderRadius: '50%',
-                                backgroundColor: 'var(--accent-gold)',
-                                boxShadow: '0 0 8px var(--accent-gold)',
-                                display: 'inline-block',
+                                width: '28px',
+                                height: '28px',
+                                borderRadius: '6px',
+                                backgroundColor: `${activeConfig.color}15`,
+                                border: `1px solid ${activeConfig.color}35`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: activeConfig.color,
+                                boxShadow: `0 0 12px ${activeConfig.color}25`,
                             }}
-                        />
+                        >
+                            <Icon size={16} />
+                        </motion.div>
+
                         <h2
                             className="dashboard-navbar-title"
                             style={{
@@ -94,9 +115,12 @@ export default function Navbar() {
                                 color: 'var(--text-primary)',
                                 margin: 0,
                                 letterSpacing: '0.02em',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '8px',
                             }}
                         >
-                            {title}
+                            {activeConfig.title}
                         </h2>
                     </motion.div>
                 </AnimatePresence>

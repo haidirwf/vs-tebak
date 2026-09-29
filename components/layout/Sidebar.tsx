@@ -193,34 +193,82 @@ export default function Sidebar() {
             <nav className="dashboard-sidebar-nav" style={{ flex: 1, padding: '8px 8px', overflow: 'auto' }}>
                 {navItems.map((item) => {
                     const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                    const Icon = item.icon
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
                             prefetch={true}
                             className={item.href === '/profile' ? 'dashboard-profile-nav-link' : undefined}
-                            style={{ textDecoration: 'none' }}
+                            style={{ textDecoration: 'none', position: 'relative', display: 'block' }}
                         >
                             <motion.div
                                 className="dashboard-sidebar-item"
-                                whileHover={{ x: 2 }}
+                                whileHover={{ x: 4, scale: 1.01 }}
+                                whileTap={{ scale: 0.96 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                                 data-tour={`nav-${item.tour}`}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
-                                    padding: '10px 10px', borderRadius: '4px', marginBottom: '2px',
+                                    padding: '10px 12px', borderRadius: '6px', marginBottom: '4px',
                                     backgroundColor: isActive ? 'var(--accent-gold-bg)' : 'transparent',
                                     border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
+                                    position: 'relative',
+                                    overflow: 'hidden',
                                     cursor: 'pointer',
+                                    boxShadow: isActive ? '0 0 16px rgba(245, 197, 66, 0.12)' : 'none',
                                 }}
                             >
-                                <item.icon size={16} style={{ color: isActive ? 'var(--accent-gold)' : 'var(--text-secondary)', flexShrink: 0 }} />
+                                {/* Active indicator bar */}
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="sidebarActiveBar"
+                                        style={{
+                                            position: 'absolute',
+                                            left: 0,
+                                            top: '15%',
+                                            bottom: '15%',
+                                            width: '3px',
+                                            borderRadius: '0 4px 4px 0',
+                                            backgroundColor: 'var(--accent-gold)',
+                                            boxShadow: '0 0 10px var(--accent-gold)',
+                                        }}
+                                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                    />
+                                )}
+
+                                <motion.div
+                                    animate={isActive ? { scale: [1, 1.15, 1] } : { scale: 1 }}
+                                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                >
+                                    <Icon
+                                        size={16}
+                                        style={{
+                                            color: isActive ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                                            filter: isActive ? 'drop-shadow(0 0 6px rgba(245, 197, 66, 0.4))' : 'none',
+                                            flexShrink: 0,
+                                        }}
+                                    />
+                                </motion.div>
+
                                 <span style={{
-                                    fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600,
+                                    fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: isActive ? 700 : 600,
                                     color: isActive ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                                    letterSpacing: '0.01em',
                                 }}>
                                     {item.label}
                                 </span>
-                                {isActive && <ChevronRight size={12} style={{ color: 'var(--accent-gold)', marginLeft: 'auto' }} />}
+                                {isActive && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -4 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        <ChevronRight size={14} style={{ color: 'var(--accent-gold)' }} />
+                                    </motion.div>
+                                )}
                             </motion.div>
                         </Link>
                     )
