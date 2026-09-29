@@ -97,7 +97,7 @@ export default function RegisterPage() {
             }
         }
 
-        router.push('/dashboard')
+        window.location.href = '/dashboard'
     }
 
     const inputStyle = (hasError?: boolean) => ({
