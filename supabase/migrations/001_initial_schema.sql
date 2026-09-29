@@ -1,5 +1,5 @@
--- SkillQuest Database Schema
--- FICPACT CUP 2026 — Jalankan di Supabase SQL Editor
+-- Skillungo Database Schema
+-- Jalankan di Supabase SQL Editor
 
 -- 1. Profiles (extend auth.users)
 CREATE TABLE IF NOT EXISTS profiles (

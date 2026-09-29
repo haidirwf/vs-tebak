@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { UserDailyQuest, DailyQuest } from '@/types'
-import { CheckCircle, Book, Swords, Flame as StreakIcon, Zap } from 'lucide-react'
+import { CheckCircle, Book, Swords, Flame as StreakIcon, Zap, Target } from 'lucide-react'
 
 interface DailyQuestListProps {
     quests: DailyQuest[]
@@ -10,17 +10,17 @@ interface DailyQuestListProps {
 }
 
 const QUEST_ICONS = {
-    complete_module: <Book size={16} />,
-    win_battle: <Swords size={16} />,
-    maintain_streak: <StreakIcon size={16} />,
-    earn_xp: <Zap size={16} />,
+    complete_module: <Book size={15} />,
+    win_battle: <Swords size={15} />,
+    maintain_streak: <StreakIcon size={15} />,
+    earn_xp: <Zap size={15} />,
 }
 
 const QUEST_COLORS = {
-    complete_module: 'var(--accent-cyan)',
-    win_battle: 'var(--accent-red)',
-    maintain_streak: 'var(--accent-green)',
-    earn_xp: 'var(--accent-gold)',
+    complete_module: { color: 'var(--accent-cyan)', bg: 'rgba(56, 189, 248, 0.08)', border: 'rgba(56, 189, 248, 0.25)' },
+    win_battle: { color: 'var(--accent-red)', bg: 'rgba(239, 68, 68, 0.08)', border: 'rgba(239, 68, 68, 0.25)' },
+    maintain_streak: { color: 'var(--accent-green)', bg: 'rgba(34, 197, 94, 0.08)', border: 'rgba(34, 197, 94, 0.25)' },
+    earn_xp: { color: 'var(--color-gold)', bg: 'rgba(245, 197, 66, 0.08)', border: 'rgba(245, 197, 66, 0.25)' },
 }
 
 export default function DailyQuestList({ quests, userQuests }: DailyQuestListProps) {
@@ -29,117 +29,180 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
     }
 
     const completedCount = quests.filter(q => getProgress(q.id)?.is_completed).length
+    const progressPercent = quests.length > 0 ? Math.round((completedCount / quests.length) * 100) : 0
 
     return (
-        <div className="card" style={{ padding: '24px', position: 'relative', overflow: 'hidden' }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800 }}>
-                        QUEST MINGGUAN
-                    </h3>
+        <div
+            className="card"
+            style={{
+                padding: '24px',
+                position: 'relative',
+                overflow: 'hidden',
+                borderRadius: '17.1429px',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--surface-border)',
+                boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+            }}
+        >
+            {/* Header */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div
+                        style={{
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '9999px',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            border: '1px solid rgba(34, 197, 94, 0.28)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'var(--accent-green)',
+                        }}
+                    >
+                        <Target size={18} />
+                    </div>
+                    <div>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
+                            Misi Harian
+                        </h3>
+                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
+                            Reset tiap tengah malam
+                        </span>
+                    </div>
                 </div>
-                <span style={{ fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
-                    {completedCount}/{quests.length} SELESAI
-                </span>
+
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        backgroundColor: 'var(--surface-elevated)',
+                        padding: '4px 12px',
+                        borderRadius: '9999px',
+                        border: '1px solid var(--surface-border)',
+                    }}
+                >
+                    <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+                        {completedCount} / {quests.length} Selesai
+                    </span>
+                </div>
             </div>
 
             {/* Progress bar */}
-            <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', marginBottom: '24px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '9999px', marginBottom: '20px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
                 <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: quests.length ? `${(completedCount / quests.length) * 100}%` : '0%' }}
+                    animate={{ width: `${progressPercent}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     style={{
                         height: '100%',
-                        backgroundColor: 'var(--accent-green)',
-                        boxShadow: '0 0 10px rgba(34, 197, 94, 0.3)'
+                        borderRadius: '9999px',
+                        background: 'linear-gradient(90deg, #F5C542 0%, #22C55E 100%)',
+                        boxShadow: '0 0 12px rgba(245, 197, 66, 0.35)',
                     }}
                 />
             </div>
 
             {quests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-muted)', fontSize: '14px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px dashed var(--border)' }}>
-                    Belum ada quest hari ini. <br />Istirahat sejenak, Hero!
+                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: 'var(--surface-elevated)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
+                    Belum ada quest hari ini. Istirahat sejenak, Hero! ☕
                 </div>
             ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                     {quests.map((quest, i) => {
                         const progress = getProgress(quest.id)
                         const isCompleted = progress?.is_completed ?? false
                         const currentVal = progress?.current_value ?? 0
-                        const color = QUEST_COLORS[quest.quest_type as keyof typeof QUEST_COLORS] || 'var(--accent-cyan)'
-                        const icon = QUEST_ICONS[quest.quest_type as keyof typeof QUEST_ICONS] || <Zap size={16} />
+                        const qMeta = QUEST_COLORS[quest.quest_type as keyof typeof QUEST_COLORS] || QUEST_COLORS.complete_module
+                        const icon = QUEST_ICONS[quest.quest_type as keyof typeof QUEST_ICONS] || <Zap size={15} />
 
                         return (
                             <motion.div
                                 key={quest.id}
-                                initial={{ opacity: 0, scale: 0.95 }}
-                                animate={{ opacity: 1, scale: 1 }}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.05 }}
-                                whileHover={{ x: 4 }}
+                                whileHover={{ x: 3, borderColor: isCompleted ? 'rgba(34,197,94,0.4)' : qMeta.color }}
                                 style={{
-                                    display: 'flex', alignItems: 'center', gap: '16px',
-                                    padding: '16px', borderRadius: '8px',
-                                    backgroundColor: isCompleted ? 'rgba(255, 255, 255, 0.01)' : 'var(--bg-secondary)',
-                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : 'var(--border)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '14px',
+                                    padding: '12px 14px',
+                                    borderRadius: '12px',
+                                    backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.04)' : '#0d0d0d',
+                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : '#222222'}`,
                                     position: 'relative',
-                                    opacity: isCompleted ? 0.7 : 1,
-                                    transition: 'all 0.2s ease'
+                                    transition: 'border-color 0.2s ease, background-color 0.2s ease',
                                 }}
                             >
-                                <div style={{
-                                    width: '40px', height: '40px',
-                                    borderRadius: '8px',
-                                    backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : `${color}10`,
-                                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    color: isCompleted ? 'var(--accent-green)' : color,
-                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.2)' : `${color}20`}`,
-                                    flexShrink: 0
-                                }}>
-                                    {isCompleted ? <CheckCircle size={20} /> : icon}
+                                <div
+                                    style={{
+                                        width: '34px',
+                                        height: '34px',
+                                        borderRadius: '8.57143px',
+                                        backgroundColor: isCompleted ? 'rgba(34,197,94,0.12)' : qMeta.bg,
+                                        border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : qMeta.border}`,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: isCompleted ? 'var(--accent-green)' : qMeta.color,
+                                        flexShrink: 0,
+                                    }}
+                                >
+                                    {isCompleted ? <CheckCircle size={16} /> : icon}
                                 </div>
 
                                 <div style={{ flex: 1, minWidth: 0 }}>
-                                    <div style={{
-                                        fontSize: '14px',
-                                        fontWeight: 700,
-                                        color: isCompleted ? 'var(--text-muted)' : 'var(--text-primary)',
-                                        fontFamily: 'var(--font-heading)',
-                                        textDecoration: isCompleted ? 'line-through' : 'none',
-                                        marginBottom: '2px'
-                                    }}>
+                                    <div
+                                        style={{
+                                            fontSize: '13px',
+                                            fontWeight: 500,
+                                            color: isCompleted ? 'var(--text-muted)' : 'var(--text-primary)',
+                                            fontFamily: 'var(--font-heading)',
+                                            textDecoration: isCompleted ? 'line-through' : 'none',
+                                            marginBottom: '2px',
+                                            whiteSpace: 'nowrap',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                        }}
+                                    >
                                         {quest.title}
                                     </div>
-                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: quest.target_value > 1 && !isCompleted ? '6px' : '0' }}>
                                         {quest.description}
                                     </div>
 
                                     {quest.target_value > 1 && !isCompleted && (
-                                        <div style={{ height: '4px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '2px', overflow: 'hidden' }}>
+                                        <div style={{ height: '4px', backgroundColor: '#181818', borderRadius: '9999px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${Math.min((currentVal / quest.target_value) * 100, 100)}%` }}
-                                                style={{ height: '100%', backgroundColor: color }}
+                                                style={{ height: '100%', borderRadius: '9999px', backgroundColor: qMeta.color }}
                                             />
                                         </div>
                                     )}
                                 </div>
 
-                                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-                                    <div style={{
-                                        backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'rgba(245,197,66,0.1)',
-                                        border: `1px solid ${isCompleted ? 'var(--accent-green)40' : 'rgba(245,197,66,0.2)'}`,
-                                        borderRadius: '4px', padding: '4px 8px',
-                                        fontFamily: 'var(--font-heading)', fontSize: '12px',
-                                        color: isCompleted ? 'var(--accent-green)' : 'var(--accent-gold)',
-                                        fontWeight: 800,
-                                    }}>
+                                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
+                                    <span
+                                        style={{
+                                            backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'rgba(245, 197, 66, 0.1)',
+                                            border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'rgba(245, 197, 66, 0.25)'}`,
+                                            borderRadius: '9999px',
+                                            padding: '3px 10px',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '11px',
+                                            color: isCompleted ? 'var(--accent-green)' : 'var(--color-gold)',
+                                            fontWeight: 600,
+                                        }}
+                                    >
                                         +{quest.xp_reward} XP
-                                    </div>
+                                    </span>
                                     {quest.target_value > 1 && !isCompleted && (
-                                        <div style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
-                                            {currentVal} / {quest.target_value}
-                                        </div>
+                                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontWeight: 500, fontFamily: 'var(--font-heading)' }}>
+                                            {currentVal}/{quest.target_value}
+                                        </span>
                                     )}
                                 </div>
                             </motion.div>
@@ -147,13 +210,8 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                     })}
                 </div>
             )}
-
-            {/* Background Decoration */}
-            <div style={{
-                position: 'absolute', top: '-20px', right: '-20px',
-                width: '80px', height: '80px', backgroundColor: 'var(--accent-cyan)',
-                filter: 'blur(60px)', opacity: 0.05, pointerEvents: 'none'
-            }} />
         </div>
     )
 }
+
+

@@ -1,29 +1,45 @@
 import type { Metadata } from 'next'
-import { DM_Sans, Rajdhani } from 'next/font/google'
+import { Inter, Space_Grotesk, JetBrains_Mono } from 'next/font/google'
 import './globals.css'
 
-const headingFont = Rajdhani({
+const inter = Inter({
   subsets: ['latin'],
   weight: ['400', '500', '600', '700'],
-  variable: '--font-rajdhani',
+  variable: '--font-inter',
   display: 'swap',
 })
 
-const bodyFont = DM_Sans({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-dm-sans',
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-acidgrotesk',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  variable: '--font-jetbrains-mono',
   display: 'swap',
 })
 
 export const metadata: Metadata = {
   title: 'Skillungo — Level Up Your Skills, Conquer Your Future',
-  description: 'Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, battle quiz 1v1, dan kompetisi leaderboard antar sekolah.',
+  description: 'Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, duel kuis 1v1, dan raih prestasi di leaderboard sekolah.',
   keywords: 'edukasi, gamified learning, RPG, SMK, SMA, Indonesia, coding, desain, produktivitas',
   openGraph: {
     title: 'Skillungo',
     description: 'Level Up Your Skills, Conquer Your Future',
     type: 'website',
+  },
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
   },
 }
 
@@ -35,7 +51,7 @@ export default function RootLayout({
   const judgeMode = process.env.NEXT_PUBLIC_JUDGE_MODE === 'true'
   return (
     <html lang="id">
-      <body className={`${headingFont.variable} ${bodyFont.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
     </html>
   )
 }

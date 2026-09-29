@@ -165,8 +165,8 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
 
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '20px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 800, marginBottom: '6px' }}>
+            <div style={{ marginBottom: '24px' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '6px', color: '#ffffff' }}>
                     🎟️ Toko Voucher Kantin
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
@@ -174,34 +174,34 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                 </p>
             </div>
 
-            <div className="card" style={{ padding: '14px 16px', marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Zap size={16} style={{ color: 'var(--accent-gold)' }} />
+            <div className="card" style={{ padding: '16px 20px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '10px', borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                <Zap size={16} style={{ color: '#F5C542' }} />
                 <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>XP kamu saat ini:</span>
-                <strong style={{ color: 'var(--accent-gold)', fontFamily: 'var(--font-heading)', fontSize: '16px' }}>
+                <strong style={{ color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600 }}>
                     {displayXp.toLocaleString()} XP
                 </strong>
             </div>
 
             {error && (
                 <div style={{
-                    marginBottom: '14px',
-                    backgroundColor: 'rgba(232,64,64,0.12)',
-                    border: '1px solid rgba(232,64,64,0.4)',
-                    color: 'var(--accent-red)',
-                    padding: '10px 12px',
-                    borderRadius: '8px',
+                    marginBottom: '16px',
+                    backgroundColor: 'rgba(255, 51, 85, 0.08)',
+                    border: '1px solid rgba(255, 51, 85, 0.3)',
+                    color: '#ff3355',
+                    padding: '12px 14px',
+                    borderRadius: '12px',
                     fontSize: '13px',
                 }}>
                     {error}
                 </div>
             )}
 
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '18px', alignItems: 'start' }}>
-                <div className="card" style={{ padding: '16px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
+                <div className="card" style={{ padding: '24px', borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '16px', color: '#ffffff' }}>
                         Pilih Voucher
                     </h3>
-                    <div style={{ display: 'grid', gap: '10px' }}>
+                    <div style={{ display: 'grid', gap: '12px' }}>
                         {vouchers.map((voucher) => {
                             const alreadyClaimed = claimedVoucherIds.has(voucher.id)
                             const canRedeem = !alreadyClaimed && displayXp >= voucher.xp_cost && (voucher.stock === null || voucher.stock > 0)
@@ -211,53 +211,56 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                 : voucher.name
                             return (
                                 <div key={voucher.id} className="ticket-card hover-lift" style={{
-                                    border: '1px dashed var(--border)',
-                                    borderRadius: '8px',
-                                    backgroundColor: 'var(--bg-tertiary)',
-                                    padding: '14px 18px',
+                                    border: '1px solid #222222',
+                                    borderRadius: '12px',
+                                    backgroundColor: '#0d0d0d',
+                                    padding: '16px 18px',
+                                    transition: 'border-color 0.2s',
                                 }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <Ticket size={15} style={{ color: 'var(--accent-cyan)' }} />
-                                            <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px' }}>{cleanVoucherName}</strong>
+                                            <Ticket size={15} style={{ color: '#F5C542' }} />
+                                            <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500, color: '#ffffff' }}>{cleanVoucherName}</strong>
                                         </div>
                                         {showValueBadge && (
                                             <span style={{
                                                 fontSize: '11px',
-                                                color: 'var(--accent-green)',
-                                                backgroundColor: 'rgba(34,197,94,0.12)',
-                                                border: '1px solid rgba(34,197,94,0.3)',
-                                                borderRadius: '4px',
-                                                padding: '2px 6px',
-                                                fontWeight: 700,
+                                                color: '#08c380',
+                                                backgroundColor: 'rgba(8, 195, 128, 0.1)',
+                                                border: '1px solid rgba(8, 195, 128, 0.25)',
+                                                borderRadius: '9999px',
+                                                padding: '2px 8px',
+                                                fontWeight: 600,
                                             }}>
                                                 Rp{voucher.voucher_value.toLocaleString('id-ID')}
                                             </span>
                                         )}
                                     </div>
-                                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
+                                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
                                         {voucher.description || 'Voucher kantin untuk penukaran makanan/minuman.'}
                                     </p>
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                        <span style={{ fontSize: '12px', color: 'var(--accent-gold)', fontWeight: 700 }}>
+                                        <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
                                             Syarat: {voucher.xp_cost} XP
                                         </span>
                                         <motion.button
-                                            whileHover={{ scale: canRedeem ? 1.03 : 1 }}
-                                            whileTap={{ scale: canRedeem ? 0.97 : 1 }}
+                                            whileHover={{ scale: canRedeem ? 1.02 : 1 }}
+                                            whileTap={{ scale: canRedeem ? 0.98 : 1 }}
                                             onClick={() => handleRedeem(voucher)}
                                             disabled={!canRedeem || loadingId === voucher.id}
                                             style={{
                                                 border: 'none',
-                                                borderRadius: '6px',
-                                                padding: '8px 10px',
+                                                borderRadius: '9999px',
+                                                padding: '8px 16px',
                                                 cursor: canRedeem ? 'pointer' : 'not-allowed',
                                                 fontFamily: 'var(--font-heading)',
-                                                fontWeight: 700,
+                                                fontWeight: 600,
                                                 fontSize: '12px',
-                                                backgroundColor: canRedeem ? 'var(--accent-gold)' : 'var(--bg-secondary)',
-                                                color: canRedeem ? 'var(--bg-primary)' : 'var(--text-muted)',
+                                                backgroundColor: canRedeem ? '#F5C542' : '#141414',
+                                                color: canRedeem ? '#0a0a0a' : 'var(--text-muted)',
+                                                boxShadow: canRedeem ? '0 0 14px rgba(245, 197, 66, 0.35)' : 'none',
                                                 opacity: loadingId === voucher.id ? 0.75 : 1,
+                                                transition: 'all 0.2s',
                                             }}
                                         >
                                             {loadingId === voucher.id ? 'Memproses...' : alreadyClaimed ? 'Sudah Diklaim' : 'Klaim'}
@@ -269,8 +272,8 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                     </div>
                 </div>
 
-                <div className="card" style={{ padding: '16px' }}>
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>
+                <div className="card" style={{ padding: '24px', borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '16px', color: '#ffffff' }}>
                         Riwayat Kode Voucher
                     </h3>
                     {history.length === 0 ? (
@@ -296,22 +299,23 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                         })
                                     }}
                                     style={{
-                                    border: '1px solid var(--border)',
-                                    borderRadius: '8px',
-                                    backgroundColor: 'var(--bg-tertiary)',
-                                    padding: '10px',
-                                    textAlign: 'left',
-                                    cursor: 'pointer',
-                                    width: '100%',
-                                }}
+                                        border: '1px solid #222222',
+                                        borderRadius: '12px',
+                                        backgroundColor: '#0d0d0d',
+                                        padding: '12px 14px',
+                                        textAlign: 'left',
+                                        cursor: 'pointer',
+                                        width: '100%',
+                                        transition: 'border-color 0.2s',
+                                    }}
                                 >
                                     <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
-                                        <strong style={{ fontSize: '13px', fontFamily: 'var(--font-heading)' }}>{item.voucherName}</strong>
-                                        <span style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 700 }}>
+                                        <strong style={{ fontSize: '13px', fontFamily: 'var(--font-heading)', fontWeight: 500, color: '#ffffff' }}>{item.voucherName}</strong>
+                                        <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>
                                             Syarat {item.xp_spent} XP
                                         </span>
                                     </div>
-                                    <div style={{ fontSize: '13px', color: 'var(--accent-cyan)', fontFamily: 'var(--font-heading)', fontWeight: 700 }}>
+                                    <div style={{ fontSize: '13px', color: '#08c380', fontFamily: 'var(--font-heading)', fontWeight: 600 }}>
                                         {item.code}
                                     </div>
                                     <div style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
@@ -335,7 +339,8 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                             position: 'fixed',
                             inset: 0,
                             zIndex: 1000,
-                            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            backdropFilter: 'blur(8px)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -348,50 +353,59 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                             exit={{ y: 8, opacity: 0, scale: 0.98 }}
                             onClick={(e) => e.stopPropagation()}
                             className="card"
-                            style={{ width: '100%', maxWidth: '420px', padding: '20px' }}
+                            style={{
+                                width: '100%',
+                                maxWidth: '420px',
+                                padding: '28px',
+                                borderRadius: '17.1429px',
+                                backgroundColor: '#080808',
+                                border: '1px solid #292929',
+                                boxShadow: '0 25px 50px rgba(0,0,0,0.8)',
+                            }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: 'var(--accent-green)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px', color: '#08c380' }}>
                                 <CheckCircle size={18} />
-                                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800 }}>
+                                <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: '#ffffff' }}>
                                     {redeemModalSource === 'claim' ? 'Voucher Berhasil Diklaim' : 'Detail Kode Voucher'}
                                 </h4>
                             </div>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '14px' }}>
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '18px' }}>
                                 Tunjukkan kode ini ke kantin untuk ditukarkan.
                             </p>
                             <div style={{
-                                border: '1px dashed var(--accent-cyan)',
-                                borderRadius: '8px',
-                                padding: '14px',
+                                border: '1px dashed #F5C542',
+                                borderRadius: '12px',
+                                padding: '16px',
                                 textAlign: 'center',
-                                marginBottom: '14px',
-                                backgroundColor: 'rgba(0,212,255,0.08)',
+                                marginBottom: '18px',
+                                backgroundColor: 'rgba(245, 197, 66, 0.08)',
                             }}>
-                                <div style={{ color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px' }}>
+                                <div style={{ color: 'var(--text-secondary)', fontSize: '11px', marginBottom: '4px', letterSpacing: '0.05em' }}>
                                     KODE VOUCHER
                                 </div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', letterSpacing: '1px', fontWeight: 800, color: 'var(--accent-cyan)' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', letterSpacing: '2px', fontWeight: 600, color: '#F5C542' }}>
                                     {redeemResult.code}
                                 </div>
                             </div>
-                            <div style={{ display: 'flex', gap: '8px' }}>
+                            <div style={{ display: 'flex', gap: '10px' }}>
                                 <button
                                     onClick={() => copyCode(redeemResult.code)}
                                     style={{
                                         flex: 1,
-                                        border: '1px solid var(--border)',
-                                        borderRadius: '6px',
-                                        backgroundColor: 'var(--bg-tertiary)',
-                                        color: 'var(--text-primary)',
-                                        padding: '10px 12px',
+                                        border: '1px solid #292929',
+                                        borderRadius: '9999px',
+                                        backgroundColor: '#141414',
+                                        color: '#ffffff',
+                                        padding: '11px 16px',
                                         cursor: 'pointer',
-                                        fontWeight: 700,
+                                        fontWeight: 500,
                                         fontFamily: 'var(--font-heading)',
                                         fontSize: '13px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
                                         gap: '6px',
+                                        transition: 'all 0.2s',
                                     }}
                                 >
                                     <Copy size={14} />
@@ -402,14 +416,16 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                     style={{
                                         flex: 1,
                                         border: 'none',
-                                        borderRadius: '6px',
-                                        backgroundColor: 'var(--accent-gold)',
-                                        color: 'var(--bg-primary)',
-                                        padding: '10px 12px',
+                                        borderRadius: '9999px',
+                                        backgroundColor: '#F5C542',
+                                        color: '#0a0a0a',
+                                        padding: '11px 16px',
                                         cursor: 'pointer',
-                                        fontWeight: 800,
+                                        fontWeight: 600,
                                         fontFamily: 'var(--font-heading)',
                                         fontSize: '13px',
+                                        boxShadow: '0 0 14px rgba(245, 197, 66, 0.35)',
+                                        transition: 'all 0.2s',
                                     }}
                                 >
                                     Tutup

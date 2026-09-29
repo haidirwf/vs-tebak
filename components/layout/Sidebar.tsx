@@ -57,17 +57,30 @@ export default function Sidebar() {
     return (
         <aside className="dashboard-sidebar" style={{
             width: '220px', flexShrink: 0,
-            backgroundColor: 'var(--bg-secondary)',
-            borderRight: '1px solid var(--border)',
+            backgroundColor: 'var(--surface-canvas)',
+            borderRight: '1px solid var(--surface-border)',
             display: 'flex', flexDirection: 'column',
             height: '100vh', position: 'sticky', top: 0,
         }}>
             {/* Logo */}
-            <div className="dashboard-logo-row" style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--border)' }}>
+            <div className="dashboard-logo-row" style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--surface-border)' }}>
                 <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-                    <Swords size={20} style={{ color: 'var(--accent-gold)' }} />
-                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--accent-gold)' }}>
-                        Skillungo
+                    <div
+                        style={{
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '9999px',
+                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                            border: '1px solid rgba(245, 197, 66, 0.4)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <Swords size={16} style={{ color: 'var(--color-gold)' }} />
+                    </div>
+                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 500, color: '#ffffff', letterSpacing: '-0.02em' }}>
+                        Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
                     </span>
                 </Link>
 
@@ -81,14 +94,14 @@ export default function Sidebar() {
                                     display: 'inline-flex',
                                     alignItems: 'center',
                                     gap: '4px',
-                                    borderRadius: '4px',
-                                    padding: '5px 8px',
-                                    border: '1px solid var(--border)',
-                                    backgroundColor: 'var(--bg-tertiary)',
+                                    borderRadius: '9999px',
+                                    padding: '4px 10px',
+                                    border: '1px solid var(--accent-red-border)',
+                                    backgroundColor: 'var(--accent-red-bg)',
                                     color: 'var(--accent-red)',
-                                    fontFamily: 'var(--font-heading)',
-                                    fontSize: '12px',
-                                    fontWeight: 700,
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '11px',
+                                    fontWeight: 500,
                                     whiteSpace: 'nowrap',
                                 }}
                             >
@@ -105,19 +118,19 @@ export default function Sidebar() {
                                 alignItems: 'center',
                                 gap: '6px',
                                 textDecoration: 'none',
-                                borderRadius: '4px',
-                                padding: '5px 8px',
-                                border: '1px solid var(--border)',
-                                backgroundColor: 'var(--bg-tertiary)',
+                                borderRadius: '9999px',
+                                padding: '4px 10px',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.04)',
                             }}
                         >
                             <span style={{ fontSize: '14px' }}>{CLASS_EMOJI[profile.avatar_class] || '🎮'}</span>
                             <span style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
                                 <span style={{
-                                    fontFamily: 'var(--font-heading)',
+                                    fontFamily: 'var(--font-inter)',
                                     fontSize: '12px',
                                     color: 'var(--text-primary)',
-                                    fontWeight: 700,
+                                    fontWeight: 500,
                                     lineHeight: 1,
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
@@ -126,7 +139,7 @@ export default function Sidebar() {
                                 }}>
                                     {profile.username}
                                 </span>
-                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 700, lineHeight: 1 }}>
+                                <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 500, lineHeight: 1 }}>
                                     Lv.{profile.level}
                                 </span>
                             </span>
@@ -135,14 +148,14 @@ export default function Sidebar() {
                         <div
                             className="dashboard-mobile-xp"
                             style={{
-                                borderRadius: '4px',
-                                padding: '5px 8px',
-                                border: '1px solid rgba(245,197,66,0.45)',
-                                backgroundColor: 'rgba(245,197,66,0.1)',
-                                color: 'var(--accent-gold)',
-                                fontFamily: 'var(--font-heading)',
-                                fontSize: '12px',
-                                fontWeight: 700,
+                                borderRadius: '9999px',
+                                padding: '4px 10px',
+                                border: '1px solid rgba(245, 197, 66, 0.35)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                color: 'var(--color-gold)',
+                                fontFamily: 'var(--font-inter)',
+                                fontSize: '11px',
+                                fontWeight: 500,
                                 whiteSpace: 'nowrap',
                             }}
                         >
@@ -154,73 +167,119 @@ export default function Sidebar() {
 
             {/* Character Preview */}
             {profile && (
-                <div className="dashboard-character-preview" style={{ padding: '12px 16px', borderBottom: '1px solid var(--border)' }}>
+                <div className="dashboard-character-preview" style={{ padding: '12px 16px', borderBottom: '1px solid var(--surface-border)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                         <div style={{
-                            width: '36px', height: '36px', borderRadius: '4px',
-                            backgroundColor: 'var(--bg-tertiary)',
-                            border: `1px solid ${CLASS_COLORS[profile.avatar_class] || 'var(--border)'}`,
+                            width: '36px', height: '36px', borderRadius: '8.57143px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            border: `1px solid ${CLASS_COLORS[profile.avatar_class] || 'rgba(255, 255, 255, 0.15)'}`,
                             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px',
                         }}>
                             {CLASS_EMOJI[profile.avatar_class]}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '13px', color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                            <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {profile.username}
                             </div>
-                            <div style={{ fontSize: '11px', color: 'var(--accent-gold)' }}>
+                            <div style={{ fontSize: '11px', color: 'var(--color-gold)' }}>
                                 Level {profile.level} {profile.avatar_class.charAt(0).toUpperCase() + profile.avatar_class.slice(1)}
                             </div>
                         </div>
                     </div>
                     {/* XP Bar */}
-                    <div style={{ height: '4px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '2px', overflow: 'hidden' }}>
+                    <div style={{ height: '4px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '9999px', overflow: 'hidden' }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${xpProgress}%` }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
-                            style={{ height: '100%', backgroundColor: 'var(--accent-gold)' }}
+                            style={{ height: '100%', backgroundColor: 'var(--color-gold)', boxShadow: '0 0 8px rgba(245, 197, 66, 0.4)' }}
                         />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>
-                        <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>{profile.xp} XP</span>
-                        <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Lv.{profile.level + 1}</span>
+                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>{profile.xp} XP</span>
+                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>Lv.{profile.level + 1}</span>
                     </div>
                 </div>
             )}
 
             {/* Navigation */}
-            <nav className="dashboard-sidebar-nav" style={{ flex: 1, padding: '8px 8px', overflow: 'auto' }}>
+            <nav className="dashboard-sidebar-nav" style={{ flex: 1, padding: '10px 10px', overflow: 'auto' }}>
                 {navItems.map((item) => {
                     const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                    const Icon = item.icon
                     return (
                         <Link
                             key={item.href}
                             href={item.href}
                             prefetch={true}
                             className={item.href === '/profile' ? 'dashboard-profile-nav-link' : undefined}
-                            style={{ textDecoration: 'none' }}
+                            style={{ textDecoration: 'none', position: 'relative', display: 'block' }}
                         >
                             <motion.div
                                 className="dashboard-sidebar-item"
-                                whileHover={{ x: 2 }}
+                                whileHover={{ x: 3 }}
+                                whileTap={{ scale: 0.97 }}
+                                transition={{ type: 'spring', stiffness: 400, damping: 22 }}
                                 data-tour={`nav-${item.tour}`}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
-                                    padding: '10px 10px', borderRadius: '4px', marginBottom: '2px',
-                                    backgroundColor: isActive ? 'var(--accent-gold-bg)' : 'transparent',
-                                    border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
+                                    padding: '8px 14px', borderRadius: '9999px', marginBottom: '4px',
+                                    backgroundColor: isActive ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
+                                    border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
+                                    position: 'relative',
+                                    overflow: 'hidden',
                                     cursor: 'pointer',
+                                    boxShadow: isActive ? '0 0 16px rgba(245, 197, 66, 0.18)' : 'none',
                                 }}
                             >
-                                <item.icon size={16} style={{ color: isActive ? 'var(--accent-gold)' : 'var(--text-secondary)', flexShrink: 0 }} />
+                                {/* Active indicator dot/pill */}
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="sidebarActiveBar"
+                                        style={{
+                                            position: 'absolute',
+                                            left: '4px',
+                                            width: '4px',
+                                            height: '14px',
+                                            borderRadius: '9999px',
+                                            backgroundColor: 'var(--color-gold)',
+                                            boxShadow: '0 0 8px var(--color-gold)',
+                                        }}
+                                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                                    />
+                                )}
+
+                                <motion.div
+                                    animate={isActive ? { scale: [1, 1.1, 1] } : { scale: 1 }}
+                                    transition={{ duration: 0.35, ease: 'easeOut' }}
+                                    style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                >
+                                    <Icon
+                                        size={15}
+                                        style={{
+                                            color: isActive ? 'var(--color-gold)' : 'var(--color-silver)',
+                                            filter: isActive ? 'drop-shadow(0 0 6px rgba(245, 197, 66, 0.5))' : 'none',
+                                            flexShrink: 0,
+                                        }}
+                                    />
+                                </motion.div>
+
                                 <span style={{
-                                    fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600,
-                                    color: isActive ? 'var(--accent-gold)' : 'var(--text-secondary)',
+                                    fontFamily: 'var(--font-inter)', fontSize: '13px', fontWeight: isActive ? 500 : 400,
+                                    color: isActive ? '#ffffff' : 'var(--color-silver)',
                                 }}>
                                     {item.label}
                                 </span>
-                                {isActive && <ChevronRight size={12} style={{ color: 'var(--accent-gold)', marginLeft: 'auto' }} />}
+                                {isActive && (
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -4 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ duration: 0.2 }}
+                                        style={{ marginLeft: 'auto', display: 'flex', alignItems: 'center' }}
+                                    >
+                                        <ChevronRight size={13} style={{ color: 'var(--color-gold)' }} />
+                                    </motion.div>
+                                )}
                             </motion.div>
                         </Link>
                     )
@@ -228,21 +287,21 @@ export default function Sidebar() {
             </nav>
 
             {/* Logout */}
-            <div className="dashboard-bottom-logout" style={{ padding: '8px', borderTop: '1px solid var(--border)' }}>
+            <div className="dashboard-bottom-logout" style={{ padding: '12px 10px', borderTop: '1px solid var(--surface-border)' }}>
                 <motion.button
                     className="dashboard-sidebar-logout"
                     onClick={() => setShowLogoutConfirm(true)}
-                    whileHover={{ x: 2 }}
+                    whileHover={{ scale: 1.01 }}
                     style={{
-                        width: '100%', display: 'flex', alignItems: 'center', gap: '10px',
-                        padding: '10px 10px', borderRadius: '4px', cursor: 'pointer',
-                        backgroundColor: 'rgba(232,64,64,0.1)',
-                        border: '1px solid rgba(232,64,64,0.4)',
+                        width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                        padding: '8px 14px', borderRadius: '9999px', cursor: 'pointer',
+                        backgroundColor: 'rgba(255, 51, 68, 0.08)',
+                        border: '1px solid rgba(255, 51, 68, 0.25)',
                         color: 'var(--accent-red)',
                     }}
                 >
-                    <LogOut size={16} />
-                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700 }}>Keluar</span>
+                    <LogOut size={14} />
+                    <span style={{ fontFamily: 'var(--font-inter)', fontSize: '12px', fontWeight: 500 }}>Keluar Akun</span>
                 </motion.button>
             </div>
 
@@ -251,7 +310,8 @@ export default function Sidebar() {
                     style={{
                         position: 'fixed',
                         inset: 0,
-                        backgroundColor: 'rgba(0, 0, 0, 0.65)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        backdropFilter: 'blur(8px)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -265,8 +325,10 @@ export default function Sidebar() {
                         style={{
                             width: '100%',
                             maxWidth: '360px',
-                            padding: '20px',
-                            border: '1px solid var(--border)',
+                            padding: '24px',
+                            backgroundColor: '#0c0c0c',
+                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            borderRadius: '17.1429px',
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -274,47 +336,45 @@ export default function Sidebar() {
                             style={{
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '18px',
-                                fontWeight: 700,
+                                fontWeight: 400,
                                 marginBottom: '8px',
+                                color: '#ffffff',
                             }}
                         >
                             Konfirmasi Keluar
                         </h3>
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '16px' }}>
-                            Yakin ingin keluar dari akun ini?
+                        <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '20px' }}>
+                            Yakin ingin keluar dari akun studio ini?
                         </p>
                         <div style={{ display: 'flex', gap: '10px' }}>
                             <button
                                 onClick={() => setShowLogoutConfirm(false)}
+                                className="btn-dark-outline"
                                 style={{
                                     flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '4px',
-                                    border: '1px solid var(--border)',
-                                    backgroundColor: 'transparent',
-                                    color: 'var(--text-secondary)',
-                                    fontFamily: 'var(--font-heading)',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
+                                    padding: '8px 14px',
+                                    fontSize: '12px',
+                                    justifyContent: 'center',
                                 }}
                             >
-                                Tidak
+                                Batal
                             </button>
                             <button
                                 onClick={handleLogoutWithConfirm}
                                 style={{
                                     flex: 1,
-                                    padding: '10px',
-                                    borderRadius: '4px',
-                                    border: '1px solid rgba(232,64,64,0.45)',
-                                    backgroundColor: 'rgba(232,64,64,0.1)',
+                                    padding: '8px 14px',
+                                    borderRadius: '9999px',
+                                    border: '1px solid rgba(255, 51, 68, 0.4)',
+                                    backgroundColor: 'rgba(255, 51, 68, 0.15)',
                                     color: 'var(--accent-red)',
-                                    fontFamily: 'var(--font-heading)',
-                                    fontWeight: 700,
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '12px',
+                                    fontWeight: 500,
                                     cursor: 'pointer',
                                 }}
                             >
-                                Ya
+                                Ya, Keluar
                             </button>
                         </div>
                     </div>

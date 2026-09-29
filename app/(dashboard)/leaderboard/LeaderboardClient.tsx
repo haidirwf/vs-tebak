@@ -50,21 +50,23 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
             <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, marginBottom: '4px' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     🏆 Leaderboard
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Ranking terbaik pelajar Indonesia</p>
             </div>
 
             {/* Tabs */}
-            <div style={{ display: 'flex', gap: '8px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', flexWrap: 'wrap' }}>
                 {tabs.map(t => (
                     <button key={t.key} type="button" aria-pressed={tab === t.key} onClick={() => setTab(t.key)} style={{
-                        padding: '8px 18px', borderRadius: '4px', cursor: 'pointer',
-                        backgroundColor: tab === t.key ? 'rgba(245,197,66,0.1)' : 'var(--bg-secondary)',
-                        border: `1px solid ${tab === t.key ? 'var(--accent-gold)' : 'var(--border)'}`,
-                        color: tab === t.key ? 'var(--accent-gold)' : 'var(--text-secondary)',
-                        fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 600,
+                        padding: '8px 18px', borderRadius: '9999px', cursor: 'pointer',
+                        backgroundColor: tab === t.key ? '#F5C542' : 'var(--surface-elevated)',
+                        border: `1px solid ${tab === t.key ? '#EAB308' : 'var(--surface-border)'}`,
+                        color: tab === t.key ? '#0a0a0a' : 'var(--text-secondary)',
+                        fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: tab === t.key ? 600 : 400,
+                        boxShadow: tab === t.key ? '0 0 16px rgba(245, 197, 66, 0.35)' : 'none',
+                        transition: 'all 0.2s ease',
                     }}>
                         {t.label}
                     </button>
@@ -76,7 +78,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 <>
                     {/* Podium for Top 3 */}
                     {(tab === 'all' ? allTime : weekly).length >= 3 && (
-                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '16px', marginBottom: '24px', padding: '16px 0' }}>
+                        <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '16px', marginBottom: '28px', padding: '16px 0' }}>
                             {/* Rank 2 (Silver) */}
                             {(() => {
                                 const list = tab === 'all' ? allTime : weekly
@@ -87,15 +89,15 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                         style={{ flex: 1, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥈</div>
                                         <div style={{
-                                            width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)',
+                                            width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
                                             border: '2px solid #C0C0C0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
                                             boxShadow: '0 0 16px rgba(192,192,192,0.3)', marginBottom: '8px',
                                         }}>
                                             {CLASS_EMOJIS[u2.avatar_class] || '🎮'}
                                         </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u2.username}</div>
-                                        <div style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 700 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(192,192,192,0.1)', border: '1px solid rgba(192,192,192,0.3)', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 800, color: '#C0C0C0' }}>2</div>
+                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u2.username}</div>
+                                        <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
+                                        <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(192,192,192,0.08)', border: '1px solid rgba(192,192,192,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#C0C0C0' }}>2</div>
                                     </motion.div>
                                 )
                             })()}
@@ -110,15 +112,15 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                         style={{ flex: 1, maxWidth: '180px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ fontSize: '32px', marginBottom: '4px' }}>👑 🥇</div>
                                         <div style={{
-                                            width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)',
-                                            border: '3px solid var(--accent-gold)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px',
-                                            boxShadow: '0 0 24px rgba(245,197,66,0.5)', marginBottom: '8px',
+                                            width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#141414',
+                                            border: '3px solid #F5C542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px',
+                                            boxShadow: '0 0 24px rgba(245, 197, 66, 0.45)', marginBottom: '8px',
                                         }}>
                                             {CLASS_EMOJIS[u1.avatar_class] || '🎮'}
                                         </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
-                                        <div style={{ fontSize: '12px', color: 'var(--accent-gold)', fontWeight: 700 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '95px', width: '100%', backgroundColor: 'rgba(245,197,66,0.15)', border: '1px solid var(--accent-gold)', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: 'var(--accent-gold)', boxShadow: '0 -4px 16px rgba(245,197,66,0.2)' }}>1</div>
+                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, color: '#F5C542', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
+                                        <div style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
+                                        <div style={{ height: '95px', width: '100%', backgroundColor: 'rgba(245, 197, 66, 0.12)', border: '1px solid rgba(245, 197, 66, 0.35)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 400, color: '#F5C542', boxShadow: '0 -4px 16px rgba(245, 197, 66, 0.2)' }}>1</div>
                                     </motion.div>
                                 )
                             })()}
@@ -133,22 +135,22 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                         style={{ flex: 1, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                         <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥉</div>
                                         <div style={{
-                                            width: '52px', height: '52px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)',
+                                            width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
                                             border: '2px solid #CD7F32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
                                             boxShadow: '0 0 16px rgba(205,127,50,0.3)', marginBottom: '8px',
                                         }}>
                                             {CLASS_EMOJIS[u3.avatar_class] || '🎮'}
                                         </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u3.username}</div>
-                                        <div style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 700 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '55px', width: '100%', backgroundColor: 'rgba(205,127,50,0.1)', border: '1px solid rgba(205,127,50,0.3)', borderTopLeftRadius: '8px', borderTopRightRadius: '8px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 800, color: '#CD7F32' }}>3</div>
+                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u3.username}</div>
+                                        <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
+                                        <div style={{ height: '55px', width: '100%', backgroundColor: 'rgba(205,127,50,0.08)', border: '1px solid rgba(205,127,50,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#CD7F32' }}>3</div>
                                     </motion.div>
                                 )
                             })()}
                         </div>
                     )}
 
-                    <div className="card">
+                    <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                         {(tab === 'all' ? allTime : weekly).map((user, i) => {
                             const isMe = user.id === currentUserId
                             return (
@@ -218,23 +220,23 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
 
             {/* School Ranking */}
             {tab === 'school' && (
-                <div className="card">
+                <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                     {schoolRanking.map((school, i) => (
                         <motion.div key={school.school} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px',
-                                borderBottom: i < schoolRanking.length - 1 ? '1px solid var(--border)' : 'none',
+                                borderBottom: i < schoolRanking.length - 1 ? '1px solid #222222' : 'none',
                             }}>
                             <div style={{ width: '32px', textAlign: 'center' }}>
                                 {MEDAL[i] ? <span style={{ fontSize: '18px' }}>{MEDAL[i]}</span> :
-                                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--text-muted)', fontSize: '14px' }}>{i + 1}</span>}
+                                    <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 500, color: 'var(--text-muted)', fontSize: '14px' }}>{i + 1}</span>}
                             </div>
                             <div style={{ flex: 1 }}>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700 }}>{school.school}</div>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500 }}>{school.school}</div>
                                 <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{school.city} · {school.members} siswa</div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, color: 'var(--accent-gold)' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#F5C542' }}>
                                     {school.totalXp.toLocaleString()} XP
                                 </div>
                             </div>
