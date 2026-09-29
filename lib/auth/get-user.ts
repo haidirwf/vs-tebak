@@ -34,7 +34,7 @@ export const getAuthenticatedUser = cache(async (): Promise<User | null> => {
             return null
         }
         return user
-    })
+    }, 500)
 })
 
 /**
@@ -59,5 +59,5 @@ export const getAuthenticatedProfile = cache(async (explicitUserId?: string): Pr
             .maybeSingle()
 
         return (profile as Profile) || null
-    })
+    }, 400)
 })
