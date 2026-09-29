@@ -4,7 +4,7 @@ import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
-import { Flame, Sparkles, MapPin, School } from 'lucide-react'
+import { Flame, MapPin, School } from 'lucide-react'
 import { startOfWeek, addDays, format, differenceInCalendarDays, parseISO, isSameDay } from 'date-fns'
 
 interface HeroBannerProps {
@@ -226,7 +226,7 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                         </div>
                     </div>
 
-                    {/* Kanan: Kalender Streak 7 Hari Duolingo & Total XP */}
+                    {/* Kanan: Kalender Streak 7 Hari Duolingo */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexWrap: 'wrap' }}>
                         {/* Kalender 7 Hari Duolingo */}
                         <div
@@ -320,31 +320,6 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                     </div>
                                 )
                             })}
-                        </div>
-
-                        {/* Total XP Badge Pill */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '10px',
-                                padding: '8px 16px',
-                                borderRadius: '9999px',
-                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                border: '1px solid rgba(245, 197, 66, 0.35)',
-                                height: 'fit-content',
-                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.15)',
-                            }}
-                        >
-                            <Sparkles size={16} style={{ color: 'var(--color-gold)' }} />
-                            <div>
-                                <div style={{ fontSize: '9px', color: 'var(--color-steel)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
-                                    TOTAL XP
-                                </div>
-                                <div style={{ fontFamily: 'var(--font-inter)', fontSize: '14px', fontWeight: 600, color: 'var(--color-gold)' }}>
-                                    {profile.xp.toLocaleString()} XP
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
