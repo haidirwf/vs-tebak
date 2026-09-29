@@ -17,16 +17,11 @@ import {
   Gift,
   CheckCircle,
   Sparkles,
-  ArrowRight,
-  Gamepad2,
   Clock,
   Award,
   ChevronDown,
   Menu,
   X,
-  Send,
-  Terminal,
-  Play,
   Layers,
   Code,
   Compass,
@@ -126,8 +121,8 @@ const FEATURES_DATA = [
   {
     icon: Zap,
     title: 'Duel Kuis Battle 1v1 Real-Time',
-    desc: 'Tantang teman satu sekolah atau cari lawan acak se-Indonesia dalam arena kuis live dengan socket real-time dan combo multiplier.',
-    tag: 'Live Multiplayer',
+    desc: 'Tantang teman satu sekolah atau cari lawan acak se-Indonesia dalam arena kuis interaktif dengan socket real-time dan combo multiplier.',
+    tag: 'Multiplayer Real-Time',
     accent: 'var(--accent-red)',
   },
   {
@@ -179,21 +174,10 @@ const FAQS = [
   },
 ]
 
-const PROMPT_SUGGESTIONS = [
-  'Belajar JavaScript Async/Await',
-  'Mulai Duel 1v1 Algoritma',
-  'Eksplor UI/UX Wireframing',
-  'Jalankan Quest Harian',
-]
-
 export default function LandingClient({ isLoggedIn }: LandingClientProps) {
   const [selectedClass, setSelectedClass] = useState(CLASSES_DATA[0])
   const [activeFaq, setActiveFaq] = useState<number | null>(null)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  // Interactive Prompt Composer state
-  const [promptInput, setPromptInput] = useState('')
-  const [promptSubmitted, setPromptSubmitted] = useState(false)
 
   // Interactive Battle Quiz Preview state
   const [quizAnswered, setQuizAnswered] = useState<number | null>(null)
@@ -204,13 +188,6 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
     if (index === 0 || index === 2) {
       setComboCount((prev) => prev + 1)
     }
-  }
-
-  const handlePromptSubmit = (e?: React.FormEvent) => {
-    if (e) e.preventDefault()
-    if (!promptInput.trim()) return
-    setPromptSubmitted(true)
-    setTimeout(() => setPromptSubmitted(false), 3000)
   }
 
   return (
@@ -471,39 +448,6 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         }}
       >
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '1040px', margin: '0 auto' }}>
-          {/* Micro Eyebrow Label (10px uppercase, Steel #808080) */}
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            style={{ marginBottom: '18px' }}
-          >
-            <span
-              className="micro-eyebrow"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '8px',
-                padding: '4px 14px',
-                borderRadius: '9999px',
-                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                border: '1px solid rgba(255, 255, 255, 0.1)',
-                color: 'var(--color-steel)',
-              }}
-            >
-              <span
-                style={{
-                  width: '6px',
-                  height: '6px',
-                  borderRadius: '9999px',
-                  backgroundColor: 'var(--color-signal-orange)',
-                  boxShadow: '0 0 8px var(--color-signal-orange)',
-                }}
-              />
-              GAMIFIED LEARNING STUDIO · RPG CONSOLE V2.0
-            </span>
-          </motion.div>
-
           {/* Main Display Headline (AcidGrotesk / Space Grotesk at weight 400 with -0.01em tracking) */}
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
@@ -546,7 +490,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               fontSize: '15px',
               color: 'var(--color-fog)',
               maxWidth: '640px',
-              margin: '0 auto 36px',
+              margin: '0 auto 32px',
               lineHeight: 1.65,
               fontWeight: 400,
             }}
@@ -554,132 +498,15 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             Platform studio gamifikasi untuk pelajar SMK dan SMA Indonesia. Asah skill coding, UI/UX, dan AI modern, bertarung dalam duel kuis real-time, dan bangun reputasi sekolahmu di leaderboard nasional.
           </motion.p>
 
-          {/* ── Linearity Hero Prompt Composer ── */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.25 }}
-            style={{ maxWidth: '640px', margin: '0 auto 36px' }}
-          >
-            <form onSubmit={handlePromptSubmit} className="hero-prompt-composer">
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  flex: 1,
-                  minWidth: 0,
-                }}
-              >
-                <div
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '6px',
-                    backgroundColor: 'rgba(202, 78, 23, 0.25)', // Burnt orange brand token
-                    border: '1px solid rgba(202, 78, 23, 0.5)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0,
-                  }}
-                >
-                  <Terminal size={12} style={{ color: 'var(--color-signal-orange)' }} />
-                </div>
-                <input
-                  type="text"
-                  value={promptInput}
-                  onChange={(e) => setPromptInput(e.target.value)}
-                  placeholder="Ketik topik belajarmu: JavaScript, CSS Grid, Figma, atau Duel 1v1..."
-                  style={{
-                    background: 'transparent',
-                    border: 'none',
-                    padding: 0,
-                    outline: 'none',
-                    fontSize: '13px',
-                    color: '#ffffff',
-                    width: '100%',
-                    fontFamily: 'var(--font-inter)',
-                  }}
-                />
-              </div>
-
-              {/* Prompt Submit Orb (Circular Signal Orange) */}
-              <button
-                type="submit"
-                className="prompt-submit-orb"
-                title="Eksplor Modul & Mulai Kuis"
-                aria-label="Submit Prompt"
-              >
-                <ArrowRight size={16} />
-              </button>
-            </form>
-
-            {/* Quick Prompt Preset Chips */}
-            <div
-              style={{
-                display: 'flex',
-                gap: '8px',
-                justifyContent: 'center',
-                flexWrap: 'wrap',
-                marginTop: '12px',
-              }}
-            >
-              {PROMPT_SUGGESTIONS.map((preset) => (
-                <button
-                  key={preset}
-                  type="button"
-                  onClick={() => setPromptInput(preset)}
-                  style={{
-                    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    borderRadius: '9999px',
-                    padding: '3px 10px',
-                    fontSize: '11px',
-                    color: 'var(--color-steel)',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = '#ffffff'
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'var(--color-steel)'
-                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.08)'
-                  }}
-                >
-                  {preset}
-                </button>
-              ))}
-            </div>
-
-            {promptSubmitted && (
-              <motion.div
-                initial={{ opacity: 0, y: 4 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{
-                  marginTop: '10px',
-                  fontSize: '12px',
-                  color: 'var(--color-signal-orange)',
-                }}
-              >
-                ✨ Modul siap! Masuk atau daftar akun untuk menyimpan progres belajarmu.
-              </motion.div>
-            )}
-          </motion.div>
-
-          {/* Paired Conversion Row (Linearity Spec) */}
+          {/* Conversion Button */}
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
             style={{
               display: 'flex',
-              gap: '14px',
               justifyContent: 'center',
-              flexWrap: 'wrap',
-              marginBottom: '48px',
+              marginBottom: '20px',
             }}
           >
             {isLoggedIn ? (
@@ -691,115 +518,29 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 <LayoutDashboard size={16} /> BUKA DASHBOARD STUDIO <ChevronRight size={14} />
               </Link>
             ) : (
-              <>
-                <Link
-                  href="/register"
-                  className="btn-signal-orange"
-                  style={{ padding: '12px 28px', fontSize: '13px' }}
-                >
-                  <Swords size={16} /> MULAI PETUALANGAN GRATIS <ChevronRight size={14} />
-                </Link>
-                <a
-                  href="#preview"
-                  className="btn-dark-outline"
-                  style={{ padding: '12px 24px', fontSize: '13px' }}
-                >
-                  <Gamepad2 size={16} style={{ color: 'var(--color-signal-orange)' }} />
-                  Buka Console Arena 1v1
-                </a>
-              </>
+              <Link
+                href="/register"
+                className="btn-signal-orange"
+                style={{ padding: '12px 28px', fontSize: '13px' }}
+              >
+                <Swords size={16} /> MULAI PETUALANGAN GRATIS <ChevronRight size={14} />
+              </Link>
             )}
           </motion.div>
         </div>
-
-        {/* ── Linearity Low-Contrast Trust Marquee on Void ── */}
-        <div
-          style={{
-            maxWidth: '1080px',
-            margin: '0 auto',
-            paddingTop: '28px',
-            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            flexWrap: 'wrap',
-            gap: '16px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span
-              style={{
-                width: '6px',
-                height: '6px',
-                borderRadius: '9999px',
-                backgroundColor: 'var(--color-signal-orange)',
-              }}
-            />
-            <span
-              style={{
-                fontFamily: 'var(--font-inter)',
-                fontSize: '11px',
-                color: 'var(--color-steel)',
-                letterSpacing: '1px',
-                textTransform: 'uppercase',
-              }}
-            >
-              DIPERCAYA SISWA & KOMUNITAS PENDIDIKAN
-            </span>
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '24px',
-              flexWrap: 'wrap',
-              fontSize: '12px',
-              color: 'var(--color-silver)',
-              fontWeight: 500,
-            }}
-          >
-            <span>SMK BISA HEBAT</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>/</span>
-            <span>RPL & SIJA INDONESIA</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>/</span>
-            <span>MULTIMEDIA & DKV</span>
-            <span style={{ color: 'rgba(255, 255, 255, 0.15)' }}>/</span>
-            <span style={{ color: 'var(--color-signal-orange)' }}>50+ SEKOLAH TERDAFTAR</span>
-          </div>
-
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              backgroundColor: 'rgba(255, 255, 255, 0.04)',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
-              borderRadius: '9999px',
-              padding: '4px 12px',
-              fontSize: '11px',
-              color: 'var(--color-silver)',
-            }}
-          >
-            <Play size={10} style={{ color: 'var(--color-signal-orange)' }} /> Interactive Demo
-          </div>
-        </div>
       </section>
 
-      {/* ── 2. Product Demonstration Panel: Interactive 1v1 Battle Arena ── */}
+      {/* ── 2. Interactive 1v1 Battle Arena ── */}
       <section
         id="preview"
         style={{
-          padding: '60px 24px 80px',
+          padding: '40px 24px 80px',
           maxWidth: '1120px',
           margin: '0 auto',
           backgroundColor: 'var(--color-void)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '8px' }}>
-            PRODUCT DEMONSTRATION PANEL
-          </span>
           <h2
             style={{
               fontFamily: 'var(--font-heading)',
@@ -848,7 +589,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   letterSpacing: '0.04em',
                 }}
               >
-                LIVE ARENA · ALGORITMA & JAVASCRIPT
+                Algoritma & JavaScript
               </span>
             </div>
 

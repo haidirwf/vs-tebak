@@ -388,9 +388,6 @@ export default function BattlePage() {
                             <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, letterSpacing: '-0.01em', color: '#ffffff', margin: 0 }}>
                                 🔥 Daftar Room Tersedia
                             </h2>
-                            <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                                *Diperbarui live
-                            </span>
                         </div>
 
                         {availableRooms.length === 0 ? (
