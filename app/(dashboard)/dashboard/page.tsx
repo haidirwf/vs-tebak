@@ -6,6 +6,8 @@ import CharacterCard from '@/components/character/CharacterCard'
 import DailyQuestList from '@/components/quest/DailyQuestList'
 import DashboardStats from '@/components/dashboard/DashboardStats'
 import RecentActivity from '@/components/dashboard/RecentActivity'
+import QuickActions from '@/components/dashboard/QuickActions'
+import MotivationQuote from '@/components/dashboard/MotivationQuote'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
 import { isStreakActiveToday } from '@/lib/game/streak'
@@ -125,8 +127,10 @@ export default function DashboardPage() {
             </div>
 
             {profile && (
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
                     <CharacterCard profile={profile} showStats={true} />
+                    <QuickActions />
+                    <MotivationQuote />
                 </div>
             )}
 

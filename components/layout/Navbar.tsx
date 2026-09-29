@@ -25,13 +25,17 @@ export default function Navbar() {
     )?.[1] || 'Skillungo'
 
     return (
-        <header
+        <motion.header
+            key={pathname}
+            initial={{ opacity: 0.8, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
             className="dashboard-navbar"
             style={{
                 height: '56px',
-                backgroundColor: 'rgba(20, 20, 20, 0.85)',
-                backdropFilter: 'blur(12px)',
-                WebkitBackdropFilter: 'blur(12px)',
+                backgroundColor: 'rgba(20, 20, 20, 0.88)',
+                backdropFilter: 'blur(16px)',
+                WebkitBackdropFilter: 'blur(16px)',
                 borderBottom: '1px solid var(--border)',
                 display: 'flex',
                 alignItems: 'center',
@@ -43,27 +47,58 @@ export default function Navbar() {
                 transition: 'background-color 0.3s ease, border-color 0.3s ease',
             }}
         >
+            {/* Ambient subtle glow line saat pindah halaman */}
+            <motion.div
+                initial={{ scaleX: 0, opacity: 0.8 }}
+                animate={{ scaleX: 1, opacity: [0.8, 1, 0] }}
+                transition={{ duration: 0.7, ease: 'easeInOut' }}
+                style={{
+                    position: 'absolute',
+                    bottom: -1,
+                    left: 0,
+                    right: 0,
+                    height: '2px',
+                    background: 'linear-gradient(90deg, transparent 0%, var(--accent-gold) 35%, var(--accent-cyan) 65%, transparent 100%)',
+                    transformOrigin: 'left',
+                    pointerEvents: 'none',
+                }}
+            />
+
             {/* Animasi Title saat rute berpindah */}
             <div style={{ position: 'relative', overflow: 'hidden', height: '28px', display: 'flex', alignItems: 'center' }}>
                 <AnimatePresence mode="wait">
-                    <motion.h2
+                    <motion.div
                         key={title}
-                        initial={{ opacity: 0, y: 10, filter: 'blur(4px)' }}
-                        animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                        exit={{ opacity: 0, y: -10, filter: 'blur(4px)' }}
-                        transition={{ duration: 0.25, ease: 'easeOut' }}
-                        className="dashboard-navbar-title"
-                        style={{
-                            fontFamily: 'var(--font-heading)',
-                            fontSize: '18px',
-                            fontWeight: 700,
-                            color: 'var(--text-primary)',
-                            margin: 0,
-                            letterSpacing: '0.02em',
-                        }}
+                        initial={{ opacity: 0, x: -12, filter: 'blur(4px)' }}
+                        animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                        exit={{ opacity: 0, x: 12, filter: 'blur(4px)' }}
+                        transition={{ duration: 0.28, ease: [0.2, 0, 0, 1] }}
+                        style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
                     >
-                        {title}
-                    </motion.h2>
+                        <span
+                            style={{
+                                width: '6px',
+                                height: '6px',
+                                borderRadius: '50%',
+                                backgroundColor: 'var(--accent-gold)',
+                                boxShadow: '0 0 8px var(--accent-gold)',
+                                display: 'inline-block',
+                            }}
+                        />
+                        <h2
+                            className="dashboard-navbar-title"
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '18px',
+                                fontWeight: 700,
+                                color: 'var(--text-primary)',
+                                margin: 0,
+                                letterSpacing: '0.02em',
+                            }}
+                        >
+                            {title}
+                        </h2>
+                    </motion.div>
                 </AnimatePresence>
             </div>
 
