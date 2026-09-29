@@ -15,7 +15,8 @@ import {
     Flame, 
     RefreshCw, 
     Plus,
-    ArrowRight
+    ArrowRight,
+    Check
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -48,6 +49,7 @@ export default function BattlePage() {
     const [pendingBattleId, setPendingBattleId] = useState<string | null>(null)
     const [matchmakingTimedOut, setMatchmakingTimedOut] = useState(false)
     const [matchmakingElapsedSec, setMatchmakingElapsedSec] = useState(0)
+    const [matchStatus, setMatchStatus] = useState<'searching' | 'found' | 'timeout'>('searching')
     const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([])
     const [refreshingRooms, setRefreshingRooms] = useState(false)
     const matchmakingTimerRef = useRef<NodeJS.Timeout | null>(null)
@@ -127,8 +129,9 @@ export default function BattlePage() {
         }
 
         // Direct Supabase query fallback (bypasses Vercel Serverless Function completely)
+        // Fast direct check for active battle
         const checkStatusDirectly = async () => {
-            if (stopped) return
+            if (stopped || cancelRequestedRef.current) return
             const { data: battleData } = await supabase
                 .from('battles')
                 .select('id, status, player2_id')
@@ -138,7 +141,10 @@ export default function BattlePage() {
             if (battleData && (battleData.status === 'active' || battleData.player2_id)) {
                 stopped = true
                 if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
-                router.push(`/battle/${pendingBattleId}`)
+                setMatchStatus('found')
+                setTimeout(() => {
+                    router.push(`/battle/${pendingBattleId}`)
+                }, 1400)
             }
         }
 
@@ -158,7 +164,10 @@ export default function BattlePage() {
                     if (updated.status === 'active' || updated.player2_id) {
                         stopped = true
                         if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
-                        router.push(`/battle/${pendingBattleId}`)
+                        setMatchStatus('found')
+                        setTimeout(() => {
+                            router.push(`/battle/${pendingBattleId}`)
+                        }, 1400)
                     }
                 }
             )
@@ -174,6 +183,7 @@ export default function BattlePage() {
                     stopped = true
                     if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
                     setPendingBattleId(null)
+                    setMatchStatus('searching')
                     setMode('select')
                     setError('Room matchmaking sudah tidak tersedia.')
                 }
@@ -188,6 +198,7 @@ export default function BattlePage() {
             if (elapsed >= MATCHMAKING_TIMEOUT_MS) {
                 stopped = true
                 if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
+                setMatchStatus('timeout')
                 setMatchmakingTimedOut(true)
                 setError('Belum menemukan lawan. Silakan coba lagi.')
                 cancelPendingRoom()
@@ -256,24 +267,44 @@ export default function BattlePage() {
     async function handleMatchmaking() {
         setLoading(true)
         setError(null)
+        setMatchStatus('searching')
         setMatchmakingTimedOut(false)
         setMatchmakingElapsedSec(0)
-        const res = await fetch('/api/battle', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ category: 'general', matchmaking: true }),
-        })
-        const data = await res.json()
-        setLoading(false)
-        if (data.error) { setError(data.error); return }
-
-        if (data.joined) {
-            router.push(`/battle/${data.battle.id}`)
-            return
-        }
-
-        setPendingBattleId(data.battle.id)
+        cancelRequestedRef.current = false
         setMode('matchmaking')
+
+        try {
+            // Memberikan jeda pencarian yang wajar (minimal 1.5 detik) agar transisi matchmaking nyaman dibaca
+            const [res] = await Promise.all([
+                fetch('/api/battle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ category: 'general', matchmaking: true }),
+                }),
+                new Promise((resolve) => setTimeout(resolve, 1500)),
+            ])
+            const data = await res.json()
+            setLoading(false)
+            if (data.error) {
+                setError(data.error)
+                setMode('select')
+                return
+            }
+
+            if (data.joined) {
+                setMatchStatus('found')
+                setTimeout(() => {
+                    router.push(`/battle/${data.battle.id}`)
+                }, 1400)
+                return
+            }
+
+            setPendingBattleId(data.battle.id)
+        } catch {
+            setLoading(false)
+            setError('Gagal memulai matchmaking. Silakan coba lagi.')
+            setMode('select')
+        }
     }
 
     async function handleCancelMatchmaking() {
@@ -285,6 +316,7 @@ export default function BattlePage() {
         setPendingBattleId(null)
         setMatchmakingTimedOut(false)
         setMatchmakingElapsedSec(0)
+        setMatchStatus('searching')
         setMode('select')
     }
 
@@ -623,8 +655,7 @@ export default function BattlePage() {
                         style={{
                             position: 'fixed',
                             inset: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.78)',
-                            backdropFilter: 'blur(8px)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -634,24 +665,26 @@ export default function BattlePage() {
                         onClick={() => setMode('select')}
                     >
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            initial={{ opacity: 0, scale: 0.95, y: 8 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{ duration: 0.2 }}
-                            className="product-demo-panel"
+                            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                            transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '520px',
+                                maxWidth: '440px',
                                 maxHeight: '90vh',
                                 overflowY: 'auto',
-                                padding: '22px 18px',
-                                border: '1px solid rgba(245, 197, 66, 0.35)',
-                                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8)',
+                                padding: '20px 18px',
+                                backgroundColor: '#141414',
+                                borderRadius: '12px',
+                                border: '1px solid var(--surface-border)',
+                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
                                     Buat Room Battle
                                 </h2>
                                 <button
@@ -672,12 +705,12 @@ export default function BattlePage() {
                                 </button>
                             </div>
 
-                            <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '18px', lineHeight: 1.5 }}>
-                                Pilih topik soal untuk pertandingan. Setelah room terbuat, kamu akan mendapatkan kode akses untuk dibagikan ke teman.
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '12.5px', marginBottom: '16px', lineHeight: 1.45 }}>
+                                Pilih topik soal untuk pertandingan. Setelah room dibuat, kamu akan mendapatkan kode akses untuk mengundang teman.
                             </p>
 
-                            <div style={{ marginBottom: '22px' }}>
-                                <label style={{ display: 'block', fontSize: '12px', color: 'var(--color-steel)', marginBottom: '10px', fontWeight: 600 }}>
+                            <div style={{ marginBottom: '20px' }}>
+                                <label style={{ display: 'block', fontSize: '11.5px', color: 'var(--color-steel)', marginBottom: '8px', fontWeight: 600 }}>
                                     Kategori Soal
                                 </label>
                                 <div className="battle-category-grid">
@@ -687,11 +720,11 @@ export default function BattlePage() {
                                             type="button"
                                             onClick={() => setCategory(cat.value)}
                                             style={{
-                                                padding: '10px 6px',
-                                                borderRadius: '10px',
+                                                padding: '9px 6px',
+                                                borderRadius: '8px',
                                                 cursor: 'pointer',
-                                                backgroundColor: category === cat.value ? 'rgba(245, 197, 66, 0.15)' : 'rgba(255, 255, 255, 0.04)',
-                                                border: `1px solid ${category === cat.value ? 'var(--color-signal-orange)' : 'rgba(255, 255, 255, 0.1)'}`,
+                                                backgroundColor: category === cat.value ? 'rgba(245, 197, 66, 0.15)' : '#0d0d0d',
+                                                border: `1px solid ${category === cat.value ? 'var(--color-signal-orange)' : 'var(--surface-border)'}`,
                                                 color: category === cat.value ? 'var(--color-signal-orange)' : 'var(--color-silver)',
                                                 fontFamily: 'var(--font-heading)',
                                                 fontSize: '11.5px',
@@ -715,17 +748,17 @@ export default function BattlePage() {
                             </div>
 
                             {error && (
-                                <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'rgba(232, 64, 64, 0.1)', borderRadius: '8px', border: '1px solid rgba(232, 64, 64, 0.3)', wordBreak: 'break-word' }}>
+                                <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.3)', wordBreak: 'break-word' }}>
                                     {error}
                                 </div>
                             )}
 
-                            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                                 <button
                                     type="button"
                                     onClick={() => setMode('select')}
                                     className="btn-dark-outline"
-                                    style={{ padding: '9px 18px', fontSize: '13px' }}
+                                    style={{ padding: '8px 16px', fontSize: '13px' }}
                                 >
                                     Batal
                                 </button>
@@ -736,9 +769,9 @@ export default function BattlePage() {
                                     onClick={handleCreate}
                                     disabled={loading}
                                     className="btn-signal-orange"
-                                    style={{ padding: '9px 20px', fontSize: '13px', fontWeight: 700 }}
+                                    style={{ padding: '8px 18px', fontSize: '13px', fontWeight: 700 }}
                                 >
-                                    {loading ? 'Membuat Room...' : 'Buat Room'}
+                                    {loading ? 'Membuat...' : 'Buat Room'}
                                 </motion.button>
                             </div>
                         </motion.div>
@@ -746,15 +779,14 @@ export default function BattlePage() {
                 )}
             </AnimatePresence>
 
-            {/* Modal: Join Room */}
+            {/* Modal: Join Room (Modal Masukin Kode) */}
             <AnimatePresence>
                 {mode === 'join' && (
                     <div
                         style={{
                             position: 'fixed',
                             inset: 0,
-                            backgroundColor: 'rgba(0, 0, 0, 0.78)',
-                            backdropFilter: 'blur(8px)',
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -764,25 +796,27 @@ export default function BattlePage() {
                         onClick={() => { setMode('select'); setRoomCode(''); setError(null) }}
                     >
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            initial={{ opacity: 0, scale: 0.95, y: 8 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                            transition={{ duration: 0.2 }}
-                            className="product-demo-panel"
+                            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                            transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '460px',
+                                maxWidth: '360px',
                                 maxHeight: '90vh',
                                 overflowY: 'auto',
-                                padding: '22px 18px',
-                                border: '1px solid rgba(56, 189, 248, 0.35)',
-                                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.8)',
+                                padding: '20px 18px',
+                                backgroundColor: '#141414',
+                                borderRadius: '12px',
+                                border: '1px solid var(--surface-border)',
+                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px', paddingBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
-                                    Join Room Battle
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
+                                    Join Room Duel
                                 </h2>
                                 <button
                                     type="button"
@@ -802,49 +836,48 @@ export default function BattlePage() {
                                 </button>
                             </div>
 
-                            <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '20px', lineHeight: 1.5 }}>
-                                Masukkan 6-digit kode room yang dibagikan oleh teman atau penyelenggara duel:
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '12.5px', marginBottom: '16px', lineHeight: 1.45 }}>
+                                Masukkan 6-digit kode room yang dibagikan oleh temanmu:
                             </p>
 
-                            <div style={{ marginBottom: '22px' }}>
+                            <div style={{ marginBottom: '18px' }}>
                                 <input
                                     autoFocus
                                     aria-label="Kode room"
                                     value={roomCode}
                                     onChange={(e) => setRoomCode(e.target.value.toUpperCase())}
-                                    placeholder="ABCDEF"
+                                    placeholder="KODE"
                                     maxLength={6}
                                     style={{
                                         width: '100%',
                                         padding: '12px 14px',
-                                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                                        border: '1px solid rgba(56, 189, 248, 0.4)',
-                                        borderRadius: '12px',
+                                        backgroundColor: '#0a0a0a',
+                                        border: '1px solid var(--surface-border)',
+                                        borderRadius: '8px',
                                         color: '#38bdf8',
                                         fontSize: '22px',
                                         fontFamily: 'var(--font-mono)',
                                         fontWeight: 800,
                                         textAlign: 'center',
-                                        letterSpacing: '5px',
+                                        letterSpacing: '6px',
                                         outline: 'none',
                                         boxSizing: 'border-box',
-                                        boxShadow: '0 0 16px rgba(56, 189, 248, 0.15)',
                                     }}
                                 />
                             </div>
 
                             {error && (
-                                <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'rgba(232, 64, 64, 0.1)', borderRadius: '8px', border: '1px solid rgba(232, 64, 64, 0.3)', wordBreak: 'break-word' }}>
+                                <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.3)', wordBreak: 'break-word' }}>
                                     {error}
                                 </div>
                             )}
 
-                            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
                                 <button
                                     type="button"
                                     onClick={() => { setMode('select'); setRoomCode(''); setError(null) }}
                                     className="btn-dark-outline"
-                                    style={{ padding: '10px 20px', fontSize: '13px' }}
+                                    style={{ padding: '8px 16px', fontSize: '13px' }}
                                 >
                                     Batal
                                 </button>
@@ -854,21 +887,16 @@ export default function BattlePage() {
                                     whileTap={{ scale: 0.98 }}
                                     onClick={handleJoin}
                                     disabled={loading || roomCode.trim().length === 0}
+                                    className="btn-signal-orange"
                                     style={{
-                                        padding: '10px 22px',
-                                        borderRadius: '10px',
-                                        border: 'none',
-                                        backgroundColor: '#38bdf8',
-                                        color: '#050505',
-                                        fontFamily: 'var(--font-heading)',
+                                        padding: '8px 18px',
                                         fontSize: '13px',
                                         fontWeight: 700,
                                         cursor: loading || roomCode.trim().length === 0 ? 'not-allowed' : 'pointer',
                                         opacity: loading || roomCode.trim().length === 0 ? 0.6 : 1,
-                                        boxShadow: '0 0 14px rgba(56, 189, 248, 0.4)',
                                     }}
                                 >
-                                    {loading ? 'Bergabung...' : 'Gabung Room'}
+                                    {loading ? 'Bergabung...' : 'Gabung'}
                                 </motion.button>
                             </div>
                         </motion.div>
@@ -884,7 +912,6 @@ export default function BattlePage() {
                             position: 'fixed',
                             inset: 0,
                             backgroundColor: 'rgba(0, 0, 0, 0.85)',
-                            backdropFilter: 'blur(10px)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -893,85 +920,131 @@ export default function BattlePage() {
                         }}
                     >
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.92 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.92 }}
-                            className="product-demo-panel"
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '440px',
+                                maxWidth: '380px',
                                 padding: '28px 20px',
                                 textAlign: 'center',
-                                border: '1px solid rgba(16, 185, 129, 0.35)',
-                                boxShadow: '0 20px 50px rgba(0, 0, 0, 0.9)',
+                                backgroundColor: '#141414',
+                                borderRadius: '14px',
+                                border: '1px solid var(--surface-border)',
+                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxSizing: 'border-box',
                             }}
                         >
-                            {/* Animated Radar Pulse */}
-                            <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <motion.div
-                                    animate={{ scale: [1, 1.8, 1], opacity: [0.6, 0, 0.6] }}
-                                    transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-                                    style={{
-                                        position: 'absolute',
-                                        inset: 0,
-                                        borderRadius: '50%',
-                                        border: '2px solid rgba(16, 185, 129, 0.5)',
-                                    }}
-                                />
-                                <div
-                                    style={{
-                                        width: '60px',
-                                        height: '60px',
-                                        borderRadius: '14px',
-                                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
-                                        border: '1px solid rgba(16, 185, 129, 0.4)',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        color: '#10b981',
-                                        fontSize: '26px',
-                                        boxShadow: '0 0 24px rgba(16, 185, 129, 0.3)',
-                                    }}
-                                >
-                                    <Shuffle size={26} />
-                                </div>
+                            {/* Visual Indicator Status */}
+                            <div style={{ position: 'relative', width: '60px', height: '60px', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                {matchStatus === 'found' ? (
+                                    <div
+                                        style={{
+                                            width: '52px',
+                                            height: '52px',
+                                            borderRadius: '12px',
+                                            backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                                            border: '1px solid rgba(34, 197, 94, 0.4)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: '#22c55e',
+                                        }}
+                                    >
+                                        <Check size={26} />
+                                    </div>
+                                ) : matchmakingTimedOut || matchStatus === 'timeout' ? (
+                                    <div
+                                        style={{
+                                            width: '52px',
+                                            height: '52px',
+                                            borderRadius: '12px',
+                                            backgroundColor: 'rgba(239, 68, 68, 0.15)',
+                                            border: '1px solid rgba(239, 68, 68, 0.4)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            color: 'var(--accent-red)',
+                                        }}
+                                    >
+                                        <Clock size={26} />
+                                    </div>
+                                ) : (
+                                    <>
+                                        <motion.div
+                                            animate={{ rotate: 360 }}
+                                            transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
+                                            style={{
+                                                position: 'absolute',
+                                                inset: 0,
+                                                borderRadius: '50%',
+                                                border: '2px solid rgba(245, 197, 66, 0.15)',
+                                                borderTopColor: 'var(--color-signal-orange)',
+                                            }}
+                                        />
+                                        <div
+                                            style={{
+                                                width: '46px',
+                                                height: '46px',
+                                                borderRadius: '10px',
+                                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                                border: '1px solid rgba(245, 197, 66, 0.3)',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                color: 'var(--color-signal-orange)',
+                                            }}
+                                        >
+                                            <Shuffle size={20} />
+                                        </div>
+                                    </>
+                                )}
                             </div>
 
-                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
-                                {matchmakingTimedOut ? 'Waktu Matchmaking Habis' : 'Mencari Lawan Duel...'}
+                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: '#ffffff', marginBottom: '8px' }}>
+                                {matchStatus === 'found'
+                                    ? 'Lawan Ditemukan!'
+                                    : matchmakingTimedOut || matchStatus === 'timeout'
+                                    ? 'Waktu Matchmaking Habis'
+                                    : 'Mencari Lawan Duel...'}
                             </h2>
-                            <p style={{ color: 'var(--color-fog)', fontSize: '13px', lineHeight: 1.5, margin: '0 0 16px 0' }}>
-                                {matchmakingTimedOut
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5, margin: '0 0 16px 0' }}>
+                                {matchStatus === 'found'
+                                    ? 'Menyiapkan arena duel. Menghubungkan ke room...'
+                                    : matchmakingTimedOut || matchStatus === 'timeout'
                                     ? 'Belum ada lawan yang cocok saat ini. Coba kembali atau buat room sendiri.'
                                     : 'Sistem sedang mencarikan lawan seimbang secara otomatis. Mohon tunggu...'}
                             </p>
 
-                            <div
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    padding: '5px 12px',
-                                    borderRadius: '8px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
-                                    fontSize: '12px',
-                                    fontFamily: 'var(--font-mono)',
-                                    color: 'var(--color-silver)',
-                                    marginBottom: '20px',
-                                }}
-                            >
-                                <Clock size={12} /> Waktu Tunggu: {matchmakingElapsedSec}s
-                            </div>
+                            {!matchmakingTimedOut && matchStatus !== 'found' && (
+                                <div
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        padding: '5px 12px',
+                                        borderRadius: '6px',
+                                        backgroundColor: '#0a0a0a',
+                                        border: '1px solid var(--surface-border)',
+                                        fontSize: '12px',
+                                        fontFamily: 'var(--font-mono)',
+                                        color: 'var(--color-silver)',
+                                        marginBottom: '20px',
+                                    }}
+                                >
+                                    <Clock size={12} /> Waktu Tunggu: {matchmakingElapsedSec}s
+                                </div>
+                            )}
 
                             <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                                {matchmakingTimedOut ? (
+                                {matchmakingTimedOut || matchStatus === 'timeout' ? (
                                     <>
                                         <button
                                             type="button"
                                             onClick={() => { setMode('select'); setError(null) }}
                                             className="btn-dark-outline"
-                                            style={{ padding: '9px 18px', fontSize: '13px' }}
+                                            style={{ padding: '8px 16px', fontSize: '13px' }}
                                         >
                                             Kembali
                                         </button>
@@ -981,45 +1054,33 @@ export default function BattlePage() {
                                             whileTap={{ scale: 0.98 }}
                                             onClick={handleMatchmaking}
                                             disabled={loading}
+                                            className="btn-signal-orange"
                                             style={{
-                                                padding: '9px 20px',
-                                                borderRadius: '10px',
-                                                border: 'none',
-                                                backgroundColor: '#10b981',
-                                                color: '#050505',
-                                                fontFamily: 'var(--font-heading)',
+                                                padding: '8px 18px',
                                                 fontSize: '13px',
                                                 fontWeight: 700,
-                                                cursor: 'pointer',
                                             }}
                                         >
                                             Coba Lagi
                                         </motion.button>
                                     </>
-                                ) : (
+                                ) : matchStatus !== 'found' ? (
                                     <motion.button
                                         type="button"
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         onClick={handleCancelMatchmaking}
+                                        className="btn-dark-outline"
                                         style={{
-                                            padding: '9px 20px',
-                                            borderRadius: '10px',
-                                            backgroundColor: 'rgba(232, 64, 64, 0.1)',
-                                            border: '1px solid rgba(232, 64, 64, 0.35)',
-                                            color: 'var(--accent-red)',
-                                            fontFamily: 'var(--font-heading)',
+                                            padding: '8px 20px',
                                             fontSize: '13px',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '6px',
+                                            borderColor: 'rgba(239, 68, 68, 0.35)',
+                                            color: 'var(--accent-red)',
                                         }}
                                     >
-                                        <X size={15} /> Batalkan Pencarian
+                                        Batalkan Pencarian
                                     </motion.button>
-                                )}
+                                ) : null}
                             </div>
                         </motion.div>
                     </div>
