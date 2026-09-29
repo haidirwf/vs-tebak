@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAuthenticatedUser } from '@/lib/auth/get-user'
 import { notFound, redirect } from 'next/navigation'
 import BattleArena from './BattleArena'
 const BATTLE_QUESTION_COUNT = 10
@@ -51,9 +52,10 @@ interface PageProps {
 
 export default async function BattleRoomPage({ params }: PageProps) {
     const { roomId } = await params
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getAuthenticatedUser()
     if (!user) redirect('/login')
+
+    const supabase = await createClient()
 
     const [battleRes, userProfileRes] = await Promise.all([
         supabase.from('battles').select('*').eq('id', roomId).single(),

@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { extractAuthSessionFromCookies, isSessionExpiringSoon } from '@/lib/auth/token-utils'
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -49,11 +50,7 @@ export async function updateSession(request: NextRequest) {
     }
 
     const allCookies = request.cookies.getAll()
-    const hasCurrentAuthCookie = allCookies.some(cookie =>
-        currentProjectRef
-            ? cookie.name.startsWith(`sb-${currentProjectRef}`) && cookie.name.includes('auth-token') && cookie.value.length > 20
-            : cookie.name.startsWith('sb-') && cookie.name.includes('auth-token') && cookie.value.length > 20
-    )
+    const session = extractAuthSessionFromCookies(allCookies, currentProjectRef)
 
     // Deteksi cookie usang dari Supabase project sebelumnya untuk dibersihkan
     const staleCookies = allCookies.filter(cookie =>
@@ -63,14 +60,14 @@ export async function updateSession(request: NextRequest) {
         !cookie.name.startsWith(`sb-${currentProjectRef}`)
     )
 
-    let response = NextResponse.next({ request })
+    const response = NextResponse.next({ request })
     staleCookies.forEach(c => {
         request.cookies.delete(c.name)
         response.cookies.set(c.name, '', { path: '/', maxAge: 0 })
     })
 
     // Jika halaman protected dan tidak ada cookie auth sama sekali -> redirect ke login (0ms, tanpa network call)
-    if (isProtected && !hasCurrentAuthCookie) {
+    if (isProtected && !session?.access_token) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         const redirectResponse = NextResponse.redirect(url)
@@ -80,7 +77,46 @@ export async function updateSession(request: NextRequest) {
         return redirectResponse
     }
 
-    // Jika ada cookie auth aktif, langsung lewatkan ke Server Component tanpa menahan delay network 2 detik!
-    // Server layout (app/(dashboard)/layout.tsx) memvalidasi keaslian session secara langsung.
+    // Fast-path: Jika token JWT masih valid (> 2 menit tersisa), langsung lewatkan ke Server Component (0ms)!
+    // Tidak perlu memblokir request dengan HTTPS roundtrip ke Supabase Auth di setiap navigasi.
+    if (session && !isSessionExpiringSoon(session, 120)) {
+        return response
+    }
+
+    // Jika token sudah mendekati kedaluwarsa (< 2 menit) atau sudah expired, lakukan refresh di middleware.
+    // Middleware adalah satu-satunya fase di SSR Next.js yang berhak menulis cookie baru ke browser.
+    // Dilengkapi timeout ketat 2.5s agar tidak membeku jika cloud lambat.
+    try {
+        const getUserPromise = supabase.auth.getUser()
+        const timeoutPromise = new Promise<{ data: { user: null }; error: { message: string; code: string } }>((resolve) =>
+            setTimeout(() => resolve({ data: { user: null }, error: { message: 'timeout', code: 'TIMEOUT' } }), 2500)
+        )
+
+        const { data, error } = await Promise.race([getUserPromise, timeoutPromise])
+
+        if (error || !data?.user) {
+            // Jika token refresh gagal atau session tidak valid di server:
+            // Bersihkan cookie auth yang rusak agar tidak menyebabkan loop slow-retry di Server Component
+            if (isProtected) {
+                allCookies
+                    .filter(c => c.name.includes('auth-token'))
+                    .forEach(c => {
+                        request.cookies.delete(c.name)
+                        response.cookies.set(c.name, '', { path: '/', maxAge: 0 })
+                    })
+                const url = request.nextUrl.clone()
+                url.pathname = '/login'
+                const redirectRes = NextResponse.redirect(url)
+                response.cookies.getAll().forEach(c => redirectRes.cookies.set(c.name, c.value, c))
+                return redirectRes
+            }
+        } else {
+            // Berhasil di-refresh: kembalikan supabaseResponse yang memuat header cookie baru
+            return supabaseResponse
+        }
+    } catch {
+        // Fallback jika terjadi error jaringan tak terduga
+    }
+
     return response
 }
