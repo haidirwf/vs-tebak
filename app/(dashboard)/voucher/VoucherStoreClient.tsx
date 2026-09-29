@@ -358,8 +358,8 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                 maxWidth: '420px',
                                 padding: '28px',
                                 borderRadius: '17.1429px',
-                                backgroundColor: '#080808',
-                                border: '1px solid #292929',
+                                backgroundColor: 'var(--surface-card)',
+                                border: '1px solid var(--surface-border)',
                                 boxShadow: '0 25px 50px rgba(0,0,0,0.8)',
                             }}
                         >
@@ -392,9 +392,9 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                                     onClick={() => copyCode(redeemResult.code)}
                                     style={{
                                         flex: 1,
-                                        border: '1px solid #292929',
+                                        border: '1px solid var(--surface-border)',
                                         borderRadius: '9999px',
-                                        backgroundColor: '#141414',
+                                        backgroundColor: 'var(--surface-elevated)',
                                         color: '#ffffff',
                                         padding: '11px 16px',
                                         cursor: 'pointer',

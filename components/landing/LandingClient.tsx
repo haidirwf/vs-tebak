@@ -228,10 +228,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 32px',
-          backgroundColor: 'rgba(0, 0, 0, 0.82)',
+          backgroundColor: 'rgba(10, 10, 10, 0.85)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--surface-border)',
         }}
       >
         <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
@@ -393,8 +393,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             top: '60px',
             left: 0,
             right: 0,
-            backgroundColor: '#050505',
-            borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+            backgroundColor: 'var(--surface-canvas)',
+            borderBottom: '1px solid var(--surface-border)',
             padding: '20px 24px',
             zIndex: 99,
             display: 'flex',
@@ -891,8 +891,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               alignItems: 'center',
               padding: '16px 20px',
               borderRadius: '17.1429px',
-              backgroundColor: 'rgba(5, 5, 5, 0.8)',
-              border: '1px solid rgba(255, 255, 255, 0.08)',
+              backgroundColor: 'var(--surface-elevated)',
+              border: '1px solid var(--surface-border)',
               marginBottom: '20px',
             }}
           >
@@ -1466,7 +1466,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  backgroundColor: 'rgba(8, 8, 8, 0.95)',
+                  backgroundColor: 'var(--surface-card)',
                 }}
               >
                 <div>
@@ -1565,7 +1565,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 key={i}
                 className="card"
                 style={{
-                  backgroundColor: 'rgba(8, 8, 8, 0.95)',
+                  backgroundColor: 'var(--surface-card)',
                   overflow: 'hidden',
                 }}
               >

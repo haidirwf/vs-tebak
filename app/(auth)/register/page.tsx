@@ -112,8 +112,8 @@ export default function RegisterPage() {
         paddingRight: '12px',
         paddingTop: '10px',
         paddingBottom: '10px',
-        backgroundColor: '#121212',
-        border: `1px solid ${hasError ? '#ff3355' : '#292929'}`,
+        backgroundColor: 'var(--surface-canvas)',
+        border: `1px solid ${hasError ? '#ff3355' : 'var(--surface-border)'}`,
         borderRadius: '12px',
         color: '#ffffff',
         fontSize: '13px',
@@ -136,7 +136,7 @@ export default function RegisterPage() {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                backgroundColor: '#000000',
+                backgroundColor: 'var(--surface-canvas)',
                 backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(245, 197, 66, 0.08), transparent 60%)',
                 padding: '32px 24px',
             }}
@@ -175,8 +175,8 @@ export default function RegisterPage() {
                     style={{
                         padding: '36px',
                         borderRadius: '17.1429px',
-                        backgroundColor: '#080808',
-                        border: '1px solid #292929',
+                        backgroundColor: 'var(--surface-card)',
+                        border: '1px solid var(--surface-border)',
                         boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
                     }}
                 >
@@ -209,8 +209,8 @@ export default function RegisterPage() {
                                                 padding: '10px 6px',
                                                 borderRadius: '12px',
                                                 cursor: 'pointer',
-                                                backgroundColor: isSelected ? 'rgba(245, 197, 66, 0.12)' : '#121212',
-                                                border: `1px solid ${isSelected ? '#F5C542' : '#292929'}`,
+                                                backgroundColor: isSelected ? 'rgba(245, 197, 66, 0.12)' : 'var(--surface-canvas)',
+                                                border: `1px solid ${isSelected ? '#F5C542' : 'var(--surface-border)'}`,
                                                 boxShadow: isSelected ? '0 0 12px rgba(245, 197, 66, 0.25)' : 'none',
                                                 display: 'flex',
                                                 flexDirection: 'column',
