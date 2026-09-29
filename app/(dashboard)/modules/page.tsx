@@ -25,50 +25,58 @@ export default function ModulesPage() {
             }
 
             try {
-                const [modulesRes, userModulesRes, xpLogsRes] = await Promise.all([
-                    supabase
-                        .from('modules')
-                        .select('id, slug, title, description, category, difficulty, xp_reward, duration_minutes, thumbnail_url, content, is_published, created_at')
-                        .eq('is_published', true)
-                        .order('created_at'),
-                    supabase
-                        .from('user_modules')
-                        .select('id, user_id, module_id, status, progress_percent, completed_at, xp_granted_at')
-                        .eq('user_id', user.id),
-                    supabase
-                        .from('xp_logs')
-                        .select('reason')
-                        .eq('user_id', user.id)
-                        .ilike('reason', '%[module:%')
-                        .limit(500),
-                ])
+                const t0 = performance.now()
+                // PostgREST Relational Join: 1 roundtrip fetch untuk modul + user_modules
+                const { data: relationalData, error: relError } = await supabase
+                    .from('modules')
+                    .select(`
+                        id, slug, title, description, category, difficulty, xp_reward, duration_minutes, thumbnail_url, content, is_published, created_at,
+                        user_modules(id, user_id, module_id, status, progress_percent, completed_at, xp_granted_at)
+                    `)
+                    .eq('is_published', true)
+                    .order('created_at')
 
-                const dbUserModules = (userModulesRes.data as UserModule[]) || []
-                const moduleClaimSet = new Set<string>()
-                for (const row of xpLogsRes.data || []) {
-                    const reason = row.reason || ''
-                    const match = reason.match(/\[module:([a-f0-9-]+)\]/i)
-                    if (match?.[1]) moduleClaimSet.add(match[1])
+                if (!relError && relationalData) {
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.log(`[PERF] Modules relational join (1 roundtrip): ${(performance.now() - t0).toFixed(1)}ms`)
+                    }
+                    const modulesList: Module[] = []
+                    const userModulesList: UserModule[] = []
+
+                    for (const item of (relationalData as any[])) {
+                        const { user_modules: uMods, ...mod } = item
+                        modulesList.push(mod as Module)
+                        if (Array.isArray(uMods)) {
+                            userModulesList.push(...uMods)
+                        }
+                    }
+
+                    setModulesData({
+                        modules: modulesList,
+                        userModules: userModulesList,
+                    })
+                } else {
+                    // Fallback to parallel Promise.all jika foreign table join tidak diizinkan
+                    if (process.env.NODE_ENV !== 'production' && relError) {
+                        console.warn('[PERF] Falling back to parallel PostgREST queries:', relError.message)
+                    }
+                    const [modulesRes, userModulesRes] = await Promise.all([
+                        supabase
+                            .from('modules')
+                            .select('id, slug, title, description, category, difficulty, xp_reward, duration_minutes, thumbnail_url, content, is_published, created_at')
+                            .eq('is_published', true)
+                            .order('created_at'),
+                        supabase
+                            .from('user_modules')
+                            .select('id, user_id, module_id, status, progress_percent, completed_at, xp_granted_at')
+                            .eq('user_id', user.id),
+                    ])
+
+                    setModulesData({
+                        modules: (modulesRes.data as Module[]) || [],
+                        userModules: (userModulesRes.data as UserModule[]) || [],
+                    })
                 }
-
-                const syntheticCompleted: UserModule[] = Array.from(moduleClaimSet)
-                    .filter((moduleId) => !dbUserModules.some((um) => um.module_id === moduleId))
-                    .map((moduleId) => ({
-                        id: `xp-log-${moduleId}`,
-                        user_id: user.id,
-                        module_id: moduleId,
-                        status: 'completed',
-                        progress_percent: 100,
-                        completed_at: null,
-                        xp_granted_at: null,
-                    }))
-
-                const mergedUserModules = [...dbUserModules, ...syntheticCompleted]
-
-                setModulesData({
-                    modules: (modulesRes.data as Module[]) || [],
-                    userModules: mergedUserModules,
-                })
             } catch (err) {
                 console.error('Error loading modules:', err)
             } finally {

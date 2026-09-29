@@ -39,37 +39,57 @@ export default function DashboardPage() {
             }
 
             try {
-                const [questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
-                    supabase
-                        .from('daily_quests')
-                        .select('id, title, description, quest_type, target_value, xp_reward, date')
-                        .eq('date', today),
-                    supabase
-                        .from('user_modules')
-                        .select('completed_at, modules(title, category, xp_reward)')
-                        .eq('user_id', user.id)
-                        .eq('status', 'completed')
-                        .order('completed_at', { ascending: false })
-                        .limit(5),
-                    supabase
-                        .from('xp_logs')
-                        .select('xp_amount, reason, created_at')
-                        .eq('user_id', user.id)
-                        .order('created_at', { ascending: false })
-                        .limit(10),
-                    supabase
-                        .from('user_daily_quests')
-                        .select('id, user_id, quest_id, current_value, is_completed, date')
-                        .eq('user_id', user.id)
-                        .eq('date', today),
-                ])
+                const t0 = performance.now()
+                const { data: rpcData, error: rpcError } = await supabase
+                    .rpc('get_dashboard_summary', { p_user_id: user.id, p_today: today })
 
-                setDashboardData({
-                    quests: questsRes.data || [],
-                    userQuests: userQuestsRes.data || [],
-                    completedModules: userModulesRes.data || [],
-                    xpLogs: xpLogRes.data || [],
-                })
+                if (!rpcError && rpcData) {
+                    if (process.env.NODE_ENV !== 'production') {
+                        console.log(`[PERF] Dashboard RPC (1 roundtrip): ${(performance.now() - t0).toFixed(1)}ms`)
+                    }
+                    setDashboardData({
+                        quests: rpcData.quests || [],
+                        userQuests: rpcData.user_quests || [],
+                        completedModules: rpcData.completed_modules || [],
+                        xpLogs: rpcData.xp_logs || [],
+                    })
+                } else {
+                    // Graceful fallback to parallel Promise.all jika RPC belum dimigrasi
+                    if (process.env.NODE_ENV !== 'production' && rpcError) {
+                        console.warn('[PERF] Falling back to parallel PostgREST queries:', rpcError.message)
+                    }
+                    const [questsRes, userModulesRes, xpLogRes, userQuestsRes] = await Promise.all([
+                        supabase
+                            .from('daily_quests')
+                            .select('id, title, description, quest_type, target_value, xp_reward, date')
+                            .eq('date', today),
+                        supabase
+                            .from('user_modules')
+                            .select('completed_at, modules(title, category, xp_reward)')
+                            .eq('user_id', user.id)
+                            .eq('status', 'completed')
+                            .order('completed_at', { ascending: false })
+                            .limit(5),
+                        supabase
+                            .from('xp_logs')
+                            .select('xp_amount, reason, created_at')
+                            .eq('user_id', user.id)
+                            .order('created_at', { ascending: false })
+                            .limit(10),
+                        supabase
+                            .from('user_daily_quests')
+                            .select('id, user_id, quest_id, current_value, is_completed, date')
+                            .eq('user_id', user.id)
+                            .eq('date', today),
+                    ])
+
+                    setDashboardData({
+                        quests: questsRes.data || [],
+                        userQuests: userQuestsRes.data || [],
+                        completedModules: userModulesRes.data || [],
+                        xpLogs: xpLogRes.data || [],
+                    })
+                }
             } catch (err) {
                 console.error('Error loading dashboard data:', err)
             } finally {

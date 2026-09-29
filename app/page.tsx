@@ -1,6 +1,5 @@
 import Link from 'next/link'
 import { Swords, BookOpen, Zap, Trophy, Users, ChevronRight, Star, Flame, LayoutDashboard } from 'lucide-react'
-import { createClient } from '@/lib/supabase/server'
 
 const FEATURES = [
   {
@@ -48,9 +47,10 @@ const CLASSES = [
   { name: 'Healer', emoji: '✨', desc: 'Bijak & produktif', color: 'var(--accent-gold)' },
 ]
 
+import { getAuthenticatedUser } from '@/lib/auth/get-user'
+
 export default async function LandingPage() {
-  const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const user = await getAuthenticatedUser()
   const isLoggedIn = !!user
 
   return (

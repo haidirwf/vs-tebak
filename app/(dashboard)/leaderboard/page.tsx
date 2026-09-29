@@ -23,7 +23,7 @@ export default function LeaderboardPage() {
 
         async function fetchLeaderboard() {
             try {
-                const [allTimeRes, weeklyRes] = await Promise.all([
+                const [allTimeRes, weeklyRes, schoolRpcRes] = await Promise.all([
                     supabase
                         .from('profiles')
                         .select('id, username, full_name, school_name, city, avatar_class, level, xp, streak_count')
@@ -34,20 +34,26 @@ export default function LeaderboardPage() {
                         .select('id, username, full_name, school_name, city, avatar_class, level, xp, streak_count')
                         .order('streak_count', { ascending: false })
                         .limit(50),
+                    supabase
+                        .rpc('get_school_rankings', { p_limit: 20 }),
                 ])
 
                 const allUsers = (allTimeRes.data || []) as LeaderboardUser[]
-                const schoolMap: Record<string, { school: string; city: string; totalXp: number; members: number }> = {}
-                allUsers.forEach((u) => {
-                    if (u.school_name) {
-                        if (!schoolMap[u.school_name]) {
-                            schoolMap[u.school_name] = { school: u.school_name, city: u.city || '', totalXp: 0, members: 0 }
+                let computedSchoolRanking: SchoolRanking[] = (schoolRpcRes.data as SchoolRanking[]) || []
+
+                if (!computedSchoolRanking || computedSchoolRanking.length === 0) {
+                    const schoolMap: Record<string, { school: string; city: string; totalXp: number; members: number }> = {}
+                    allUsers.forEach((u) => {
+                        if (u.school_name) {
+                            if (!schoolMap[u.school_name]) {
+                                schoolMap[u.school_name] = { school: u.school_name, city: u.city || '', totalXp: 0, members: 0 }
+                            }
+                            schoolMap[u.school_name].totalXp += u.xp
+                            schoolMap[u.school_name].members++
                         }
-                        schoolMap[u.school_name].totalXp += u.xp
-                        schoolMap[u.school_name].members++
-                    }
-                })
-                const computedSchoolRanking = Object.values(schoolMap).sort((a, b) => b.totalXp - a.totalXp)
+                    })
+                    computedSchoolRanking = Object.values(schoolMap).sort((a, b) => b.totalXp - a.totalXp)
+                }
 
                 setLeaderboardData({
                     allTime: allUsers,

@@ -1,6 +1,7 @@
 import Sidebar from '@/components/layout/Sidebar'
 import Navbar from '@/components/layout/Navbar'
 import { DashboardProvider } from '@/components/layout/DashboardProvider'
+import { getAuthenticatedUser, getAuthenticatedProfile } from '@/lib/auth/get-user'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
@@ -9,19 +10,16 @@ export default async function DashboardLayout({
 }: {
     children: React.ReactNode
 }) {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+    const user = await getAuthenticatedUser()
+    if (!user) {
+        redirect('/login')
+    }
 
-    if (!user) redirect('/login')
-
-    let { data: profile } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle()
+    let profile = await getAuthenticatedProfile(user.id)
 
     if (!profile) {
-        // Coba auto-provision profile dari user metadata jika akun auth ada tapi row profile belum terbuat
+        // Fallback auto-provision jika profile record belum terbentuk
+        const supabase = await createClient()
         const meta = user.user_metadata || {}
         const fallbackUsername = meta.username || user.email?.split('@')[0] || `hero_${user.id.slice(0, 5)}`
         const { data: newProfile, error: insertError } = await supabase
@@ -41,7 +39,6 @@ export default async function DashboardLayout({
             profile = newProfile
         } else {
             console.error('Failed to auto-create profile:', insertError)
-            // Redirect ke login dengan param reason agar middleware tidak mengarahkan balik ke dashboard
             redirect('/login?reason=profile_missing')
         }
     }

@@ -31,6 +31,19 @@ export function DashboardProvider({
     useEffect(() => {
         setProfile(profile)
         setLoading(false)
+
+        // Trigger background user/quest sync non-blocking (throttled to 5 mins)
+        if (profile?.id && typeof window !== 'undefined') {
+            const cacheKey = `sq:sync:${profile.id}`
+            const lastSync = sessionStorage.getItem(cacheKey)
+            const now = Date.now()
+            if (!lastSync || now - Number(lastSync) > 300_000) {
+                sessionStorage.setItem(cacheKey, String(now))
+                fetch('/api/user/sync', { method: 'POST' }).catch(() => {
+                    // Ignore background sync errors
+                })
+            }
+        }
     }, [profile, setProfile, setLoading])
 
     return (
