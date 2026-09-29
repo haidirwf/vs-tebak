@@ -185,6 +185,6 @@ export default function Navbar() {
                 {/* Theme Toggle (Disembunyikan sementara, hapus komentar untuk mengaktifkan kembali) */}
                 {/* <ThemeToggle /> */}
             </div>
-        </header>
+        </motion.header>
     )
 }
