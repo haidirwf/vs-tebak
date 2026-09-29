@@ -394,14 +394,12 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   box-shadow: 0 0 26px rgba(245, 197, 66, 0.6), 0 0 10px rgba(234, 179, 8, 0.4);
 }
 
-/* Linearity Product Demonstration Panel (25.7143px radius, frosted translucency) */
+/* Linearity Product Demonstration Panel (Solid High-Contrast Surface) */
 .product-demo-panel {
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: var(--radius-product-panels);
-  box-shadow: var(--shadow-panel);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
   padding: 24px;
   box-sizing: border-box !important;
 }

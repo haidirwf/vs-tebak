@@ -1,17 +1,35 @@
 // lib/auth/get-user.ts — Request-deduplicated auth & profile helper using React cache()
 import { cache } from 'react'
 import { createClient } from '@/lib/supabase/server'
+import { cookies } from 'next/headers'
 import { Profile } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { measureAsync } from '@/lib/utils/timing'
+import { extractAuthSessionFromCookies, isSessionExpiringSoon } from '@/lib/auth/token-utils'
 
 /**
  * Deduplicated getAuthenticatedUser.
- * Wrapped in React cache() so multiple components calling this within the same
- * render lifecycle only trigger exactly 1 request to Supabase Auth.
+ * Fast-path: reads user object directly from cached valid session cookie (0ms),
+ * avoiding slow redundant HTTPS roundtrips to Supabase Auth on every page navigation.
  */
 export const getAuthenticatedUser = cache(async (): Promise<User | null> => {
     return measureAsync('auth:getUser (cached)', async () => {
+        let allCookies: { name: string; value: string }[] = []
+        try {
+            const cookieStore = await cookies()
+            allCookies = cookieStore.getAll()
+        } catch {
+            return null
+        }
+
+        const session = extractAuthSessionFromCookies(allCookies)
+
+        // 1. FAST-PATH: Jika token masih valid (> 10s) dan user object tersedia di cookie session (0ms)
+        if (session?.user && session?.access_token && !isSessionExpiringSoon(session, 10)) {
+            return session.user
+        }
+
+        // 2. Fallback: jika token expired atau butuh refresh via server client
         try {
             const supabase = await createClient()
             const { data: { user }, error } = await supabase.auth.getUser()

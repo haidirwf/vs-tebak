@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import { extractAuthSessionFromCookies, isSessionExpiringSoon } from '@/lib/auth/token-utils'
 
 export async function updateSession(request: NextRequest) {
     let supabaseResponse = NextResponse.next({
@@ -27,15 +28,7 @@ export async function updateSession(request: NextRequest) {
         }
     )
 
-    // IMPORTANT: Avoid writing any logic between createServerClient and
-    // supabase.auth.getUser(). Calling getUser() refreshes the auth token
-    // if expired and writes the new cookies to supabaseResponse via setAll.
-    const {
-        data: { user },
-    } = await supabase.auth.getUser()
-
     const pathname = request.nextUrl.pathname
-
     const protectedPaths = [
         '/dashboard',
         '/modules',
@@ -49,8 +42,15 @@ export async function updateSession(request: NextRequest) {
     const authPaths = ['/login', '/register']
     const isAuthPage = authPaths.some((p) => pathname === p || pathname.startsWith(p + '/'))
 
-    // 1. Jika rute terlindungi dan user tidak login -> redirect ke /login
-    if (isProtected && !user) {
+    if (!isProtected && !isAuthPage) {
+        return supabaseResponse
+    }
+
+    const allCookies = request.cookies.getAll()
+    const session = extractAuthSessionFromCookies(allCookies)
+
+    // 1. Rute terlindungi dan tidak ada session -> redirect ke /login instan (0ms)
+    if (isProtected && !session?.access_token) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         const redirectRes = NextResponse.redirect(url)
@@ -60,17 +60,48 @@ export async function updateSession(request: NextRequest) {
         return redirectRes
     }
 
-    // 2. Jika user sudah login dan mengakses /login atau /register -> redirect ke /dashboard
-    if (isAuthPage && user) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
-        const redirectRes = NextResponse.redirect(url)
-        supabaseResponse.cookies.getAll().forEach((c) => {
-            redirectRes.cookies.set(c.name, c.value, c)
-        })
-        return redirectRes
+    // 2. FAST-PATH: Jika token JWT masih aktif (> 60 detik), bypass network call (0ms instan!)
+    // Menghilangkan latency 5-6 detik per navigasi ke Supabase Cloud
+    if (session?.access_token && !isSessionExpiringSoon(session, 60)) {
+        if (isAuthPage) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard'
+            const redirectRes = NextResponse.redirect(url)
+            supabaseResponse.cookies.getAll().forEach((c) => {
+                redirectRes.cookies.set(c.name, c.value, c)
+            })
+            return redirectRes
+        }
+        return supabaseResponse
     }
 
-    // 3. Selalu kembalikan supabaseResponse yang memuat header cookie tersinkronisasi
+    // 3. Token sudah expired atau mendekati kedaluwarsa (<60s):
+    // Lakukan refresh via Supabase Auth tanpa membunuh session jika terjadi error jaringan
+    try {
+        const { data: { user } } = await supabase.auth.getUser()
+
+        if (isProtected && !user) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/login'
+            const redirectRes = NextResponse.redirect(url)
+            supabaseResponse.cookies.getAll().forEach((c) => {
+                redirectRes.cookies.set(c.name, c.value, c)
+            })
+            return redirectRes
+        }
+
+        if (isAuthPage && user) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard'
+            const redirectRes = NextResponse.redirect(url)
+            supabaseResponse.cookies.getAll().forEach((c) => {
+                redirectRes.cookies.set(c.name, c.value, c)
+            })
+            return redirectRes
+        }
+    } catch {
+        // Pertahankan session, jangan hapus cookie pada transient network error
+    }
+
     return supabaseResponse
 }
