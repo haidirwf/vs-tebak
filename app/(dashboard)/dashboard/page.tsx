@@ -1,12 +1,12 @@
 'use client'
 
-import { useEffect, useState, useTransition } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import CharacterCard from '@/components/character/CharacterCard'
-import DailyQuestList from '@/components/quest/DailyQuestList'
-import DashboardStats from '@/components/dashboard/DashboardStats'
-import RecentActivity from '@/components/dashboard/RecentActivity'
+import HeroBanner from '@/components/dashboard/HeroBanner'
 import QuickActions from '@/components/dashboard/QuickActions'
+import DailyQuestList from '@/components/quest/DailyQuestList'
+import RecentActivity from '@/components/dashboard/RecentActivity'
+import QuickLeaderboard from '@/components/dashboard/QuickLeaderboard'
 import MotivationQuote from '@/components/dashboard/MotivationQuote'
 import { format } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
@@ -56,7 +56,7 @@ export default function DashboardPage() {
                         xpLogs: rpcData.xp_logs || [],
                     })
                 } else {
-                    // Graceful fallback to parallel Promise.all jika RPC belum dimigrasi
+                    // Graceful fallback to parallel PostgREST queries
                     if (process.env.NODE_ENV !== 'production' && rpcError) {
                         console.warn('[PERF] Falling back to parallel PostgREST queries:', rpcError.message)
                     }
@@ -108,88 +108,38 @@ export default function DashboardPage() {
         }
     }, [today, dashboardFetchedAt, setDashboardData, router])
 
-    const activeStreakCount = profile && isStreakActiveToday(profile.last_active, profile.streak_count)
-        ? profile.streak_count
-        : 0
-
     const dateStr = format(new Date(), "EEEE, d MMMM yyyy", { locale: idLocale })
 
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-            {/* Welcome */}
-            <div style={{ marginBottom: '24px' }}>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '2px' }}>
-                    {dateStr}
-                </p>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700 }}>
-                    Selamat datang{profile ? `, ${profile.username}` : ''}! 👋
-                </h1>
-            </div>
-
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress, Atribut Hero) */}
             {profile && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
-                    <CharacterCard profile={profile} showStats={true} />
-                    <QuickActions />
-                    <MotivationQuote />
-                </div>
+                <HeroBanner
+                    profile={profile}
+                    modulesCompletedCount={completedModules.length}
+                />
             )}
 
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
-                <div>
-                    <div className="card" style={{ padding: '20px' }}>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            🎭 Benefit Role
-                        </h3>
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                            {[
-                                { name: 'Warrior', desc: '+25% XP Modul Coding', color: 'var(--accent-red)', bg: 'var(--accent-red-bg)', icon: '⚔️' },
-                                { name: 'Mage', desc: '+25% XP Modul Desain', color: 'var(--accent-cyan)', bg: 'var(--accent-cyan-bg)', icon: '🔮' },
-                                { name: 'Archer', desc: '+25% XP Menang Battle', color: 'var(--accent-green)', bg: 'var(--accent-green-bg)', icon: '🏹' },
-                                { name: 'Healer', desc: '+25% XP Modul Produktivitas', color: 'var(--accent-gold)', bg: 'var(--accent-gold-bg)', icon: '✨' },
-                            ].map(role => {
-                                const isCurrent = role.name.toLowerCase() === profile?.avatar_class
-                                return (
-                                    <div key={role.name} style={{
-                                        padding: '12px',
-                                        backgroundColor: isCurrent ? role.bg : 'var(--bg-secondary)',
-                                        borderRadius: '8px',
-                                        border: `1px solid ${isCurrent ? role.color : 'var(--border)'}`,
-                                        position: 'relative',
-                                        opacity: isCurrent ? 1 : 0.7
-                                    }}>
-                                        {isCurrent && (
-                                            <div style={{
-                                                position: 'absolute', top: '-8px', right: '8px',
-                                                backgroundColor: role.color, color: '#FFFFFF',
-                                                fontSize: '8px', padding: '2px 6px', borderRadius: '4px',
-                                                fontWeight: 800
-                                            }}>AKTIF</div>
-                                        )}
-                                        <div style={{ fontSize: '18px', marginBottom: '4px' }}>{role.icon}</div>
-                                        <div style={{ fontSize: '13px', fontWeight: 700, color: role.color, fontFamily: 'var(--font-heading)' }}>{role.name}</div>
-                                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>{role.desc}</div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    </div>
-                </div>
+            {/* 2. Aksi Cepat / Mode Petualangan (4 Jalur Game: Modul, Battle, Voucher, Leaderboard) */}
+            <div>
+                <QuickActions modulesCompletedCount={completedModules.length} />
+            </div>
 
-                <div>
-                    <DashboardStats
-                        modulesCompleted={completedModules.length}
-                        totalXp={profile?.xp || 0}
-                        streak={activeStreakCount}
-                        level={profile?.level || 1}
-                    />
-                </div>
-
-                <div>
+            {/* 3. Grid Dua Kolom Utama (Quest Harian, Aktivitas, Leaderboard, Motivasi) */}
+            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1.15fr 0.85fr', gap: '20px', alignItems: 'start' }}>
+                {/* Kolom Kiri: Quest Harian & Aktivitas Terbaru */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     <DailyQuestList quests={quests} userQuests={userQuests} />
+                    <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
 
-                <div>
-                    <RecentActivity modules={completedModules} xpLogs={xpLogs} />
+                {/* Kolom Kanan: Top Hero Leaderboard & Motivasi Belajar Harian */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <QuickLeaderboard
+                        currentUserId={profile?.id}
+                        userStreak={profile?.streak_count}
+                    />
+                    <MotivationQuote />
                 </div>
             </div>
         </div>
