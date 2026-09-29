@@ -20,6 +20,7 @@ export interface SchoolRanking {
     school: string
     city: string
     totalXp: number
+    totalxp?: number
     members: number
 }
 

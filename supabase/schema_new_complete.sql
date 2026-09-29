@@ -957,7 +957,7 @@ CREATE OR REPLACE FUNCTION public.get_school_rankings(p_limit INTEGER DEFAULT 20
 RETURNS TABLE (
   school TEXT,
   city TEXT,
-  totalXp BIGINT,
+  "totalXp" BIGINT,
   members BIGINT
 )
 LANGUAGE sql
@@ -968,11 +968,11 @@ AS $$
   SELECT
     COALESCE(NULLIF(school_name, ''), 'Sekolah Indonesia') AS school,
     COALESCE(NULLIF(city, ''), 'Indonesia') AS city,
-    COALESCE(SUM(xp), 0)::BIGINT AS totalXp,
+    COALESCE(SUM(xp), 0)::BIGINT AS "totalXp",
     COUNT(id)::BIGINT AS members
   FROM profiles
   GROUP BY 1, 2
-  ORDER BY totalXp DESC
+  ORDER BY "totalXp" DESC
   LIMIT p_limit;
 $$;
 

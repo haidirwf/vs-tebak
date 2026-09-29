@@ -233,11 +233,11 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                             </div>
                             <div style={{ flex: 1 }}>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 500 }}>{school.school}</div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{school.city} · {school.members} siswa</div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{school.city} · {school.members ?? 0} siswa</div>
                             </div>
                             <div style={{ textAlign: 'right' }}>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#F5C542' }}>
-                                    {school.totalXp.toLocaleString()} XP
+                                    {(school.totalXp ?? (school as any).totalxp ?? 0).toLocaleString()} XP
                                 </div>
                             </div>
                         </motion.div>

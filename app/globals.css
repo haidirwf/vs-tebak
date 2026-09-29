@@ -772,56 +772,48 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-select-layout {
-  grid-template-columns: 1fr;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 24px !important;
+  width: 100%;
 }
 
 .battle-select-actions {
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 12px !important;
-  margin-bottom: 20px !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)) !important;
+  gap: 14px !important;
+  width: 100%;
+  margin-bottom: 0 !important;
 }
 
 .battle-mode-card-match {
   grid-column: auto;
 }
 
-.battle-mode-card .card {
-  padding: 16px !important;
-  gap: 10px !important;
-}
-
-.battle-mode-card .card h3 {
-  font-size: 16px !important;
-}
-
-.battle-mode-card .card p {
-  font-size: 12px !important;
-}
-
-.battle-card-desc {
-  display: none;
-}
-
-.battle-select-card {
-  min-height: 148px;
-}
-
-.battle-room-panel {
-  min-height: 500px;
+.battle-mode-card {
   height: 100%;
 }
 
+.battle-card-desc {
+  display: block;
+}
+
+.battle-room-panel {
+  min-height: auto;
+  width: 100%;
+}
+
 .battle-room-empty {
-  min-height: 420px;
+  min-height: 180px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .battle-room-list {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .battle-page {
@@ -986,40 +978,22 @@ input::placeholder, textarea::placeholder {
   }
 
   .battle-select-layout {
-    grid-template-columns: minmax(300px, 340px) 1fr;
-    align-items: stretch;
-    min-height: 590px;
-    gap: 20px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    min-height: auto !important;
+    gap: 24px !important;
   }
 
   .battle-select-actions {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     display: grid !important;
-    height: 100%;
-    gap: 20px !important;
+    height: auto !important;
+    gap: 16px !important;
     margin-bottom: 0 !important;
-  }
-
-  .battle-select-card {
-    flex: 1;
-    min-height: 0;
   }
 
   .battle-mode-card-match {
     grid-column: auto;
-  }
-
-  .battle-mode-card .card {
-    padding: 24px !important;
-    gap: 16px !important;
-  }
-
-  .battle-mode-card .card h3 {
-    font-size: 18px !important;
-  }
-
-  .battle-mode-card .card p {
-    font-size: 13px !important;
   }
 
   .battle-card-desc {
@@ -1027,12 +1001,11 @@ input::placeholder, textarea::placeholder {
   }
 
   .battle-room-panel {
-    min-height: 0;
+    min-height: auto;
   }
 
   .battle-room-empty {
-    min-height: 0;
-    flex: 1;
+    min-height: 180px;
   }
 
   .battle-page {

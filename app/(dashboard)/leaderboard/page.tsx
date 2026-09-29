@@ -39,16 +39,25 @@ export default function LeaderboardPage() {
                 ])
 
                 const allUsers = (allTimeRes.data || []) as LeaderboardUser[]
-                let computedSchoolRanking: SchoolRanking[] = (schoolRpcRes.data as SchoolRanking[]) || []
+                let computedSchoolRanking: SchoolRanking[] = []
 
-                if (!computedSchoolRanking || computedSchoolRanking.length === 0) {
+                if (schoolRpcRes.data && Array.isArray(schoolRpcRes.data) && schoolRpcRes.data.length > 0) {
+                    computedSchoolRanking = (schoolRpcRes.data as any[]).map((s) => ({
+                        school: s.school || 'Sekolah Indonesia',
+                        city: s.city || 'Indonesia',
+                        totalXp: Number(s.totalXp ?? s.totalxp ?? 0),
+                        members: Number(s.members ?? 0),
+                    }))
+                }
+
+                if (computedSchoolRanking.length === 0) {
                     const schoolMap: Record<string, { school: string; city: string; totalXp: number; members: number }> = {}
                     allUsers.forEach((u) => {
                         if (u.school_name) {
                             if (!schoolMap[u.school_name]) {
                                 schoolMap[u.school_name] = { school: u.school_name, city: u.city || '', totalXp: 0, members: 0 }
                             }
-                            schoolMap[u.school_name].totalXp += u.xp
+                            schoolMap[u.school_name].totalXp += (u.xp || 0)
                             schoolMap[u.school_name].members++
                         }
                     })
