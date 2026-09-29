@@ -251,7 +251,12 @@ CREATE POLICY "battles_delete" ON public.battles FOR DELETE USING (auth.uid() = 
 
 -- 3.7 Daily Quests Policies
 CREATE POLICY "daily_quests_public_read" ON public.daily_quests FOR SELECT USING (true);
-CREATE POLICY "daily_quests_auth_insert_today" ON public.daily_quests FOR INSERT WITH CHECK (auth.uid() IS NOT NULL AND date = CURRENT_DATE);
+CREATE POLICY "daily_quests_auth_insert_today" ON public.daily_quests FOR INSERT WITH CHECK (
+  auth.uid() IS NOT NULL 
+  AND date = CURRENT_DATE
+  AND xp_reward BETWEEN 10 AND 100
+  AND quest_type IN ('complete_module', 'win_battle', 'maintain_streak', 'earn_xp')
+);
 
 -- 3.8 User Daily Quests Policies
 CREATE POLICY "user_daily_quests_self" ON public.user_daily_quests FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
@@ -261,8 +266,9 @@ CREATE POLICY "badges_public_read" ON public.badges FOR SELECT USING (true);
 CREATE POLICY "user_badges_read" ON public.user_badges FOR SELECT USING (true);
 CREATE POLICY "user_badges_insert" ON public.user_badges FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- 3.10 XP Logs Policies
-CREATE POLICY "xp_logs_self" ON public.xp_logs FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+-- 3.10 XP Logs Policies (Immutable audit trail: Read and insert allowed, no manual edit/delete)
+CREATE POLICY "xp_logs_self_read" ON public.xp_logs FOR SELECT USING (auth.uid() = user_id);
+CREATE POLICY "xp_logs_self_insert" ON public.xp_logs FOR INSERT WITH CHECK (auth.uid() = user_id);
 
 -- 3.11 Voucher Policies
 CREATE POLICY "voucher_catalog_public_read" ON public.voucher_catalog FOR SELECT USING (is_active = true);
@@ -420,6 +426,15 @@ BEGIN
     WHERE id = v_voucher.id;
   END IF;
 
+  -- Potong XP user secara atomik
+  UPDATE public.profiles
+  SET xp = xp - v_voucher.xp_cost
+  WHERE id = v_user_id;
+
+  -- Catat log pengurangan XP ke tabel audit xp_logs
+  INSERT INTO public.xp_logs (user_id, xp_amount, reason)
+  VALUES (v_user_id, -v_voucher.xp_cost, 'Tukar voucher: ' || v_voucher.name);
+
   INSERT INTO voucher_redemptions (
     user_id, voucher_id, code, xp_spent, voucher_value, status
   )
@@ -432,7 +447,7 @@ BEGIN
   SELECT
     v_redemption_id,
     v_code,
-    v_profile.xp::INTEGER,
+    (v_profile.xp - v_voucher.xp_cost)::INTEGER,
     v_voucher.xp_cost::INTEGER,
     v_voucher.voucher_value::INTEGER,
     v_voucher.name::TEXT;

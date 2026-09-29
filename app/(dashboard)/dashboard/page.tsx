@@ -34,7 +34,7 @@ export default function DashboardPage() {
         async function fetchDashboard() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
-                router.push('/login')
+                setIsFetching(false)
                 return
             }
 

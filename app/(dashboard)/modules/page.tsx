@@ -20,7 +20,7 @@ export default function ModulesPage() {
         async function fetchModules() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
-                router.push('/login')
+                setIsLoading(false)
                 return
             }
 

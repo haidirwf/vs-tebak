@@ -25,7 +25,7 @@ export default function VoucherPage() {
         async function fetchVouchers() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
-                router.push('/login')
+                setIsLoading(false)
                 return
             }
 

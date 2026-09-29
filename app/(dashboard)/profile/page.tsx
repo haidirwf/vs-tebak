@@ -30,7 +30,7 @@ export default function ProfilePage() {
         async function fetchProfileData() {
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) {
-                router.push('/login')
+                setIsLoading(false)
                 return
             }
 

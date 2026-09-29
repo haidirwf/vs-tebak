@@ -38,68 +38,85 @@ export async function updateSession(request: NextRequest) {
         return supabaseResponse
     }
 
-    // Fast-path cookie presence check
-    const hasAuthCookie = request.cookies
-        .getAll()
-        .some(cookie => cookie.name.startsWith('sb-') && cookie.name.includes('auth-token') && cookie.value.length > 20)
+    // Ekstrak project ref Supabase saat ini agar tidak terkecoh cookie lama dari database/project lain
+    let currentProjectRef = ''
+    try {
+        if (process.env.NEXT_PUBLIC_SUPABASE_URL) {
+            currentProjectRef = new URL(process.env.NEXT_PUBLIC_SUPABASE_URL).hostname.split('.')[0]
+        }
+    } catch {
+        currentProjectRef = ''
+    }
 
-    if (isProtected && !hasAuthCookie) {
+    const allCookies = request.cookies.getAll()
+    const hasCurrentAuthCookie = allCookies.some(cookie =>
+        currentProjectRef
+            ? cookie.name.startsWith(`sb-${currentProjectRef}`) && cookie.name.includes('auth-token') && cookie.value.length > 20
+            : cookie.name.startsWith('sb-') && cookie.name.includes('auth-token') && cookie.value.length > 20
+    )
+
+    // Deteksi cookie usang dari Supabase project sebelumnya untuk dibersihkan
+    const staleCookies = allCookies.filter(cookie =>
+        currentProjectRef &&
+        cookie.name.startsWith('sb-') &&
+        cookie.name.includes('auth-token') &&
+        !cookie.name.startsWith(`sb-${currentProjectRef}`)
+    )
+
+    staleCookies.forEach(c => {
+        request.cookies.delete(c.name)
+        supabaseResponse.cookies.set(c.name, '', { path: '/', maxAge: 0 })
+    })
+
+    if (isProtected && !hasCurrentAuthCookie) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
-        return NextResponse.redirect(url)
+        const redirectResponse = NextResponse.redirect(url)
+        supabaseResponse.cookies.getAll().forEach(c => {
+            redirectResponse.cookies.set(c.name, c.value, c)
+        })
+        return redirectResponse
     }
 
     let user = null
-    let staleAuthCookieNames: string[] = []
 
     try {
-        // Beri timeout 2.5s agar tidak membeku 10 detik jika cloud Supabase lambat
+        // Beri timeout 2s agar tidak membeku jika cloud Supabase lambat
         const getUserPromise = supabase.auth.getUser()
         const timeoutPromise = new Promise<{ data: { user: null }; error: { message: string; code: string } }>((resolve) =>
-            setTimeout(() => resolve({ data: { user: null }, error: { message: 'timeout', code: 'TIMEOUT' } }), 2500)
+            setTimeout(() => resolve({ data: { user: null }, error: { message: 'timeout', code: 'TIMEOUT' } }), 2000)
         )
 
         const { data, error } = await Promise.race([getUserPromise, timeoutPromise])
 
         if (error?.code === 'refresh_token_not_found') {
-            staleAuthCookieNames = request.cookies
-                .getAll()
-                .filter(cookie => cookie.name.startsWith('sb-') && cookie.name.includes('auth-token'))
-                .map(cookie => cookie.name)
-            staleAuthCookieNames.forEach(cookieName => {
-                request.cookies.delete(cookieName)
-                supabaseResponse.cookies.set(cookieName, '', { path: '/', maxAge: 0 })
-            })
+            allCookies
+                .filter(c => c.name.startsWith('sb-') && c.name.includes('auth-token'))
+                .forEach(c => {
+                    request.cookies.delete(c.name)
+                    supabaseResponse.cookies.set(c.name, '', { path: '/', maxAge: 0 })
+                })
         } else if (data?.user) {
             user = data.user
         }
     } catch {
-        // Fallback: jika timeout/error tapi auth cookie ada, biarkan lewat agar client-side yang handle
+        // Fallback: jika terjadi error jaringan, biarkan request berlanjut
     }
 
-    // Jika pasti tidak ada user dan tidak ada cookie auth
-    if (isProtected && !user && !hasAuthCookie) {
+    // Jika halaman protected dan dipastikan tidak ada user
+    if (isProtected && !user && !hasCurrentAuthCookie) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         const redirectResponse = NextResponse.redirect(url)
-        staleAuthCookieNames.forEach(cookieName => {
-            redirectResponse.cookies.set(cookieName, '', { path: '/', maxAge: 0 })
+        supabaseResponse.cookies.getAll().forEach(c => {
+            redirectResponse.cookies.set(c.name, c.value, c)
         })
         return redirectResponse
     }
 
-    // Redirect authenticated users away from /login, tapi BUKAN jika ada error/reason dan BUKAN dari /register
-    const hasBypassParam = request.nextUrl.searchParams.has('reason') ||
-        request.nextUrl.searchParams.has('error') ||
-        request.nextUrl.searchParams.has('clear')
-
-    if (isAuthPage && user && !hasBypassParam) {
-        if (request.nextUrl.pathname.startsWith('/login')) {
-            const url = request.nextUrl.clone()
-            url.pathname = '/dashboard'
-            return NextResponse.redirect(url)
-        }
-    }
+    // PENTING: Jangan me-redirect /login atau /register ke /dashboard di middleware!
+    // Memaksa redirect dari /login ke /dashboard di middleware adalah penyebab utama redirect loop.
+    // Biarkan user membuka /login dan /register dengan normal.
 
     return supabaseResponse
 }
