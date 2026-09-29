@@ -41,6 +41,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [iAmReady, setIAmReady] = useState(false)
     const [opponentReady, setOpponentReady] = useState(false)
     const [countdown, setCountdown] = useState<number | null>(null)
+    const [isRealtimeSubscribed, setIsRealtimeSubscribed] = useState(false)
 
     // Finish state
     const [iAmFinished, setIAmFinished] = useState(false)
@@ -389,7 +390,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             })
             .subscribe((status) => {
                 debugBattle('Supabase Realtime subscription status:', status)
-                if (status === 'SUBSCRIBED') return
+                if (status === 'SUBSCRIBED') {
+                    setIsRealtimeSubscribed(true)
+                } else if (status === 'CHANNEL_ERROR' || status === 'TIMED_OUT' || status === 'CLOSED') {
+                    setIsRealtimeSubscribed(false)
+                }
             })
 
         return () => { supabase.removeChannel(channel) }
@@ -445,12 +450,21 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             return
         }
 
-        // Fallback polling in waiting/lobby to keep player join + ready state in sync
+        // Fallback polling: when Realtime WebSocket is connected, updates arrive instantly.
+        // We use a relaxed 15s heartbeat when subscribed, or 3.5s if offline/reconnecting.
+        const pollDelay = isRealtimeSubscribed ? 15000 : 3500
         if (phase === 'waiting' && isPlayer1) {
-            pollInterval = setInterval(checkFreshBattle, 5000)
+            pollInterval = setInterval(checkFreshBattle, pollDelay)
         } else if (phase === 'lobby') {
-            pollInterval = setInterval(checkFreshBattle, 2500)
+            pollInterval = setInterval(checkFreshBattle, pollDelay)
         }
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                checkFreshBattle()
+            }
+        }
+        document.addEventListener('visibilitychange', handleVisibilityChange)
 
         if (battle.player1_id && battle.player2_id) {
             setPhase((prev) => {
@@ -473,6 +487,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         return () => {
             if (pollInterval) clearInterval(pollInterval)
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
         }
     }, [
         battle.id,
@@ -482,6 +497,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         battle.player2_ready,
         battle.status,
         isPlayer1,
+        isRealtimeSubscribed,
         opponent,
         phase,
         supabase

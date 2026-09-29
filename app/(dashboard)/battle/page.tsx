@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
@@ -17,6 +17,7 @@ import {
     Plus,
     ArrowRight
 } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
 
 const CATEGORIES = [
     { value: 'coding', label: 'Coding', emoji: '💻' },
@@ -27,8 +28,6 @@ const CATEGORIES = [
 ]
 
 const MATCHMAKING_TIMEOUT_MS = 45_000
-const MATCHMAKING_POLL_BASE_MS = 1_500
-const MATCHMAKING_POLL_MAX_MS = 5_000
 
 interface AvailableRoom {
     id: string
@@ -40,6 +39,7 @@ interface AvailableRoom {
 
 export default function BattlePage() {
     const router = useRouter()
+    const supabase = useMemo(() => createClient(), [])
     const [mode, setMode] = useState<'select' | 'create' | 'join' | 'matchmaking'>('select')
     const [roomCode, setRoomCode] = useState('')
     const [category, setCategory] = useState('general')
@@ -50,12 +50,10 @@ export default function BattlePage() {
     const [matchmakingElapsedSec, setMatchmakingElapsedSec] = useState(0)
     const [availableRooms, setAvailableRooms] = useState<AvailableRoom[]>([])
     const [refreshingRooms, setRefreshingRooms] = useState(false)
-    const pollingRef = useRef<NodeJS.Timeout | null>(null)
     const matchmakingTimerRef = useRef<NodeJS.Timeout | null>(null)
-    const roomsPollingRef = useRef<NodeJS.Timeout | null>(null)
     const cancelRequestedRef = useRef(false)
 
-    const fetchRooms = async () => {
+    const fetchRooms = useCallback(async () => {
         if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
         try {
             const res = await fetch('/api/battle/list')
@@ -67,7 +65,7 @@ export default function BattlePage() {
         } catch (e: any) {
             console.error(e)
         }
-    }
+    }, [])
 
     const handleManualRefresh = async () => {
         setRefreshingRooms(true)
@@ -75,22 +73,45 @@ export default function BattlePage() {
         setTimeout(() => setRefreshingRooms(false), 500)
     }
 
-    // Fetch available rooms on mount and periodic poll
+    // Subscribe to battle lobby updates via Supabase Realtime WebSocket (replaces 15s polling)
     useEffect(() => {
         fetchRooms()
-        roomsPollingRef.current = setInterval(fetchRooms, 15000)
-        return () => {
-            if (roomsPollingRef.current) clearInterval(roomsPollingRef.current)
-        }
-    }, [])
 
-    // When matchmaking, poll the battle row until an opponent joins
+        const channel = supabase
+            .channel('lobby-rooms')
+            .on(
+                'postgres_changes',
+                {
+                    event: '*',
+                    schema: 'public',
+                    table: 'battles',
+                },
+                () => {
+                    // Update rooms list immediately when any room is created, joined, finished, or deleted
+                    fetchRooms()
+                }
+            )
+            .subscribe()
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                fetchRooms()
+            }
+        }
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+
+        return () => {
+            supabase.removeChannel(channel)
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
+        }
+    }, [supabase, fetchRooms])
+
+    // When matchmaking, listen via Supabase Realtime WebSocket for opponent joining (0 repeated Vercel API calls)
     useEffect(() => {
         if (mode !== 'matchmaking' || !pendingBattleId) return
 
         cancelRequestedRef.current = false
         const startedAt = Date.now()
-        let attempts = 0
         let stopped = false
 
         const cancelPendingRoom = () => {
@@ -105,77 +126,108 @@ export default function BattlePage() {
             fetch(endpoint, { method: 'DELETE', keepalive: true }).catch(() => { })
         }
 
-        const runPoll = async () => {
+        // Direct Supabase query fallback (bypasses Vercel Serverless Function completely)
+        const checkStatusDirectly = async () => {
             if (stopped) return
+            const { data: battleData } = await supabase
+                .from('battles')
+                .select('id, status, player2_id')
+                .eq('id', pendingBattleId)
+                .maybeSingle()
 
+            if (battleData && (battleData.status === 'active' || battleData.player2_id)) {
+                stopped = true
+                if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
+                router.push(`/battle/${pendingBattleId}`)
+            }
+        }
+
+        // 1. Subscribe to Supabase Realtime WebSocket for instant opponent join notification
+        const channel = supabase
+            .channel(`matchmaking:${pendingBattleId}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table: 'battles',
+                    filter: `id=eq.${pendingBattleId}`,
+                },
+                (payload) => {
+                    const updated = payload.new as { status?: string; player2_id?: string }
+                    if (updated.status === 'active' || updated.player2_id) {
+                        stopped = true
+                        if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
+                        router.push(`/battle/${pendingBattleId}`)
+                    }
+                }
+            )
+            .on(
+                'postgres_changes',
+                {
+                    event: 'DELETE',
+                    schema: 'public',
+                    table: 'battles',
+                    filter: `id=eq.${pendingBattleId}`,
+                },
+                () => {
+                    stopped = true
+                    if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
+                    setPendingBattleId(null)
+                    setMode('select')
+                    setError('Room matchmaking sudah tidak tersedia.')
+                }
+            )
+            .subscribe()
+
+        // 2. UI timer for elapsed seconds and timeout
+        matchmakingTimerRef.current = setInterval(() => {
             const elapsed = Date.now() - startedAt
             setMatchmakingElapsedSec(Math.floor(elapsed / 1000))
 
             if (elapsed >= MATCHMAKING_TIMEOUT_MS) {
                 stopped = true
-                clearTimeout(pollingRef.current!)
-                clearInterval(matchmakingTimerRef.current!)
+                if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
                 setMatchmakingTimedOut(true)
                 setError('Belum menemukan lawan. Silakan coba lagi.')
                 cancelPendingRoom()
                 setPendingBattleId(null)
-                return
             }
-
-            if (typeof document !== 'undefined' && document.visibilityState !== 'visible') {
-                pollingRef.current = setTimeout(runPoll, MATCHMAKING_POLL_MAX_MS)
-                return
-            }
-
-            const res = await fetch(`/api/battle/${pendingBattleId}`)
-            if (!res.ok) {
-                if (res.status === 403 || res.status === 404) {
-                    stopped = true
-                    clearTimeout(pollingRef.current!)
-                    clearInterval(matchmakingTimerRef.current!)
-                    setPendingBattleId(null)
-                    setMode('select')
-                    setError('Room matchmaking sudah tidak tersedia. Coba lagi.')
-                }
-                return
-            }
-            const data = await res.json()
-            if (data.status === 'active') {
-                stopped = true
-                clearTimeout(pollingRef.current!)
-                clearInterval(matchmakingTimerRef.current!)
-                router.push(`/battle/${pendingBattleId}`)
-                return
-            }
-
-            attempts += 1
-            const delay = Math.min(MATCHMAKING_POLL_BASE_MS + attempts * 350, MATCHMAKING_POLL_MAX_MS)
-            pollingRef.current = setTimeout(runPoll, delay)
-        }
-
-        matchmakingTimerRef.current = setInterval(() => {
-            setMatchmakingElapsedSec(Math.floor((Date.now() - startedAt) / 1000))
         }, 1000)
-        runPoll()
+
+        // 3. Direct Supabase safety checks: initial check + tab focus + relaxed 12s heartbeat
+        checkStatusDirectly()
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible' && !stopped) {
+                checkStatusDirectly()
+            }
+        }
+        document.addEventListener('visibilitychange', handleVisibilityChange)
+
+        const fallbackInterval = setInterval(() => {
+            if (!stopped) checkStatusDirectly()
+        }, 12000)
 
         const handleUnload = () => {
             if (pendingBattleId && mode === 'matchmaking') {
                 cancelPendingRoom()
             }
         }
-
         window.addEventListener('beforeunload', handleUnload)
 
         return () => {
             stopped = true
-            clearTimeout(pollingRef.current!)
-            clearInterval(matchmakingTimerRef.current!)
+            clearInterval(fallbackInterval)
+            if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
+            supabase.removeChannel(channel)
+            document.removeEventListener('visibilitychange', handleVisibilityChange)
             window.removeEventListener('beforeunload', handleUnload)
             if (pendingBattleId && mode === 'matchmaking') {
                 cancelPendingRoom()
             }
         }
-    }, [mode, pendingBattleId, router])
+    }, [mode, pendingBattleId, router, supabase])
 
     async function handleCreate() {
         setLoading(true)
@@ -225,11 +277,10 @@ export default function BattlePage() {
     }
 
     async function handleCancelMatchmaking() {
-        clearTimeout(pollingRef.current!)
-        clearInterval(matchmakingTimerRef.current!)
+        if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
         if (pendingBattleId) {
             cancelRequestedRef.current = true
-            await fetch(`/api/battle/${pendingBattleId}`, { method: 'DELETE' })
+            await fetch(`/api/battle/${pendingBattleId}`, { method: 'DELETE' }).catch(() => {})
         }
         setPendingBattleId(null)
         setMatchmakingTimedOut(false)
@@ -433,7 +484,7 @@ export default function BattlePage() {
                                     backgroundColor: availableRooms.length > 0 ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.05)',
                                     border: `1px solid ${availableRooms.length > 0 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
                                     padding: '4px 10px',
-                                    borderRadius: '9999px',
+                                    borderRadius: '8px',
                                     fontFamily: 'var(--font-mono)',
                                 }}
                             >
@@ -448,7 +499,7 @@ export default function BattlePage() {
                                     alignItems: 'center',
                                     gap: '6px',
                                     padding: '5px 12px',
-                                    borderRadius: '9999px',
+                                    borderRadius: '8px',
                                     backgroundColor: 'rgba(255, 255, 255, 0.06)',
                                     border: '1px solid rgba(255, 255, 255, 0.12)',
                                     color: 'var(--color-silver)',
@@ -579,8 +630,8 @@ export default function BattlePage() {
                                                         style={{
                                                             backgroundColor: 'rgba(245, 197, 66, 0.12)',
                                                             border: '1px solid rgba(245, 197, 66, 0.3)',
-                                                            padding: '1px 7px',
-                                                            borderRadius: '9999px',
+                                                            padding: '2px 8px',
+                                                            borderRadius: '6px',
                                                             fontFamily: 'var(--font-mono)',
                                                             fontWeight: 700,
                                                             color: 'var(--color-signal-orange)',
@@ -947,8 +998,8 @@ export default function BattlePage() {
                                     display: 'inline-flex',
                                     alignItems: 'center',
                                     gap: '6px',
-                                    padding: '4px 12px',
-                                    borderRadius: '9999px',
+                                    padding: '5px 12px',
+                                    borderRadius: '8px',
                                     backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                     border: '1px solid rgba(255, 255, 255, 0.1)',
                                     fontSize: '12px',
