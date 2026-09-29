@@ -379,7 +379,7 @@ export default function BattlePage() {
         <div className="responsive-page battle-page" style={{ maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header Title */}
             <div style={{ marginBottom: '16px', textAlign: 'left' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     ⚔️ Battle Arena
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>

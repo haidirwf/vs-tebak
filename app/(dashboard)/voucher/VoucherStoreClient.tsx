@@ -166,7 +166,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '6px', color: '#ffffff' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     🎟️ Toko Voucher Kantin
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>

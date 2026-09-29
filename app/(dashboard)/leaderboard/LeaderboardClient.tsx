@@ -50,7 +50,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
             <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     🏆 Leaderboard
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Ranking terbaik pelajar Indonesia</p>

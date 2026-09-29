@@ -423,6 +423,33 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   overflow-wrap: break-word;
 }
 
+.hero-banner-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.hero-banner-streak {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .hero-banner-header {
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 20px !important;
+  }
+  .hero-banner-streak {
+    width: auto !important;
+    margin-left: auto !important;
+    flex-shrink: 0 !important;
+  }
+}
+
 /* Role Selector Chip (8px radius rounded rect on Near Black) */
 .role-selector-chip {
   display: inline-flex;

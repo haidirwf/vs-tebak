@@ -58,7 +58,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
         <div className="responsive-page modules-page" style={{ padding: '24px' }}>
             {/* Header with glass effect background */}
             <div style={{ marginBottom: '32px', textAlign: 'left' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, marginBottom: '4px' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     📚 Modul Belajar
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
