@@ -355,17 +355,8 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
 
                     {/* Contestants Final Comparison */}
                     <div
-                        style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr auto 1fr',
-                            gap: '16px',
-                            alignItems: 'center',
-                            padding: '20px',
-                            borderRadius: '17.1429px',
-                            backgroundColor: 'var(--surface-elevated)',
-                            border: '1px solid var(--surface-border)',
-                            marginBottom: '28px',
-                        }}
+                        className="battle-versus-row"
+                        style={{ marginBottom: '28px' }}
                     >
                         {/* You */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -528,17 +519,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
 
                     {/* Versus Contestant Row (Mirroring Landing Page Simulation) */}
                     <div
-                        style={{
-                            display: 'grid',
-                            gridTemplateColumns: '1fr auto 1fr',
-                            gap: '16px',
-                            alignItems: 'center',
-                            padding: '16px 20px',
-                            borderRadius: '17.1429px',
-                            backgroundColor: 'var(--surface-elevated)',
-                            border: '1px solid var(--surface-border)',
-                            marginBottom: '20px',
-                        }}
+                        className="battle-versus-row"
                     >
                         {/* Player 1 (You) */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
@@ -570,6 +551,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             </AnimatePresence>
 
                             <motion.div
+                                className="battle-versus-avatar"
                                 animate={
                                     meAnimation === 'attack'
                                         ? { x: [0, 18, 0], scale: [1, 1.15, 1] }
@@ -579,15 +561,11 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                 }
                                 transition={{ duration: 0.35 }}
                                 style={{
-                                    width: '46px',
-                                    height: '46px',
-                                    borderRadius: '10px',
                                     backgroundColor: meAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(245, 197, 66, 0.12)',
                                     border: `1px solid ${meAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(245, 197, 66, 0.4)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '22px',
                                     flexShrink: 0,
                                     boxShadow: meAnimation === 'attack' ? '0 0 24px rgba(245, 197, 66, 0.6)' : meAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(245, 197, 66, 0.2)',
                                 }}
@@ -804,6 +782,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                 </div>
                             </div>
                             <motion.div
+                                className="battle-versus-avatar"
                                 animate={
                                     botAnimation === 'attack'
                                         ? { x: [0, -18, 0], scale: [1, 1.15, 1] }
@@ -813,15 +792,11 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                 }
                                 transition={{ duration: 0.35 }}
                                 style={{
-                                    width: '46px',
-                                    height: '46px',
-                                    borderRadius: '10px',
                                     backgroundColor: botAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(0, 212, 255, 0.1)',
                                     border: `1px solid ${botAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(0, 212, 255, 0.35)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    fontSize: '22px',
                                     flexShrink: 0,
                                     boxShadow: botAnimation === 'attack' ? '0 0 24px rgba(0, 212, 255, 0.6)' : botAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(0, 212, 255, 0.2)',
                                 }}
@@ -894,7 +869,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                     </AnimatePresence>
 
                     {/* Options Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '10px', marginBottom: '16px' }}>
+                    <div className="battle-options-grid">
                         {currentQuestion.options.map((opt, idx) => {
                             const isSelected = selectedAnswer === idx
                             const isCorrect = idx === currentQuestion.correct_option
