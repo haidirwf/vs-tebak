@@ -18,7 +18,7 @@ const bodyFont = DM_Sans({
 
 export const metadata: Metadata = {
   title: 'Skillungo — Level Up Your Skills, Conquer Your Future',
-  description: 'Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, battle quiz 1v1, dan kompetisi leaderboard antar sekolah.',
+  description: 'Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, duel kuis 1v1, dan raih prestasi di leaderboard sekolah.',
   keywords: 'edukasi, gamified learning, RPG, SMK, SMA, Indonesia, coding, desain, produktivitas',
   openGraph: {
     title: 'Skillungo',

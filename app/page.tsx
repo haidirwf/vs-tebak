@@ -17,7 +17,7 @@ const FEATURES = [
   {
     icon: <Trophy size={24} />,
     title: 'Leaderboard Nasional',
-    desc: 'Kompetisi seru antar pelajar dan antar sekolah se-Indonesia. Buktikan sekolahmu terbaik!',
+    desc: 'Papan peringkat reputasi pelajar dan sekolah se-Indonesia. Raih peringkat tertinggi lewat prestasi belajar!',
     color: 'var(--accent-gold)',
   },
   {
@@ -106,8 +106,8 @@ export default async function LandingPage() {
           borderRadius: '4px', padding: '6px 14px',
         }}>
           <Swords size={12} style={{ color: 'var(--accent-gold)' }} />
-          <span style={{ fontSize: '12px', color: 'var(--accent-gold)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
-            FICPACT CUP 2026 · WEB DEVELOPMENT
+          <span style={{ fontSize: '12px', color: 'var(--accent-gold)', fontWeight: 600, fontFamily: 'var(--font-heading)', letterSpacing: '0.05em' }}>
+            PLATFORM EDUKASI GAMIFIKASI RPG PELAJAR INDONESIA
           </span>
         </div>
 
@@ -123,7 +123,7 @@ export default async function LandingPage() {
           color: 'var(--text-secondary)', fontSize: '16px', maxWidth: '560px',
           margin: '0 auto 32px', lineHeight: 1.7,
         }}>
-          Platform edukasi berbasis RPG untuk pelajar SMK/SMA Indonesia. Belajar skill digital, battle quiz 1v1, dan kompetisi leaderboard antar sekolah!
+          Platform edukasi berbasis RPG interaktif untuk pelajar SMK/SMA Indonesia. Asah skill digital, tantang teman dalam duel kuis 1v1, dan raih prestasi di leaderboard sekolah!
         </p>
 
         <div className="landing-cta-row" style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
@@ -258,7 +258,7 @@ export default async function LandingPage() {
           <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--accent-gold)', fontSize: '16px' }}>Skillungo</span>
         </div>
         <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-          © 2026 Skillungo · FICPACT CUP 2026 · &quot;Level Up Your Skills, Conquer Your Future&quot;
+          © 2026 Skillungo · &quot;Level Up Your Skills, Conquer Your Future&quot;
         </p>
       </footer>
     </div>

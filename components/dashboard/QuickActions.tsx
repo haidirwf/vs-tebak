@@ -56,7 +56,7 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
             bg: 'var(--accent-green-bg)',
             border: 'var(--accent-green-border)',
             cta: 'Lihat Rank',
-            badge: 'Kompetisi',
+            badge: 'Prestasi',
         },
     ]
 
