@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import HeroBanner from '@/components/dashboard/HeroBanner'
-import QuickActions from '@/components/dashboard/QuickActions'
 import DailyQuestList from '@/components/quest/DailyQuestList'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import QuickLeaderboard from '@/components/dashboard/QuickLeaderboard'
@@ -116,11 +115,6 @@ export default function DashboardPage() {
                     modulesCompletedCount={completedModules.length}
                 />
             )}
-
-            {/* 2. Aksi Cepat / Mode Petualangan (4 Jalur Game: Modul, Battle, Voucher, Leaderboard) */}
-            <div>
-                <QuickActions modulesCompletedCount={completedModules.length} />
-            </div>
 
             {/* 3. Diagram Analisa Pembelajaran (Grafik Bar XP 7 Hari & Penguasaan Kategori Modul) */}
             <div>
