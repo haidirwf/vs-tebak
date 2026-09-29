@@ -22,14 +22,36 @@ export default async function DashboardLayout({
         console.error('Background daily quest check error:', err)
     })
 
-    const { data: profile } = await supabase
+    let { data: profile } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single()
+        .maybeSingle()
 
     if (!profile) {
-        redirect('/register')
+        // Coba auto-provision profile dari user metadata jika akun auth ada tapi row profile belum terbuat
+        const meta = user.user_metadata || {}
+        const fallbackUsername = meta.username || user.email?.split('@')[0] || `hero_${user.id.slice(0, 5)}`
+        const { data: newProfile, error: insertError } = await supabase
+            .from('profiles')
+            .upsert({
+                id: user.id,
+                username: fallbackUsername,
+                full_name: meta.full_name || fallbackUsername,
+                school_name: meta.school_name || 'Sekolah Indonesia',
+                city: meta.city || 'Indonesia',
+                avatar_class: meta.avatar_class || 'warrior',
+            }, { onConflict: 'id' })
+            .select('*')
+            .maybeSingle()
+
+        if (newProfile) {
+            profile = newProfile
+        } else {
+            console.error('Failed to auto-create profile:', insertError)
+            // Redirect ke login dengan param reason agar middleware tidak mengarahkan balik ke dashboard
+            redirect('/login?reason=profile_missing')
+        }
     }
 
     return (

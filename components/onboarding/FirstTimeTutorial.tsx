@@ -77,15 +77,20 @@ export default function FirstTimeTutorial({ userId, isNewUser, blocked = false, 
 
     useEffect(() => {
         if (!open || !step) return
+        if (typeof window !== 'undefined' && window.innerWidth <= 768) {
+            const target = document.querySelector(step.selector) as HTMLElement | null
+            target?.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
+        }
+    }, [open, step])
+
+    useEffect(() => {
+        if (!open || !step) return
 
         const measure = () => {
             const target = document.querySelector(step.selector) as HTMLElement | null
             if (!target) {
                 setRect(null)
                 return
-            }
-            if (typeof window !== 'undefined' && window.innerWidth <= 768) {
-                target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })
             }
             const r = target.getBoundingClientRect()
             setRect({

@@ -88,11 +88,17 @@ export async function updateSession(request: NextRequest) {
         return redirectResponse
     }
 
-    // Redirect authenticated users away from auth pages
-    if (isAuthPage && (user || hasAuthCookie)) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/dashboard'
-        return NextResponse.redirect(url)
+    // Redirect authenticated users away from /login, tapi BUKAN jika ada error/reason dan BUKAN dari /register
+    const hasBypassParam = request.nextUrl.searchParams.has('reason') ||
+        request.nextUrl.searchParams.has('error') ||
+        request.nextUrl.searchParams.has('clear')
+
+    if (isAuthPage && user && !hasBypassParam) {
+        if (request.nextUrl.pathname.startsWith('/login')) {
+            const url = request.nextUrl.clone()
+            url.pathname = '/dashboard'
+            return NextResponse.redirect(url)
+        }
     }
 
     return supabaseResponse
