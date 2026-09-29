@@ -63,60 +63,24 @@ export async function updateSession(request: NextRequest) {
         !cookie.name.startsWith(`sb-${currentProjectRef}`)
     )
 
+    let response = NextResponse.next({ request })
     staleCookies.forEach(c => {
         request.cookies.delete(c.name)
-        supabaseResponse.cookies.set(c.name, '', { path: '/', maxAge: 0 })
+        response.cookies.set(c.name, '', { path: '/', maxAge: 0 })
     })
 
+    // Jika halaman protected dan tidak ada cookie auth sama sekali -> redirect ke login (0ms, tanpa network call)
     if (isProtected && !hasCurrentAuthCookie) {
         const url = request.nextUrl.clone()
         url.pathname = '/login'
         const redirectResponse = NextResponse.redirect(url)
-        supabaseResponse.cookies.getAll().forEach(c => {
-            redirectResponse.cookies.set(c.name, c.value, c)
+        staleCookies.forEach(c => {
+            redirectResponse.cookies.set(c.name, '', { path: '/', maxAge: 0 })
         })
         return redirectResponse
     }
 
-    let user = null
-
-    try {
-        // Beri timeout 2s agar tidak membeku jika cloud Supabase lambat
-        const getUserPromise = supabase.auth.getUser()
-        const timeoutPromise = new Promise<{ data: { user: null }; error: { message: string; code: string } }>((resolve) =>
-            setTimeout(() => resolve({ data: { user: null }, error: { message: 'timeout', code: 'TIMEOUT' } }), 2000)
-        )
-
-        const { data, error } = await Promise.race([getUserPromise, timeoutPromise])
-
-        if (error?.code === 'refresh_token_not_found') {
-            allCookies
-                .filter(c => c.name.startsWith('sb-') && c.name.includes('auth-token'))
-                .forEach(c => {
-                    request.cookies.delete(c.name)
-                    supabaseResponse.cookies.set(c.name, '', { path: '/', maxAge: 0 })
-                })
-        } else if (data?.user) {
-            user = data.user
-        }
-    } catch {
-        // Fallback: jika terjadi error jaringan, biarkan request berlanjut
-    }
-
-    // Jika halaman protected dan dipastikan tidak ada user
-    if (isProtected && !user && !hasCurrentAuthCookie) {
-        const url = request.nextUrl.clone()
-        url.pathname = '/login'
-        const redirectResponse = NextResponse.redirect(url)
-        supabaseResponse.cookies.getAll().forEach(c => {
-            redirectResponse.cookies.set(c.name, c.value, c)
-        })
-        return redirectResponse
-    }
-
-    // PENTING: Jangan me-redirect /login atau /register ke /dashboard di middleware!
-    // Memaksa redirect dari /login ke /dashboard di middleware adalah penyebab utama redirect loop.
-    // Biarkan user membuka /login dan /register dengan normal.
-
-    return supabaseResponse
+    // Jika ada cookie auth aktif, langsung lewatkan ke Server Component tanpa menahan delay network 2 detik!
+    // Server layout (app/(dashboard)/layout.tsx) memvalidasi keaslian session secara langsung.
+    return response
 }

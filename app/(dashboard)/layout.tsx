@@ -3,8 +3,6 @@ import Navbar from '@/components/layout/Navbar'
 import { DashboardProvider } from '@/components/layout/DashboardProvider'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { format } from 'date-fns'
-import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 
 export default async function DashboardLayout({
     children,
@@ -15,12 +13,6 @@ export default async function DashboardLayout({
     const { data: { user } } = await supabase.auth.getUser()
 
     if (!user) redirect('/login')
-
-    const today = format(new Date(), 'yyyy-MM-dd')
-    // Jalankan di background (non-blocking) agar navigasi halaman tidak tertahan detik-detik SQL
-    ensureDailyQuestsAndProgress(supabase, user.id, today).catch((err) => {
-        console.error('Background daily quest check error:', err)
-    })
 
     let { data: profile } = await supabase
         .from('profiles')

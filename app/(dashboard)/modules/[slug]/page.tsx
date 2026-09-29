@@ -16,25 +16,19 @@ export default async function ModulePage({ params }: PageProps) {
     if (!moduleRes.data) notFound()
 
     const moduleId = moduleRes.data.id
-    const [profileRes, userModuleRes, questionsRes, xpClaimRes] = await Promise.all([
-        supabase.from('profiles').select('avatar_class').eq('id', user.id).single(),
+    const [profileRes, userModuleRes, questionsRes] = await Promise.all([
+        supabase.from('profiles').select('avatar_class').eq('id', user.id).maybeSingle(),
         supabase.from('user_modules').select('*').eq('user_id', user.id).eq('module_id', moduleId).maybeSingle(),
         supabase.from('questions').select('*').eq('module_id', moduleId),
-        supabase
-            .from('xp_logs')
-            .select('id')
-            .eq('user_id', user.id)
-            .ilike('reason', `%[module:${moduleId}]%`)
-            .limit(1),
     ])
 
-    const completedFromLog = (xpClaimRes.data?.length ?? 0) > 0
+    const isCompleted = userModuleRes.data?.status === 'completed'
 
     return (
         <ModuleDetail
             module={moduleRes.data}
             userModule={userModuleRes.data || null}
-            completedFromLog={completedFromLog}
+            completedFromLog={isCompleted}
             questions={questionsRes.data || []}
             avatarClass={profileRes.data?.avatar_class || 'warrior'}
         />
