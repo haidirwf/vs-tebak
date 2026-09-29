@@ -8,8 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import { AVATAR_CLASS_STATS } from '@/lib/game/xp'
-import { AvatarClass } from '@/types'
 import { Flame, Mail, Lock, User, School, Loader2 } from 'lucide-react'
 
 const registerSchema = z.object({
@@ -20,7 +18,6 @@ const registerSchema = z.object({
     full_name: z.string().min(2, 'Nama minimal 2 karakter'),
     school_name: z.string().min(3, 'Nama sekolah minimal 3 karakter'),
     city: z.string().min(2, 'Nama kota minimal 2 karakter'),
-    avatar_class: z.enum(['warrior', 'mage', 'archer', 'healer']),
 })
 
 type RegisterForm = z.infer<typeof registerSchema>
@@ -29,11 +26,9 @@ export default function RegisterPage() {
     const router = useRouter()
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const [selectedClass, setSelectedClass] = useState<AvatarClass>('warrior')
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<RegisterForm>({
+    const { register, handleSubmit, formState: { errors } } = useForm<RegisterForm>({
         resolver: zodResolver(registerSchema),
-        defaultValues: { avatar_class: 'warrior' },
     })
 
     const onSubmit = async (data: RegisterForm) => {
@@ -51,7 +46,6 @@ export default function RegisterPage() {
                     full_name: data.full_name,
                     school_name: data.school_name,
                     city: data.city,
-                    avatar_class: data.avatar_class,
                 },
             },
         })
@@ -83,7 +77,7 @@ export default function RegisterPage() {
                 full_name: data.full_name,
                 school_name: data.school_name,
                 city: data.city,
-                avatar_class: data.avatar_class,
+                character_created: false,
             }, { onConflict: 'id' })
 
             if (profileError) {
@@ -191,49 +185,6 @@ export default function RegisterPage() {
                     )}
 
                     <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                        {/* Avatar Class Selection */}
-                        <div>
-                            <label style={labelStyle}>Pilih Role / Kelas Karakter</label>
-                            <div className="four-col-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                                {(Object.keys(AVATAR_CLASS_STATS) as AvatarClass[]).map((cls) => {
-                                    const stat = AVATAR_CLASS_STATS[cls]
-                                    const isSelected = selectedClass === cls
-                                    return (
-                                        <motion.button
-                                            key={cls}
-                                            type="button"
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={() => { setSelectedClass(cls); setValue('avatar_class', cls) }}
-                                            style={{
-                                                padding: '10px 6px',
-                                                borderRadius: '12px',
-                                                cursor: 'pointer',
-                                                backgroundColor: isSelected ? 'rgba(245, 197, 66, 0.12)' : 'var(--surface-canvas)',
-                                                border: `1px solid ${isSelected ? '#F5C542' : 'var(--surface-border)'}`,
-                                                boxShadow: isSelected ? '0 0 12px rgba(245, 197, 66, 0.25)' : 'none',
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: '4px',
-                                                transition: 'all 0.2s',
-                                            }}
-                                        >
-                                            <span style={{ fontSize: '20px' }}>{stat.emoji}</span>
-                                            <span style={{
-                                                fontFamily: 'var(--font-heading)',
-                                                fontSize: '11px',
-                                                fontWeight: 500,
-                                                color: isSelected ? '#F5C542' : 'var(--text-secondary)',
-                                            }}>{stat.label}</span>
-                                        </motion.button>
-                                    )
-                                })}
-                            </div>
-                            <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginTop: '8px', marginBottom: 0 }}>
-                                {AVATAR_CLASS_STATS[selectedClass].description}
-                            </p>
-                        </div>
 
                         {/* Email */}
                         <div>

@@ -207,20 +207,20 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                                 </span>
                             </div>
 
-                            <p style={{ margin: '4px 0 6px', fontSize: '12px', color: 'var(--color-fog)', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            <p style={{ margin: '4px 0 6px', fontSize: '12px', color: 'var(--color-fog)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                 {roleCfg.desc} • <span style={{ color: roleCfg.color, fontWeight: 500 }}>{roleCfg.roleBonus}</span>
                             </p>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px', color: 'var(--color-steel)' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11.5px', color: 'var(--color-steel)', flexWrap: 'wrap', minWidth: 0 }}>
                                 {profile.school_name && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                        <School size={13} style={{ color: 'var(--color-gold)' }} />
-                                        <span>{profile.school_name}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '160px' }}>
+                                        <School size={12} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
+                                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.school_name}</span>
                                     </div>
                                 )}
                                 {profile.city && (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                                        <MapPin size={13} style={{ color: 'var(--accent-cyan)' }} />
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                                        <MapPin size={12} style={{ color: 'var(--accent-cyan)', flexShrink: 0 }} />
                                         <span>{profile.city}</span>
                                     </div>
                                 )}

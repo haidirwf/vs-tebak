@@ -70,7 +70,7 @@ export default function Sidebar() {
                         style={{
                             width: '28px',
                             height: '28px',
-                            borderRadius: '9999px',
+                            borderRadius: '8px',
                             backgroundColor: 'rgba(245, 197, 66, 0.15)',
                             border: '1px solid rgba(245, 197, 66, 0.4)',
                             display: 'flex',
@@ -171,12 +171,12 @@ export default function Sidebar() {
                         </div>
                     </div>
                     {/* XP Bar */}
-                    <div style={{ height: '4px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '9999px', overflow: 'hidden' }}>
+                    <div style={{ height: '4px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '4px', overflow: 'hidden' }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${xpProgress}%` }}
                             transition={{ duration: 0.6, ease: 'easeOut' }}
-                            style={{ height: '100%', backgroundColor: 'var(--color-gold)', boxShadow: '0 0 8px rgba(245, 197, 66, 0.4)' }}
+                            style={{ height: '100%', backgroundColor: 'var(--color-gold)' }}
                         />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>

@@ -567,9 +567,9 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                 ⚔️
                             </motion.div>
                             <div className="battle-versus-info">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
-                                    <span className="battle-player-name">
-                                        Kamu <span style={{ color: 'var(--color-signal-orange)', fontSize: '10px', fontWeight: 400 }}>(Hero)</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0 }}>
+                                    <span className="battle-player-name" title="Kamu (Hero)">
+                                        Kamu
                                     </span>
                                     <span
                                         className="battle-level-badge"
@@ -670,7 +670,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                             </AnimatePresence>
 
                             <div className="battle-versus-info">
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', minWidth: 0 }}>
                                     <span
                                         className="battle-level-badge"
                                         style={{
@@ -681,7 +681,7 @@ export default function PracticeArena({ questionPool }: PracticeArenaProps) {
                                     >
                                         LV.14
                                     </span>
-                                    <span className="battle-player-name">
+                                    <span className="battle-player-name" title="Computer AI">
                                         Computer AI
                                     </span>
                                 </div>

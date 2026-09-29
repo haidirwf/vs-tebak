@@ -92,25 +92,26 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
             }}
         >
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '12px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                     <div
                         style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '9999px',
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '8px',
                             backgroundColor: 'rgba(245, 197, 66, 0.1)',
                             border: '1px solid rgba(245, 197, 66, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: '#F5C542',
+                            flexShrink: 0,
                         }}
                     >
-                        <BarChart3 size={18} />
+                        <BarChart3 size={17} />
                     </div>
-                    <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
+                    <div style={{ minWidth: 0 }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 500, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             Analisa Pembelajaran
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -222,12 +223,12 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                         })}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                            <TrendingUp size={14} style={{ color: '#22C55E' }} />
-                            <span>Konsistensi belajar harian tercatat otomatis</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginTop: '14px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0 }}>
+                            <TrendingUp size={14} style={{ color: '#22C55E', flexShrink: 0 }} />
+                            <span style={{ fontSize: '11px', lineHeight: 1.3 }}>Konsistensi belajar harian tercatat otomatis</span>
                         </div>
-                        <span style={{ fontWeight: 600, color: '#F5C542', fontFamily: 'var(--font-heading)' }}>
+                        <span style={{ fontWeight: 600, color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '11px', whiteSpace: 'nowrap' }}>
                             Total: {totalXp.toLocaleString()} XP
                         </span>
                     </div>
@@ -251,16 +252,15 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                 </span>
                             </div>
 
-                            <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '9999px', overflow: 'hidden', border: '1px solid #222222' }}>
+                            <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '4px', overflow: 'hidden', border: '1px solid #222222' }}>
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${Math.max(stat.percent > 0 ? stat.percent : 4, 0)}%` }}
                                     transition={{ duration: 0.6, ease: 'easeOut' }}
                                     style={{
                                         height: '100%',
-                                        borderRadius: '9999px',
+                                        borderRadius: '4px',
                                         backgroundColor: stat.color,
-                                        boxShadow: `0 0 8px ${stat.color}40`,
                                     }}
                                 />
                             </div>

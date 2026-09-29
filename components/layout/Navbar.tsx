@@ -138,8 +138,8 @@ export default function Navbar() {
                             display: 'flex',
                             alignItems: 'center',
                             gap: '6px',
-                            padding: '4px 12px',
-                            borderRadius: '9999px',
+                            padding: '4px 10px',
+                            borderRadius: '8px',
                             backgroundColor: 'var(--accent-red-bg)',
                             border: '1px solid var(--accent-red-border)',
                             cursor: 'default',
@@ -172,7 +172,7 @@ export default function Navbar() {
                     </motion.div>
                 )}
 
-                {/* XP Badge with shimmer & micro-interaction */}
+                {/* XP Badge with micro-interaction */}
                 {profile && (
                     <motion.div
                         className="dashboard-navbar-xp"
@@ -182,8 +182,8 @@ export default function Navbar() {
                         style={{
                             backgroundColor: 'rgba(245, 197, 66, 0.1)',
                             border: '1px solid rgba(245, 197, 66, 0.35)',
-                            borderRadius: '9999px',
-                            padding: '4px 14px',
+                            borderRadius: '8px',
+                            padding: '4px 12px',
                             fontSize: '12px',
                             fontFamily: 'var(--font-inter)',
                             fontWeight: 600,
@@ -192,7 +192,6 @@ export default function Navbar() {
                             alignItems: 'center',
                             gap: '6px',
                             cursor: 'default',
-                            boxShadow: '0 0 14px rgba(245, 197, 66, 0.15)',
                         }}
                     >
                         <motion.div

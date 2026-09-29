@@ -21,7 +21,10 @@ import {
     Clock, 
     Flame,
     Lock,
-    Loader2
+    Loader2,
+    CheckCircle2,
+    AlertCircle,
+    X
 } from 'lucide-react'
 
 const SLOT_LABELS: Record<ItemSlot, { name: string; emoji: string }> = {
@@ -63,6 +66,15 @@ export default function CharacterPage() {
     useEffect(() => {
         loadInventoryData()
     }, [loadInventoryData, profile?.character_created, profile?.avatar_class])
+
+    // Auto-dismiss floating toast notification
+    useEffect(() => {
+        if (!notification) return
+        const timer = setTimeout(() => {
+            setNotification(null)
+        }, 3200)
+        return () => clearTimeout(timer)
+    }, [notification])
 
     // Compute total character stats
     const characterStats = useMemo(() => {
@@ -200,33 +212,55 @@ export default function CharacterPage() {
                 </div>
             </div>
 
-            {/* Notification Alert Banner */}
+            {/* Floating Toaster for Equip/Unequip/Buy Notifications (No Layout Shift) */}
             <AnimatePresence>
                 {notification && (
                     <motion.div
-                        initial={{ opacity: 0, y: -8 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -8 }}
+                        initial={{ opacity: 0, y: 24, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 24, scale: 0.95 }}
+                        transition={{ duration: 0.2, ease: 'easeOut' }}
                         style={{
-                            padding: '10px 16px',
-                            borderRadius: '8px',
-                            marginBottom: '20px',
-                            fontSize: '13px',
+                            position: 'fixed',
+                            bottom: '28px',
+                            right: '28px',
+                            zIndex: 9999,
                             display: 'flex',
                             alignItems: 'center',
-                            justifyContent: 'space-between',
-                            backgroundColor: notification.type === 'success' ? 'rgba(34, 197, 94, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                            border: `1px solid ${notification.type === 'success' ? 'rgba(34, 197, 94, 0.35)' : 'rgba(239, 68, 68, 0.35)'}`,
-                            color: notification.type === 'success' ? 'var(--color-vector-green)' : 'var(--accent-red)',
+                            gap: '12px',
+                            padding: '12px 18px',
+                            borderRadius: '12px',
+                            backgroundColor: '#141414',
+                            border: `1px solid ${notification.type === 'success' ? 'rgba(34, 197, 94, 0.45)' : 'rgba(239, 68, 68, 0.45)'}`,
+                            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.15)',
+                            maxWidth: '420px',
                         }}
                     >
-                        <span>{notification.message}</span>
+                        {notification.type === 'success' ? (
+                            <CheckCircle2 size={18} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />
+                        ) : (
+                            <AlertCircle size={18} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
+                        )}
+                        <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 500, lineHeight: 1.4 }}>
+                            {notification.message}
+                        </span>
                         <button
                             type="button"
                             onClick={() => setNotification(null)}
-                            style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer', padding: '2px 6px' }}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'var(--color-steel)',
+                                cursor: 'pointer',
+                                padding: '4px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '6px',
+                                marginLeft: '6px',
+                            }}
                         >
-                            ✕
+                            <X size={14} />
                         </button>
                     </motion.div>
                 )}
@@ -245,12 +279,11 @@ export default function CharacterPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                     {/* Character Stage Card */}
                     <div
-                        className="product-demo-panel"
                         style={{
                             padding: '24px 20px',
                             borderRadius: '16px',
-                            border: `1px solid ${roleInfo.themeColor}44`,
-                            backgroundColor: 'rgba(15, 23, 42, 0.75)',
+                            border: '1px solid #313131',
+                            backgroundColor: '#141414',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -264,8 +297,8 @@ export default function CharacterPage() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '3px 10px',
-                                borderRadius: '6px',
+                                padding: '4px 10px',
+                                borderRadius: '8px',
                                 backgroundColor: `${roleInfo.themeColor}18`,
                                 border: `1px solid ${roleInfo.themeColor}44`,
                                 color: roleInfo.themeColor,
@@ -276,7 +309,7 @@ export default function CharacterPage() {
                             }}
                         >
                             <span>{roleInfo.avatarEmoji}</span>
-                            <span>{roleInfo.name.toUpperCase()} · LV.{profile?.level || 1}</span>
+                            <span>{roleInfo.name} · Lv.{profile?.level || 1}</span>
                         </div>
 
                         {/* Visual Stage */}
@@ -322,12 +355,11 @@ export default function CharacterPage() {
 
                     {/* Active Equipment Slots Bar */}
                     <div
-                        className="product-demo-panel"
                         style={{
                             padding: '18px',
-                            borderRadius: '14px',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
-                            backgroundColor: 'rgba(15, 23, 42, 0.6)',
+                            borderRadius: '16px',
+                            border: '1px solid #313131',
+                            backgroundColor: '#141414',
                         }}
                     >
                         <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)', marginBottom: '14px' }}>
@@ -420,12 +452,11 @@ export default function CharacterPage() {
 
                     {/* Battle Buffs Summary Card */}
                     <div
-                        className="product-demo-panel"
                         style={{
                             padding: '16px',
-                            borderRadius: '12px',
-                            backgroundColor: 'rgba(15, 23, 42, 0.5)',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            borderRadius: '16px',
+                            backgroundColor: '#141414',
+                            border: '1px solid #313131',
                         }}
                     >
                         <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)', marginBottom: '10px' }}>

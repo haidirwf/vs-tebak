@@ -42,25 +42,26 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
             }}
         >
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                     <div
                         style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '9999px',
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '8px',
                             backgroundColor: 'rgba(245, 197, 66, 0.1)',
                             border: '1px solid rgba(245, 197, 66, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: '#F5C542',
+                            flexShrink: 0,
                         }}
                     >
-                        <History size={18} />
+                        <History size={17} />
                     </div>
-                    <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
+                    <div style={{ minWidth: 0 }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 500, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             Aktivitas Terbaru
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -75,9 +76,10 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                         alignItems: 'center',
                         gap: '6px',
                         backgroundColor: 'var(--surface-elevated)',
-                        padding: '4px 12px',
-                        borderRadius: '9999px',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
                         border: '1px solid var(--surface-border)',
+                        whiteSpace: 'nowrap',
                     }}
                 >
                     <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
@@ -145,8 +147,9 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                                         color: '#F5C542',
                                         backgroundColor: 'rgba(245, 197, 66, 0.1)',
                                         border: '1px solid rgba(245, 197, 66, 0.25)',
-                                        padding: '3px 10px',
-                                        borderRadius: '9999px',
+                                        padding: '2px 8px',
+                                        borderRadius: '6px',
+                                        whiteSpace: 'nowrap',
                                     }}
                                 >
                                     +{log.xp_amount} XP

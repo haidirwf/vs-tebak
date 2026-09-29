@@ -7,7 +7,7 @@ import { AvatarClass, Profile } from '@/types'
 import { CHARACTER_ROLES } from '@/lib/game/character'
 import { getStarterItemsForClass } from '@/lib/game/items'
 import CharacterVisual from './CharacterVisual'
-import { Swords, Sparkles, Shield, Zap, Check, ArrowRight, Loader2 } from 'lucide-react'
+import { Sparkles, Zap, Check, ArrowRight, Loader2 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 
 interface CharacterCreationModalProps {
@@ -79,8 +79,8 @@ export default function CharacterCreationModal({
                 style={{
                     position: 'fixed',
                     inset: 0,
-                    backgroundColor: 'rgba(5, 5, 10, 0.88)',
-                    backdropFilter: 'blur(12px)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                    backdropFilter: 'blur(10px)',
                     zIndex: 9999,
                     display: 'flex',
                     alignItems: 'center',
@@ -90,24 +90,25 @@ export default function CharacterCreationModal({
                 }}
             >
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 16 }}
+                    initial={{ opacity: 0, scale: 0.96, y: 12 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 16 }}
-                    className="product-demo-panel"
+                    exit={{ opacity: 0, scale: 0.96, y: 12 }}
+                    transition={{ duration: 0.25, ease: 'easeOut' }}
                     style={{
                         width: '100%',
-                        maxWidth: '840px',
-                        maxHeight: '92vh',
+                        maxWidth: '820px',
+                        maxHeight: '90vh',
                         overflowY: 'auto',
-                        padding: '32px 28px',
+                        padding: '28px',
                         borderRadius: '16px',
-                        border: `1px solid ${roleInfo.themeColor}55`,
-                        boxShadow: `0 24px 60px rgba(0, 0, 0, 0.9), 0 0 40px ${roleInfo.themeColor}22`,
+                        backgroundColor: '#141414',
+                        border: '1px solid #313131',
+                        boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
                         position: 'relative',
                     }}
                 >
                     {/* Header */}
-                    <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+                    <div style={{ textAlign: 'center', marginBottom: '22px' }}>
                         <div
                             style={{
                                 display: 'inline-flex',
@@ -115,40 +116,42 @@ export default function CharacterCreationModal({
                                 gap: '6px',
                                 padding: '4px 12px',
                                 borderRadius: '8px',
-                                backgroundColor: `${roleInfo.themeColor}15`,
-                                border: `1px solid ${roleInfo.themeColor}44`,
-                                color: roleInfo.themeColor,
+                                backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                border: '1px solid rgba(245, 197, 66, 0.3)',
+                                color: 'var(--color-gold)',
                                 fontSize: '12px',
-                                fontWeight: 700,
+                                fontWeight: 600,
                                 fontFamily: 'var(--font-heading)',
                                 marginBottom: '10px',
                             }}
                         >
-                            <Sparkles size={14} /> Pembuatan Karakter Baru
+                            <Sparkles size={13} />
+                            <span>Pahlawan Belajar</span>
                         </div>
                         <h2
                             style={{
                                 fontFamily: 'var(--font-heading)',
-                                fontSize: '24px',
-                                fontWeight: 800,
+                                fontSize: '22px',
+                                fontWeight: 700,
                                 color: '#ffffff',
                                 margin: '0 0 6px 0',
+                                letterSpacing: '-0.01em',
                             }}
                         >
                             Pilih Pahlawan Belajarmu
                         </h2>
-                        <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: 0 }}>
-                            Fitur karakter telah aktif! Pilih role tempur dan dapatkan paket perlengkapan starter gratis untuk akunmu.
+                        <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>
+                            Pilih role pahlawan untuk membuka gaya bertarung, bonus XP, dan paket perlengkapan starter gratis.
                         </p>
                     </div>
 
-                    {/* Role Selection Tabs */}
+                    {/* Role Selection Cards Grid */}
                     <div
                         style={{
                             display: 'grid',
                             gridTemplateColumns: 'repeat(4, 1fr)',
                             gap: '10px',
-                            marginBottom: '24px',
+                            marginBottom: '20px',
                         }}
                     >
                         {ROLES.map((rKey) => {
@@ -163,15 +166,17 @@ export default function CharacterCreationModal({
                                         display: 'flex',
                                         flexDirection: 'column',
                                         alignItems: 'center',
-                                        padding: '12px 8px',
+                                        textAlign: 'center',
+                                        padding: '14px 10px',
                                         borderRadius: '12px',
-                                        border: `1px solid ${isSelected ? r.themeColor : 'rgba(255, 255, 255, 0.08)'}`,
-                                        backgroundColor: isSelected ? `${r.themeColor}18` : 'rgba(255, 255, 255, 0.03)',
+                                        border: `1.5px solid ${isSelected ? r.themeColor : '#313131'}`,
+                                        backgroundColor: isSelected ? `${r.themeColor}14` : '#1a1a1a',
                                         cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
+                                        transition: 'all 0.18s ease',
+                                        position: 'relative',
                                     }}
                                 >
-                                    <span style={{ fontSize: '24px', marginBottom: '4px' }}>{r.avatarEmoji}</span>
+                                    <span style={{ fontSize: '26px', marginBottom: '6px' }}>{r.avatarEmoji}</span>
                                     <span
                                         style={{
                                             fontFamily: 'var(--font-heading)',
@@ -182,94 +187,106 @@ export default function CharacterCreationModal({
                                     >
                                         {r.name}
                                     </span>
-                                    <span style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                                    <span style={{ fontSize: '10px', color: 'var(--color-fog)', marginTop: '2px', marginBottom: '8px' }}>
                                         {r.title}
+                                    </span>
+                                    <span
+                                        style={{
+                                            fontSize: '9.5px',
+                                            fontWeight: 600,
+                                            color: isSelected ? r.themeColor : 'var(--color-steel)',
+                                            backgroundColor: isSelected ? `${r.themeColor}22` : 'rgba(255, 255, 255, 0.05)',
+                                            padding: '2px 6px',
+                                            borderRadius: '6px',
+                                            border: `1px solid ${isSelected ? `${r.themeColor}44` : 'transparent'}`,
+                                        }}
+                                    >
+                                        {r.perk.name}
                                     </span>
                                 </button>
                             )
                         })}
                     </div>
 
-                    {/* Main Character Showcase: 2 Columns */}
+                    {/* Character Showcase Card */}
                     <div
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: 'minmax(240px, 300px) 1fr',
-                            gap: '24px',
+                            gridTemplateColumns: 'minmax(220px, 280px) 1fr',
+                            gap: '20px',
                             alignItems: 'center',
-                            backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                            backgroundColor: '#181818',
                             borderRadius: '14px',
-                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            border: '1px solid #2a2a2a',
                             padding: '20px',
-                            marginBottom: '24px',
+                            marginBottom: '20px',
                         }}
                     >
-                        {/* Visual Avatar Stage */}
+                        {/* Visual Stage */}
                         <div
                             style={{
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                                backgroundColor: '#141414',
                                 borderRadius: '12px',
-                                border: `1px solid ${roleInfo.themeColor}33`,
+                                border: '1px solid #313131',
                                 padding: '16px',
                             }}
                         >
                             <CharacterVisual
                                 role={selectedRole}
-                                size={190}
+                                size={175}
                                 showAura={true}
                                 interactive={true}
                             />
                             <div
                                 style={{
                                     marginTop: '8px',
-                                    fontFamily: 'var(--font-mono)',
                                     fontSize: '11px',
                                     color: roleInfo.themeColor,
-                                    fontWeight: 700,
+                                    fontWeight: 600,
+                                    fontFamily: 'var(--font-heading)',
                                 }}
                             >
-                                {roleInfo.subtitle}
+                                {roleInfo.name} · {roleInfo.subtitle}
                             </div>
                         </div>
 
-                        {/* Role Details & Stats */}
+                        {/* Role Details */}
                         <div>
+                            {/* Role Title & Description */}
                             <div style={{ marginBottom: '14px' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
-                                    <h3
-                                        style={{
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '20px',
-                                            fontWeight: 700,
-                                            color: '#ffffff',
-                                            margin: 0,
-                                        }}
-                                    >
-                                        {roleInfo.name} — {roleInfo.title}
-                                    </h3>
-                                </div>
-                                <p style={{ fontSize: '12px', color: 'var(--color-fog)', margin: '0 0 10px 0', lineHeight: 1.5 }}>
+                                <h3
+                                    style={{
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '18px',
+                                        fontWeight: 700,
+                                        color: '#ffffff',
+                                        margin: '0 0 4px 0',
+                                    }}
+                                >
+                                    {roleInfo.name} — {roleInfo.title}
+                                </h3>
+                                <p style={{ fontSize: '12px', color: 'var(--color-fog)', margin: 0, lineHeight: 1.5 }}>
                                     {roleInfo.description}
                                 </p>
                             </div>
 
-                            {/* Inherent Role Perk */}
+                            {/* Inherent Perk Box */}
                             <div
                                 style={{
-                                    backgroundColor: `${roleInfo.themeColor}12`,
-                                    border: `1px solid ${roleInfo.themeColor}35`,
+                                    backgroundColor: '#141414',
+                                    border: '1px solid #313131',
                                     borderRadius: '10px',
                                     padding: '10px 14px',
-                                    marginBottom: '16px',
+                                    marginBottom: '14px',
                                 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '2px' }}>
                                     <Zap size={14} style={{ color: roleInfo.themeColor }} />
-                                    <span style={{ fontSize: '12px', fontWeight: 700, color: roleInfo.themeColor }}>
+                                    <span style={{ fontSize: '12px', fontWeight: 600, color: roleInfo.themeColor }}>
                                         Kemampuan Spesial: {roleInfo.perk.name}
                                     </span>
                                 </div>
@@ -279,7 +296,7 @@ export default function CharacterCreationModal({
                             </div>
 
                             {/* Base Stats Grid */}
-                            <div style={{ marginBottom: '16px' }}>
+                            <div style={{ marginBottom: '14px' }}>
                                 <div style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 600, marginBottom: '6px' }}>
                                     Atribut Tempur Awal:
                                 </div>
@@ -295,10 +312,10 @@ export default function CharacterCreationModal({
                                         <div
                                             key={st.label}
                                             style={{
-                                                backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                                                borderRadius: '6px',
-                                                padding: '6px 8px',
-                                                border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                backgroundColor: '#141414',
+                                                borderRadius: '8px',
+                                                padding: '6px 10px',
+                                                border: '1px solid #2e2e2e',
                                             }}
                                         >
                                             <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>{st.label}</div>
@@ -313,20 +330,20 @@ export default function CharacterCreationModal({
                             {/* Starter Kit Preview */}
                             <div>
                                 <div style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 600, marginBottom: '6px' }}>
-                                    Paket Kostum & Aksesoris Awal (Gratis):
+                                    Perlengkapan Starter Gratis:
                                 </div>
-                                <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                                     {starterItems.map(it => (
                                         <div
                                             key={it.id}
                                             style={{
                                                 display: 'flex',
                                                 alignItems: 'center',
-                                                gap: '6px',
-                                                padding: '4px 10px',
+                                                gap: '5px',
+                                                padding: '4px 8px',
                                                 borderRadius: '6px',
-                                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                backgroundColor: '#141414',
+                                                border: '1px solid #313131',
                                                 fontSize: '11px',
                                                 color: 'var(--color-silver)',
                                             }}
@@ -347,9 +364,9 @@ export default function CharacterCreationModal({
                                 fontSize: '12px',
                                 marginBottom: '16px',
                                 padding: '8px 14px',
-                                backgroundColor: 'rgba(232, 64, 64, 0.1)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
                                 borderRadius: '8px',
-                                border: '1px solid rgba(232, 64, 64, 0.3)',
+                                border: '1px solid rgba(239, 68, 68, 0.3)',
                                 textAlign: 'center',
                             }}
                         >
@@ -378,7 +395,8 @@ export default function CharacterCreationModal({
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px',
-                                boxShadow: `0 8px 24px ${roleInfo.themeColor}55`,
+                                boxShadow: `0 8px 20px ${roleInfo.themeColor}40`,
+                                transition: 'background-color 0.2s ease',
                             }}
                         >
                             {isSubmitting ? (
@@ -393,7 +411,7 @@ export default function CharacterCreationModal({
                                 </>
                             ) : (
                                 <>
-                                    <span>Pilih {roleInfo.name} & Mulai</span>
+                                    <span>Pilih {roleInfo.name} & Mulai Petualangan</span>
                                     <ArrowRight size={16} />
                                 </>
                             )}

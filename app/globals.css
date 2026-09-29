@@ -823,13 +823,13 @@ input::placeholder, textarea::placeholder {
 .battle-action-card {
   height: 100%;
   min-width: 0 !important;
-  padding: 12px 10px !important;
+  padding: 10px 8px !important;
   border-radius: 12px !important;
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
   display: flex !important;
   flex-direction: column !important;
-  gap: 8px !important;
+  gap: 6px !important;
   position: relative;
   overflow: hidden !important;
   box-sizing: border-box !important;
@@ -866,10 +866,10 @@ input::placeholder, textarea::placeholder {
 
 .battle-action-title {
   font-family: var(--font-heading);
-  font-size: 13.5px !important;
+  font-size: 13px !important;
   font-weight: 600;
   color: #ffffff;
-  margin-bottom: 2px !important;
+  margin: 0 0 2px 0 !important;
   line-height: 1.25;
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -885,17 +885,22 @@ input::placeholder, textarea::placeholder {
 
 .battle-action-desc {
   color: var(--text-secondary);
-  font-size: 11px !important;
+  font-size: 10.5px !important;
   line-height: 1.35 !important;
   margin: 0;
+  min-width: 0 !important;
   overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
 }
 
-.mobile-desc,
+.mobile-desc {
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  word-break: break-word !important;
+}
+
 .mobile-cta {
   display: inline-block;
 }
@@ -939,7 +944,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-action-cta {
-  font-size: 11px !important;
+  font-size: 10.5px !important;
   font-weight: 600;
   font-family: var(--font-heading);
   letter-spacing: 0.02em;
@@ -967,7 +972,7 @@ input::placeholder, textarea::placeholder {
 .battle-room-panel {
   min-height: auto;
   width: 100%;
-  padding: 14px 12px !important;
+  padding: 12px 10px !important;
   box-sizing: border-box !important;
 }
 
@@ -990,7 +995,7 @@ input::placeholder, textarea::placeholder {
 
 .battle-room-title {
   font-family: var(--font-heading) !important;
-  font-size: 16px !important;
+  font-size: 15px !important;
   font-weight: 600 !important;
   color: #ffffff !important;
   margin: 0 !important;
@@ -1004,7 +1009,7 @@ input::placeholder, textarea::placeholder {
 
 .battle-room-subtitle {
   color: var(--text-secondary) !important;
-  font-size: 11.5px !important;
+  font-size: 11px !important;
   margin: 2px 0 0 0 !important;
   display: none !important;
 }
@@ -1035,7 +1040,7 @@ input::placeholder, textarea::placeholder {
   flex-direction: column !important;
   align-items: stretch !important;
   gap: 10px !important;
-  padding: 12px !important;
+  padding: 10px !important;
   background-color: rgba(255, 255, 255, 0.03);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -1067,14 +1072,8 @@ input::placeholder, textarea::placeholder {
 
 .battle-category-grid {
   display: grid !important;
-  grid-template-columns: repeat(2, 1fr) !important;
+  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)) !important;
   gap: 8px !important;
-}
-
-@media (min-width: 480px) {
-  .battle-category-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-  }
 }
 
 @media (min-width: 640px) {
@@ -1083,13 +1082,94 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+/* Room Code Card in Waiting Lobby */
+.battle-room-code-card {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 14px 16px !important;
+  border-radius: 12px !important;
+  background-color: rgba(245, 197, 66, 0.08);
+  border: 1px solid rgba(245, 197, 66, 0.35);
+  margin: 0 auto 20px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  max-width: 280px !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 640px) {
+  .battle-room-code-card {
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    padding: 12px 24px !important;
+    max-width: 380px !important;
+  }
+}
+
+.battle-room-code-text {
+  font-family: var(--font-heading);
+  font-size: 26px !important;
+  font-weight: 800;
+  color: var(--color-signal-orange);
+  letter-spacing: 4px !important;
+  line-height: 1;
+}
+
+@media (min-width: 640px) {
+  .battle-room-code-text {
+    font-size: 32px !important;
+    letter-spacing: 6px !important;
+  }
+}
+
+.battle-room-code-btn {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+@media (min-width: 640px) {
+  .battle-room-code-btn {
+    width: auto !important;
+  }
+}
+
+/* Action buttons */
+.battle-ready-btn {
+  width: 100% !important;
+  justify-content: center !important;
+  padding: 12px 20px !important;
+  font-size: 14px !important;
+}
+
+@media (min-width: 640px) {
+  .battle-ready-btn {
+    width: auto !important;
+    padding: 14px 36px !important;
+    font-size: 15px !important;
+  }
+}
+
+.battle-finish-btn {
+  width: 100% !important;
+  justify-content: center !important;
+}
+
+@media (min-width: 640px) {
+  .battle-finish-btn {
+    width: auto !important;
+  }
+}
+
 /* Versus Row in Gameplay */
 .battle-versus-row {
   display: grid !important;
-  grid-template-columns: 1fr auto 1fr !important;
-  gap: 6px !important;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
+  gap: 4px !important;
   align-items: center !important;
-  padding: 8px 10px !important;
+  padding: 6px 8px !important;
   border-radius: 12px !important;
   background-color: var(--surface-elevated);
   border: 1px solid var(--surface-border);
@@ -1134,13 +1214,13 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-player-name {
-  font-size: 11.5px !important;
+  font-size: 11px !important;
   font-weight: 600 !important;
   color: #ffffff !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
-  max-width: 70px !important;
+  max-width: 62px !important;
   line-height: 1.2 !important;
 }
 
@@ -1192,7 +1272,7 @@ input::placeholder, textarea::placeholder {
 
 .battle-hp-bar-outer {
   flex: 1 !important;
-  max-width: 50px !important;
+  max-width: 42px !important;
   height: 4px !important;
   background-color: rgba(255, 255, 255, 0.08) !important;
   border-radius: 9999px !important;
@@ -1226,7 +1306,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-score-text {
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 700 !important;
   white-space: nowrap !important;
   flex-shrink: 0 !important;
@@ -1239,10 +1319,10 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-vs-badge {
-  padding: 2px 8px !important;
-  font-size: 10px !important;
+  padding: 2px 6px !important;
+  font-size: 9.5px !important;
   letter-spacing: 0.04em !important;
-  border-radius: 8px !important;
+  border-radius: 6px !important;
   font-family: var(--font-heading) !important;
   font-weight: 800 !important;
   color: var(--color-signal-orange) !important;
@@ -1256,12 +1336,13 @@ input::placeholder, textarea::placeholder {
     padding: 4px 14px !important;
     font-size: 12px !important;
     letter-spacing: 0.08em !important;
+    border-radius: 8px !important;
   }
 }
 
 .battle-level-badge {
-  font-size: 9.5px !important;
-  padding: 1px 6px !important;
+  font-size: 9px !important;
+  padding: 1px 5px !important;
   border-radius: 6px !important;
   font-weight: 700 !important;
   white-space: nowrap !important;
@@ -1276,7 +1357,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-player-status {
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   font-weight: 600 !important;
   white-space: nowrap !important;
   overflow: hidden !important;
@@ -1318,7 +1399,7 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-question-card {
-  padding: 14px 12px !important;
+  padding: 12px 10px !important;
   width: 100% !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
@@ -1332,11 +1413,11 @@ input::placeholder, textarea::placeholder {
 
 .battle-question-text {
   font-family: var(--font-heading) !important;
-  font-size: 15px !important;
+  font-size: 14px !important;
   font-weight: 600 !important;
   color: #ffffff !important;
   line-height: 1.4 !important;
-  margin-bottom: 14px !important;
+  margin: 0 0 12px 0 !important;
   word-break: break-word !important;
   overflow-wrap: break-word !important;
 }
@@ -1345,7 +1426,7 @@ input::placeholder, textarea::placeholder {
   .battle-question-text {
     font-size: 20px !important;
     line-height: 1.5 !important;
-    margin-bottom: 24px !important;
+    margin: 0 0 20px 0 !important;
   }
 }
 
@@ -1353,7 +1434,7 @@ input::placeholder, textarea::placeholder {
   display: grid !important;
   grid-template-columns: 1fr !important;
   gap: 8px !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 12px !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
@@ -1369,9 +1450,9 @@ input::placeholder, textarea::placeholder {
 .battle-option-btn {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 10px 12px !important;
-  border-radius: 10px !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  border-radius: 8px !important;
   width: 100% !important;
   box-sizing: border-box !important;
   word-break: break-word !important;
@@ -1388,10 +1469,11 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-option-text {
-  font-size: 12px !important;
-  line-height: 1.4 !important;
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
   font-weight: 500 !important;
   flex: 1 !important;
+  min-width: 0 !important;
   word-break: break-word !important;
   overflow-wrap: break-word !important;
 }

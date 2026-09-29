@@ -1246,15 +1246,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 <CharacterVisual
                                     role={myClassKey as any}
                                     equipped={(currentUser.equipped_items as any) || {}}
-                                    size={44}
+                                    size={36}
                                     animationState={meAnimation}
                                     showAura={false}
+                                    className="battle-character-visual"
                                 />
                             </motion.div>
                             <div className="battle-versus-info">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
-                                    <span className="battle-player-name">
-                                        {currentUser.username} <span style={{ color: 'var(--color-signal-orange)', fontSize: '10px', fontWeight: 400 }}>(Kamu)</span>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0 }}>
+                                    <span className="battle-player-name" title={currentUser.username}>
+                                        {currentUser.username}
                                     </span>
                                     <span
                                         className="battle-level-badge"
@@ -1355,7 +1356,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             </AnimatePresence>
 
                             <div className="battle-versus-info">
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', flexWrap: 'wrap' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', minWidth: 0 }}>
                                     <span
                                         className="battle-level-badge"
                                         style={{
@@ -1366,7 +1367,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     >
                                         LV.{opponent?.level || 1}
                                     </span>
-                                    <span className="battle-player-name">
+                                    <span className="battle-player-name" title={opponent?.username || 'Lawan'}>
                                         {opponent?.username || 'Lawan'}
                                     </span>
                                 </div>
@@ -1446,9 +1447,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 <CharacterVisual
                                     role={oppClassKey as any}
                                     equipped={(opponent?.equipped_items as any) || {}}
-                                    size={44}
+                                    size={36}
                                     animationState={oppAnimation}
                                     showAura={false}
+                                    className="battle-character-visual"
                                 />
                             </motion.div>
                         </div>

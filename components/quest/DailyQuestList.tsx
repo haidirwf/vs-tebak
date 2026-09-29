@@ -45,25 +45,26 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             }}
         >
             {/* Header */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '18px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                     <div
                         style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '9999px',
+                            width: '34px',
+                            height: '34px',
+                            borderRadius: '8px',
                             backgroundColor: 'rgba(34, 197, 94, 0.1)',
                             border: '1px solid rgba(34, 197, 94, 0.28)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             color: 'var(--accent-green)',
+                            flexShrink: 0,
                         }}
                     >
-                        <Target size={18} />
+                        <Target size={17} />
                     </div>
-                    <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
+                    <div style={{ minWidth: 0 }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 500, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             Misi Harian
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -78,9 +79,10 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                         alignItems: 'center',
                         gap: '6px',
                         backgroundColor: 'var(--surface-elevated)',
-                        padding: '4px 12px',
-                        borderRadius: '9999px',
+                        padding: '4px 10px',
+                        borderRadius: '6px',
                         border: '1px solid var(--surface-border)',
+                        whiteSpace: 'nowrap',
                     }}
                 >
                     <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
@@ -90,16 +92,15 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             </div>
 
             {/* Progress bar */}
-            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '9999px', marginBottom: '20px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
+            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '4px', marginBottom: '16px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
                 <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${progressPercent}%` }}
                     transition={{ duration: 0.8, ease: 'easeOut' }}
                     style={{
                         height: '100%',
-                        borderRadius: '9999px',
+                        borderRadius: '4px',
                         background: 'linear-gradient(90deg, #F5C542 0%, #22C55E 100%)',
-                        boxShadow: '0 0 12px rgba(245, 197, 66, 0.35)',
                     }}
                 />
             </div>
@@ -127,20 +128,21 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '14px',
-                                    padding: '12px 14px',
-                                    borderRadius: '12px',
+                                    gap: '10px',
+                                    padding: '10px 12px',
+                                    borderRadius: '10px',
                                     backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.04)' : '#0d0d0d',
                                     border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : '#222222'}`,
                                     position: 'relative',
                                     transition: 'border-color 0.2s ease, background-color 0.2s ease',
+                                    minWidth: 0,
                                 }}
                             >
                                 <div
                                     style={{
-                                        width: '34px',
-                                        height: '34px',
-                                        borderRadius: '8.57143px',
+                                        width: '32px',
+                                        height: '32px',
+                                        borderRadius: '6px',
                                         backgroundColor: isCompleted ? 'rgba(34,197,94,0.12)' : qMeta.bg,
                                         border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.3)' : qMeta.border}`,
                                         display: 'flex',
@@ -150,7 +152,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                         flexShrink: 0,
                                     }}
                                 >
-                                    {isCompleted ? <CheckCircle size={16} /> : icon}
+                                    {isCompleted ? <CheckCircle size={15} /> : icon}
                                 </div>
 
                                 <div style={{ flex: 1, minWidth: 0 }}>
@@ -169,32 +171,33 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                     >
                                         {quest.title}
                                     </div>
-                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: quest.target_value > 1 && !isCompleted ? '6px' : '0' }}>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: quest.target_value > 1 && !isCompleted ? '4px' : '0', wordBreak: 'break-word', lineHeight: 1.3 }}>
                                         {quest.description}
                                     </div>
 
                                     {quest.target_value > 1 && !isCompleted && (
-                                        <div style={{ height: '4px', backgroundColor: '#181818', borderRadius: '9999px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div style={{ height: '4px', backgroundColor: '#181818', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${Math.min((currentVal / quest.target_value) * 100, 100)}%` }}
-                                                style={{ height: '100%', borderRadius: '9999px', backgroundColor: qMeta.color }}
+                                                style={{ height: '100%', borderRadius: '4px', backgroundColor: qMeta.color }}
                                             />
                                         </div>
                                     )}
                                 </div>
 
-                                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px' }}>
+                                <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flexShrink: 0 }}>
                                     <span
                                         style={{
                                             backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'rgba(245, 197, 66, 0.1)',
                                             border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'rgba(245, 197, 66, 0.25)'}`,
-                                            borderRadius: '9999px',
-                                            padding: '3px 10px',
+                                            borderRadius: '6px',
+                                            padding: '2px 8px',
                                             fontFamily: 'var(--font-heading)',
                                             fontSize: '11px',
                                             color: isCompleted ? 'var(--accent-green)' : 'var(--color-gold)',
                                             fontWeight: 600,
+                                            whiteSpace: 'nowrap',
                                         }}
                                     >
                                         +{quest.xp_reward} XP
