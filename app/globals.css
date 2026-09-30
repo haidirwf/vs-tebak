@@ -812,13 +812,13 @@ input::placeholder, textarea::placeholder {
 
 .character-items-grid {
   display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 10px !important;
+  grid-template-columns: 1fr !important;
+  gap: 12px !important;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 580px) {
   .character-items-grid {
-    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
     gap: 14px !important;
   }
 }

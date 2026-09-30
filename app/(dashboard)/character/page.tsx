@@ -328,7 +328,7 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 width: '100%',
-                                marginTop: '14px',
+                                marginTop: '16px',
                                 padding: '10px 12px',
                                 borderRadius: '8px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.03)',
@@ -344,88 +344,102 @@ export default function CharacterPage() {
                                 {roleInfo.perk.effect}
                             </div>
                         </div>
+                    </div>
 
-                        {/* 4 Equipped Gear Sockets Grid */}
-                        <div style={{ width: '100%', marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                <span style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
-                                    Perlengkapan Terpasang
-                                </span>
-                                <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
-                                    {Object.values(equipped).filter(Boolean).length}/4 Slot
-                                </span>
-                            </div>
+                    {/* Active Equipment Slots Card */}
+                    <div
+                        style={{
+                            padding: '18px',
+                            borderRadius: '16px',
+                            border: '1px solid #313131',
+                            backgroundColor: '#141414',
+                        }}
+                    >
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)', marginBottom: '14px' }}>
+                            Perlengkapan Terpasang
+                        </div>
 
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '8px' }}>
-                                {(['head', 'weapon', 'armor', 'accessory'] as ItemSlot[]).map((slotKey) => {
-                                    const itemId = equipped[slotKey]
-                                    const item = itemId ? GAME_ITEMS.find(it => it.id === itemId) : null
-                                    const slotMeta = SLOT_LABELS[slotKey]
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {(['head', 'weapon', 'armor', 'accessory'] as ItemSlot[]).map((slotKey) => {
+                                const itemId = equipped[slotKey]
+                                const item = itemId ? GAME_ITEMS.find(it => it.id === itemId) : null
+                                const slotMeta = SLOT_LABELS[slotKey]
 
-                                    return (
-                                        <div
-                                            key={slotKey}
-                                            style={{
-                                                padding: '10px 6px',
-                                                borderRadius: '8px',
-                                                backgroundColor: item ? 'rgba(245, 197, 66, 0.08)' : 'rgba(255, 255, 255, 0.02)',
-                                                border: `1px solid ${item ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.06)'}`,
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                textAlign: 'center',
-                                                position: 'relative',
-                                                minWidth: 0,
-                                            }}
-                                        >
-                                            <span style={{ fontSize: '20px', marginBottom: '2px' }}>
-                                                {item ? item.icon : slotMeta.emoji}
-                                            </span>
-                                            <span style={{ fontSize: '9.5px', color: 'var(--color-steel)', whiteSpace: 'nowrap' }}>
-                                                {slotMeta.name}
-                                            </span>
-                                            <span
+                                return (
+                                    <div
+                                        key={slotKey}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            padding: '8px 12px',
+                                            borderRadius: '8px',
+                                            backgroundColor: item ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.02)',
+                                            border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'rgba(255, 255, 255, 0.05)'}`,
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                                            <div
                                                 style={{
-                                                    fontSize: '10.5px',
-                                                    fontWeight: 600,
-                                                    color: item ? '#ffffff' : 'var(--color-fog)',
-                                                    marginTop: '2px',
-                                                    width: '100%',
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
+                                                    width: '32px',
+                                                    height: '32px',
+                                                    borderRadius: '6px',
+                                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '16px',
+                                                    flexShrink: 0,
                                                 }}
-                                                title={item ? item.name : 'Kosong'}
                                             >
-                                                {item ? item.name : 'Kosong'}
-                                            </span>
-
-                                            {item && (
-                                                <button
-                                                    type="button"
-                                                    title={`Lepas ${item.name}`}
-                                                    disabled={actionLoadingId === item.id}
-                                                    onClick={() => handleEquipToggle(item, 'unequip')}
+                                                {item ? item.icon : slotMeta.emoji}
+                                            </div>
+                                            <div style={{ minWidth: 0 }}>
+                                                <div style={{ fontSize: '10px', color: 'var(--color-steel)', textTransform: 'uppercase' }}>
+                                                    {slotMeta.name}
+                                                </div>
+                                                <div
                                                     style={{
-                                                        marginTop: '6px',
-                                                        padding: '2px 8px',
-                                                        borderRadius: '4px',
-                                                        border: '1px solid rgba(239, 68, 68, 0.35)',
-                                                        backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                                                        color: 'var(--accent-red)',
-                                                        fontSize: '10px',
-                                                        fontWeight: 700,
-                                                        cursor: 'pointer',
-                                                        width: '100%',
+                                                        fontSize: '12px',
+                                                        fontWeight: 600,
+                                                        color: item ? '#ffffff' : 'var(--color-fog)',
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    {actionLoadingId === item.id ? '...' : 'Lepas'}
-                                                </button>
-                                            )}
+                                                    {item ? item.name : 'Kosong'}
+                                                </div>
+                                            </div>
                                         </div>
-                                    )
-                                })}
-                            </div>
+
+                                        {item ? (
+                                            <button
+                                                type="button"
+                                                disabled={actionLoadingId === item.id}
+                                                onClick={() => handleEquipToggle(item, 'unequip')}
+                                                style={{
+                                                    padding: '4px 10px',
+                                                    borderRadius: '6px',
+                                                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                                                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                                    color: 'var(--accent-red)',
+                                                    fontSize: '11px',
+                                                    cursor: 'pointer',
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                Lepas
+                                            </button>
+                                        ) : (
+                                            <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
+                                                —
+                                            </span>
+                                        )}
+                                    </div>
+                                )
+                            })}
                         </div>
                     </div>
 
@@ -660,7 +674,7 @@ export default function CharacterPage() {
                                             >
                                                 <div>
                                                     {/* Header: Slot Badge & Rarity / Equipped status */}
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
                                                         <span
                                                             style={{
                                                                 fontSize: '10px',
@@ -849,7 +863,7 @@ export default function CharacterPage() {
                                     >
                                         <div>
                                             {/* Header: Slot Badge & Rarity */}
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
                                                 <span
                                                     style={{
                                                         fontSize: '10px',
