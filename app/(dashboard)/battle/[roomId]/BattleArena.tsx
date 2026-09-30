@@ -4,11 +4,13 @@ import { useState, useEffect, useRef, useCallback, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import { Question, Battle, Profile } from '@/types'
+import { Question, Battle, Profile, AvatarClass } from '@/types'
 import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords } from 'lucide-react'
 import { getClassBonusDescription, AVATAR_CLASS_STATS } from '@/lib/game/xp'
 import { calculateCharacterStats } from '@/lib/game/character'
 import CharacterVisual from '@/components/character/CharacterVisual'
+import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
+import { battleSounds } from '@/lib/game/battle-sounds'
 
 interface BattleArenaProps {
     battle: Battle
@@ -67,6 +69,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [combatText, setCombatText] = useState<{ target: 'me' | 'opp'; text: string; type: 'crit' | 'damage' | 'miss' } | null>(null)
     const [meAnimation, setMeAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
     const [oppAnimation, setOppAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
+    const [activeAttack, setActiveAttack] = useState<AttackEvent | null>(null)
     const [battleLog, setBattleLog] = useState<string>('Pilih jawaban terbaik untuk melancarkan serangan duel!')
     const [opponentAnsweredThisRound, setOpponentAnsweredThisRound] = useState(false)
     const [copiedRoomCode, setCopiedRoomCode] = useState(false)
@@ -326,6 +329,46 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         setOpponentScore(payload.final_score)
                     }
                     setOpponentFinished(true)
+                }
+            })
+            .on('broadcast', { event: 'battle_attack' }, ({ payload }) => {
+                if (payload.attacker_id !== currentUser.id) {
+                    if (typeof payload.score === 'number') {
+                        setOpponentScore(payload.score)
+                    }
+                    setOpponentAnsweredThisRound(true)
+                    setOppAnimation('attack')
+                    battleSounds.playAttackSwing()
+
+                    const attackType = (payload.attacker_class || 'mage').toLowerCase() as any
+                    setActiveAttack({
+                        id: String(Date.now()),
+                        direction: 'right-to-left',
+                        type: attackType,
+                        isCrit: payload.is_crit,
+                        isUltimate: payload.is_ultimate,
+                        damage: payload.damage || 15,
+                    })
+
+                    setTimeout(() => {
+                        battleSounds.playHitImpact(payload.is_crit || payload.is_ultimate)
+                        setMeAnimation('hurt')
+                        const dmg = payload.damage || 15
+                        setMyHp(hp => Math.max(10, hp - dmg))
+                        setCombatText({
+                            target: 'me',
+                            text: payload.is_ultimate ? `🔥 ULTIMATE! -${dmg} HP` : payload.is_crit ? `💥 CRIT! -${dmg} HP` : `⚔️ -${dmg} HP`,
+                            type: payload.is_crit || payload.is_ultimate ? 'crit' : 'damage',
+                        })
+                        if (payload.log) setBattleLog(payload.log)
+                        setTimeout(() => setMeAnimation('idle'), 500)
+                        setTimeout(() => setCombatText(null), 1100)
+                    }, 280)
+
+                    setTimeout(() => {
+                        setOppAnimation('idle')
+                        setActiveAttack(null)
+                    }, 650)
                 }
             })
             .on('broadcast', { event: 'score_update' }, ({ payload }) => {
@@ -620,49 +663,95 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const newScore = myScore + finalScoreGained
         setMyScore(newScore)
 
-        const baseHpDamage = Math.max(12, Math.floor(100 / Math.max(questions.length, 1)))
+        const baseHpDamage = Math.max(14, Math.floor(100 / Math.max(questions.length, 1)))
         if (isCorrect) {
             const nextCombo = comboCount + 1
             setComboCount(nextCombo)
             const isCrit = rollCrit || nextCombo >= 2
-            const effectiveDamage = isCrit ? baseHpDamage + 10 : baseHpDamage
-            setOppHp(prev => Math.max(10, prev - effectiveDamage))
-            setMyMp(mp => Math.min(100, mp + 25))
+            const isUltimate = myMp >= 100
+            const effectiveDamage = isUltimate ? baseHpDamage * 2 : isCrit ? baseHpDamage + 8 : baseHpDamage
+
+            // Play attack sound and trigger lunge/hand animation
+            battleSounds.playAttackSwing()
+            setMeAnimation('attack')
+            setActiveAttack({
+                id: String(Date.now()),
+                direction: 'left-to-right',
+                type: myClassKey as any,
+                isCrit,
+                isUltimate,
+                damage: effectiveDamage,
+            })
+
+            // Projectile arrives at opponent
+            setTimeout(() => {
+                battleSounds.playHitImpact(isCrit || isUltimate)
+                setOppAnimation('hurt')
+                setOppHp(prev => Math.max(10, prev - effectiveDamage))
+                setCombatText({
+                    target: 'opp',
+                    text: isUltimate
+                        ? `🔥 ULTIMATE! -${effectiveDamage} HP`
+                        : isCrit
+                        ? `💥 CRIT! -${effectiveDamage} HP`
+                        : `⚔️ -${effectiveDamage} HP`,
+                    type: isCrit || isUltimate ? 'crit' : 'damage',
+                })
+            }, 280)
+
+            // Mana / Special charge
+            if (isUltimate) {
+                setMyMp(0)
+            } else {
+                setMyMp(mp => Math.min(100, mp + 25))
+            }
 
             // Shield recovery from healer / accessory buff
             if (myStats.battleBuffs.shieldRegenPoints > 0) {
                 setMyHp(hp => Math.min(100, hp + myStats.battleBuffs.shieldRegenPoints))
             }
 
-            setCombatText({
-                target: 'opp',
-                text: isCrit ? `💥 CRIT! +${finalScoreGained} PTS` : `⚔️ +${finalScoreGained} PTS`,
-                type: isCrit ? 'crit' : 'damage',
+            const attackLogMsg = isUltimate
+                ? `💥 ULTIMATE BURST! ${myClassInfo.label} mengerahkan seluruh tenaga menghantam lawan (-${effectiveDamage} HP)!`
+                : isCrit
+                ? `🔥 CRITICAL HIT! Serangan ${myClassInfo.label} mendarat telak (+${finalScoreGained} Pts, -${effectiveDamage} HP)!`
+                : `⚔️ Serangan ${myClassInfo.label} menembus pertahanan lawan (+${finalScoreGained} Pts, -${effectiveDamage} HP)!`
+            setBattleLog(attackLogMsg)
+
+            // Broadcast battle_attack to opponent in real-time
+            channelRef.current?.send({
+                type: 'broadcast',
+                event: 'battle_attack',
+                payload: {
+                    attacker_id: currentUser.id,
+                    score: newScore,
+                    damage: effectiveDamage,
+                    is_crit: isCrit,
+                    is_ultimate: isUltimate,
+                    attacker_class: myClassKey,
+                    log: `⚡ Lawan melancarkan serangan ${myClassInfo.label} (-${effectiveDamage} HP)!`,
+                }
             })
-            setMeAnimation('attack')
-            setOppAnimation('hurt')
-            setBattleLog(
-                isCrit
-                    ? `🔥 CRITICAL HIT! Serangan ${myClassInfo.label} mendarat telak (+${finalScoreGained} Poin)!`
-                    : `⚔️ Serangan ${myClassInfo.label} menembus pertahanan lawan (+${finalScoreGained} Poin)!`
-            )
+
             setTimeout(() => {
                 setMeAnimation('idle')
                 setOppAnimation('idle')
+                setActiveAttack(null)
             }, 600)
             setTimeout(() => setCombatText(null), 1100)
         } else {
+            battleSounds.playMiss()
             setComboCount(0)
             const reduction = myStats.battleBuffs.damageReductionPct
-            const mitigatedDamage = Math.max(4, Math.floor(baseHpDamage * (1 - reduction / 100)))
+            const mitigatedDamage = Math.max(6, Math.floor(baseHpDamage * (1 - reduction / 100)))
             setMyHp(prev => Math.max(10, prev - mitigatedDamage))
             setCombatText({
                 target: 'me',
-                text: `❌ MISS! -${mitigatedDamage} HP`,
+                text: `❌ Meleset! -${mitigatedDamage} HP`,
                 type: 'miss',
             })
             setMeAnimation('hurt')
-            setBattleLog(`🛡️ Serangan meleset! Zirah menyerap benturan (-${mitigatedDamage} HP).`)
+            setBattleLog(`🛡️ Serangan meleset! Pertahananmu goyah dan menerima pantulan (-${mitigatedDamage} HP).`)
             setTimeout(() => setMeAnimation('idle'), 600)
             setTimeout(() => setCombatText(null), 1100)
         }
@@ -682,7 +771,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             } else {
                 endBattle(newScore, opponentScore)
             }
-        }, 1200)
+        }, 1250)
     }
 
     const handleCopyRoomCode = () => {
@@ -1190,298 +1279,45 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         </div>
                     </div>
 
-                    {/* Versus Contestant Row (Mirroring Landing Page Simulation) */}
-                    <div
-                        className="battle-versus-row"
-                    >
-                        {/* Player 1 (You) */}
-                        <div className="battle-versus-col" style={{ position: 'relative' }}>
-                            {/* Floating Combat Text for Me */}
-                            <AnimatePresence>
-                                {combatText?.target === 'me' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.7 }}
-                                        animate={{ opacity: 1, y: -26, scale: 1.15 }}
-                                        exit={{ opacity: 0, y: -40 }}
-                                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                                        style={{
-                                            position: 'absolute',
-                                            top: '-12px',
-                                            left: '4px',
-                                            fontFamily: 'var(--font-heading)',
-                                            fontWeight: 900,
-                                            fontSize: '14px',
-                                            color: 'var(--accent-red)',
-                                            textShadow: '0 0 10px rgba(232, 64, 64, 0.9), 0 2px 4px #000000',
-                                            pointerEvents: 'none',
-                                            zIndex: 25,
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        {combatText.text}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            <motion.div
-                                className="battle-versus-avatar"
-                                animate={
-                                    meAnimation === 'attack'
-                                        ? { x: [0, 18, 0], scale: [1, 1.15, 1] }
-                                        : meAnimation === 'hurt'
-                                        ? { x: [-6, 6, -4, 4, 0], scale: [1, 0.95, 1] }
-                                        : { x: 0, scale: 1 }
-                                }
-                                transition={{ duration: 0.35 }}
-                                style={{
-                                    backgroundColor: meAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(245, 197, 66, 0.12)',
-                                    border: `1px solid ${meAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(245, 197, 66, 0.4)'}`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexShrink: 0,
-                                    boxShadow: meAnimation === 'attack' ? '0 0 24px rgba(245, 197, 66, 0.6)' : meAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(245, 197, 66, 0.2)',
-                                }}
-                            >
-                                <CharacterVisual
-                                    role={myClassKey as any}
-                                    equipped={(currentUser.equipped_items as any) || {}}
-                                    size={36}
-                                    animationState={meAnimation}
-                                    showAura={false}
-                                    className="battle-character-visual"
-                                />
-                            </motion.div>
-                            <div className="battle-versus-info">
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0 }}>
-                                    <span className="battle-player-name" title={currentUser.username}>
-                                        {currentUser.username}
-                                    </span>
-                                    <span
-                                        className="battle-level-badge"
-                                        style={{
-                                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
-                                            border: '1px solid rgba(245, 197, 66, 0.4)',
-                                            color: 'var(--color-signal-orange)',
-                                        }}
-                                    >
-                                        LV.{currentUser.level || 1}
-                                    </span>
-                                </div>
-                                <div className="battle-school-name">
-                                    {currentUser.school_name || 'Pelajar Hebat'} · {myClassInfo.label}
-                                </div>
-                                {/* Health Bar */}
-                                <div className="battle-hp-bar-wrapper">
-                                    <div className="battle-hp-bar-outer">
-                                        <motion.div
-                                            initial={{ width: '100%' }}
-                                            animate={{ width: `${myHpPercent}%` }}
-                                            transition={{ duration: 0.4 }}
-                                            style={{
-                                                height: '100%',
-                                                backgroundColor: myHpPercent > 50 ? 'var(--color-vector-green)' : myHpPercent > 25 ? 'var(--color-signal-orange)' : 'var(--accent-red)',
-                                            }}
-                                        />
-                                    </div>
-                                    <span className="battle-score-text" style={{ color: 'var(--color-signal-orange)', fontFamily: 'var(--font-heading)' }}>
-                                        {myScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
-                                    </span>
-                                </div>
-                                {/* Mana / Special Gauge */}
-                                <div className="battle-mp-row">
-                                    <div
-                                        style={{
-                                            flex: 1,
-                                            maxWidth: '120px',
-                                            height: '3px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                            borderRadius: '4px',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
-                                        <motion.div
-                                            animate={{ width: `${myMp}%` }}
-                                            transition={{ duration: 0.3 }}
-                                            style={{
-                                                height: '100%',
-                                                background: 'linear-gradient(90deg, #3b82f6, #a855f7)',
-                                            }}
-                                        />
-                                    </div>
-                                    <span style={{ fontSize: '9px', color: '#a855f7', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                                        MP {myMp}%
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Center VS Badge */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
-                            <div className="battle-vs-badge">
-                                VS
-                            </div>
-                            <span style={{ fontSize: '9px', color: 'var(--color-steel)', fontWeight: 600, letterSpacing: '0.04em' }}>
-                                {safeQuestionIndex + 1}/{questions.length}
-                            </span>
-                        </div>
-
-                        {/* Player 2 (Opponent) */}
-                        <div className="battle-versus-col battle-versus-col-right" style={{ position: 'relative' }}>
-                            {/* Floating Combat Text for Opponent */}
-                            <AnimatePresence>
-                                {combatText?.target === 'opp' && (
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 10, scale: 0.7 }}
-                                        animate={{ opacity: 1, y: -26, scale: 1.25 }}
-                                        exit={{ opacity: 0, y: -40 }}
-                                        transition={{ duration: 0.6, ease: 'easeOut' }}
-                                        style={{
-                                            position: 'absolute',
-                                            top: '-12px',
-                                            right: '4px',
-                                            fontFamily: 'var(--font-heading)',
-                                            fontWeight: 900,
-                                            fontSize: '14px',
-                                            color: combatText.type === 'crit' ? '#ff3b30' : 'var(--color-signal-orange)',
-                                            textShadow: '0 0 12px rgba(255, 59, 48, 0.9), 0 2px 4px #000000',
-                                            pointerEvents: 'none',
-                                            zIndex: 25,
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        {combatText.text}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            <div className="battle-versus-info">
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '4px', minWidth: 0 }}>
-                                    <span
-                                        className="battle-level-badge"
-                                        style={{
-                                            backgroundColor: 'rgba(0, 212, 255, 0.15)',
-                                            border: '1px solid rgba(0, 212, 255, 0.4)',
-                                            color: '#00d4ff',
-                                        }}
-                                    >
-                                        LV.{opponent?.level || 1}
-                                    </span>
-                                    <span className="battle-player-name" title={opponent?.username || 'Lawan'}>
-                                        {opponent?.username || 'Lawan'}
-                                    </span>
-                                </div>
-                                <div className="battle-school-name">
-                                    {opponent?.school_name || 'Pelajar'} · {oppClassInfo.label}
-                                </div>
-                                {/* Health Bar */}
-                                <div className="battle-hp-bar-wrapper" style={{ justifyContent: 'flex-end' }}>
-                                    <span className="battle-score-text" style={{ color: '#00d4ff', fontFamily: 'var(--font-heading)' }}>
-                                        {opponentScore} <span style={{ fontSize: '9px', fontWeight: 500, color: 'var(--color-steel)' }}>PTS</span>
-                                    </span>
-                                    <div className="battle-hp-bar-outer">
-                                        <motion.div
-                                            initial={{ width: '100%' }}
-                                            animate={{ width: `${oppHpPercent}%` }}
-                                            transition={{ duration: 0.4 }}
-                                            style={{
-                                                height: '100%',
-                                                backgroundColor: oppHpPercent > 50 ? '#00d4ff' : oppHpPercent > 25 ? 'var(--color-signal-orange)' : 'var(--accent-red)',
-                                                marginLeft: 'auto',
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                                {/* Mana / Special Gauge */}
-                                <div className="battle-mp-row" style={{ justifyContent: 'flex-end' }}>
-                                    <span style={{ fontSize: '9px', color: '#00d4ff', fontFamily: 'var(--font-mono)', fontWeight: 600 }}>
-                                        MP {oppMp}%
-                                    </span>
-                                    <div
-                                        style={{
-                                            flex: 1,
-                                            maxWidth: '120px',
-                                            height: '3px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                            borderRadius: '4px',
-                                            overflow: 'hidden',
-                                        }}
-                                    >
-                                        <motion.div
-                                            animate={{ width: `${oppMp}%` }}
-                                            transition={{ duration: 0.3 }}
-                                            style={{
-                                                height: '100%',
-                                                background: 'linear-gradient(90deg, #06b6d4, #3b82f6)',
-                                                marginLeft: 'auto',
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                                <div style={{ marginTop: '2px' }}>
-                                    <span className="battle-player-status" style={{ fontSize: '9.5px', color: opponentFinished ? 'var(--color-vector-green)' : opponentAnsweredThisRound ? 'var(--color-signal-orange)' : 'var(--color-steel)' }}>
-                                        {opponentFinished ? '✓ Selesai' : opponentAnsweredThisRound ? '⚡ Menjawab' : '🤔 Berpikir...'}
-                                    </span>
-                                </div>
-                            </div>
-                            <motion.div
-                                className="battle-versus-avatar"
-                                animate={
-                                    oppAnimation === 'attack'
-                                        ? { x: [0, -18, 0], scale: [1, 1.15, 1] }
-                                        : oppAnimation === 'hurt'
-                                        ? { x: [6, -6, 4, -4, 0], scale: [1, 0.95, 1] }
-                                        : { x: 0, scale: 1 }
-                                }
-                                transition={{ duration: 0.35 }}
-                                style={{
-                                    backgroundColor: oppAnimation === 'hurt' ? 'rgba(232, 64, 64, 0.25)' : 'rgba(0, 212, 255, 0.1)',
-                                    border: `1px solid ${oppAnimation === 'hurt' ? 'var(--accent-red)' : 'rgba(0, 212, 255, 0.35)'}`,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    flexShrink: 0,
-                                    boxShadow: oppAnimation === 'attack' ? '0 0 24px rgba(0, 212, 255, 0.6)' : oppAnimation === 'hurt' ? '0 0 24px rgba(232, 64, 64, 0.6)' : '0 0 16px rgba(0, 212, 255, 0.2)',
-                                }}
-                            >
-                                <CharacterVisual
-                                    role={oppClassKey as any}
-                                    equipped={(opponent?.equipped_items as any) || {}}
-                                    size={36}
-                                    animationState={oppAnimation}
-                                    showAura={false}
-                                    className="battle-character-visual"
-                                />
-                            </motion.div>
-                        </div>
-                    </div>
-
-                    {/* RPG Combat Feed / Action Banner */}
-                    <motion.div
-                        key={battleLog}
-                        initial={{ opacity: 0, y: -4 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            gap: '8px',
-                            padding: '8px 14px',
-                            borderRadius: '10px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                            border: '1px solid rgba(255, 255, 255, 0.07)',
-                            marginBottom: '14px',
-                            fontSize: '11.5px',
-                            lineHeight: 1.35,
-                            color: 'var(--color-fog)',
-                            textAlign: 'center',
-                            width: '100%',
-                            boxSizing: 'border-box',
-                            wordBreak: 'break-word',
+                    {/* RPG Battle Arena Stage with Characters, Hand Attacks, & Projectile FX */}
+                    <BattleArenaStage
+                        player={{
+                            name: currentUser.username,
+                            avatarClass: myClassKey as AvatarClass,
+                            equipped: (currentUser.equipped_items as any) || {},
+                            level: currentUser.level || 1,
+                            hp: myHp,
+                            maxHp: 100,
+                            mp: myMp,
+                            score: myScore,
+                            schoolName: currentUser.school_name || undefined,
+                            animationState: meAnimation,
                         }}
-                    >
-                        <span>{battleLog}</span>
-                    </motion.div>
+                        opponent={{
+                            name: opponent?.username || 'Lawan',
+                            avatarClass: oppClassKey as AvatarClass,
+                            equipped: (opponent?.equipped_items as any) || {},
+                            level: opponent?.level || 1,
+                            hp: oppHp,
+                            maxHp: 100,
+                            mp: oppMp,
+                            score: opponentScore,
+                            schoolName: opponent?.school_name || undefined,
+                            animationState: oppAnimation,
+                        }}
+                        activeAttack={activeAttack}
+                        combatText={
+                            combatText
+                                ? {
+                                      target: combatText.target === 'me' ? 'player' : 'opponent',
+                                      text: combatText.text,
+                                      type: combatText.type,
+                                  }
+                                : null
+                        }
+                        comboCount={comboCount}
+                        battleLog={battleLog}
+                    />
 
                     {/* Question Card (Linearity Frosted Block) */}
                     <AnimatePresence mode="wait">

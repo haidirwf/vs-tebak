@@ -9,11 +9,18 @@ export default async function BattleComputerPage() {
 
     const supabase = await createClient()
 
-    const { data: questionPool } = await supabase
-        .from('battle_questions')
-        .select('id, category, question_text, options, correct_option, difficulty, explanation')
-        .eq('is_active', true)
-        .limit(400)
+    const [{ data: questionPool }, { data: profile }] = await Promise.all([
+        supabase
+            .from('battle_questions')
+            .select('id, category, question_text, options, correct_option, difficulty, explanation')
+            .eq('is_active', true)
+            .limit(400),
+        supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', user.id)
+            .single(),
+    ])
 
-    return <PracticeArena questionPool={questionPool || []} />
+    return <PracticeArena questionPool={questionPool || []} currentUser={profile} />
 }

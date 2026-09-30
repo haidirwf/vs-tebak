@@ -14,6 +14,8 @@ interface CharacterVisualProps {
     showAura?: boolean
     interactive?: boolean
     className?: string
+    facing?: 'left' | 'right'
+    showRoleBadge?: boolean
 }
 
 export default function CharacterVisual({
@@ -24,6 +26,8 @@ export default function CharacterVisual({
     showAura = true,
     interactive = false,
     className = '',
+    facing = 'right',
+    showRoleBadge = true,
 }: CharacterVisualProps) {
     const roleInfo = CHARACTER_ROLES[role] || CHARACTER_ROLES.warrior
     const weaponItem = equipped.weapon ? getItemById(equipped.weapon) : null
@@ -46,6 +50,7 @@ export default function CharacterVisual({
                 alignItems: 'center',
                 justifyContent: 'center',
                 userSelect: 'none',
+                transform: facing === 'left' ? 'scaleX(-1)' : undefined,
             }}
         >
             {/* Background Aura Effect */}
@@ -242,22 +247,98 @@ export default function CharacterVisual({
                         </g>
                     ) : null}
 
-                    {/* --- WEAPON SLOT OVERLAY (RIGHT HAND) --- */}
-                    <g transform="translate(148, 102)">
-                        {/* Hand grip */}
-                        <circle cx="0" cy="0" r="8" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
-                        {/* Weapon graphic / icon */}
-                        <text
-                            x="4"
-                            y="-6"
-                            textAnchor="middle"
-                            dominantBaseline="central"
-                            fontSize="32"
-                            style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
-                        >
-                            {weaponItem ? weaponItem.icon : roleInfo.avatarEmoji}
-                        </text>
-                    </g>
+                    {/* --- WEAPON SLOT OVERLAY (RIGHT ATTACKING HAND) --- */}
+                    <motion.g
+                        animate={
+                            animationState === 'attack'
+                                ? {
+                                    x: [0, -10, 24, 12, 0],
+                                    y: [0, -8, 12, 4, 0],
+                                    rotate: [0, -35, 45, -10, 0],
+                                }
+                                : animationState === 'hurt'
+                                ? {
+                                    x: [0, -8, 0],
+                                    rotate: [0, -18, 0],
+                                }
+                                : {
+                                    y: [0, 2, 0],
+                                    rotate: [0, 2, 0],
+                                }
+                        }
+                        transition={
+                            animationState === 'attack'
+                                ? { duration: 0.45, ease: 'easeOut' }
+                                : animationState === 'hurt'
+                                ? { duration: 0.3 }
+                                : { repeat: Infinity, duration: 2.2, ease: 'easeInOut' }
+                        }
+                        style={{
+                            transformOrigin: '148px 102px',
+                        }}
+                    >
+                        <g transform="translate(148, 102)">
+                            {/* Hand grip */}
+                            <circle cx="0" cy="0" r="8" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
+                            {/* Weapon graphic / icon */}
+                            <text
+                                x="4"
+                                y="-6"
+                                textAnchor="middle"
+                                dominantBaseline="central"
+                                fontSize="32"
+                                style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
+                            >
+                                {weaponItem ? weaponItem.icon : roleInfo.avatarEmoji}
+                            </text>
+
+                            {/* Attack Slash Blade Arc & Spark Effect (Tangan Nyerang) */}
+                            {animationState === 'attack' && (
+                                <g>
+                                    <motion.path
+                                        d="M 12 -28 A 38 38 0 0 1 32 20"
+                                        fill="none"
+                                        stroke={primary}
+                                        strokeWidth="4"
+                                        strokeLinecap="round"
+                                        initial={{ pathLength: 0, opacity: 0 }}
+                                        animate={{ pathLength: [0, 1, 0.2], opacity: [0, 1, 0], scale: [0.8, 1.2, 1.4] }}
+                                        transition={{ duration: 0.45, ease: 'easeOut' }}
+                                        style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
+                                    />
+                                    <motion.path
+                                        d="M 6 -20 A 30 30 0 0 1 24 16"
+                                        fill="none"
+                                        stroke="#ffffff"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        initial={{ pathLength: 0, opacity: 0 }}
+                                        animate={{ pathLength: [0, 1, 0], opacity: [0, 0.9, 0] }}
+                                        transition={{ duration: 0.4, ease: 'easeOut' }}
+                                    />
+                                    {/* Attack sparks from tip */}
+                                    <motion.circle
+                                        cx="30"
+                                        cy="0"
+                                        r="3"
+                                        fill="#ffffff"
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: [0, 1.8, 0], opacity: [0, 1, 0], x: [0, 12], y: [0, -6] }}
+                                        transition={{ duration: 0.35 }}
+                                    />
+                                    <motion.circle
+                                        cx="26"
+                                        cy="14"
+                                        r="2.5"
+                                        fill={primary}
+                                        initial={{ scale: 0, opacity: 0 }}
+                                        animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0], x: [0, 10], y: [0, 8] }}
+                                        transition={{ duration: 0.35, delay: 0.05 }}
+                                    />
+                                </g>
+                            )}
+                        </g>
+                    </motion.g>
 
                     {/* Left Hand Guard */}
                     <g transform="translate(52, 102)">
@@ -270,28 +351,30 @@ export default function CharacterVisual({
             </motion.div>
 
             {/* Role Watermark Badge on Corner */}
-            <div
-                style={{
-                    position: 'absolute',
-                    bottom: 0,
-                    right: 4,
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '4px',
-                    padding: '3px 8px',
-                    borderRadius: '6px',
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    border: `1px solid ${primary}44`,
-                    fontSize: '11px',
-                    fontFamily: 'var(--font-heading)',
-                    fontWeight: 700,
-                    color: primary,
-                    zIndex: 3,
-                }}
-            >
-                <span>{roleInfo.avatarEmoji}</span>
-                <span>{roleInfo.name}</span>
-            </div>
+            {showRoleBadge && (
+                <div
+                    style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        right: 4,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        padding: '3px 8px',
+                        borderRadius: '6px',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        border: `1px solid ${primary}44`,
+                        fontSize: '11px',
+                        fontFamily: 'var(--font-heading)',
+                        fontWeight: 700,
+                        color: primary,
+                        zIndex: 3,
+                    }}
+                >
+                    <span>{roleInfo.avatarEmoji}</span>
+                    <span>{roleInfo.name}</span>
+                </div>
+            )}
         </div>
     )
 }
