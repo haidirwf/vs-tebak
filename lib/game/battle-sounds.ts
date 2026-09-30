@@ -111,6 +111,54 @@ class SoundSynthesizer {
             // Audio context blocked
         }
     }
+
+    // Play victory fanfare
+    playVictory() {
+        try {
+            const ctx = this.getContext()
+            if (!ctx) return
+            const notes = [392, 523.25, 659.25, 783.99] // G4, C5, E5, G5
+            notes.forEach((freq, idx) => {
+                const now = ctx.currentTime + idx * 0.12
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = 'triangle'
+                osc.frequency.setValueAtTime(freq, now)
+                gain.gain.setValueAtTime(0.12, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.28)
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + 0.28)
+            })
+        } catch {
+            // Audio context blocked
+        }
+    }
+
+    // Play defeat / knockout sound
+    playDefeat() {
+        try {
+            const ctx = this.getContext()
+            if (!ctx) return
+            const notes = [311.13, 293.66, 261.63, 207.65] // Eb4, D4, C4, G#3
+            notes.forEach((freq, idx) => {
+                const now = ctx.currentTime + idx * 0.18
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = 'sawtooth'
+                osc.frequency.setValueAtTime(freq, now)
+                gain.gain.setValueAtTime(0.1, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35)
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + 0.35)
+            })
+        } catch {
+            // Audio context blocked
+        }
+    }
 }
 
 export const battleSounds = new SoundSynthesizer()

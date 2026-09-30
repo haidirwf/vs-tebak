@@ -84,6 +84,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const opponentFinalScoreRef = useRef<number | null>(null)
     const finalizeFallbackRequestedRef = useRef(false)
     const finalizeFallbackTimerRef = useRef<NodeJS.Timeout | null>(null)
+    const myHpRef = useRef(100)
+    const oppHpRef = useRef(100)
+    const knockoutHandledRef = useRef(false)
 
     const isPlayer1 = battle.player1_id === currentUser.id
     const syncXpToUserStore = useCallback(async (
@@ -220,10 +223,29 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         await endBattle(myScoreRef.current, opponentScoreRef.current, true, 'lose')
     }
 
+    // Triggered when current player's HP reaches 0 (K.O.)
+    const handleKnockoutLoss = useCallback(async () => {
+        if (knockoutHandledRef.current || phase === 'finished') return
+        knockoutHandledRef.current = true
+        setFinalOutcome('lose')
+        battleSounds.playDefeat()
+        setBattleLog('💀 HP habis! Kamu terkena K.O. dan kalah dalam pertarungan!')
+
+        channelRef.current?.send({
+            type: 'broadcast',
+            event: 'player_knockout',
+            payload: { loser_id: currentUser.id }
+        })
+
+        await endBattle(myScoreRef.current, opponentScoreRef.current, false, 'lose')
+    }, [currentUser.id, endBattle, phase])
+
     useEffect(() => {
         myScoreRef.current = myScore
         opponentScoreRef.current = opponentScore
-    }, [myScore, opponentScore])
+        myHpRef.current = myHp
+        oppHpRef.current = oppHp
+    }, [myScore, opponentScore, myHp, oppHp])
 
     // Fallback safety: if host misses final DB write, let participant force finalize once.
     useEffect(() => {
@@ -264,13 +286,31 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     clearInterval(timerRef.current!)
                     setShowAnswer(true)
                     setComboCount(0)
-                    const hpDamage = Math.max(12, Math.floor(100 / Math.max(questions.length, 1)))
-                    setMyHp(hp => Math.max(10, hp - hpDamage))
-                    setCombatText({ target: 'me', text: '⏰ TIMEOUT! -15 HP', type: 'miss' })
+                    const hpDamage = Math.max(14, Math.floor(100 / Math.max(questions.length, 1)))
+                    const newMyHp = Math.max(0, myHpRef.current - hpDamage)
+                    setMyHp(newMyHp)
+                    myHpRef.current = newMyHp
+
+                    // Broadcast HP sync ke lawan
+                    channelRef.current?.send({
+                        type: 'broadcast',
+                        event: 'hp_sync',
+                        payload: { player_id: currentUser.id, hp: newMyHp }
+                    })
+
+                    setCombatText({ target: 'me', text: `⏰ TIMEOUT! -${hpDamage} HP`, type: 'miss' })
                     setMeAnimation('hurt')
                     setBattleLog('⌛ Waktu habis! Kamu kehilangan giliran dan terkena penalti HP.')
                     setTimeout(() => setMeAnimation('idle'), 600)
                     setTimeout(() => setCombatText(null), 1200)
+
+                    if (newMyHp <= 0) {
+                        setTimeout(() => {
+                            handleKnockoutLoss()
+                        }, 700)
+                        return 0
+                    }
+
                     setTimeout(() => {
                         if (currentQ < questions.length - 1) {
                             setCurrentQ(q => q + 1)
@@ -331,10 +371,31 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     setOpponentFinished(true)
                 }
             })
+            .on('broadcast', { event: 'player_knockout' }, ({ payload }) => {
+                if (payload?.loser_id !== currentUser.id) {
+                    // Opponent lost all HP, I win!
+                    setFinalOutcome('win')
+                    setOppHp(0)
+                    oppHpRef.current = 0
+                    battleSounds.playVictory()
+                    setBattleLog('🏆 Lawan kehabisan HP (K.O.)! Kamu meraih kemenangan mutlak!')
+                    endBattle(myScoreRef.current, opponentScoreRef.current, false, 'win')
+                }
+            })
+            .on('broadcast', { event: 'hp_sync' }, ({ payload }) => {
+                if (payload.player_id !== currentUser.id && typeof payload.hp === 'number') {
+                    setOppHp(payload.hp)
+                    oppHpRef.current = payload.hp
+                }
+            })
             .on('broadcast', { event: 'battle_attack' }, ({ payload }) => {
                 if (payload.attacker_id !== currentUser.id) {
                     if (typeof payload.score === 'number') {
                         setOpponentScore(payload.score)
+                    }
+                    if (typeof payload.attacker_hp === 'number') {
+                        setOppHp(payload.attacker_hp)
+                        oppHpRef.current = payload.attacker_hp
                     }
                     setOpponentAnsweredThisRound(true)
                     setOppAnimation('attack')
@@ -354,7 +415,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         battleSounds.playHitImpact(payload.is_crit || payload.is_ultimate)
                         setMeAnimation('hurt')
                         const dmg = payload.damage || 15
-                        setMyHp(hp => Math.max(10, hp - dmg))
+                        const newHp = Math.max(0, myHpRef.current - dmg)
+                        setMyHp(newHp)
+                        myHpRef.current = newHp
+
+                        // Kirim kembali konfirmasi HP ke penyerang agar kedua layar 100% sama
+                        channelRef.current?.send({
+                            type: 'broadcast',
+                            event: 'hp_sync',
+                            payload: { player_id: currentUser.id, hp: newHp }
+                        })
+
                         setCombatText({
                             target: 'me',
                             text: payload.is_ultimate ? `🔥 ULTIMATE! -${dmg} HP` : payload.is_crit ? `💥 CRIT! -${dmg} HP` : `⚔️ -${dmg} HP`,
@@ -363,6 +434,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         if (payload.log) setBattleLog(payload.log)
                         setTimeout(() => setMeAnimation('idle'), 500)
                         setTimeout(() => setCombatText(null), 1100)
+
+                        if (newHp <= 0) {
+                            setTimeout(() => {
+                                handleKnockoutLoss()
+                            }, 500)
+                        }
                     }, 280)
 
                     setTimeout(() => {
@@ -374,6 +451,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             .on('broadcast', { event: 'score_update' }, ({ payload }) => {
                 if (payload.player_id !== currentUser.id) {
                     setOpponentScore(payload.score)
+                    if (typeof payload.hp === 'number') {
+                        setOppHp(payload.hp)
+                        oppHpRef.current = payload.hp
+                    }
                     setOpponentAnsweredThisRound(true)
                     setOppAnimation('attack')
                     setOppMp(mp => Math.min(100, mp + 20))
@@ -634,8 +715,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const myClassInfo = AVATAR_CLASS_STATS[myClassKey] || AVATAR_CLASS_STATS.warrior
     const oppClassKey = (opponent?.avatar_class || 'mage').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
     const oppClassInfo = AVATAR_CLASS_STATS[oppClassKey] || AVATAR_CLASS_STATS.mage
-    const myHpPercent = Math.max(10, Math.min(100, myHp))
-    const oppHpPercent = Math.max(10, Math.min(100, oppHp))
+    const myHpPercent = Math.max(0, Math.min(100, myHp))
+    const oppHpPercent = Math.max(0, Math.min(100, oppHp))
 
     const myStats = useMemo(() => {
         return calculateCharacterStats(
@@ -687,7 +768,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             setTimeout(() => {
                 battleSounds.playHitImpact(isCrit || isUltimate)
                 setOppAnimation('hurt')
-                setOppHp(prev => Math.max(10, prev - effectiveDamage))
+                const newOppHp = Math.max(0, oppHpRef.current - effectiveDamage)
+                setOppHp(newOppHp)
+                oppHpRef.current = newOppHp
                 setCombatText({
                     target: 'opp',
                     text: isUltimate
@@ -708,7 +791,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
             // Shield recovery from healer / accessory buff
             if (myStats.battleBuffs.shieldRegenPoints > 0) {
-                setMyHp(hp => Math.min(100, hp + myStats.battleBuffs.shieldRegenPoints))
+                const recovered = Math.min(100, myHpRef.current + myStats.battleBuffs.shieldRegenPoints)
+                setMyHp(recovered)
+                myHpRef.current = recovered
             }
 
             const attackLogMsg = isUltimate
@@ -718,12 +803,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 : `⚔️ Serangan ${myClassInfo.label} menembus pertahanan lawan (+${finalScoreGained} Pts, -${effectiveDamage} HP)!`
             setBattleLog(attackLogMsg)
 
-            // Broadcast battle_attack to opponent in real-time
+            // Broadcast battle_attack to opponent in real-time beserta HP penyerang
             channelRef.current?.send({
                 type: 'broadcast',
                 event: 'battle_attack',
                 payload: {
                     attacker_id: currentUser.id,
+                    attacker_hp: myHpRef.current,
                     score: newScore,
                     damage: effectiveDamage,
                     is_crit: isCrit,
@@ -744,7 +830,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             setComboCount(0)
             const reduction = myStats.battleBuffs.damageReductionPct
             const mitigatedDamage = Math.max(6, Math.floor(baseHpDamage * (1 - reduction / 100)))
-            setMyHp(prev => Math.max(10, prev - mitigatedDamage))
+            const newMyHp = Math.max(0, myHpRef.current - mitigatedDamage)
+            setMyHp(newMyHp)
+            myHpRef.current = newMyHp
+
+            // Broadcast HP perubahan setelah miss / recoil
+            channelRef.current?.send({
+                type: 'broadcast',
+                event: 'hp_sync',
+                payload: { player_id: currentUser.id, hp: newMyHp }
+            })
+
             setCombatText({
                 target: 'me',
                 text: `❌ Meleset! -${mitigatedDamage} HP`,
@@ -754,11 +850,18 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             setBattleLog(`🛡️ Serangan meleset! Pertahananmu goyah dan menerima pantulan (-${mitigatedDamage} HP).`)
             setTimeout(() => setMeAnimation('idle'), 600)
             setTimeout(() => setCombatText(null), 1100)
+
+            if (newMyHp <= 0) {
+                setTimeout(() => {
+                    handleKnockoutLoss()
+                }, 500)
+                return
+            }
         }
 
         channelRef.current?.send({
             type: 'broadcast', event: 'score_update',
-            payload: { player_id: currentUser.id, score: newScore }
+            payload: { player_id: currentUser.id, score: newScore, hp: myHpRef.current }
         })
 
         setTimeout(() => {

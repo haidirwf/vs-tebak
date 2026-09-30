@@ -130,11 +130,18 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             setTimeout(() => {
                 battleSounds.playHitImpact(false)
                 setMeAnimation('hurt')
-                setMyHp(prev => Math.max(10, prev - 12))
+                const newHp = Math.max(0, myHp - 12)
+                setMyHp(newHp)
                 setCombatText({ target: 'me', text: '⚡ -12 HP', type: 'damage' })
                 setBattleLog('🤖 AI Sentinel melancarkan serangan pulsa energi kilat (-12 HP)!')
                 setTimeout(() => setMeAnimation('idle'), 500)
                 setTimeout(() => setCombatText(null), 1100)
+
+                if (newHp <= 0) {
+                    setTimeout(() => {
+                        endGame(myScore, botScore + 10, 'lose')
+                    }, 500)
+                }
             }, 280)
 
             setTimeout(() => {
@@ -144,12 +151,18 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         }, botDelayMs)
     }
 
-    function endGame(finalMy: number, finalBot: number) {
+    function endGame(finalMy: number, finalBot: number, forcedResult?: 'win' | 'lose' | 'draw') {
         resetTimers()
         setFinished(true)
-        if (finalMy > finalBot) setResult('win')
-        else if (finalMy < finalBot) setResult('lose')
-        else setResult('draw')
+        if (forcedResult) {
+            setResult(forcedResult)
+        } else if (finalMy > finalBot) {
+            setResult('win')
+        } else if (finalMy < finalBot) {
+            setResult('lose')
+        } else {
+            setResult('draw')
+        }
     }
 
     function goNextQuestion(finalMy: number, finalBot: number) {
@@ -201,12 +214,20 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     setShowAnswer(true)
                     setComboCount(0)
                     battleSounds.playMiss()
-                    setMyHp(hp => Math.max(10, hp - 15))
+                    const newHp = Math.max(0, myHp - 15)
+                    setMyHp(newHp)
                     setCombatText({ target: 'me', text: '⏰ TIMEOUT! -15 HP', type: 'miss' })
                     setMeAnimation('hurt')
                     setBattleLog('⌛ Waktu habis! Kamu terkena penalti giliran dan kehilangan 15 HP.')
                     setTimeout(() => setMeAnimation('idle'), 600)
                     setTimeout(() => setCombatText(null), 1100)
+
+                    if (newHp <= 0) {
+                        setTimeout(() => {
+                            endGame(myScore, botScore, 'lose')
+                        }, 600)
+                        return 0
+                    }
 
                     setTimeout(() => {
                         goNextQuestion(myScore, botScore)
@@ -219,7 +240,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
 
         return () => resetTimers()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [started, finished, currentQ, currentQuestion])
+    }, [started, finished, currentQ, currentQuestion, myHp, botScore, myScore])
 
     function handleAnswer(idx: number) {
         if (!currentQuestion || showAnswer || selectedAnswer !== null) return
@@ -257,7 +278,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             setTimeout(() => {
                 battleSounds.playHitImpact(isCrit || isUltimate)
                 setBotAnimation('hurt')
-                setBotHp(prev => Math.max(0, prev - effectiveDamage))
+                const newBotHp = Math.max(0, botHp - effectiveDamage)
+                setBotHp(newBotHp)
                 setCombatText({
                     target: 'bot',
                     text: isUltimate
@@ -267,6 +289,12 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                         : `⚔️ -${effectiveDamage} HP`,
                     type: isCrit || isUltimate ? 'crit' : 'damage',
                 })
+
+                if (newBotHp <= 0) {
+                    setTimeout(() => {
+                        endGame(updatedMyScore + 10, botScore, 'win')
+                    }, 500)
+                }
             }, 280)
 
             if (isUltimate) {
@@ -291,7 +319,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         } else {
             battleSounds.playMiss()
             setComboCount(0)
-            setMyHp(prev => Math.max(10, prev - hpDamage))
+            const newMyHp = Math.max(0, myHp - hpDamage)
+            setMyHp(newMyHp)
             setCombatText({
                 target: 'me',
                 text: `❌ Meleset! -${hpDamage} HP`,
@@ -301,6 +330,13 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             setBattleLog(`🛡️ Serangan meleset! AI Sentinel membalas dengan serangan balik (-${hpDamage} HP).`)
             setTimeout(() => setMeAnimation('idle'), 600)
             setTimeout(() => setCombatText(null), 1100)
+
+            if (newMyHp <= 0) {
+                setTimeout(() => {
+                    endGame(updatedMyScore, botScore + 10, 'lose')
+                }, 500)
+                return
+            }
         }
 
         setTimeout(() => {
