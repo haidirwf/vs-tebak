@@ -96,10 +96,10 @@ export default function CharacterCreationModal({
                     transition={{ duration: 0.25, ease: 'easeOut' }}
                     style={{
                         width: '100%',
-                        maxWidth: '820px',
+                        maxWidth: '640px',
                         maxHeight: '90vh',
                         overflowY: 'auto',
-                        padding: '28px',
+                        padding: '24px 22px',
                         borderRadius: '16px',
                         backgroundColor: '#141414',
                         border: '1px solid #313131',
@@ -212,13 +212,13 @@ export default function CharacterCreationModal({
                     <div
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: 'minmax(220px, 280px) 1fr',
-                            gap: '20px',
+                            gridTemplateColumns: 'minmax(180px, 210px) 1fr',
+                            gap: '16px',
                             alignItems: 'center',
                             backgroundColor: '#181818',
                             borderRadius: '14px',
                             border: '1px solid #2a2a2a',
-                            padding: '20px',
+                            padding: '16px',
                             marginBottom: '20px',
                         }}
                     >
@@ -232,12 +232,12 @@ export default function CharacterCreationModal({
                                 backgroundColor: '#141414',
                                 borderRadius: '12px',
                                 border: '1px solid #313131',
-                                padding: '16px',
+                                padding: '14px 10px',
                             }}
                         >
                             <CharacterVisual
                                 role={selectedRole}
-                                size={175}
+                                size={150}
                                 showAura={true}
                                 interactive={true}
                             />
