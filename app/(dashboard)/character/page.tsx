@@ -121,12 +121,12 @@ export default function CharacterPage() {
         }
     }
 
-    // Handle Buy with XP
+    // Handle Unlock/Claim with XP Requirement
     async function handleBuyItem(item: GameItem) {
         if (!profile || profile.xp < item.cost_xp) {
             setNotification({
                 type: 'error',
-                message: `XP tidak cukup! Butuh ${item.cost_xp} XP, kamu memiliki ${profile?.xp || 0} XP.`
+                message: `Syarat XP belum terpenuhi! Butuh minimal ${item.cost_xp} XP, saat ini kamu memiliki ${profile?.xp || 0} XP.`
             })
             return
         }
@@ -141,10 +141,12 @@ export default function CharacterPage() {
             })
             const data = await res.json()
             if (!res.ok || data.error) {
-                setNotification({ type: 'error', message: data.error || 'Gagal membeli item.' })
+                setNotification({ type: 'error', message: data.error || 'Gagal membuka item.' })
             } else {
                 setInventory(prev => [...prev, data.item])
-                updateXP(data.newXp)
+                if (data.currentXp !== undefined) {
+                    updateXP(data.currentXp)
+                }
                 setNotification({ type: 'success', message: data.message })
             }
         } catch (e: any) {
@@ -242,11 +244,11 @@ export default function CharacterPage() {
                         <span>Kostumisasi & Karakter</span>
                     </h1>
                     <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: 0 }}>
-                        Atur perlengkapan tempur, belanja aksesoris dengan XP, dan tingkatkan buff tempur duelmu.
+                        Atur perlengkapan tempur, buka aksesoris berdasarkan pencapaian XP, dan tingkatkan buff tempur duelmu.
                     </p>
                 </div>
 
-                {/* XP Balance Display */}
+                {/* XP Balance / Milestone Display */}
                 <div
                     style={{
                         display: 'flex',
@@ -259,7 +261,7 @@ export default function CharacterPage() {
                     }}
                 >
                     <Coins size={18} style={{ color: '#F5C542' }} />
-                    <span style={{ fontSize: '12px', color: 'var(--color-silver)' }}>Saldo XP:</span>
+                    <span style={{ fontSize: '12px', color: 'var(--color-silver)' }}>Total XP:</span>
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '15px', fontWeight: 700, color: '#F5C542' }}>
                         {profile?.xp || 0} XP
                     </span>
@@ -935,10 +937,10 @@ export default function CharacterPage() {
                                             outline: 'none',
                                         }}
                                     >
-                                        <option value="rating_price_asc">Rating & Harga: Rendah → Tinggi</option>
-                                        <option value="rating_price_desc">Rating & Harga: Tinggi → Rendah</option>
-                                        <option value="price_asc">Harga: Termurah</option>
-                                        <option value="price_desc">Harga: Termahal</option>
+                                        <option value="rating_price_asc">Rating & Syarat XP: Rendah → Tinggi</option>
+                                        <option value="rating_price_desc">Rating & Syarat XP: Tinggi → Rendah</option>
+                                        <option value="price_asc">Syarat XP: Terendah</option>
+                                        <option value="price_desc">Syarat XP: Tertinggi</option>
                                         <option value="rating_desc">Rating Tertinggi</option>
                                     </select>
                                 </div>
@@ -1132,7 +1134,7 @@ export default function CharacterPage() {
                                                     }}
                                                 >
                                                     <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                        <span style={{ fontSize: '10px', color: 'var(--color-fog)', lineHeight: 1.2 }}>Harga</span>
+                                                        <span style={{ fontSize: '10px', color: 'var(--color-fog)', lineHeight: 1.2 }}>Syarat XP</span>
                                                         <span
                                                             style={{
                                                                 fontFamily: 'var(--font-mono)',
@@ -1186,11 +1188,11 @@ export default function CharacterPage() {
                                                             }}
                                                         >
                                                             {actionLoadingId === item.id ? (
-                                                                <span>Membeli...</span>
+                                                                <span>Membuka...</span>
                                                             ) : canAfford ? (
-                                                                <span>Beli</span>
+                                                                <span>Klaim</span>
                                                             ) : (
-                                                                <span>XP Kurang</span>
+                                                                <span>Terkunci</span>
                                                             )}
                                                         </button>
                                                     )}

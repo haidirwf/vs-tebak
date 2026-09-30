@@ -58,47 +58,29 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Kamu sudah memiliki item ini!' }, { status: 400 })
     }
 
-    // 3. Check XP balance
+    // 3. Check XP requirement (XP is an unlock milestone, not deducted)
     if (profile.xp < item.cost_xp) {
         return NextResponse.json({
-            error: `XP tidak mencukupi! Butuh ${item.cost_xp} XP, kamu memiliki ${profile.xp} XP.`
+            error: `Syarat belum terpenuhi! Butuh minimal ${item.cost_xp} XP untuk membuka item ini, saat ini kamu memiliki ${profile.xp} XP.`
         }, { status: 400 })
     }
 
-    // 4. Deduct XP
-    const newXp = profile.xp - item.cost_xp
-    const { error: deductErr } = await supabase
-        .from('profiles')
-        .update({ xp: newXp })
-        .eq('id', user.id)
+    // 4. Insert into user_inventory (XP remains untouched)
+    const { error: insertErr } = await supabase.from('user_inventory').insert({
+        user_id: user.id,
+        item_id: item.id,
+        slot: item.slot,
+        is_equipped: false,
+    })
 
-    if (deductErr) {
-        return NextResponse.json({ error: 'Gagal memproses pengurangan XP: ' + deductErr.message }, { status: 500 })
+    if (insertErr) {
+        return NextResponse.json({ error: 'Gagal membuka item: ' + insertErr.message }, { status: 500 })
     }
-
-    // 5. Insert into user_inventory
-    try {
-        await supabase.from('user_inventory').insert({
-            user_id: user.id,
-            item_id: item.id,
-            slot: item.slot,
-            is_equipped: false,
-        })
-    } catch {}
-
-    // 6. Log XP expenditure
-    try {
-        await supabase.from('xp_logs').insert({
-            user_id: user.id,
-            xp_amount: -item.cost_xp,
-            reason: `Beli item aksesoris: ${item.name}`,
-        })
-    } catch {}
 
     return NextResponse.json({
         success: true,
         item,
-        newXp,
-        message: `Berhasil membeli ${item.name}!`,
+        currentXp: profile.xp,
+        message: `Berhasil membuka ${item.name}! XP kamu tetap utuh.`,
     })
 }
