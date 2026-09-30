@@ -27,6 +27,12 @@ export function DashboardProvider({
         dismissActivePopup,
     } = useUserStore()
 
+    // Seed user store profile synchronously if empty so child pages have profile on initial render
+    const storeProfile = useUserStore.getState().profile
+    if (profile && !storeProfile) {
+        useUserStore.setState({ profile, isLoading: false })
+    }
+
     const [hasCompletedCreation, setHasCompletedCreation] = useState(false)
 
     // Akun baru maupun akun lama yang belum menyelesaikan kustomisasi karakter wajib melalui CharacterCreationModal

@@ -3,7 +3,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { AvatarClass } from '@/types'
-import { CHARACTER_ROLES, EquippedItemsMap } from '@/lib/game/character'
+import { CHARACTER_ROLES, EquippedItemsMap, getStarterEquippedMap } from '@/lib/game/character'
 import { getItemById } from '@/lib/game/items'
 
 interface CharacterVisualProps {
@@ -30,10 +30,15 @@ export default function CharacterVisual({
     showRoleBadge = true,
 }: CharacterVisualProps) {
     const roleInfo = CHARACTER_ROLES[role] || CHARACTER_ROLES.warrior
-    const weaponItem = equipped.weapon ? getItemById(equipped.weapon) : null
-    const headItem = equipped.head ? getItemById(equipped.head) : null
-    const armorItem = equipped.armor ? getItemById(equipped.armor) : null
-    const accessoryItem = equipped.accessory ? getItemById(equipped.accessory) : null
+    const resolvedEquipped = React.useMemo(() => {
+        if (equipped && Object.keys(equipped).length > 0) return equipped
+        return getStarterEquippedMap(role)
+    }, [equipped, role])
+
+    const weaponItem = resolvedEquipped.weapon ? getItemById(resolvedEquipped.weapon) : null
+    const headItem = resolvedEquipped.head ? getItemById(resolvedEquipped.head) : null
+    const armorItem = resolvedEquipped.armor ? getItemById(resolvedEquipped.armor) : null
+    const accessoryItem = resolvedEquipped.accessory ? getItemById(resolvedEquipped.accessory) : null
 
     // Determine colors
     const primary = roleInfo.themeColor

@@ -3,6 +3,8 @@
 
 import { create } from 'zustand'
 import { Module, UserModule, DailyQuest, UserDailyQuest, XPLog } from '@/types'
+import { GameItem } from '@/lib/game/items'
+import { EquippedItemsMap } from '@/lib/game/character'
 
 export interface LeaderboardUser {
     id: string
@@ -76,6 +78,11 @@ interface ContentStore {
     profileBattlesTotal: number
     profileStatsFetchedAt: number | null
 
+    // Character Equipment & Inventory Cache
+    characterEquipped: EquippedItemsMap | null
+    characterInventory: GameItem[] | null
+    characterInventoryFetchedAt: number | null
+
     // Setters
     setDashboardData: (data: {
         quests: DailyQuest[]
@@ -107,12 +114,18 @@ interface ContentStore {
         battlesTotal: number
     }) => void
 
+    setCharacterInventoryData: (data: {
+        equipped: EquippedItemsMap
+        inventory: GameItem[]
+    }) => void
+
     // Invalidation
     invalidateDashboard: () => void
     invalidateModules: () => void
     invalidateLeaderboard: () => void
     invalidateVouchers: () => void
     invalidateProfileStats: () => void
+    invalidateCharacterInventory: () => void
 }
 
 export const useContentStore = create<ContentStore>((set) => ({
@@ -140,6 +153,10 @@ export const useContentStore = create<ContentStore>((set) => ({
     profileBattlesWon: 0,
     profileBattlesTotal: 0,
     profileStatsFetchedAt: null,
+
+    characterEquipped: null,
+    characterInventory: null,
+    characterInventoryFetchedAt: null,
 
     setDashboardData: (data) =>
         set({
@@ -181,9 +198,17 @@ export const useContentStore = create<ContentStore>((set) => ({
             profileStatsFetchedAt: Date.now(),
         }),
 
+    setCharacterInventoryData: (data) =>
+        set({
+            characterEquipped: data.equipped,
+            characterInventory: data.inventory,
+            characterInventoryFetchedAt: Date.now(),
+        }),
+
     invalidateDashboard: () => set({ dashboardFetchedAt: null }),
     invalidateModules: () => set({ modulesFetchedAt: null }),
     invalidateLeaderboard: () => set({ leaderboardFetchedAt: null }),
     invalidateVouchers: () => set({ vouchersFetchedAt: null }),
     invalidateProfileStats: () => set({ profileStatsFetchedAt: null }),
+    invalidateCharacterInventory: () => set({ characterInventoryFetchedAt: null }),
 }))

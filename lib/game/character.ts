@@ -1,6 +1,6 @@
 // lib/game/character.ts — Character Roles, Stats & Calculation Engine
 import { AvatarClass } from '@/types'
-import { getItemById, GameItem, ItemSlot } from './items'
+import { getItemById, getStarterItemsForClass, GameItem, ItemSlot } from './items'
 
 export interface CharacterRoleInfo {
     id: AvatarClass
@@ -132,6 +132,29 @@ export const CHARACTER_ROLES: Record<AvatarClass, CharacterRoleInfo> = {
 }
 
 export type EquippedItemsMap = Partial<Record<ItemSlot, string>>
+
+export function getStarterEquippedMap(roleKey: AvatarClass): EquippedItemsMap {
+    const starters = getStarterItemsForClass(roleKey)
+    const map: EquippedItemsMap = {}
+    for (const it of starters) {
+        map[it.slot] = it.id
+    }
+    return map
+}
+
+export function resolveEquippedMap(
+    roleKey: AvatarClass,
+    equipped?: EquippedItemsMap | null,
+    characterCreated: boolean = true
+): EquippedItemsMap {
+    if (equipped && Object.keys(equipped).length > 0) {
+        return equipped
+    }
+    if (characterCreated) {
+        return getStarterEquippedMap(roleKey)
+    }
+    return {}
+}
 
 export interface TotalCharacterStats {
     hp: number

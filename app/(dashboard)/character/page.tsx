@@ -3,9 +3,10 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
+import { useContentStore } from '@/stores/contentStore'
 import { AvatarClass } from '@/types'
-import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap } from '@/lib/game/character'
-import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemsBySlot } from '@/lib/game/items'
+import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap, resolveEquippedMap } from '@/lib/game/character'
+import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import { 
     Swords, 
@@ -46,37 +47,110 @@ const SLOT_LABELS: Record<ItemSlot, { name: string; emoji: string }> = {
 
 export default function CharacterPage() {
     const { profile, updateXP } = useUserStore()
-    const [activeTab, setActiveTab] = useState<'inventory' | 'shop' | 'perks'>('inventory')
-    const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
-    const [equipped, setEquipped] = useState<EquippedItemsMap>({})
-    const [inventory, setInventory] = useState<GameItem[]>([])
-    const [isLoadingData, setIsLoadingData] = useState(true)
-    const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
-    const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
-    const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
+    const { 
+        characterEquipped, 
+        characterInventory, 
+        characterInventoryFetchedAt, 
+        setCharacterInventoryData 
+    } = useContentStore()
 
     const avatarClass = (profile?.avatar_class || 'warrior') as AvatarClass
     const roleInfo = CHARACTER_ROLES[avatarClass] || CHARACTER_ROLES.warrior
 
-    // 1. Fetch user inventory and equipped gear
-    const loadInventoryData = useCallback(async () => {
+    // 1. Initial equipped determination:
+    // Memory cache in contentStore -> profile.equipped_items in userStore -> starter items fallback
+    const resolvedInitialEquipped = useMemo(() => {
+        if (characterEquipped && Object.keys(characterEquipped).length > 0) {
+            return characterEquipped
+        }
+        return resolveEquippedMap(avatarClass, profile?.equipped_items, profile?.character_created ?? true)
+    }, [characterEquipped, avatarClass, profile?.equipped_items, profile?.character_created])
+
+    // 2. Initial inventory determination:
+    // Memory cache in contentStore -> starter items for created character -> empty
+    const resolvedInitialInventory = useMemo(() => {
+        if (characterInventory && characterInventory.length > 0) {
+            return characterInventory
+        }
+        if (profile?.character_created ?? true) {
+            return getStarterItemsForClass(avatarClass)
+        }
+        return []
+    }, [characterInventory, avatarClass, profile?.character_created])
+
+    const [activeTab, setActiveTab] = useState<'inventory' | 'shop' | 'perks'>('inventory')
+    const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
+    const [equipped, setEquipped] = useState<EquippedItemsMap>(resolvedInitialEquipped)
+    const [inventory, setInventory] = useState<GameItem[]>(resolvedInitialInventory)
+    const [isLoadingData, setIsLoadingData] = useState(!characterInventoryFetchedAt && !profile?.character_created)
+    const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
+    const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+    const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
+
+    // Keep local equipped & inventory in sync when profile or store updates
+    useEffect(() => {
+        if (Object.keys(equipped).length === 0 && profile) {
+            const fallback = resolveEquippedMap(avatarClass, profile.equipped_items, profile.character_created ?? true)
+            if (Object.keys(fallback).length > 0) {
+                setEquipped(fallback)
+            }
+        }
+        if (inventory.length === 0 && profile) {
+            const starters = getStarterItemsForClass(avatarClass)
+            if (starters.length > 0) {
+                setInventory(starters)
+            }
+        }
+    }, [profile, avatarClass, equipped, inventory.length])
+
+    // Fetch user inventory and equipped gear with background revalidation
+    const loadInventoryData = useCallback(async (silent = false) => {
+        if (!silent && inventory.length === 0) {
+            setIsLoadingData(true)
+        }
         try {
             const res = await fetch('/api/character/inventory')
             if (res.ok) {
                 const data = await res.json()
-                setEquipped(data.equipped || {})
-                setInventory(data.inventory || [])
+                const serverEquipped = data.equipped && Object.keys(data.equipped).length > 0
+                    ? data.equipped
+                    : resolveEquippedMap(avatarClass, data.equipped, true)
+                const serverInventory = data.inventory && data.inventory.length > 0
+                    ? data.inventory
+                    : getStarterItemsForClass(avatarClass)
+
+                setEquipped(serverEquipped)
+                setInventory(serverInventory)
+
+                // Update caches
+                setCharacterInventoryData({
+                    equipped: serverEquipped,
+                    inventory: serverInventory,
+                })
+
+                if (profile) {
+                    useUserStore.getState().setProfile({
+                        ...profile,
+                        equipped_items: serverEquipped,
+                    })
+                }
             }
         } catch (e) {
             console.error('Failed to load character inventory:', e)
         } finally {
             setIsLoadingData(false)
         }
-    }, [])
+    }, [avatarClass, inventory.length, profile, setCharacterInventoryData])
 
     useEffect(() => {
-        loadInventoryData()
-    }, [loadInventoryData, profile?.character_created, profile?.avatar_class])
+        const isFresh = characterInventoryFetchedAt && Date.now() - characterInventoryFetchedAt < 60_000
+        if (isFresh) {
+            // Data in memory is fresh, load silently in background without blocking UI
+            loadInventoryData(true)
+        } else {
+            loadInventoryData(false)
+        }
+    }, [loadInventoryData, profile?.character_created, profile?.avatar_class, characterInventoryFetchedAt])
 
     // Auto-dismiss floating toast notification
     useEffect(() => {
@@ -97,10 +171,34 @@ export default function CharacterPage() {
         return new Set(inventory.map(it => it.id))
     }, [inventory])
 
-    // Handle Equip or Unequip
+    // Handle Equip or Unequip with Instant Optimistic UI
     async function handleEquipToggle(item: GameItem, action: 'equip' | 'unequip') {
         setActionLoadingId(item.id)
         setNotification(null)
+
+        // 1. Optimistic update
+        const previousEquipped = { ...equipped }
+        const newEquipped = { ...equipped }
+        if (action === 'equip') {
+            newEquipped[item.slot] = item.id
+        } else {
+            delete newEquipped[item.slot]
+        }
+
+        // Apply immediately in 0ms
+        setEquipped(newEquipped)
+        if (profile) {
+            useUserStore.getState().setProfile({
+                ...profile,
+                equipped_items: newEquipped,
+            })
+        }
+        setCharacterInventoryData({
+            equipped: newEquipped,
+            inventory,
+        })
+
+        // 2. Persist to server
         try {
             const res = await fetch('/api/character/equip', {
                 method: 'POST',
@@ -109,12 +207,47 @@ export default function CharacterPage() {
             })
             const data = await res.json()
             if (!res.ok || data.error) {
+                // Rollback on server error
+                setEquipped(previousEquipped)
+                if (profile) {
+                    useUserStore.getState().setProfile({
+                        ...profile,
+                        equipped_items: previousEquipped,
+                    })
+                }
+                setCharacterInventoryData({
+                    equipped: previousEquipped,
+                    inventory,
+                })
                 setNotification({ type: 'error', message: data.error || 'Gagal mengubah perlengkapan.' })
             } else {
-                setEquipped(data.equipped || {})
+                const finalEquipped = data.equipped || newEquipped
+                setEquipped(finalEquipped)
+                if (profile) {
+                    useUserStore.getState().setProfile({
+                        ...profile,
+                        equipped_items: finalEquipped,
+                    })
+                }
+                setCharacterInventoryData({
+                    equipped: finalEquipped,
+                    inventory,
+                })
                 setNotification({ type: 'success', message: data.message })
             }
         } catch (e: any) {
+            // Rollback on network failure
+            setEquipped(previousEquipped)
+            if (profile) {
+                useUserStore.getState().setProfile({
+                    ...profile,
+                    equipped_items: previousEquipped,
+                })
+            }
+            setCharacterInventoryData({
+                equipped: previousEquipped,
+                inventory,
+            })
             setNotification({ type: 'error', message: e.message || 'Terjadi kesalahan jaringan.' })
         } finally {
             setActionLoadingId(null)
@@ -143,7 +276,12 @@ export default function CharacterPage() {
             if (!res.ok || data.error) {
                 setNotification({ type: 'error', message: data.error || 'Gagal membuka item.' })
             } else {
-                setInventory(prev => [...prev, data.item])
+                const updatedInventory = [...inventory, data.item]
+                setInventory(updatedInventory)
+                setCharacterInventoryData({
+                    equipped,
+                    inventory: updatedInventory,
+                })
                 if (data.currentXp !== undefined) {
                     updateXP(data.currentXp)
                 }

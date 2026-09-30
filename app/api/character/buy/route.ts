@@ -1,11 +1,17 @@
 import { createClient } from '@/lib/supabase/server'
+import { getAuthenticatedUser } from '@/lib/auth/get-user'
 import { NextRequest, NextResponse } from 'next/server'
 import { getItemById } from '@/lib/game/items'
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
 export async function POST(request: NextRequest) {
+    let user = await getAuthenticatedUser()
     const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        const { data: { user: authUser } } = await supabase.auth.getUser()
+        user = authUser
+    }
 
     if (!user) {
         return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
