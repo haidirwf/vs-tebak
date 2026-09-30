@@ -108,12 +108,40 @@ export default function BattlePage() {
         }
     }, [supabase, fetchRooms])
 
-    // When matchmaking, listen via Supabase Realtime WebSocket for opponent joining (0 repeated Vercel API calls)
+    // 1. Stopwatch timer: starts immediately when mode becomes 'matchmaking'
+    useEffect(() => {
+        if (mode !== 'matchmaking') {
+            if (matchmakingTimerRef.current) {
+                clearInterval(matchmakingTimerRef.current)
+                matchmakingTimerRef.current = null
+            }
+            return
+        }
+
+        const startedAt = Date.now()
+        setMatchmakingElapsedSec(0)
+
+        const timer = setInterval(() => {
+            const elapsed = Math.floor((Date.now() - startedAt) / 1000)
+            setMatchmakingElapsedSec(elapsed)
+        }, 1000)
+
+        matchmakingTimerRef.current = timer
+
+        return () => {
+            clearInterval(timer)
+            if (matchmakingTimerRef.current === timer) {
+                matchmakingTimerRef.current = null
+            }
+        }
+    }, [mode])
+
+    // 2. Realtime WebSocket listener for room opponent matching & timeout limit
     useEffect(() => {
         if (mode !== 'matchmaking' || !pendingBattleId) return
 
         cancelRequestedRef.current = false
-        const startedAt = Date.now()
+        const roomStartedAt = Date.now()
         let stopped = false
 
         const cancelPendingRoom = () => {
@@ -190,14 +218,13 @@ export default function BattlePage() {
             )
             .subscribe()
 
-        // 2. UI timer for elapsed seconds and timeout
-        matchmakingTimerRef.current = setInterval(() => {
-            const elapsed = Date.now() - startedAt
-            setMatchmakingElapsedSec(Math.floor(elapsed / 1000))
-
+        // 2. Room timeout handler
+        const timeoutCheckTimer = setInterval(() => {
+            const elapsed = Date.now() - roomStartedAt
             if (elapsed >= MATCHMAKING_TIMEOUT_MS) {
                 stopped = true
                 if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
+                clearInterval(timeoutCheckTimer)
                 setMatchStatus('timeout')
                 setMatchmakingTimedOut(true)
                 setError('Belum menemukan lawan. Silakan coba lagi.')
@@ -229,8 +256,8 @@ export default function BattlePage() {
 
         return () => {
             stopped = true
+            clearInterval(timeoutCheckTimer)
             clearInterval(fallbackInterval)
-            if (matchmakingTimerRef.current) clearInterval(matchmakingTimerRef.current)
             supabase.removeChannel(channel)
             document.removeEventListener('visibilitychange', handleVisibilityChange)
             window.removeEventListener('beforeunload', handleUnload)
@@ -972,17 +999,7 @@ export default function BattlePage() {
                                     </div>
                                 ) : (
                                     <>
-                                        <motion.div
-                                            animate={{ rotate: 360 }}
-                                            transition={{ repeat: Infinity, duration: 2, ease: 'linear' }}
-                                            style={{
-                                                position: 'absolute',
-                                                inset: 0,
-                                                borderRadius: '50%',
-                                                border: '2px solid rgba(245, 197, 66, 0.15)',
-                                                borderTopColor: 'var(--color-signal-orange)',
-                                            }}
-                                        />
+                                        <div className="battle-radar-spinner" />
                                         <div
                                             style={{
                                                 width: '46px',

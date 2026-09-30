@@ -1440,6 +1440,25 @@ input::placeholder, textarea::placeholder {
   z-index: 9999;
 }
 
+@keyframes battle-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.battle-radar-spinner {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2.5px solid rgba(245, 197, 66, 0.15);
+  border-top-color: var(--color-signal-orange);
+  animation: battle-spin 1.2s linear infinite;
+  will-change: transform;
+}
+
 @media (min-width: 768px) {
   .character-toast-notification {
     bottom: 32px;
