@@ -1514,13 +1514,14 @@ input::placeholder, textarea::placeholder {
 }
 
 .character-toast-notification {
-  position: fixed;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
-  left: 16px;
-  right: 16px;
-  margin: 0 auto;
-  max-width: 420px;
-  z-index: 9999;
+  position: fixed !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
+  left: 16px !important;
+  right: 16px !important;
+  margin: 0 auto !important;
+  max-width: 420px !important;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
 }
 
 @keyframes battle-spin {
@@ -1544,10 +1545,11 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 768px) {
   .character-toast-notification {
-    bottom: 32px;
-    left: auto;
-    right: 32px;
-    margin: 0;
+    bottom: 28px !important;
+    left: auto !important;
+    right: 28px !important;
+    margin: 0 !important;
+    max-width: 440px !important;
   }
 }
 

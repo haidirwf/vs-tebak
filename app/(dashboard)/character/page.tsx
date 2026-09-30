@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
@@ -91,6 +92,11 @@ export default function CharacterPage() {
     const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
 
     // Keep local equipped & inventory in sync once when profile first loads
     useEffect(() => {
@@ -503,55 +509,61 @@ export default function CharacterPage() {
                 </div>
             </div>
 
-            {/* Floating Toaster for Equip/Unequip/Buy Notifications (Mobile bottom offset above navigation) */}
-            <AnimatePresence>
-                {notification && (
-                    <motion.div
-                        className="character-toast-notification"
-                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
-                        transition={{ duration: 0.22, ease: 'easeOut' }}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '12px',
-                            padding: '12px 18px',
-                            borderRadius: '12px',
-                            backgroundColor: '#141414',
-                            border: `1px solid ${notification.type === 'success' ? 'rgba(34, 197, 94, 0.45)' : 'rgba(239, 68, 68, 0.45)'}`,
-                            boxShadow: '0 16px 40px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.15)',
-                        }}
-                    >
-                        {notification.type === 'success' ? (
-                            <CheckCircle2 size={18} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />
-                        ) : (
-                            <AlertCircle size={18} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
-                        )}
-                        <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 500, lineHeight: 1.4 }}>
-                            {notification.message}
-                        </span>
-                        <button
-                            type="button"
-                            onClick={() => setNotification(null)}
+            {/* Floating Toaster for Equip/Unequip/Buy Notifications (Portal to body so it stays fixed to viewport during page scroll) */}
+            {mounted && typeof document !== 'undefined' && createPortal(
+                <AnimatePresence>
+                    {notification && (
+                        <motion.div
+                            className="character-toast-notification"
+                            initial={{ opacity: 0, y: 24, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 24, scale: 0.95 }}
+                            transition={{ duration: 0.22, ease: 'easeOut' }}
                             style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: 'var(--color-steel)',
-                                cursor: 'pointer',
-                                padding: '4px',
+                                position: 'fixed',
+                                zIndex: 99999,
                                 display: 'flex',
                                 alignItems: 'center',
-                                justifyContent: 'center',
-                                borderRadius: '6px',
-                                marginLeft: '6px',
+                                gap: '12px',
+                                padding: '12px 18px',
+                                borderRadius: '12px',
+                                backgroundColor: '#141414',
+                                border: `1px solid ${notification.type === 'success' ? 'rgba(34, 197, 94, 0.45)' : 'rgba(239, 68, 68, 0.45)'}`,
+                                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.15)',
+                                pointerEvents: 'auto',
                             }}
                         >
-                            <X size={14} />
-                        </button>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+                            {notification.type === 'success' ? (
+                                <CheckCircle2 size={18} style={{ color: 'var(--color-vector-green)', flexShrink: 0 }} />
+                            ) : (
+                                <AlertCircle size={18} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
+                            )}
+                            <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 500, lineHeight: 1.4 }}>
+                                {notification.message}
+                            </span>
+                            <button
+                                type="button"
+                                onClick={() => setNotification(null)}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--color-steel)',
+                                    cursor: 'pointer',
+                                    padding: '4px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    borderRadius: '6px',
+                                    marginLeft: 'auto',
+                                }}
+                            >
+                                <X size={14} />
+                            </button>
+                        </motion.div>
+                    )}
+                </AnimatePresence>,
+                document.body
+            )}
 
             {/* Main 2-Column Customization Grid */}
             <div className="character-main-grid">
