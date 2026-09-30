@@ -2005,6 +2005,37 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ===================================================
+   MOBILE LIVE BATTLE FULL-FOCUS STYLES
+   Saat battle di mobile, sembunyikan navbar & sidebar 
+   agar layar fokus penuh pada arena battle.
+   =================================================== */
+@media (max-width: 767px) {
+  .dashboard-shell.in-live-battle .dashboard-sidebar {
+    display: none !important;
+  }
+
+  .dashboard-shell.in-live-battle .dashboard-topbar {
+    display: none !important;
+  }
+
+  .dashboard-shell.in-live-battle .dashboard-main {
+    height: 100vh !important;
+    max-height: 100vh !important;
+  }
+
+  .dashboard-shell.in-live-battle .dashboard-content {
+    padding: 0 !important;
+    height: 100% !important;
+  }
+
+  .battle-active-page {
+    padding: 8px !important;
+    min-height: 100vh !important;
+    justify-content: flex-start !important;
+  }
+}
+
+/* ===================================================
    TAILWIND V4 THEME EXTENSIONS (LINEARITY SPEC)
    =================================================== */
 

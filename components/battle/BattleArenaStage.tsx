@@ -4,7 +4,7 @@ import React, { useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { AvatarClass } from '@/types'
 import { EquippedItemsMap } from '@/lib/game/character'
-import { Flame, Sparkles, Swords, Zap } from 'lucide-react'
+import { Flame, Swords, Zap } from 'lucide-react'
 import CharacterVisual from '@/components/character/CharacterVisual'
 
 export type AttackType = 'warrior' | 'mage' | 'archer' | 'healer' | 'bot'
@@ -639,35 +639,6 @@ export default function BattleArenaStage({
                     />
                 </div>
             </div>
-
-            {/* Duel Battle Action Banner / Combat Log */}
-            {battleLog && (
-                <motion.div
-                    key={battleLog}
-                    initial={{ opacity: 0, y: 3 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    style={{
-                        position: 'relative',
-                        zIndex: 2,
-                        marginTop: '8px',
-                        padding: '6px 12px',
-                        borderRadius: '8px',
-                        backgroundColor: 'rgba(15, 23, 42, 0.8)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '6px',
-                        fontSize: '11.5px',
-                        color: '#cbd5e1',
-                        textAlign: 'center',
-                        lineHeight: 1.4,
-                    }}
-                >
-                    <Sparkles size={12} style={{ color: 'var(--color-signal-orange)', flexShrink: 0 }} />
-                    <span>{battleLog}</span>
-                </motion.div>
-            )}
         </div>
     )
 }

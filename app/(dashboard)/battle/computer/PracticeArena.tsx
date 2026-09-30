@@ -573,7 +573,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     const botHpPercent = Math.max(10, Math.min(100, botHp))
 
     return (
-        <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+        <div className="responsive-page battle-active-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
             <div style={{ width: '100%', maxWidth: '840px' }}>
                 {/* Linearity Frosted Duel Panel */}
                 <div className="product-demo-panel">

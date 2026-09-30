@@ -1426,7 +1426,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const timerColor = timeLeft > 8 ? 'var(--color-vector-green)' : timeLeft > 4 ? 'var(--color-signal-orange)' : 'var(--accent-red)'
 
     return (
-        <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+        <div className="responsive-page battle-active-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
             <div style={{ width: '100%', maxWidth: '840px' }}>
                 {/* Linearity Frosted Duel Demonstration Panel */}
                 <div className="product-demo-panel">

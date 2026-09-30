@@ -1,5 +1,4 @@
-import Sidebar from '@/components/layout/Sidebar'
-import Navbar from '@/components/layout/Navbar'
+import DashboardShellWrapper from '@/components/layout/DashboardShellWrapper'
 import { DashboardProvider } from '@/components/layout/DashboardProvider'
 import { getAuthenticatedUser, getAuthenticatedProfile } from '@/lib/auth/get-user'
 import { createClient } from '@/lib/supabase/server'
@@ -45,17 +44,9 @@ export default async function DashboardLayout({
 
     return (
         <DashboardProvider profile={profile}>
-            <div className="dashboard-shell" style={{ display: 'flex', minHeight: '100vh', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}>
-                <Sidebar />
-                <div className="dashboard-main" style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
-                    <div className="dashboard-topbar">
-                        <Navbar />
-                    </div>
-                    <main className="dashboard-content" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', minWidth: 0, width: '100%', maxWidth: '100%', backgroundColor: 'var(--bg-primary)' }}>
-                        {children}
-                    </main>
-                </div>
-            </div>
+            <DashboardShellWrapper>
+                {children}
+            </DashboardShellWrapper>
         </DashboardProvider>
     )
 }
