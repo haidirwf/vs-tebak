@@ -136,32 +136,38 @@ export default function Sidebar() {
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
-                                    maxWidth: '75px',
+                                    maxWidth: '85px',
                                 }}>
                                     {profile.username}
                                 </span>
                                 <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 600, lineHeight: 1 }}>
                                     Lv.{profile.level}
                                 </span>
-                                <span style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '3px',
-                                    fontFamily: 'var(--font-mono)',
-                                    fontSize: '10.5px',
-                                    fontWeight: 700,
-                                    color: '#F5C542',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                    padding: '2px 5px',
-                                    borderRadius: '5px',
-                                    lineHeight: 1,
-                                    whiteSpace: 'nowrap',
-                                }}>
-                                    <Coins size={10} style={{ color: '#F5C542' }} />
-                                    {profile.xp} XP
-                                </span>
                             </span>
                         </Link>
+
+                        {/* XP Badge outside profile box on the right */}
+                        <div
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '11px',
+                                fontWeight: 600,
+                                color: 'var(--color-gold)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                border: '1px solid rgba(245, 197, 66, 0.25)',
+                                padding: '4px 8px',
+                                borderRadius: '8px',
+                                lineHeight: 1,
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
+                            }}
+                        >
+                            <Coins size={11} style={{ color: 'var(--color-gold)' }} />
+                            <span>{profile.xp.toLocaleString()} XP</span>
+                        </div>
                     </div>
                 )}
             </div>

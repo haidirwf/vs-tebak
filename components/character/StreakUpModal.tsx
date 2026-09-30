@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Flame } from 'lucide-react'
+import { Flame, Sparkles, X } from 'lucide-react'
 
 interface StreakUpModalProps {
     oldStreak: number
@@ -12,7 +12,7 @@ interface StreakUpModalProps {
 
 export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakUpModalProps) {
     useEffect(() => {
-        const timer = setTimeout(onClose, 5000)
+        const timer = setTimeout(onClose, 6000)
         return () => clearTimeout(timer)
     }, [onClose])
 
@@ -22,115 +22,183 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
+                className="modal-overlay"
                 style={{
                     position: 'fixed',
                     inset: 0,
                     zIndex: 1000,
-                    backgroundColor: 'rgba(0,0,0,0.85)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
+                    padding: '16px',
+                    overscrollBehavior: 'contain',
                 }}
                 onClick={onClose}
             >
                 <motion.div
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    transition={{ type: 'spring', duration: 0.6, bounce: 0.4 }}
+                    initial={{ scale: 0.94, opacity: 0, y: 10 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.94, opacity: 0, y: 10 }}
+                    transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
                     onClick={(e) => e.stopPropagation()}
+                    className="card"
                     style={{
-                        backgroundColor: 'var(--bg-secondary)',
-                        border: '2px solid var(--accent-red)',
-                        borderRadius: '8px',
-                        padding: '40px',
+                        backgroundColor: '#141414',
+                        border: '1px solid rgba(239, 68, 68, 0.35)',
+                        borderRadius: '16px',
+                        padding: '24px 20px',
                         textAlign: 'center',
-                        maxWidth: '380px',
-                        width: '90%',
+                        maxWidth: '360px',
+                        width: '100%',
                         position: 'relative',
-                        overflow: 'hidden',
+                        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.95)',
+                        boxSizing: 'border-box',
                     }}
                 >
-                    {[...Array(8)].map((_, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, scale: 0 }}
-                            animate={{
-                                opacity: [0, 1, 0],
-                                scale: [0, 1, 0],
-                                x: Math.cos(i * 45 * (Math.PI / 180)) * 80,
-                                y: Math.sin(i * 45 * (Math.PI / 180)) * 80,
-                            }}
-                            transition={{ duration: 1.2, delay: i * 0.08, repeat: Infinity, repeatDelay: 1 }}
-                            style={{
-                                position: 'absolute',
-                                top: '50%',
-                                left: '50%',
-                                width: '6px',
-                                height: '6px',
-                                backgroundColor: 'var(--accent-red)',
-                                borderRadius: '50%',
-                            }}
-                        />
-                    ))}
-
-                    <motion.div
-                        animate={{ rotate: [0, -5, 5, 0], scale: [1, 1.1, 1] }}
-                        transition={{ duration: 0.5, delay: 0.3, repeat: Infinity, repeatDelay: 2 }}
-                        style={{ marginBottom: '16px', display: 'flex', justifyContent: 'center' }}
-                    >
-                        <Flame size={48} style={{ color: 'var(--accent-red)' }} />
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                    >
-                        <div style={{
-                            fontFamily: 'var(--font-heading)',
-                            fontSize: '13px',
-                            letterSpacing: '3px',
-                            color: 'var(--accent-red)',
-                            marginBottom: '8px',
-                            opacity: 0.9,
-                        }}>
-                            STREAK UP!
-                        </div>
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '52px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>
-                            {oldStreak} <span style={{ color: 'var(--accent-red)', fontSize: '32px' }}>→</span> {newStreak}
-                        </div>
-                    </motion.div>
-
-                    <motion.div
-                        initial={{ y: 20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.4 }}
-                        style={{ marginTop: '16px', marginBottom: '24px' }}
-                    >
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>
-                            Mantap! Streak harianmu naik jadi {newStreak} hari.
-                        </p>
-                    </motion.div>
-
-                    <motion.button
-                        whileHover={{ scale: 1.03 }}
-                        whileTap={{ scale: 0.97 }}
+                    {/* Close button */}
+                    <button
+                        type="button"
                         onClick={onClose}
+                        aria-label="Tutup"
                         style={{
-                            backgroundColor: 'var(--accent-red)',
-                            color: 'var(--text-primary)',
+                            position: 'absolute',
+                            top: '12px',
+                            right: '12px',
+                            background: 'none',
                             border: 'none',
-                            borderRadius: '4px',
-                            padding: '10px 32px',
+                            color: 'var(--color-fog)',
+                            cursor: 'pointer',
+                            padding: '4px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <X size={16} />
+                    </button>
+
+                    {/* Flame Icon Badge */}
+                    <div
+                        style={{
+                            width: '54px',
+                            height: '54px',
+                            borderRadius: '14px',
+                            backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                            border: '1px solid rgba(239, 68, 68, 0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            margin: '0 auto 16px',
+                        }}
+                    >
+                        <Flame size={24} style={{ color: 'var(--accent-red)' }} />
+                    </div>
+
+                    {/* Subtitle / Header */}
+                    <div
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            fontFamily: 'var(--font-inter)',
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            letterSpacing: '0.04em',
+                            color: 'var(--accent-red)',
+                            textTransform: 'uppercase',
+                            marginBottom: '10px',
+                        }}
+                    >
+                        <Sparkles size={12} />
+                        Streak Harian Naik
+                    </div>
+
+                    {/* Streak Transition Indicator */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '12px',
+                            marginBottom: '14px',
+                        }}
+                    >
+                        <div
+                            style={{
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '28px',
+                                fontWeight: 700,
+                                color: 'var(--color-silver)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                borderRadius: '10px',
+                                padding: '6px 16px',
+                                minWidth: '60px',
+                            }}
+                        >
+                            {oldStreak}
+                        </div>
+                        <span style={{ color: 'var(--accent-red)', fontSize: '20px', fontWeight: 600 }}>→</span>
+                        <div
+                            style={{
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '32px',
+                                fontWeight: 700,
+                                color: '#ffffff',
+                                backgroundColor: 'rgba(239, 68, 68, 0.14)',
+                                border: '1px solid rgba(239, 68, 68, 0.45)',
+                                borderRadius: '10px',
+                                padding: '6px 18px',
+                                minWidth: '65px',
+                            }}
+                        >
+                            {newStreak}
+                        </div>
+                    </div>
+
+                    <h3
+                        style={{
                             fontFamily: 'var(--font-heading)',
-                            fontSize: '15px',
-                            fontWeight: 700,
+                            fontSize: '16px',
+                            fontWeight: 600,
+                            color: '#ffffff',
+                            margin: '0 0 6px',
+                        }}
+                    >
+                        Konsistensi Luar Biasa!
+                    </h3>
+                    <p
+                        style={{
+                            color: 'var(--color-fog)',
+                            fontSize: '12.5px',
+                            lineHeight: 1.45,
+                            margin: '0 0 20px',
+                        }}
+                    >
+                        Kamu telah aktif belajar selama <strong style={{ color: '#ffffff' }}>{newStreak} hari</strong> berturut-turut. Jaga api semangat belajarmu tetap menyala!
+                    </p>
+
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="btn-primary"
+                        style={{
+                            width: '100%',
+                            padding: '10px 16px',
+                            borderRadius: '8px',
+                            fontSize: '13px',
+                            fontWeight: 600,
+                            backgroundColor: 'var(--accent-red)',
+                            color: '#ffffff',
+                            border: 'none',
                             cursor: 'pointer',
                         }}
                     >
-                        LANJUTKAN
-                    </motion.button>
+                        Lanjutkan
+                    </button>
                 </motion.div>
             </motion.div>
         </AnimatePresence>
