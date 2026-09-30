@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
-import CharacterCard from '@/components/character/CharacterCard'
-import { Trophy, BookOpen, Zap, Target } from 'lucide-react'
+import ProfileHeroStage from '@/components/profile/ProfileHeroStage'
 import BadgeIcon from '@/components/character/BadgeIcon'
+import { ArrowRight } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
@@ -81,144 +82,200 @@ export default function ProfilePage() {
 
     if (!profile) {
         return (
-            <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
-                <div className="sq-skeleton" style={{ height: '180px', marginBottom: '20px' }} />
-                <div className="sq-skeleton" style={{ height: '240px' }} />
+            <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
+                <div className="sq-skeleton" style={{ height: '360px', borderRadius: '16px', marginBottom: '20px' }} />
+                <div className="sq-skeleton" style={{ height: '200px', borderRadius: '16px' }} />
             </div>
         )
     }
 
-    const winrate = profileBattlesTotal > 0
-        ? `${Math.round((profileBattlesWon / profileBattlesTotal) * 100)}%`
-        : '0%'
-
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
             {/* Header Title */}
             <div style={{ marginBottom: '24px', textAlign: 'left' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     👤 Profil Pahlawan
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
-                    Ringkasan performa belajar, lencana prestasi, dan statistik duelmu.
+                    Identitas pahlawan, atribut tempur RPG, dan rekam jejak prestasimu.
                 </p>
             </div>
 
-            <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-                <motion.div initial={{ opacity: 0, x: -16 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.35 }}>
-                    <CharacterCard profile={profile} showStats={false} />
-                </motion.div>
+            {/* Hero Stage & RPG Combat Attributes */}
+            <ProfileHeroStage
+                profile={profile}
+                completedModulesCount={profileCompletedModules.length}
+                battlesTotal={profileBattlesTotal}
+                battlesWon={profileBattlesWon}
+            />
 
-                {/* Detailed Stats */}
-                <motion.div
-                    initial={{ opacity: 0, x: 16 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.35, delay: 0.08 }}
-                    className="card"
-                    style={{ padding: '20px' }}
-                >
-                    <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
-                        Statistik Lengkap
-                    </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        {[
-                            { label: 'Modul Diselesaikan', value: profileCompletedModules.length, icon: <BookOpen size={14} />, color: 'var(--accent-cyan)' },
-                            { label: 'Battle Dimainkan', value: profileBattlesTotal, icon: <Zap size={14} />, color: 'var(--accent-red)' },
-                            { label: 'Battle Dimenangi', value: profileBattlesWon, icon: <Trophy size={14} />, color: 'var(--accent-gold)' },
-                            { label: 'Winrate Battle', value: winrate, icon: <Target size={14} />, color: 'var(--accent-green)' },
-                        ].map((stat, i) => (
-                            <motion.div
-                                key={stat.label}
-                                initial={{ opacity: 0, y: 8 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.15 + i * 0.05 }}
-                                whileHover={{ x: 3 }}
-                                style={{
-                                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                                    padding: '10px 12px', borderRadius: '4px', backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border)',
-                                }}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: stat.color }}>
-                                    {stat.icon}
-                                    <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{stat.label}</span>
-                                </div>
-                                <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, color: stat.color }}>{stat.value}</span>
-                            </motion.div>
-                        ))}
-                    </div>
-                </motion.div>
-            </div>
-
-            {/* Badges */}
+            {/* Badges & Achievements Section */}
             <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.2 }}
-                className="card"
-                style={{ padding: '20px', marginBottom: '20px' }}
+                style={{
+                    backgroundColor: '#141414',
+                    border: '1px solid #282828',
+                    borderRadius: '16px',
+                    padding: '22px',
+                    marginBottom: '20px',
+                }}
             >
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
-                    🏅 Badge & Achievement ({profileBadges.length})
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                            🏅 Lencana & Prestasi
+                        </h3>
+                        <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                            Pencapaian dari modul belajar, streak harian, dan duel arena
+                        </p>
+                    </div>
+                    <div
+                        style={{
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: 'var(--accent-gold)',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.25)',
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                        }}
+                    >
+                        {profileBadges.length} Terbuka
+                    </div>
+                </div>
+
                 {profileBadges.length === 0 ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>
-                        Belum ada badge. Selesaikan quest dan battle untuk mendapatkan badge!
-                    </p>
+                    <div
+                        style={{
+                            textAlign: 'center',
+                            padding: '32px 20px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                            borderRadius: '12px',
+                            border: '1px dashed #282828',
+                        }}
+                    >
+                        <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: 0 }}>
+                            Belum ada lencana yang terbuka. Selesaikan modul dan menangkan battle untuk meraih lencana pertamamu!
+                        </p>
+                    </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))', gap: '12px' }}>
                         {profileBadges.map((ub: any, idx: number) => (
                             <motion.div
                                 key={ub.id}
                                 initial={{ opacity: 0, scale: 0.9 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.25 + idx * 0.04 }}
-                                whileHover={{ scale: 1.05, y: -2 }}
-                                className="hover-lift"
+                                transition={{ delay: 0.1 + idx * 0.03 }}
+                                whileHover={{ scale: 1.03, y: -2 }}
                                 style={{
-                                    backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--accent-gold)33',
-                                    borderRadius: '6px', padding: '12px', textAlign: 'center', cursor: 'pointer',
+                                    backgroundColor: 'rgba(255, 255, 255, 0.025)',
+                                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                                    borderRadius: '10px',
+                                    padding: '14px 12px',
+                                    textAlign: 'center',
+                                    cursor: 'pointer',
                                 }}
                             >
-                                <div style={{ fontSize: '24px', marginBottom: '4px', lineHeight: 1 }}>
-                                    <BadgeIcon icon={ub.badge?.icon_url} size={24} />
+                                <div style={{ fontSize: '26px', marginBottom: '6px', lineHeight: 1 }}>
+                                    <BadgeIcon icon={ub.badge?.icon_url} size={28} />
                                 </div>
-                                <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--accent-gold)' }}>{ub.badge?.name}</div>
+                                <div style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', lineHeight: 1.3 }}>
+                                    {ub.badge?.name}
+                                </div>
                             </motion.div>
                         ))}
                     </div>
                 )}
             </motion.div>
 
-            {/* Completed Modules */}
+            {/* Completed Modules Section */}
             <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.35, delay: 0.3 }}
-                className="card"
-                style={{ padding: '20px' }}
+                transition={{ duration: 0.35, delay: 0.28 }}
+                style={{
+                    backgroundColor: '#141414',
+                    border: '1px solid #282828',
+                    borderRadius: '16px',
+                    padding: '22px',
+                }}
             >
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, marginBottom: '16px' }}>
-                    📚 Modul Selesai ({profileCompletedModules.length})
-                </h3>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                    <div>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                            📚 Modul Pembelajaran Selesai
+                        </h3>
+                        <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                            Daftar materi pembelajaran yang telah berhasil dituntaskan
+                        </p>
+                    </div>
+                    <div
+                        style={{
+                            fontSize: '11px',
+                            fontWeight: 600,
+                            color: 'var(--accent-green)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            border: '1px solid rgba(34, 197, 94, 0.25)',
+                            padding: '4px 10px',
+                            borderRadius: '8px',
+                        }}
+                    >
+                        {profileCompletedModules.length} Modul
+                    </div>
+                </div>
+
                 {profileCompletedModules.length === 0 ? (
-                    <p style={{ color: 'var(--text-muted)', fontSize: '13px' }}>Belum ada modul yang diselesaikan. Mulai belajar sekarang!</p>
+                    <div
+                        style={{
+                            textAlign: 'center',
+                            padding: '32px 20px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                            borderRadius: '12px',
+                            border: '1px dashed #282828',
+                        }}
+                    >
+                        <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: '0 0 10px 0' }}>
+                            Belum ada modul yang diselesaikan. Asah kemampuanmu dan raih XP belajar sekarang!
+                        </p>
+                        <Link
+                            href="/modules"
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                color: 'var(--color-primary-light)',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <span>Jelajahi Modul Belajar</span>
+                            <ArrowRight size={13} />
+                        </Link>
+                    </div>
                 ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '10px' }}>
                         {profileCompletedModules.map((um: any, mIdx: number) => (
                             <motion.div
                                 key={um.id}
-                                initial={{ opacity: 0, scale: 0.96 }}
+                                initial={{ opacity: 0, scale: 0.97 }}
                                 animate={{ opacity: 1, scale: 1 }}
-                                transition={{ delay: 0.35 + mIdx * 0.03 }}
+                                transition={{ delay: 0.1 + mIdx * 0.02 }}
                                 whileHover={{ x: 2 }}
                                 style={{
-                                    padding: '10px 12px', borderRadius: '4px',
-                                    backgroundColor: 'rgba(34,197,94,0.05)', border: '1px solid rgba(34,197,94,0.2)',
-                                    display: 'flex', alignItems: 'center', gap: '8px',
+                                    padding: '12px 14px',
+                                    borderRadius: '10px',
+                                    backgroundColor: 'rgba(34, 197, 94, 0.04)',
+                                    border: '1px solid rgba(34, 197, 94, 0.18)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '10px',
                                 }}
                             >
-                                <span style={{ color: 'var(--accent-green)' }}>✓</span>
-                                <span style={{ fontSize: '12px', color: 'var(--text-primary)' }}>
+                                <span style={{ color: 'var(--accent-green)', fontWeight: 700, fontSize: '14px' }}>✓</span>
+                                <span style={{ fontSize: '12px', color: '#ffffff', fontWeight: 500, lineHeight: 1.35 }}>
                                     {um.module?.title || 'Modul'}
                                 </span>
                             </motion.div>
