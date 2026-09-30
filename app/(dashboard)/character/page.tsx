@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react'
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
@@ -54,6 +54,9 @@ export default function CharacterPage() {
         setCharacterInventoryData 
     } = useContentStore()
 
+    const isFetchingRef = useRef(false)
+    const hasFetchedRef = useRef(false)
+
     const avatarClass = (profile?.avatar_class || 'warrior') as AvatarClass
     const roleInfo = CHARACTER_ROLES[avatarClass] || CHARACTER_ROLES.warrior
 
@@ -87,70 +90,83 @@ export default function CharacterPage() {
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
 
-    // Keep local equipped & inventory in sync when profile or store updates
+    // Keep local equipped & inventory in sync once when profile first loads
     useEffect(() => {
-        if (Object.keys(equipped).length === 0 && profile) {
-            const fallback = resolveEquippedMap(avatarClass, profile.equipped_items, profile.character_created ?? true)
-            if (Object.keys(fallback).length > 0) {
-                setEquipped(fallback)
-            }
+        if (profile) {
+            setEquipped(prev => {
+                if (Object.keys(prev).length === 0) {
+                    return resolveEquippedMap(avatarClass, profile.equipped_items, profile.character_created ?? true)
+                }
+                return prev
+            })
+            setInventory(prev => {
+                if (prev.length === 0) {
+                    return getStarterItemsForClass(avatarClass)
+                }
+                return prev
+            })
         }
-        if (inventory.length === 0 && profile) {
-            const starters = getStarterItemsForClass(avatarClass)
-            if (starters.length > 0) {
-                setInventory(starters)
-            }
-        }
-    }, [profile, avatarClass, equipped, inventory.length])
+    }, [profile?.id, avatarClass])
 
-    // Fetch user inventory and equipped gear with background revalidation
+    // Fetch user inventory and equipped gear with background revalidation (safe from circular triggers)
     const loadInventoryData = useCallback(async (silent = false) => {
-        if (!silent && inventory.length === 0) {
+        if (isFetchingRef.current) return
+        isFetchingRef.current = true
+
+        if (!silent) {
             setIsLoadingData(true)
         }
         try {
             const res = await fetch('/api/character/inventory')
             if (res.ok) {
                 const data = await res.json()
+                const currentProfile = useUserStore.getState().profile
+                const userClass = (currentProfile?.avatar_class || 'warrior') as AvatarClass
                 const serverEquipped = data.equipped && Object.keys(data.equipped).length > 0
                     ? data.equipped
-                    : resolveEquippedMap(avatarClass, data.equipped, true)
+                    : resolveEquippedMap(userClass, data.equipped, true)
                 const serverInventory = data.inventory && data.inventory.length > 0
                     ? data.inventory
-                    : getStarterItemsForClass(avatarClass)
+                    : getStarterItemsForClass(userClass)
 
                 setEquipped(serverEquipped)
                 setInventory(serverInventory)
 
-                // Update caches
-                setCharacterInventoryData({
+                // Update caches in contentStore
+                useContentStore.getState().setCharacterInventoryData({
                     equipped: serverEquipped,
                     inventory: serverInventory,
                 })
 
-                if (profile) {
-                    useUserStore.getState().setProfile({
-                        ...profile,
-                        equipped_items: serverEquipped,
+                if (currentProfile) {
+                    useUserStore.setState({
+                        profile: {
+                            ...currentProfile,
+                            equipped_items: serverEquipped,
+                        }
                     })
                 }
             }
         } catch (e) {
             console.error('Failed to load character inventory:', e)
         } finally {
+            isFetchingRef.current = false
             setIsLoadingData(false)
         }
-    }, [avatarClass, inventory.length, profile, setCharacterInventoryData])
+    }, [])
 
     useEffect(() => {
-        const isFresh = characterInventoryFetchedAt && Date.now() - characterInventoryFetchedAt < 60_000
+        if (hasFetchedRef.current) return
+        hasFetchedRef.current = true
+
+        const fetchedAt = useContentStore.getState().characterInventoryFetchedAt
+        const isFresh = Boolean(fetchedAt && Date.now() - fetchedAt < 60_000)
         if (isFresh) {
-            // Data in memory is fresh, load silently in background without blocking UI
             loadInventoryData(true)
         } else {
             loadInventoryData(false)
         }
-    }, [loadInventoryData, profile?.character_created, profile?.avatar_class, characterInventoryFetchedAt])
+    }, [loadInventoryData])
 
     // Auto-dismiss floating toast notification
     useEffect(() => {
