@@ -348,11 +348,11 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
                 <div style={{ width: '100%', maxWidth: '540px' }}>
-                <div style={{ marginBottom: '20px' }}>
+                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
                     <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, marginBottom: '6px' }}>
                         🤖 Battle vs Computer
                     </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                         Mode latihan solo. Main 10 soal melawan AI bot.
                     </p>
                 </div>
@@ -383,21 +383,21 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     </div>
 
                     {availableQuestions.length === 0 ? (
-                        <p style={{ color: 'var(--accent-red)', fontSize: '13px', marginBottom: '12px' }}>
+                        <p style={{ color: 'var(--accent-red)', fontSize: '13px', marginBottom: '12px', textAlign: 'center' }}>
                             Soal untuk kategori ini belum tersedia.
                         </p>
                     ) : (
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '12px' }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '16px', textAlign: 'center' }}>
                             Soal tersedia: {availableQuestions.length}
                         </p>
                     )}
 
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
                         <button
                             type="button"
                             onClick={() => router.push('/battle')}
                             style={{
-                                padding: '10px 20px', borderRadius: '4px', cursor: 'pointer',
+                                padding: '10px 20px', borderRadius: '8px', cursor: 'pointer',
                                 backgroundColor: 'transparent', border: '1px solid var(--border)',
                                 color: 'var(--text-secondary)', fontSize: '13px',
                             }}

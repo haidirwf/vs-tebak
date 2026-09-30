@@ -1,7 +1,7 @@
 export default function BattleLoading() {
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '32px', textAlign: 'left' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ marginBottom: '32px', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
                 <div className="sq-skeleton" style={{ height: '34px', width: '260px', marginBottom: '8px' }} />
                 <div className="sq-skeleton" style={{ height: '14px', width: '300px', maxWidth: '100%' }} />
             </div>
