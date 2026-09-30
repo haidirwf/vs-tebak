@@ -311,9 +311,9 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     if (!started) {
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <div style={{ width: '100%', maxWidth: '900px' }}>
-                <div style={{ marginBottom: '28px' }}>
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '28px', fontWeight: 700, marginBottom: '6px' }}>
+                <div style={{ width: '100%', maxWidth: '540px' }}>
+                <div style={{ marginBottom: '20px' }}>
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, marginBottom: '6px' }}>
                         🤖 Battle vs Computer
                     </h1>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
@@ -397,7 +397,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         const color = result === 'win' ? 'var(--color-signal-orange)' : result === 'lose' ? 'var(--accent-red)' : '#00d4ff'
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '720px', padding: '28px', textAlign: 'center' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '540px', padding: '28px', textAlign: 'center' }}>
                     <div style={{ fontSize: '56px', marginBottom: '8px' }}>{icon}</div>
                     <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color, marginBottom: '10px' }}>{title}</h2>
                     <p style={{ color: 'var(--color-fog)', fontSize: '14px', marginBottom: '24px' }}>

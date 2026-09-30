@@ -96,7 +96,7 @@ export default function CharacterCreationModal({
                     transition={{ duration: 0.25, ease: 'easeOut' }}
                     style={{
                         width: '100%',
-                        maxWidth: '640px',
+                        maxWidth: '560px',
                         maxHeight: '90vh',
                         overflowY: 'auto',
                         padding: '24px 22px',

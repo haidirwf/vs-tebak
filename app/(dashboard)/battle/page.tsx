@@ -671,7 +671,7 @@ export default function BattlePage() {
                             transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '440px',
+                                maxWidth: '400px',
                                 maxHeight: '90vh',
                                 overflowY: 'auto',
                                 padding: '20px 18px',
@@ -683,8 +683,8 @@ export default function BattlePage() {
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
                                     Buat Room Battle
                                 </h2>
                                 <button
@@ -802,7 +802,7 @@ export default function BattlePage() {
                             transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '360px',
+                                maxWidth: '340px',
                                 maxHeight: '90vh',
                                 overflowY: 'auto',
                                 padding: '20px 18px',
@@ -814,8 +814,8 @@ export default function BattlePage() {
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
                                     Join Room Duel
                                 </h2>
                                 <button
@@ -926,8 +926,8 @@ export default function BattlePage() {
                             transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '380px',
-                                padding: '28px 20px',
+                                maxWidth: '350px',
+                                padding: '24px 20px',
                                 textAlign: 'center',
                                 backgroundColor: '#141414',
                                 borderRadius: '14px',

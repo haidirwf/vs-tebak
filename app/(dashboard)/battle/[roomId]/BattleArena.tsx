@@ -789,7 +789,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     initial={{ opacity: 0, y: 16 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="product-demo-panel"
-                    style={{ width: '100%', maxWidth: '640px', textAlign: 'center' }}
+                    style={{ width: '100%', maxWidth: '480px', textAlign: 'center' }}
                 >
                     {/* Topbar */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
@@ -897,7 +897,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="product-demo-panel"
-                    style={{ width: '100%', maxWidth: '720px' }}
+                    style={{ width: '100%', maxWidth: '540px' }}
                 >
                     {/* Topbar */}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
@@ -1074,7 +1074,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     if (iAmFinished && !opponentFinished && phase !== 'finished') {
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '600px', textAlign: 'center' }}>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '480px', textAlign: 'center' }}>
                     <div style={{ fontSize: '48px', marginBottom: '14px' }}>⏳</div>
                     <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
                         Semua Pertanyaan Selesai!
@@ -1106,7 +1106,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         return (
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '720px', textAlign: 'center' }}>
+                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '540px', textAlign: 'center' }}>
                     <div style={{ fontSize: '56px', marginBottom: '8px' }}>{icon}</div>
                     <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: titleColor, marginBottom: '8px' }}>
                         {title}
@@ -1476,16 +1476,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             className="product-demo-panel"
                             style={{
                                 width: '100%',
-                                maxWidth: '380px',
-                                padding: '24px',
+                                maxWidth: '350px',
+                                padding: '20px',
                                 border: '1px solid rgba(255, 255, 255, 0.15)',
+                                boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <h3
                                 style={{
                                     fontFamily: 'var(--font-heading)',
-                                    fontSize: '18px',
+                                    fontSize: '17px',
                                     fontWeight: 700,
                                     color: '#ffffff',
                                     marginBottom: '8px',
