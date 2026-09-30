@@ -995,24 +995,68 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const myReady = iAmReady
         const oppReady = opponentReady
         return (
-            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: 'calc(100vh - 120px)',
+                    width: '100%',
+                    padding: '16px',
+                    boxSizing: 'border-box',
+                }}
+            >
                 <motion.div
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    className="product-demo-panel"
-                    style={{ width: '100%', maxWidth: '540px' }}
+                    className="product-demo-panel battle-lobby-card"
+                    style={{
+                        width: '100%',
+                        maxWidth: '440px',
+                        padding: '20px 18px',
+                        backgroundColor: '#141414',
+                        border: '1px solid var(--surface-border)',
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
+                        boxSizing: 'border-box',
+                    }}
                 >
-                    {/* Topbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
-                            ROOM: {battle.room_code}
+                    {/* Header: Title & Room Badge */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            paddingBottom: '12px',
+                            marginBottom: '16px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                            gap: '8px',
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <Swords size={15} style={{ color: 'var(--color-signal-orange)' }} />
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
+                                Arena Persiapan Duel
+                            </span>
+                        </div>
+                        <span
+                            style={{
+                                fontSize: '11px',
+                                color: 'var(--color-silver)',
+                                fontFamily: 'var(--font-mono)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.06)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                padding: '2px 8px',
+                                borderRadius: '6px',
+                            }}
+                        >
+                            #{battle.room_code}
                         </span>
                     </div>
 
                     {/* Versus Contestant Row */}
-                    <div
-                        className="battle-versus-row"
-                    >
+                    <div className="battle-versus-row" style={{ marginBottom: '16px' }}>
                         {/* Player 1 (You) */}
                         <div className="battle-versus-col">
                             <div
@@ -1024,7 +1068,6 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     flexShrink: 0,
-                                    boxShadow: myReady ? '0 0 16px rgba(34, 197, 94, 0.3)' : '0 0 16px rgba(245, 197, 66, 0.2)',
                                 }}
                             >
                                 {myReady ? '✓' : myClassInfo.emoji}
@@ -1048,11 +1091,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 <div className="battle-school-name">
                                     {currentUser.school_name || 'Pelajar'} · {myClassInfo.label}
                                 </div>
-                                <div style={{ marginTop: '4px' }}>
+                                <div style={{ marginTop: '3px' }}>
                                     <span
                                         className="battle-player-status"
                                         style={{
                                             color: myReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
+                                            fontWeight: 700,
                                         }}
                                     >
                                         {myReady ? '✓ Siap' : 'Menunggu'}
@@ -1061,8 +1105,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             </div>
                         </div>
 
-                        {/* VS Center Pill */}
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                        {/* VS Center Badge */}
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flexShrink: 0 }}>
                             <div className="battle-vs-badge">
                                 VS
                             </div>
@@ -1089,11 +1133,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 <div className="battle-school-name">
                                     {opponent?.school_name || 'Pelajar'} · {oppClassInfo.label}
                                 </div>
-                                <div style={{ marginTop: '4px' }}>
+                                <div style={{ marginTop: '3px' }}>
                                     <span
                                         className="battle-player-status"
                                         style={{
                                             color: oppReady ? 'var(--color-vector-green)' : 'var(--color-steel)',
+                                            fontWeight: 700,
                                         }}
                                     >
                                         {oppReady ? '✓ Siap' : 'Menunggu'}
@@ -1109,7 +1154,6 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     flexShrink: 0,
-                                    boxShadow: oppReady ? '0 0 16px rgba(34, 197, 94, 0.3)' : '0 0 16px rgba(0, 212, 255, 0.2)',
                                 }}
                             >
                                 {oppReady ? '✓' : oppClassInfo.emoji}
@@ -1118,39 +1162,65 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     </div>
 
                     {/* Action Area */}
-                    <div style={{ textAlign: 'center', marginTop: '16px' }}>
+                    <div style={{ textAlign: 'center', marginTop: '12px' }}>
                         {!myReady ? (
                             <motion.button
                                 type="button"
-                                whileHover={{ scale: 1.03 }}
-                                whileTap={{ scale: 0.97 }}
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 onClick={handleReady}
-                                className="btn-signal-orange battle-ready-btn"
-                                style={{ padding: '12px 28px', fontSize: '14px', fontWeight: 700 }}
+                                className="btn-signal-orange battle-ready-action-btn"
+                                style={{
+                                    width: '100%',
+                                    maxWidth: '280px',
+                                    padding: '11px 20px',
+                                    fontSize: '13.5px',
+                                    fontWeight: 700,
+                                    borderRadius: '10px',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '8px',
+                                    cursor: 'pointer',
+                                }}
                             >
-                                <Swords size={17} /> Saya Siap Bertanding
+                                <Swords size={16} /> Saya Siap Bertanding
                             </motion.button>
                         ) : countdown !== null ? (
-                            <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '6px' }}>Pertandingan Dimulai Dalam</p>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '54px', fontWeight: 800, color: 'var(--color-signal-orange)', textShadow: '0 0 20px rgba(245, 197, 66, 0.6)' }}>
+                            <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                <p style={{ color: 'var(--color-fog)', fontSize: '12px', margin: '0 0 4px 0' }}>Pertandingan Dimulai Dalam</p>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '42px', fontWeight: 800, color: 'var(--color-signal-orange)', lineHeight: 1 }}>
                                     {countdown}
                                 </div>
                             </motion.div>
                         ) : (
-                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 18px', borderRadius: '10px', backgroundColor: 'rgba(34, 197, 94, 0.08)', border: '1px solid rgba(34, 197, 94, 0.25)', color: 'var(--color-vector-green)', fontSize: '13px', fontWeight: 500 }}>
-                                <CheckCircle size={16} /> Menunggu lawan menekan tombol siap...
+                            <div
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '8px 14px',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                                    border: '1px solid rgba(34, 197, 94, 0.25)',
+                                    color: 'var(--color-vector-green)',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    maxWidth: '100%',
+                                }}
+                            >
+                                <CheckCircle size={15} style={{ flexShrink: 0 }} /> Menunggu lawan menekan tombol siap...
                             </div>
                         )}
 
-                        <div style={{ marginTop: '18px' }}>
-                            <p style={{ color: 'var(--color-signal-orange)', fontSize: '12px', fontWeight: 600 }}>
-                                🔥 Bonus Role Aktif: {classBenefitText}
+                        <div style={{ marginTop: '12px' }}>
+                            <p style={{ color: 'var(--color-signal-orange)', fontSize: '11.5px', fontWeight: 600, margin: 0 }}>
+                                🔥 Bonus Role: {classBenefitText}
                             </p>
                         </div>
 
                         {countdown === null && (
-                            <div style={{ marginTop: '20px' }}>
+                            <div style={{ marginTop: '14px' }}>
                                 <button
                                     type="button"
                                     onClick={handleExitGame}
@@ -1158,9 +1228,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                         background: 'transparent',
                                         border: 'none',
                                         color: 'var(--color-steel)',
-                                        fontSize: '12px',
+                                        fontSize: '11.5px',
                                         cursor: 'pointer',
                                         textDecoration: 'underline',
+                                        padding: '4px',
                                     }}
                                 >
                                     Keluar Dari Room

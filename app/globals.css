@@ -1319,6 +1319,20 @@ input::placeholder, textarea::placeholder {
 }
 
 /* Versus Row in Gameplay */
+.battle-lobby-card {
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 640px) {
+  .battle-lobby-card {
+    max-width: 460px !important;
+    padding: 24px 22px !important;
+  }
+}
+
 .battle-versus-row {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;
@@ -1336,10 +1350,10 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 640px) {
   .battle-versus-row {
-    gap: 16px !important;
-    padding: 16px 20px !important;
-    border-radius: 17.1429px !important;
-    margin-bottom: 20px !important;
+    gap: 12px !important;
+    padding: 12px 16px !important;
+    border-radius: 14px !important;
+    margin-bottom: 16px !important;
   }
 }
 
