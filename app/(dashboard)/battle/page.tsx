@@ -58,16 +58,81 @@ export default function BattlePage() {
     const fetchRooms = useCallback(async () => {
         if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return
         try {
-            const res = await fetch('/api/battle/list')
-            if (res.ok) {
-                const data = await res.json()
-                const rooms = Array.isArray(data.rooms) ? (data.rooms as AvailableRoom[]) : []
-                setAvailableRooms(rooms)
+            // Direct query to Supabase PostgREST (0 load to Vercel Serverless Functions)
+            const { data: { user } } = await supabase.auth.getUser()
+
+            let query = supabase
+                .from('battles')
+                .select(`
+                    id,
+                    room_code,
+                    category,
+                    created_at,
+                    player1_id,
+                    profiles!battles_player1_id_fkey (
+                        username
+                    )
+                `)
+                .eq('status', 'waiting')
+                .is('player2_id', null)
+                .order('created_at', { ascending: false })
+                .limit(10)
+
+            if (user?.id) {
+                query = query.neq('player1_id', user.id)
+            }
+
+            const { data: openRooms, error: roomsErr } = await query
+
+            if (!roomsErr && openRooms) {
+                const formattedRooms: AvailableRoom[] = openRooms.map((room: any) => {
+                    const profs = room.profiles as { username?: string } | Array<{ username?: string }> | null
+                    return {
+                        id: room.id,
+                        room_code: room.room_code,
+                        category: room.category,
+                        created_at: room.created_at,
+                        host_name: (Array.isArray(profs) ? profs[0]?.username : profs?.username) || 'Unknown',
+                    }
+                })
+                setAvailableRooms(formattedRooms)
+                return
+            }
+
+            // Fallback if PostgREST relation syntax differs
+            const { data: fallbackRooms } = await supabase
+                .from('battles')
+                .select('id, room_code, category, created_at, player1_id')
+                .eq('status', 'waiting')
+                .is('player2_id', null)
+                .order('created_at', { ascending: false })
+                .limit(10)
+
+            if (fallbackRooms && fallbackRooms.length > 0) {
+                const filtered = user?.id ? fallbackRooms.filter(r => r.player1_id !== user.id) : fallbackRooms
+                const p1Ids = Array.from(new Set(filtered.map(r => r.player1_id).filter(Boolean)))
+                let profileMap: Record<string, string> = {}
+                if (p1Ids.length > 0) {
+                    const { data: profs } = await supabase.from('profiles').select('id, username').in('id', p1Ids)
+                    if (profs) {
+                        profileMap = Object.fromEntries(profs.map(p => [p.id, p.username || 'Unknown']))
+                    }
+                }
+                const formatted: AvailableRoom[] = filtered.map(room => ({
+                    id: room.id,
+                    room_code: room.room_code,
+                    category: room.category,
+                    created_at: room.created_at,
+                    host_name: profileMap[room.player1_id] || 'Unknown',
+                }))
+                setAvailableRooms(formatted)
+            } else {
+                setAvailableRooms([])
             }
         } catch (e: any) {
-            console.error(e)
+            console.error('Failed to fetch rooms from Supabase directly:', e)
         }
-    }, [])
+    }, [supabase])
 
     const handleManualRefresh = async () => {
         setRefreshingRooms(true)

@@ -7,6 +7,7 @@ import { useContentStore } from '@/stores/contentStore'
 import { AvatarClass } from '@/types'
 import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap, resolveEquippedMap } from '@/lib/game/character'
 import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
+import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import { 
     Swords, 
@@ -46,6 +47,7 @@ const SLOT_LABELS: Record<ItemSlot, { name: string; emoji: string }> = {
 }
 
 export default function CharacterPage() {
+    const supabase = useMemo(() => createClient(), [])
     const { profile, updateXP } = useUserStore()
     const { 
         characterEquipped, 
@@ -108,7 +110,7 @@ export default function CharacterPage() {
         }
     }, [profile?.id, avatarClass])
 
-    // Fetch user inventory and equipped gear with background revalidation (safe from circular triggers)
+    // Fetch user inventory and equipped gear directly from Supabase (0 load on Vercel Serverless Functions)
     const loadInventoryData = useCallback(async (silent = false) => {
         if (isFetchingRef.current) return
         isFetchingRef.current = true
@@ -117,43 +119,119 @@ export default function CharacterPage() {
             setIsLoadingData(true)
         }
         try {
-            const res = await fetch('/api/character/inventory')
-            if (res.ok) {
-                const data = await res.json()
-                const currentProfile = useUserStore.getState().profile
-                const userClass = (currentProfile?.avatar_class || 'warrior') as AvatarClass
-                const serverEquipped = data.equipped && Object.keys(data.equipped).length > 0
-                    ? data.equipped
-                    : resolveEquippedMap(userClass, data.equipped, true)
-                const serverInventory = data.inventory && data.inventory.length > 0
-                    ? data.inventory
-                    : getStarterItemsForClass(userClass)
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) return
 
-                setEquipped(serverEquipped)
-                setInventory(serverInventory)
+            // Query user profile & inventory in parallel directly from Supabase PostgREST
+            const [profileRes, invRes] = await Promise.all([
+                supabase
+                    .from('profiles')
+                    .select('id, username, avatar_class, level, xp, equipped_items, character_created')
+                    .eq('id', user.id)
+                    .single(),
+                supabase
+                    .from('user_inventory')
+                    .select('id, item_id, slot, is_equipped, acquired_at')
+                    .eq('user_id', user.id),
+            ])
+
+            const prof = profileRes.data
+            const inventoryRows = invRes.data
+            const invErr = invRes.error
+
+            if (prof) {
+                const userClass = (prof.avatar_class || 'warrior') as AvatarClass
+                const profEquipped = (prof.equipped_items as Partial<Record<ItemSlot, string>>) || {}
+                let ownedItemIds = new Set<string>()
+                let equippedMap: Partial<Record<ItemSlot, string>> = {}
+
+                if (invErr) {
+                    equippedMap = { ...profEquipped }
+                    if (prof.character_created) {
+                        const starters = getStarterItemsForClass(userClass)
+                        starters.forEach(it => {
+                            ownedItemIds.add(it.id)
+                            if (!equippedMap[it.slot]) equippedMap[it.slot] = it.id
+                        })
+                        Object.values(profEquipped).forEach(id => {
+                            if (id) ownedItemIds.add(id)
+                        })
+                    }
+                } else if (!inventoryRows || inventoryRows.length === 0) {
+                    // Auto-grant starter items if user has already created their character
+                    if (prof.character_created) {
+                        const starters = getStarterItemsForClass(userClass)
+                        const insertPayload = starters.map(it => ({
+                            user_id: user.id,
+                            item_id: it.id,
+                            slot: it.slot,
+                            is_equipped: true,
+                        }))
+
+                        await supabase.from('user_inventory').upsert(insertPayload, { onConflict: 'user_id, item_id' })
+                        starters.forEach(it => {
+                            ownedItemIds.add(it.id)
+                            equippedMap[it.slot] = it.id
+                        })
+
+                        await supabase.from('profiles').update({
+                            equipped_items: equippedMap,
+                        }).eq('id', user.id)
+                    }
+                } else {
+                    inventoryRows.forEach(row => {
+                        ownedItemIds.add(row.item_id)
+                        if (row.is_equipped) {
+                            equippedMap[row.slot as ItemSlot] = row.item_id
+                        }
+                    })
+
+                    if (Object.keys(equippedMap).length === 0 && Object.keys(profEquipped).length > 0) {
+                        equippedMap = { ...profEquipped }
+                    }
+
+                    if (prof.character_created) {
+                        const starters = getStarterItemsForClass(userClass)
+                        starters.forEach(it => {
+                            ownedItemIds.add(it.id)
+                            if (!equippedMap[it.slot]) {
+                                equippedMap[it.slot] = it.id
+                            }
+                        })
+                    }
+                }
+
+                const serverInventory = GAME_ITEMS.filter(it => ownedItemIds.has(it.id))
+                const finalInventory = serverInventory.length > 0 ? serverInventory : getStarterItemsForClass(userClass)
+                const finalEquipped = Object.keys(equippedMap).length > 0 ? equippedMap : resolveEquippedMap(userClass, equippedMap, true)
+
+                setEquipped(finalEquipped)
+                setInventory(finalInventory)
 
                 // Update caches in contentStore
                 useContentStore.getState().setCharacterInventoryData({
-                    equipped: serverEquipped,
-                    inventory: serverInventory,
+                    equipped: finalEquipped,
+                    inventory: finalInventory,
                 })
 
+                const currentProfile = useUserStore.getState().profile
                 if (currentProfile) {
                     useUserStore.setState({
                         profile: {
                             ...currentProfile,
-                            equipped_items: serverEquipped,
+                            avatar_class: userClass,
+                            equipped_items: finalEquipped,
                         }
                     })
                 }
             }
         } catch (e) {
-            console.error('Failed to load character inventory:', e)
+            console.error('Failed to load character inventory directly from Supabase:', e)
         } finally {
             isFetchingRef.current = false
             setIsLoadingData(false)
         }
-    }, [])
+    }, [supabase])
 
     useEffect(() => {
         if (hasFetchedRef.current) return
@@ -214,45 +292,48 @@ export default function CharacterPage() {
             inventory,
         })
 
-        // 2. Persist to server
+        // 2. Persist directly to Supabase PostgREST (0 load on Vercel Serverless Functions)
         try {
-            const res = await fetch('/api/character/equip', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ itemId: item.id, slot: item.slot, action }),
-            })
-            const data = await res.json()
-            if (!res.ok || data.error) {
-                // Rollback on server error
-                setEquipped(previousEquipped)
-                if (profile) {
-                    useUserStore.getState().setProfile({
-                        ...profile,
-                        equipped_items: previousEquipped,
-                    })
-                }
-                setCharacterInventoryData({
-                    equipped: previousEquipped,
-                    inventory,
-                })
-                setNotification({ type: 'error', message: data.error || 'Gagal mengubah perlengkapan.' })
+            const { data: { user } } = await supabase.auth.getUser()
+            if (!user) throw new Error('Pengguna tidak terautentikasi')
+
+            // Update user_inventory table
+            if (action === 'equip') {
+                await supabase
+                    .from('user_inventory')
+                    .update({ is_equipped: false })
+                    .eq('user_id', user.id)
+                    .eq('slot', item.slot)
+
+                await supabase
+                    .from('user_inventory')
+                    .update({ is_equipped: true })
+                    .eq('user_id', user.id)
+                    .eq('item_id', item.id)
             } else {
-                const finalEquipped = data.equipped || newEquipped
-                setEquipped(finalEquipped)
-                if (profile) {
-                    useUserStore.getState().setProfile({
-                        ...profile,
-                        equipped_items: finalEquipped,
-                    })
-                }
-                setCharacterInventoryData({
-                    equipped: finalEquipped,
-                    inventory,
-                })
-                setNotification({ type: 'success', message: data.message })
+                await supabase
+                    .from('user_inventory')
+                    .update({ is_equipped: false })
+                    .eq('user_id', user.id)
+                    .eq('slot', item.slot)
             }
+
+            // Persist to profiles.equipped_items
+            const { error: profUpdateErr } = await supabase
+                .from('profiles')
+                .update({ equipped_items: newEquipped })
+                .eq('id', user.id)
+
+            if (profUpdateErr) {
+                throw new Error(profUpdateErr.message)
+            }
+
+            setNotification({ 
+                type: 'success', 
+                message: action === 'equip' ? `${item.name} berhasil dipakai!` : `${item.name} dilepas.` 
+            })
         } catch (e: any) {
-            // Rollback on network failure
+            // Rollback on failure
             setEquipped(previousEquipped)
             if (profile) {
                 useUserStore.getState().setProfile({
@@ -264,7 +345,7 @@ export default function CharacterPage() {
                 equipped: previousEquipped,
                 inventory,
             })
-            setNotification({ type: 'error', message: e.message || 'Terjadi kesalahan jaringan.' })
+            setNotification({ type: 'error', message: e.message || 'Gagal mengubah perlengkapan.' })
         } finally {
             setActionLoadingId(null)
         }
