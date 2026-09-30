@@ -679,6 +679,7 @@ export default function BattlePage() {
             <AnimatePresence>
                 {mode === 'create' && (
                     <div
+                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
@@ -688,6 +689,7 @@ export default function BattlePage() {
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
+                            overscrollBehavior: 'contain',
                         }}
                         onClick={() => setMode('select')}
                     >
@@ -810,6 +812,7 @@ export default function BattlePage() {
             <AnimatePresence>
                 {mode === 'join' && (
                     <div
+                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
@@ -819,6 +822,7 @@ export default function BattlePage() {
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
+                            overscrollBehavior: 'contain',
                         }}
                         onClick={() => { setMode('select'); setRoomCode(''); setError(null) }}
                     >
@@ -935,6 +939,7 @@ export default function BattlePage() {
             <AnimatePresence>
                 {mode === 'matchmaking' && (
                     <div
+                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
@@ -944,6 +949,7 @@ export default function BattlePage() {
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
+                            overscrollBehavior: 'contain',
                         }}
                     >
                         <motion.div

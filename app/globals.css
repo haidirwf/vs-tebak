@@ -161,6 +161,7 @@ html {
   background-color: var(--surface-canvas);
   overflow-x: hidden;
   max-width: 100vw;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -174,6 +175,23 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   max-width: 100vw;
+  touch-action: manipulation;
+}
+
+/* Prevent mobile browser auto-pinch zoom when focusing input fields */
+@media (max-width: 768px) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Modal containment and scroll protection */
+.modal-overlay,
+[role="dialog"] {
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* Linearity Studio Grid: Sparse 64px hairline matrix on Void */
@@ -627,7 +645,13 @@ input::placeholder, textarea::placeholder {
 }
 
 .auth-card {
-  padding: 24px !important;
+  padding: 20px 16px !important;
+}
+
+@media (min-width: 640px) {
+  .auth-card {
+    padding: 36px !important;
+  }
 }
 
 .dashboard-shell {

@@ -132,7 +132,10 @@ export default function RegisterPage() {
                 justifyContent: 'center',
                 backgroundColor: 'var(--surface-canvas)',
                 backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(245, 197, 66, 0.08), transparent 60%)',
-                padding: '32px 24px',
+                padding: '20px 16px',
+                boxSizing: 'border-box',
+                overflowX: 'hidden',
+                width: '100%',
             }}
         >
             <motion.div

@@ -1664,16 +1664,19 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 {/* Surrender Confirmation Modal */}
                 {showSurrenderConfirm && (
                     <div
+                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
                             backgroundColor: 'rgba(0, 0, 0, 0.75)',
                             backdropFilter: 'blur(8px)',
+                            WebkitBackdropFilter: 'blur(8px)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
+                            overscrollBehavior: 'contain',
                         }}
                         onClick={() => setShowSurrenderConfirm(false)}
                     >
