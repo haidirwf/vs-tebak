@@ -12,13 +12,13 @@ import { getXpProgress } from '@/lib/game/xp'
 import { isStreakActiveToday } from '@/lib/game/streak'
 
 const navItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard', tour: 'dashboard' },
-    { href: '/character', icon: Shield, label: 'Karakter', tour: 'character' },
-    { href: '/modules', icon: BookOpen, label: 'Modul', tour: 'modules' },
-    { href: '/battle', icon: Swords, label: 'Battle', tour: 'battle' },
-    { href: '/voucher', icon: Ticket, label: 'Voucher', tour: 'voucher' },
-    { href: '/leaderboard', icon: Trophy, label: 'Leaderboard', tour: 'leaderboard' },
-    { href: '/profile', icon: User, label: 'Profil', tour: 'profile' },
+    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/character', icon: Shield, label: 'Karakter' },
+    { href: '/modules', icon: BookOpen, label: 'Modul' },
+    { href: '/battle', icon: Swords, label: 'Battle' },
+    { href: '/voucher', icon: Ticket, label: 'Voucher' },
+    { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
+    { href: '/profile', icon: User, label: 'Profil' },
 ]
 
 const CLASS_COLORS: Record<string, string> = {
@@ -227,7 +227,6 @@ export default function Sidebar() {
                                 whileHover={{ x: 3 }}
                                 whileTap={{ scale: 0.97 }}
                                 transition={{ type: 'spring', stiffness: 400, damping: 22 }}
-                                data-tour={`nav-${item.tour}`}
                                 style={{
                                     display: 'flex', alignItems: 'center', gap: '10px',
                                     padding: '8px 14px', borderRadius: '8px', marginBottom: '4px',

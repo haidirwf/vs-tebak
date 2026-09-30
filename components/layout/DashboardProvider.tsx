@@ -9,10 +9,6 @@ import StreakUpModal from '@/components/character/StreakUpModal'
 import BadgeUnlockModal from '@/components/character/BadgeUnlockModal'
 import RefreshOnFocus from '@/components/layout/RefreshOnFocus'
 
-const FirstTimeTutorial = dynamic(() => import('@/components/onboarding/FirstTimeTutorial'), {
-    ssr: false,
-})
-
 const CharacterCreationModal = dynamic(() => import('@/components/character/CharacterCreationModal'), {
     ssr: false,
 })
@@ -24,7 +20,6 @@ export function DashboardProvider({
     children: React.ReactNode
     profile: Profile | null
 }) {
-    const onboardingDisabled = process.env.NEXT_PUBLIC_DISABLE_ONBOARDING === 'true'
     const {
         setProfile,
         setLoading,
@@ -74,15 +69,6 @@ export function DashboardProvider({
                         setHasCompletedCreation(true)
                         setShowCharacterModal(false)
                     }}
-                />
-            )}
-            {profile && !onboardingDisabled && (
-                <FirstTimeTutorial
-                    key={profile.id}
-                    userId={profile.id}
-                    isNewUser={profile.xp <= 0 && profile.streak_count <= 0 && profile.level <= 1}
-                    blocked={Boolean(activePopup) || showCharacterModal}
-                    forceShow={profile.username === 'pelajar1'}
                 />
             )}
             {activePopup?.type === 'level_up' && (

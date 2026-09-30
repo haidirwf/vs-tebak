@@ -190,8 +190,14 @@ body {
 /* Modal containment and scroll protection */
 .modal-overlay,
 [role="dialog"] {
-  overscroll-behavior: contain;
+  overscroll-behavior: none !important;
   -webkit-overflow-scrolling: touch;
+  touch-action: none;
+}
+
+.modal-overlay > * {
+  touch-action: pan-y;
+  overscroll-behavior: contain;
 }
 
 /* Linearity Studio Grid: Sparse 64px hairline matrix on Void */

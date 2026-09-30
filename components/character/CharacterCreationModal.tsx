@@ -76,6 +76,7 @@ export default function CharacterCreationModal({
     return (
         <AnimatePresence>
             <div
+                className="modal-overlay"
                 style={{
                     position: 'fixed',
                     inset: 0,
@@ -86,7 +87,8 @@ export default function CharacterCreationModal({
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '16px',
-                    overflowY: 'auto',
+                    overflow: 'hidden',
+                    touchAction: 'none',
                 }}
             >
                 <motion.div
@@ -105,6 +107,7 @@ export default function CharacterCreationModal({
                         border: '1px solid #313131',
                         boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
                         position: 'relative',
+                        touchAction: 'pan-y',
                     }}
                 >
                     {/* Header */}
