@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame, Ticket, Shield } from 'lucide-react'
+import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame, Ticket, Shield, Coins } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getXpProgress } from '@/lib/game/xp'
 import { isStreakActiveToday } from '@/lib/game/streak'
@@ -136,12 +136,29 @@ export default function Sidebar() {
                                     whiteSpace: 'nowrap',
                                     overflow: 'hidden',
                                     textOverflow: 'ellipsis',
-                                    maxWidth: '85px',
+                                    maxWidth: '75px',
                                 }}>
                                     {profile.username}
                                 </span>
-                                <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 500, lineHeight: 1 }}>
+                                <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 600, lineHeight: 1 }}>
                                     Lv.{profile.level}
+                                </span>
+                                <span style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '3px',
+                                    fontFamily: 'var(--font-mono)',
+                                    fontSize: '10.5px',
+                                    fontWeight: 700,
+                                    color: '#F5C542',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                    padding: '2px 5px',
+                                    borderRadius: '5px',
+                                    lineHeight: 1,
+                                    whiteSpace: 'nowrap',
+                                }}>
+                                    <Coins size={10} style={{ color: '#F5C542' }} />
+                                    {profile.xp} XP
                                 </span>
                             </span>
                         </Link>

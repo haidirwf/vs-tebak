@@ -359,6 +359,8 @@ export default function CharacterPage() {
                         >
                             <span>{roleInfo.avatarEmoji}</span>
                             <span>{roleInfo.name} · Lv.{profile?.level || 1}</span>
+                            <span style={{ opacity: 0.5 }}>•</span>
+                            <span style={{ color: '#F5C542', fontFamily: 'var(--font-mono)' }}>{profile?.xp || 0} XP</span>
                         </div>
 
                         {/* Visual Stage */}
