@@ -1430,6 +1430,25 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.character-toast-notification {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 76px);
+  left: 16px;
+  right: 16px;
+  margin: 0 auto;
+  max-width: 420px;
+  z-index: 9999;
+}
+
+@media (min-width: 768px) {
+  .character-toast-notification {
+    bottom: 32px;
+    left: auto;
+    right: 32px;
+    margin: 0;
+  }
+}
+
 .battle-hp-bar-outer {
   flex: 1 !important;
   max-width: 42px !important;

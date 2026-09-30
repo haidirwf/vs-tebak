@@ -268,19 +268,16 @@ export default function CharacterPage() {
                 </div>
             </div>
 
-            {/* Floating Toaster for Equip/Unequip/Buy Notifications (No Layout Shift) */}
+            {/* Floating Toaster for Equip/Unequip/Buy Notifications (Mobile bottom offset above navigation) */}
             <AnimatePresence>
                 {notification && (
                     <motion.div
-                        initial={{ opacity: 0, y: 24, scale: 0.95 }}
+                        className="character-toast-notification"
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 24, scale: 0.95 }}
-                        transition={{ duration: 0.2, ease: 'easeOut' }}
+                        exit={{ opacity: 0, y: 20, scale: 0.95 }}
+                        transition={{ duration: 0.22, ease: 'easeOut' }}
                         style={{
-                            position: 'fixed',
-                            bottom: '28px',
-                            right: '28px',
-                            zIndex: 9999,
                             display: 'flex',
                             alignItems: 'center',
                             gap: '12px',
@@ -289,7 +286,6 @@ export default function CharacterPage() {
                             backgroundColor: '#141414',
                             border: `1px solid ${notification.type === 'success' ? 'rgba(34, 197, 94, 0.45)' : 'rgba(239, 68, 68, 0.45)'}`,
                             boxShadow: '0 16px 40px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.15)',
-                            maxWidth: '420px',
                         }}
                     >
                         {notification.type === 'success' ? (
