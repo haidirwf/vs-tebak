@@ -65,7 +65,7 @@ export default function Sidebar() {
         }}>
             {/* Logo */}
             <div className="dashboard-logo-row" style={{ padding: '20px 16px 16px', borderBottom: '1px solid var(--surface-border)' }}>
-                <Link href="/dashboard" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
+                <Link href="/dashboard" prefetch={true} style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
                     <div
                         style={{
                             width: '28px',

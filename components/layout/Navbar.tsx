@@ -37,11 +37,7 @@ export default function Navbar() {
     const Icon = activeConfig.icon
 
     return (
-        <motion.header
-            key={pathname}
-            initial={{ opacity: 0.85, y: -6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.32, ease: 'easeOut' }}
+        <header
             className="dashboard-navbar"
             style={{
                 height: '56px',
@@ -61,9 +57,10 @@ export default function Navbar() {
         >
             {/* Ambient subtle glow line saat pindah halaman */}
             <motion.div
+                key={`glow-${pathname}`}
                 initial={{ scaleX: 0, opacity: 1 }}
                 animate={{ scaleX: 1, opacity: [1, 0.8, 0] }}
-                transition={{ duration: 0.8, ease: 'easeInOut' }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
                 style={{
                     position: 'absolute',
                     bottom: -1,
@@ -76,21 +73,18 @@ export default function Navbar() {
                 }}
             />
 
-            {/* Animasi Title & Icon saat rute berpindah */}
+            {/* Title & Icon saat rute berpindah (transisi ringan tanpa blur) */}
             <div style={{ position: 'relative', overflow: 'hidden', height: '32px', display: 'flex', alignItems: 'center' }}>
-                <AnimatePresence mode="wait">
+                <AnimatePresence mode="popLayout">
                     <motion.div
                         key={pathname}
-                        initial={{ opacity: 0, x: -16, filter: 'blur(6px)', scale: 0.96 }}
-                        animate={{ opacity: 1, x: 0, filter: 'blur(0px)', scale: 1 }}
-                        exit={{ opacity: 0, x: 16, filter: 'blur(6px)', scale: 0.96 }}
-                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 8 }}
+                        transition={{ duration: 0.15, ease: 'easeOut' }}
                         style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
                     >
-                        <motion.div
-                            initial={{ rotate: -15, scale: 0.8 }}
-                            animate={{ rotate: 0, scale: 1 }}
-                            transition={{ duration: 0.35, ease: 'easeOut' }}
+                        <div
                             style={{
                                 width: '28px',
                                 height: '28px',
@@ -105,7 +99,7 @@ export default function Navbar() {
                             }}
                         >
                             <Icon size={16} />
-                        </motion.div>
+                        </div>
 
                         <h2
                             className="dashboard-navbar-title"
@@ -208,6 +202,6 @@ export default function Navbar() {
                 {/* Theme Toggle (Disembunyikan sementara, hapus komentar untuk mengaktifkan kembali) */}
                 {/* <ThemeToggle /> */}
             </div>
-        </motion.header>
+        </header>
     )
 }
