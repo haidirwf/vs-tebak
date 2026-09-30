@@ -1333,6 +1333,35 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.battle-result-card {
+  width: 100% !important;
+  max-width: 440px !important;
+  margin: 0 auto !important;
+  padding: 20px 18px !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 640px) {
+  .battle-result-card {
+    max-width: 460px !important;
+    padding: 24px 22px !important;
+  }
+}
+
+.battle-surrender-card {
+  width: 100% !important;
+  max-width: 320px !important;
+  padding: 18px 16px !important;
+  box-sizing: border-box !important;
+}
+
+@media (min-width: 640px) {
+  .battle-surrender-card {
+    max-width: 340px !important;
+    padding: 22px 20px !important;
+  }
+}
+
 .battle-versus-row {
   display: grid !important;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr) !important;

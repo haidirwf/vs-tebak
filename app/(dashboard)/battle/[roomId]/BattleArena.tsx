@@ -1279,13 +1279,44 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const icon = isDraw ? '🤝' : won ? '🏆' : '💀'
 
         return (
-            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <motion.div initial={{ opacity: 0, scale: 0.94 }} animate={{ opacity: 1, scale: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '540px', textAlign: 'center' }}>
-                    <div style={{ fontSize: '56px', marginBottom: '8px' }}>{icon}</div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: titleColor, marginBottom: '8px' }}>
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    minHeight: 'calc(100vh - 120px)',
+                    width: '100%',
+                    padding: '16px',
+                    boxSizing: 'border-box',
+                }}
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="product-demo-panel battle-result-card"
+                    style={{
+                        backgroundColor: '#141414',
+                        border: '1px solid var(--surface-border)',
+                        borderRadius: '16px',
+                        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
+                        textAlign: 'center',
+                    }}
+                >
+                    <div style={{ fontSize: '38px', marginBottom: '4px', lineHeight: 1 }}>{icon}</div>
+                    <h2
+                        style={{
+                            fontFamily: 'var(--font-heading)',
+                            fontSize: '22px',
+                            fontWeight: 800,
+                            color: titleColor,
+                            marginBottom: '6px',
+                            letterSpacing: '-0.01em',
+                        }}
+                    >
                         {title}
                     </h2>
-                    <p style={{ color: 'var(--color-fog)', fontSize: '14px', marginBottom: '16px' }}>
+                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: '0 0 10px 0', lineHeight: 1.4 }}>
                         {xpResult ? (
                             xpResult.bonus > 0
                                 ? <>{`+${xpResult.base} XP `}<span style={{ color: 'var(--color-vector-green)', fontWeight: 700 }}>+ {xpResult.bonus} bonus 🔥</span>{' didapat!'}</>
@@ -1294,14 +1325,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             isDraw ? '+40 XP didapat (hasil seri)!' : won ? '+80 XP didapat!' : '+20 XP untuk usahamu'
                         )}
                     </p>
-                    <p style={{ color: 'var(--color-signal-orange)', fontSize: '12px', fontWeight: 600, marginBottom: '24px' }}>
+                    <p style={{ color: 'var(--color-signal-orange)', fontSize: '11px', fontWeight: 600, margin: '0 0 16px 0' }}>
                         {classBenefitText}
                     </p>
 
                     {/* Contestants Final Comparison */}
                     <div
                         className="battle-versus-row"
-                        style={{ marginBottom: '28px' }}
+                        style={{ marginBottom: '18px' }}
                     >
                         {/* You */}
                         <div className="battle-versus-col">
@@ -1320,8 +1351,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             </div>
                             <div className="battle-versus-info" style={{ textAlign: 'left' }}>
                                 <div className="battle-player-name">Kamu</div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: 'var(--color-signal-orange)', lineHeight: 1.2 }}>
-                                    {myScore} <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>PTS</span>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--color-signal-orange)', lineHeight: 1.2 }}>
+                                    {myScore} <span style={{ fontSize: '9.5px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
                             </div>
                         </div>
@@ -1335,8 +1366,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         <div className="battle-versus-col battle-versus-col-right">
                             <div className="battle-versus-info">
                                 <div className="battle-player-name">{opponent?.username || 'Lawan'}</div>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 800, color: '#00d4ff', lineHeight: 1.2 }}>
-                                    {opponentScore} <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>PTS</span>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: '#00d4ff', lineHeight: 1.2 }}>
+                                    {opponentScore} <span style={{ fontSize: '9.5px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
                             </div>
                             <div
@@ -1355,12 +1386,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         </div>
                     </div>
 
-                    <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                    <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                         <button
                             type="button"
                             onClick={() => router.push('/battle')}
                             className="btn-dark-outline battle-finish-btn"
-                            style={{ padding: '12px 24px', fontSize: '13px' }}
+                            style={{ padding: '9px 18px', fontSize: '12.5px', borderRadius: '8px' }}
                         >
                             Kembali ke Lobby
                         </button>
@@ -1370,9 +1401,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             whileTap={{ scale: 0.98 }}
                             onClick={() => router.push('/battle')}
                             className="btn-signal-orange battle-finish-btn"
-                            style={{ padding: '12px 28px', fontSize: '13px', fontWeight: 700 }}
+                            style={{ padding: '9px 22px', fontSize: '12.5px', fontWeight: 700, borderRadius: '8px' }}
                         >
-                            <Swords size={16} /> Main Lagi
+                            <Swords size={15} /> Main Lagi
                         </motion.button>
                     </div>
                 </motion.div>
@@ -1647,40 +1678,42 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         onClick={() => setShowSurrenderConfirm(false)}
                     >
                         <div
-                            className="product-demo-panel"
+                            className="product-demo-panel battle-surrender-card"
                             style={{
-                                width: '100%',
-                                maxWidth: '350px',
-                                padding: '20px',
+                                backgroundColor: '#141414',
                                 border: '1px solid rgba(255, 255, 255, 0.15)',
-                                boxSizing: 'border-box',
+                                borderRadius: '14px',
+                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                textAlign: 'center',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
+                            <div style={{ fontSize: '28px', marginBottom: '6px' }}>🚩</div>
                             <h3
                                 style={{
                                     fontFamily: 'var(--font-heading)',
-                                    fontSize: '17px',
+                                    fontSize: '16px',
                                     fontWeight: 700,
                                     color: '#ffffff',
-                                    marginBottom: '8px',
+                                    marginBottom: '6px',
                                 }}
                             >
                                 Konfirmasi Menyerah
                             </h3>
-                            <p style={{ color: 'var(--color-fog)', fontSize: '13px', lineHeight: 1.5, marginBottom: '20px' }}>
-                                Yakin ingin menyerah? Kamu akan otomatis didiskualifikasi dan lawanmu mendapatkan kemenangan penuh.
+                            <p style={{ color: 'var(--color-fog)', fontSize: '12px', lineHeight: 1.45, margin: '0 0 16px 0' }}>
+                                Yakin ingin menyerah? Kamu akan didiskualifikasi dan lawan mendapatkan kemenangan penuh.
                             </p>
-                            <div style={{ display: 'flex', gap: '10px' }}>
+                            <div style={{ display: 'flex', gap: '8px' }}>
                                 <button
                                     type="button"
                                     onClick={() => setShowSurrenderConfirm(false)}
                                     className="btn-dark-outline"
                                     style={{
                                         flex: 1,
-                                        padding: '10px',
-                                        fontSize: '13px',
+                                        padding: '8px 12px',
+                                        fontSize: '12.5px',
                                         fontWeight: 600,
+                                        borderRadius: '8px',
                                     }}
                                 >
                                     Batal
@@ -1693,14 +1726,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     }}
                                     style={{
                                         flex: 1,
-                                        padding: '10px',
+                                        padding: '8px 12px',
                                         borderRadius: '8px',
                                         border: '1px solid rgba(232, 64, 64, 0.6)',
                                         backgroundColor: 'rgba(232, 64, 64, 0.2)',
                                         color: 'var(--accent-red)',
                                         fontFamily: 'var(--font-heading)',
                                         fontWeight: 700,
-                                        fontSize: '13px',
+                                        fontSize: '12.5px',
                                         cursor: 'pointer',
                                     }}
                                 >
