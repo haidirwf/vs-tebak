@@ -817,6 +817,18 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.character-equipped-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 8px !important;
+}
+
+@media (min-width: 900px) {
+  .character-equipped-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
 .character-nav-tabs {
   display: flex !important;
   align-items: center;

@@ -660,7 +660,7 @@ export default function CharacterPage() {
                             Perlengkapan Terpasang
                         </div>
 
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        <div className="character-equipped-grid">
                             {(['head', 'weapon', 'armor', 'accessory'] as ItemSlot[]).map((slotKey) => {
                                 const itemId = equipped[slotKey]
                                 const item = itemId ? GAME_ITEMS.find(it => it.id === itemId) : null
@@ -673,41 +673,44 @@ export default function CharacterPage() {
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'space-between',
-                                            padding: '8px 12px',
+                                            padding: '8px 10px',
                                             borderRadius: '8px',
                                             backgroundColor: item ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.02)',
                                             border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'rgba(255, 255, 255, 0.05)'}`,
+                                            minWidth: 0,
+                                            gap: '6px',
                                         }}
                                     >
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
                                             <div
                                                 style={{
-                                                    width: '32px',
-                                                    height: '32px',
+                                                    width: '30px',
+                                                    height: '30px',
                                                     borderRadius: '6px',
                                                     backgroundColor: 'rgba(0, 0, 0, 0.3)',
                                                     border: '1px solid rgba(255, 255, 255, 0.1)',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
-                                                    fontSize: '16px',
+                                                    fontSize: '15px',
                                                     flexShrink: 0,
                                                 }}
                                             >
                                                 {item ? item.icon : slotMeta.emoji}
                                             </div>
-                                            <div style={{ minWidth: 0 }}>
-                                                <div style={{ fontSize: '10px', color: 'var(--color-steel)', textTransform: 'uppercase' }}>
+                                            <div style={{ minWidth: 0, flex: 1 }}>
+                                                <div style={{ fontSize: '9.5px', color: 'var(--color-steel)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
                                                     {slotMeta.name}
                                                 </div>
                                                 <div
                                                     style={{
-                                                        fontSize: '12px',
+                                                        fontSize: '11.5px',
                                                         fontWeight: 600,
                                                         color: item ? '#ffffff' : 'var(--color-fog)',
                                                         overflow: 'hidden',
                                                         textOverflow: 'ellipsis',
                                                         whiteSpace: 'nowrap',
+                                                        lineHeight: 1.25,
                                                     }}
                                                 >
                                                     {item ? item.name : 'Kosong'}
@@ -721,12 +724,13 @@ export default function CharacterPage() {
                                                 disabled={actionLoadingId === item.id}
                                                 onClick={() => handleEquipToggle(item, 'unequip')}
                                                 style={{
-                                                    padding: '4px 10px',
-                                                    borderRadius: '6px',
+                                                    padding: '3px 7px',
+                                                    borderRadius: '5px',
                                                     border: '1px solid rgba(239, 68, 68, 0.3)',
                                                     backgroundColor: 'rgba(239, 68, 68, 0.1)',
                                                     color: 'var(--accent-red)',
-                                                    fontSize: '11px',
+                                                    fontSize: '10.5px',
+                                                    fontWeight: 500,
                                                     cursor: 'pointer',
                                                     flexShrink: 0,
                                                 }}
@@ -734,7 +738,7 @@ export default function CharacterPage() {
                                                 Lepas
                                             </button>
                                         ) : (
-                                            <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
+                                            <span style={{ fontSize: '11px', color: 'var(--color-steel)', flexShrink: 0, paddingRight: '4px' }}>
                                                 —
                                             </span>
                                         )}
@@ -753,13 +757,10 @@ export default function CharacterPage() {
                             border: '1px solid #313131',
                         }}
                     >
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                        <div style={{ marginBottom: '10px' }}>
                             <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
                                 Total Atribut & Buff Tempur:
                             </div>
-                            <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
-                                PvP Duel 1v1
-                            </span>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
                             <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
