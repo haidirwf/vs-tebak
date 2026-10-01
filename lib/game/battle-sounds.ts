@@ -81,7 +81,7 @@ class SoundSynthesizer {
         }
 
         if (this.bgmGainNode && this.ctx) {
-            const targetGain = this.isBgmMuted ? 0 : 0.12
+            const targetGain = this.isBgmMuted ? 0 : 0.85
             this.bgmGainNode.gain.setTargetAtTime(targetGain, this.ctx.currentTime, 0.1)
         }
 
@@ -452,7 +452,7 @@ class SoundSynthesizer {
         }
 
         // Smooth volume fade-in
-        const targetVol = this.isBgmMuted ? 0 : 0.12
+        const targetVol = this.isBgmMuted ? 0 : 0.85
         this.bgmGainNode.gain.cancelScheduledValues(ctx.currentTime)
         this.bgmGainNode.gain.setValueAtTime(0, ctx.currentTime)
         this.bgmGainNode.gain.linearRampToValueAtTime(targetVol, ctx.currentTime + 0.6)
@@ -494,16 +494,16 @@ class SoundSynthesizer {
                         const kickOsc = this.ctx.createOscillator()
                         const kickGain = this.ctx.createGain()
                         kickOsc.type = 'sine'
-                        kickOsc.frequency.setValueAtTime(130, time)
-                        kickOsc.frequency.exponentialRampToValueAtTime(35, time + 0.09)
+                        kickOsc.frequency.setValueAtTime(140, time)
+                        kickOsc.frequency.exponentialRampToValueAtTime(36, time + 0.1)
 
-                        kickGain.gain.setValueAtTime(0.22, time)
-                        kickGain.gain.exponentialRampToValueAtTime(0.001, time + 0.09)
+                        kickGain.gain.setValueAtTime(0.32, time)
+                        kickGain.gain.exponentialRampToValueAtTime(0.001, time + 0.1)
 
                         kickOsc.connect(kickGain)
                         kickGain.connect(this.bgmGainNode)
                         kickOsc.start(time)
-                        kickOsc.stop(time + 0.09)
+                        kickOsc.stop(time + 0.1)
                     } catch {}
                 }
 
@@ -513,10 +513,10 @@ class SoundSynthesizer {
                         const snareOsc = this.ctx.createOscillator()
                         const snareGain = this.ctx.createGain()
                         snareOsc.type = 'triangle'
-                        snareOsc.frequency.setValueAtTime(220, time)
-                        snareOsc.frequency.exponentialRampToValueAtTime(80, time + 0.08)
+                        snareOsc.frequency.setValueAtTime(240, time)
+                        snareOsc.frequency.exponentialRampToValueAtTime(90, time + 0.08)
 
-                        snareGain.gain.setValueAtTime(0.12, time)
+                        snareGain.gain.setValueAtTime(0.20, time)
                         snareGain.gain.exponentialRampToValueAtTime(0.001, time + 0.08)
 
                         snareOsc.connect(snareGain)
@@ -532,16 +532,16 @@ class SoundSynthesizer {
                         const hatOsc = this.ctx.createOscillator()
                         const hatGain = this.ctx.createGain()
                         hatOsc.type = 'sine'
-                        hatOsc.frequency.setValueAtTime(1400, time)
-                        hatOsc.frequency.exponentialRampToValueAtTime(800, time + 0.03)
+                        hatOsc.frequency.setValueAtTime(1600, time)
+                        hatOsc.frequency.exponentialRampToValueAtTime(800, time + 0.035)
 
-                        hatGain.gain.setValueAtTime(0.04, time)
-                        hatGain.gain.exponentialRampToValueAtTime(0.001, time + 0.03)
+                        hatGain.gain.setValueAtTime(0.08, time)
+                        hatGain.gain.exponentialRampToValueAtTime(0.001, time + 0.035)
 
                         hatOsc.connect(hatGain)
                         hatGain.connect(this.bgmGainNode)
                         hatOsc.start(time)
-                        hatOsc.stop(time + 0.03)
+                        hatOsc.stop(time + 0.035)
                     } catch {}
                 }
 
@@ -554,13 +554,13 @@ class SoundSynthesizer {
                         bassOsc.type = 'triangle'
                         bassOsc.frequency.setValueAtTime(bassFreq, time)
 
-                        bassGain.gain.setValueAtTime(0.14, time)
-                        bassGain.gain.exponentialRampToValueAtTime(0.01, time + stepDuration * 0.9)
+                        bassGain.gain.setValueAtTime(0.26, time)
+                        bassGain.gain.exponentialRampToValueAtTime(0.02, time + stepDuration * 0.95)
 
                         bassOsc.connect(bassGain)
                         bassGain.connect(this.bgmGainNode)
                         bassOsc.start(time)
-                        bassOsc.stop(time + stepDuration * 0.9)
+                        bassOsc.stop(time + stepDuration * 0.95)
                     } catch {}
                 }
 
@@ -570,16 +570,16 @@ class SoundSynthesizer {
                     try {
                         const arpOsc = this.ctx.createOscillator()
                         const arpGain = this.ctx.createGain()
-                        arpOsc.type = 'sine'
+                        arpOsc.type = 'triangle'
                         arpOsc.frequency.setValueAtTime(arpFreq, time)
 
-                        arpGain.gain.setValueAtTime(0.06, time)
-                        arpGain.gain.exponentialRampToValueAtTime(0.001, time + stepDuration * 0.8)
+                        arpGain.gain.setValueAtTime(0.22, time)
+                        arpGain.gain.exponentialRampToValueAtTime(0.001, time + stepDuration * 0.85)
 
                         arpOsc.connect(arpGain)
                         arpGain.connect(this.bgmGainNode)
                         arpOsc.start(time)
-                        arpOsc.stop(time + stepDuration * 0.8)
+                        arpOsc.stop(time + stepDuration * 0.85)
                     } catch {}
                 }
 
