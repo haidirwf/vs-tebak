@@ -1,10 +1,11 @@
 'use client'
 
+import Link from 'next/link'
 import { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
-import { Flame, MapPin, School } from 'lucide-react'
+import { Flame, MapPin, School, Users, ExternalLink } from 'lucide-react'
 import { startOfWeek, addDays, format, differenceInCalendarDays, parseISO, isSameDay } from 'date-fns'
 
 interface HeroBannerProps {
@@ -208,6 +209,25 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                             </div>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11.5px', color: 'var(--color-steel)', flexWrap: 'wrap', minWidth: 0, marginTop: '6px' }}>
+                                <Link
+                                    href={`/pelajar/${encodeURIComponent(profile.username)}`}
+                                    title="Tautan profil publik Anda"
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        fontSize: '11px',
+                                        color: 'var(--color-steel)',
+                                        textDecoration: 'none',
+                                        padding: '2px 7px',
+                                        borderRadius: '6px',
+                                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                    }}
+                                >
+                                    <span>/pelajar/{profile.username}</span>
+                                    <ExternalLink size={10} />
+                                </Link>
                                 {profile.school_name && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                         <School size={12} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
@@ -330,13 +350,34 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
                 {/* Progress Bar & Quick Stats Strip */}
                 <div style={{ backgroundColor: '#141414', borderRadius: '12px', padding: '14px 16px', border: '1px solid rgba(255, 255, 255, 0.08)', boxSizing: 'border-box' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
                             <span style={{ fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-inter)', color: '#ffffff' }}>
                                 Perkembangan Level
                             </span>
                             <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
                                 ({currentXpProgress.toLocaleString()} / {profile.xp_to_next_level.toLocaleString()} XP)
                             </span>
+                            <Link
+                                href="/leaderboard"
+                                title="Lihat profil pelajar lain di Leaderboard"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontSize: '11px',
+                                    fontWeight: 600,
+                                    color: 'var(--color-gold)',
+                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                    border: '1px solid rgba(245, 197, 66, 0.3)',
+                                    padding: '2px 8px',
+                                    borderRadius: '6px',
+                                    textDecoration: 'none',
+                                    transition: 'all 0.15s ease',
+                                }}
+                            >
+                                <Users size={11} />
+                                <span>Lihat Profil Lain</span>
+                            </Link>
                         </div>
                         <span style={{ fontSize: '11px', fontWeight: 600, color: roleCfg.color, fontFamily: 'var(--font-inter)' }}>
                             {progressPercent}% Menuju Level {profile.level + 1}

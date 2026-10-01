@@ -2,26 +2,23 @@
 
 import React, { useEffect, useState, use } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import ProfileHeroStage from '@/components/profile/ProfileHeroStage'
 import BadgeIcon from '@/components/character/BadgeIcon'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, Share2, Copy, Check, ExternalLink } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useUserStore } from '@/stores/userStore'
 import { Profile } from '@/types'
 
-interface PublicProfilePageProps {
-    params: Promise<{ id: string }>
+interface PublicStudentProfilePageProps {
+    params: Promise<{ username: string }>
 }
 
-export default function PublicProfilePage({ params }: PublicProfilePageProps) {
-    const router = useRouter()
+export default function PublicStudentProfilePage({ params }: PublicStudentProfilePageProps) {
     const resolvedParams = use(params)
-    const targetUserId = resolvedParams.id
+    const rawParam = decodeURIComponent(resolvedParams.username || '')
 
     const currentUser = useUserStore((s) => s.profile)
-    const isOwnProfile = currentUser?.id === targetUserId
 
     const [targetProfile, setTargetProfile] = useState<Profile | null>(null)
     const [badges, setBadges] = useState<any[]>([])
@@ -30,21 +27,33 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
     const [battlesWon, setBattlesWon] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
+    const [copied, setCopied] = useState(false)
 
     useEffect(() => {
         const supabase = createClient()
 
-        async function fetchPublicProfile() {
+        async function fetchStudentProfile() {
+            if (!rawParam) {
+                setNotFound(true)
+                setIsLoading(false)
+                return
+            }
+
             setIsLoading(true)
             setNotFound(false)
 
             try {
-                // Fetch target user profile
-                const { data: profileData, error: profileErr } = await supabase
-                    .from('profiles')
-                    .select('*')
-                    .eq('id', targetUserId)
-                    .maybeSingle()
+                // Check whether param is UUID or username
+                const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(rawParam)
+
+                let profileQuery = supabase.from('profiles').select('*')
+                if (isUuid) {
+                    profileQuery = profileQuery.eq('id', rawParam)
+                } else {
+                    profileQuery = profileQuery.ilike('username', rawParam)
+                }
+
+                const { data: profileData, error: profileErr } = await profileQuery.maybeSingle()
 
                 if (profileErr || !profileData) {
                     setNotFound(true)
@@ -52,12 +61,8 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                     return
                 }
 
-                if (profileData.username) {
-                    router.replace(`/pelajar/${encodeURIComponent(profileData.username)}`)
-                    return
-                }
-
                 setTargetProfile(profileData as Profile)
+                const targetUserId = profileData.id
 
                 // Fetch badges, modules, and battles concurrently
                 const [badgesRes, completedRes, battlesRes] = await Promise.all([
@@ -94,10 +99,18 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
             }
         }
 
-        if (targetUserId) {
-            fetchPublicProfile()
-        }
-    }, [targetUserId])
+        fetchStudentProfile()
+    }, [rawParam])
+
+    const isOwnProfile = currentUser?.id === targetProfile?.id
+
+    const handleCopyLink = () => {
+        if (typeof window === 'undefined' || !targetProfile) return
+        const profileUrl = `${window.location.origin}/pelajar/${targetProfile.username}`
+        navigator.clipboard.writeText(profileUrl)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
 
     if (isLoading) {
         return (
@@ -116,57 +129,121 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
             <div className="responsive-page" style={{ padding: '48px 24px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
                 <div style={{ fontSize: '48px', marginBottom: '14px' }}>🔍</div>
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
-                    Pahlawan Tidak Ditemukan
+                    Profil Pelajar Tidak Ditemukan
                 </h2>
                 <p style={{ color: 'var(--color-steel)', fontSize: '13px', lineHeight: 1.5, marginBottom: '24px' }}>
-                    Profil pelajar atau pahlawan yang kamu cari tidak tersedia atau belum terdaftar di Skillungo.
+                    Profil pelajar dengan username <strong>&quot;{rawParam}&quot;</strong> belum terdaftar atau tautan tidak valid.
                 </p>
-                <Link
-                    href="/leaderboard"
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '10px 18px',
-                        borderRadius: '8px',
-                        backgroundColor: '#F5C542',
-                        color: '#0a0a0a',
-                        fontWeight: 600,
-                        fontSize: '13px',
-                        textDecoration: 'none',
-                    }}
-                >
-                    <ArrowLeft size={14} />
-                    <span>Kembali ke Leaderboard</span>
-                </Link>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                    <Link
+                        href="/dashboard"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '10px 18px',
+                            borderRadius: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                            color: '#ffffff',
+                            fontWeight: 600,
+                            fontSize: '13px',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        <span>Ke Dashboard</span>
+                    </Link>
+                    <Link
+                        href="/leaderboard"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '10px 18px',
+                            borderRadius: '8px',
+                            backgroundColor: '#F5C542',
+                            color: '#0a0a0a',
+                            fontWeight: 600,
+                            fontSize: '13px',
+                            textDecoration: 'none',
+                        }}
+                    >
+                        <ArrowLeft size={14} />
+                        <span>Leaderboard</span>
+                    </Link>
+                </div>
             </div>
         )
     }
 
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
-            {/* Navigation Back */}
-            <div style={{ marginBottom: '20px' }}>
-                <Link
-                    href="/leaderboard"
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        color: 'var(--text-secondary)',
-                        textDecoration: 'none',
-                        fontSize: '12.5px',
-                        fontWeight: 500,
-                        padding: '6px 10px',
-                        borderRadius: '8px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
-                        transition: 'color 0.15s ease',
-                    }}
-                >
-                    <ArrowLeft size={14} />
-                    <span>Leaderboard</span>
-                </Link>
+            {/* Top Navigation Bar */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Link
+                        href="/dashboard"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            color: 'var(--text-secondary)',
+                            textDecoration: 'none',
+                            fontSize: '12.5px',
+                            fontWeight: 500,
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                        }}
+                    >
+                        <ArrowLeft size={14} />
+                        <span>Dashboard</span>
+                    </Link>
+                    <Link
+                        href="/leaderboard"
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            color: 'var(--text-secondary)',
+                            textDecoration: 'none',
+                            fontSize: '12.5px',
+                            fontWeight: 500,
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                        }}
+                    >
+                        <span>Leaderboard</span>
+                    </Link>
+                </div>
+
+                {/* Share & Copy Public Profile Link */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <button
+                        type="button"
+                        onClick={handleCopyLink}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            padding: '6px 12px',
+                            borderRadius: '8px',
+                            backgroundColor: copied ? 'rgba(34, 197, 94, 0.15)' : 'rgba(255, 255, 255, 0.05)',
+                            border: `1px solid ${copied ? 'rgba(34, 197, 94, 0.35)' : 'rgba(255, 255, 255, 0.12)'}`,
+                            color: copied ? 'var(--accent-green)' : '#ffffff',
+                            cursor: 'pointer',
+                            transition: 'all 0.15s ease',
+                        }}
+                    >
+                        {copied ? <Check size={13} /> : <Copy size={13} />}
+                        <span>{copied ? 'Tautan Disalin!' : `skillungo.vercel.app/pelajar/${targetProfile.username}`}</span>
+                    </button>
+                </div>
             </div>
 
             {/* Header Title */}
@@ -177,7 +254,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                     </h1>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                         {isOwnProfile
-                            ? 'Ini adalah profil publikmu yang dapat dilihat oleh seluruh penantang di leaderboard.'
+                            ? 'Ini adalah profil publikmu. Bagikan tautan unikmu kepada teman atau penantang lain.'
                             : `Melihat atribut tempur RPG dan rekam jejak capaian ${targetProfile.username}.`}
                     </p>
                 </div>
@@ -262,7 +339,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                         }}
                     >
                         <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: 0 }}>
-                            Belum ada lencana yang terbuka untuk pahlawan ini.
+                            Belum ada lencana yang terbuka untuk pelajar ini.
                         </p>
                     </div>
                 ) : (

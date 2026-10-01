@@ -87,7 +87,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 if (!u2) return null
                                 return (
                                     <Link
-                                        href={`/profile/${u2.id}`}
+                                        href={`/pelajar/${encodeURIComponent(u2.username)}`}
                                         style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, maxWidth: '160px' }}
                                     >
                                         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
@@ -116,7 +116,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 if (!u1) return null
                                 return (
                                     <Link
-                                        href={`/profile/${u1.id}`}
+                                        href={`/pelajar/${encodeURIComponent(u1.username)}`}
                                         style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, maxWidth: '180px' }}
                                     >
                                         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
@@ -145,7 +145,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 if (!u3) return null
                                 return (
                                     <Link
-                                        href={`/profile/${u3.id}`}
+                                        href={`/pelajar/${encodeURIComponent(u3.username)}`}
                                         style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, maxWidth: '160px' }}
                                     >
                                         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
@@ -175,7 +175,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                             return (
                                 <Link
                                     key={user.id}
-                                    href={`/profile/${user.id}`}
+                                    href={`/pelajar/${encodeURIComponent(user.username)}`}
                                     style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                                 >
                                     <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
