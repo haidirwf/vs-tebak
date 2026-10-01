@@ -87,6 +87,31 @@ export default function Sidebar() {
 
                 {profile && (
                     <div className="dashboard-mobile-actions">
+                        {profile.streak_count > 0 && (
+                            <span
+                                title={`Streak ${profile.streak_count} hari`}
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '3px',
+                                    borderRadius: '8px',
+                                    padding: '4px 7px',
+                                    border: '1px solid var(--accent-red-border)',
+                                    backgroundColor: 'var(--accent-red-bg)',
+                                    color: 'var(--accent-red)',
+                                    fontFamily: 'var(--font-inter)',
+                                    fontSize: '11px',
+                                    fontWeight: 600,
+                                    lineHeight: 1,
+                                    whiteSpace: 'nowrap',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                <Flame size={11} />
+                                <span>{profile.streak_count}</span>
+                            </span>
+                        )}
+
                         <Link
                             href="/profile"
                             className="dashboard-mobile-profile"
@@ -119,29 +144,6 @@ export default function Sidebar() {
                                 <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 600, lineHeight: 1 }}>
                                     Lv.{profile.level}
                                 </span>
-                                {profile.streak_count > 0 && (
-                                    <span
-                                        title={`Streak ${profile.streak_count} hari`}
-                                        style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '2px',
-                                            borderRadius: '6px',
-                                            padding: '2px 5px',
-                                            border: '1px solid var(--accent-red-border)',
-                                            backgroundColor: 'var(--accent-red-bg)',
-                                            color: 'var(--accent-red)',
-                                            fontFamily: 'var(--font-inter)',
-                                            fontSize: '10.5px',
-                                            fontWeight: 600,
-                                            lineHeight: 1,
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        <Flame size={10} />
-                                        {profile.streak_count}
-                                    </span>
-                                )}
                             </span>
                         </Link>
 
