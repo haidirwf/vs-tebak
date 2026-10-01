@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
+import { ChevronRight } from 'lucide-react'
 
 const CLASS_EMOJIS: Record<string, string> = { warrior: '⚔️', mage: '🔮', archer: '🏹', healer: '✨' }
 const CLASS_COLORS: Record<string, string> = {
@@ -226,10 +227,30 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
 
                                         {/* Stats */}
                                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', color: 'var(--accent-gold)', fontWeight: 700 }}>
-                                                Lv.{user.level}
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
+                                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '13.5px', color: 'var(--accent-gold)', fontWeight: 700 }}>
+                                                    Lv.{user.level}
+                                                </span>
+                                                <span
+                                                    style={{
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                        fontSize: '11px',
+                                                        fontWeight: 600,
+                                                        color: isMe ? 'var(--color-gold)' : 'var(--text-primary)',
+                                                        backgroundColor: isMe ? 'rgba(245, 197, 66, 0.12)' : 'rgba(255, 255, 255, 0.05)',
+                                                        border: `1px solid ${isMe ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.1)'}`,
+                                                        padding: '3px 8px',
+                                                        borderRadius: '8px',
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    <span>Lihat Profil</span>
+                                                    <ChevronRight size={12} />
+                                                </span>
                                             </div>
-                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
                                                 {tab === 'all' ? `${user.xp.toLocaleString()} XP` : `${user.streak_count} hari 🔥`}
                                             </div>
                                         </div>
@@ -299,8 +320,28 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {me.username} (Peringkat Kamu)
                                 </div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    Lv.{me.level} · {CLASS_EMOJIS[me.avatar_class]} {me.avatar_class}
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
+                                    <span>Lv.{me.level} · {CLASS_EMOJIS[me.avatar_class]} {me.avatar_class}</span>
+                                    <Link
+                                        href={`/pelajar/${encodeURIComponent(me.username)}`}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '3px',
+                                            fontSize: '10.5px',
+                                            fontWeight: 600,
+                                            color: 'var(--accent-gold)',
+                                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                            border: '1px solid rgba(245, 197, 66, 0.35)',
+                                            padding: '1px 6px',
+                                            borderRadius: '6px',
+                                            textDecoration: 'none',
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        <span>Lihat Profil</span>
+                                        <ChevronRight size={10} />
+                                    </Link>
                                 </div>
                             </div>
                         </div>
