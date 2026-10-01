@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import { Flame, Mail, Lock, Loader2 } from 'lucide-react'
+import { Swords, Mail, Lock, Loader2 } from 'lucide-react'
 
 const loginSchema = z.object({
     email: z.string().email('Email tidak valid'),
@@ -70,25 +70,26 @@ export default function LoginPage() {
             >
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '8px', textDecoration: 'none' }}>
                         <div
                             style={{
-                                width: '36px',
-                                height: '36px',
+                                width: '38px',
+                                height: '38px',
                                 borderRadius: '10px',
-                                background: 'linear-gradient(135deg, #F5C542, #EAB308)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                                border: '1px solid rgba(245, 197, 66, 0.4)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.4)',
+                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.25)',
                             }}
                         >
-                            <Flame size={20} color="#000000" />
+                            <Swords size={20} style={{ color: 'var(--color-gold)' }} />
                         </div>
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 400, letterSpacing: '-0.01em', color: '#ffffff' }}>
-                            Skillungo
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 500, letterSpacing: '-0.02em', color: '#ffffff' }}>
+                            Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
                         </span>
-                    </div>
+                    </Link>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>Masuk ke studio petualangan belajarmu</p>
                 </div>
 
