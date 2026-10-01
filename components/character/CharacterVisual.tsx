@@ -80,14 +80,14 @@ export default function CharacterVisual({
                 />
             )}
 
-            {/* Wing / Accessory Back Layer */}
-            {accessoryItem && (
+            {/* Wing / Back Aura Layer (only for wings and flame auras, not wearable jewelry) */}
+            {accessoryItem && (accessoryItem.id === 'acc_valkyrie_wings' || accessoryItem.id === 'acc_flame_aura' || accessoryItem.icon === '🪽' || accessoryItem.icon === '🔥') && (
                 <motion.div
                     animate={
                         animationState === 'idle'
                             ? { y: [0, -4, 0], scale: [1, 1.05, 1] }
                             : animationState === 'attack'
-                                ? { scale: [1, 1.3, 1] }
+                                ? { scale: [1, 1.25, 1] }
                                 : { x: [-3, 3, -3, 0] }
                     }
                     transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
@@ -236,21 +236,89 @@ export default function CharacterVisual({
                     )}
 
                     {/* --- HEADGEAR SLOT OVERLAY --- */}
-                    {headItem ? (
-                        <g transform="translate(100, 36)">
-                            {/* Visual Headgear Badge / Crown / Visor */}
-                            <circle cx="0" cy="-6" r="16" fill="rgba(15, 23, 42, 0.85)" stroke={primary} strokeWidth="2" />
+                    {headItem && (
+                        headItem.id === 'hd_novice_band' || headItem.icon === '🎗️' ? (
+                            /* Stylish headband tied cleanly around the hero's forehead */
+                            <g transform="translate(100, 41)">
+                                {/* Band wrap */}
+                                <path
+                                    d="M -24 -2 Q 0 4 24 -2 L 24 -8 Q 0 -2 -24 -8 Z"
+                                    fill="#f59e0b"
+                                    stroke="#b45309"
+                                    strokeWidth="1.2"
+                                />
+                                {/* Band tails fluttering on left temple */}
+                                <path
+                                    d="M -23 -4 Q -32 -1 -30 11 L -26 10 Q -28 3 -23 -1 Z"
+                                    fill="#f59e0b"
+                                    stroke="#b45309"
+                                    strokeWidth="0.8"
+                                />
+                                {/* Center gold crest emblem */}
+                                <circle cx="0" cy="-2" r="3.5" fill="#fef08a" stroke="#ca8a04" strokeWidth="1" />
+                            </g>
+                        ) : headItem.id === 'hd_knight_helm' || headItem.icon === '🪖' ? (
+                            /* Knight Helmet sitting on top of head */
+                            <g transform="translate(100, 26)">
+                                <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="28">
+                                    🪖
+                                </text>
+                            </g>
+                        ) : headItem.id === 'hd_crown_sovereign' || headItem.id === 'hd_cleric_circlet' || headItem.icon === '👑' ? (
+                            /* Sovereign Crown atop the head */
+                            <g transform="translate(100, 24)">
+                                <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="28" style={{ filter: 'drop-shadow(0 0 6px #f59e0b)' }}>
+                                    👑
+                                </text>
+                            </g>
+                        ) : headItem.id === 'hd_cyber_goggles' || headItem.icon === '🥽' ? (
+                            /* Cyber visor over the eyes */
+                            <g transform="translate(100, 48)">
+                                <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="26" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }}>
+                                    🥽
+                                </text>
+                            </g>
+                        ) : headItem.id === 'hd_wizard_hat' || headItem.icon === '🧙' ? (
+                            /* Wizard Hat on head */
+                            <g transform="translate(100, 22)">
+                                <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="30">
+                                    🧙
+                                </text>
+                            </g>
+                        ) : headItem.id === 'hd_scout_hood' || headItem.icon === '🥷' ? (
+                            /* Scout Hood */
+                            <g transform="translate(100, 26)">
+                                <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="30">
+                                    🥷
+                                </text>
+                            </g>
+                        ) : (
+                            /* Any other headgear naturally positioned atop head without dark circle */
+                            <g transform="translate(100, 26)">
+                                <text x="0" y="0" textAnchor="middle" dominantBaseline="central" fontSize="26">
+                                    {headItem.icon}
+                                </text>
+                            </g>
+                        )
+                    )}
+
+                    {/* --- PENDANT ACCESSORY (CHEST) --- */}
+                    {accessoryItem && (accessoryItem.id === 'acc_chrono_pendant' || accessoryItem.icon === '⏳') && (
+                        <g transform="translate(100, 76)">
+                            {/* Gold chain */}
+                            <path d="M -12 -8 Q 0 4 12 -8" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
                             <text
                                 x="0"
-                                y="0"
+                                y="8"
                                 textAnchor="middle"
                                 dominantBaseline="central"
-                                fontSize="18"
+                                fontSize="16"
+                                style={{ filter: 'drop-shadow(0 0 6px #f59e0b)' }}
                             >
-                                {headItem.icon}
+                                ⏳
                             </text>
                         </g>
-                    ) : null}
+                    )}
 
                     {/* --- WEAPON SLOT OVERLAY (RIGHT ATTACKING HAND) --- */}
                     <motion.g
@@ -283,19 +351,27 @@ export default function CharacterVisual({
                         }}
                     >
                         <g transform="translate(148, 102)">
-                            {/* Hand grip */}
-                            <circle cx="0" cy="0" r="8" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
-                            {/* Weapon graphic / icon */}
-                            <text
-                                x="4"
-                                y="-6"
-                                textAnchor="middle"
-                                dominantBaseline="central"
-                                fontSize="32"
-                                style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
-                            >
-                                {weaponItem ? weaponItem.icon : roleInfo.avatarEmoji}
-                            </text>
+                            {/* Weapon graphic held in hand */}
+                            <g transform="translate(4, -8) rotate(-10)">
+                                <text
+                                    x="0"
+                                    y="0"
+                                    textAnchor="middle"
+                                    dominantBaseline="central"
+                                    fontSize="32"
+                                    style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
+                                >
+                                    {weaponItem ? weaponItem.icon : roleInfo.avatarEmoji}
+                                </text>
+                            </g>
+
+                            {/* Armored gauntlet cuff on weapon hand */}
+                            {armorItem && (
+                                <rect x="-8" y="-7" width="16" height="14" rx="4" fill="#0f172a" stroke={primary} strokeWidth="1.5" />
+                            )}
+
+                            {/* Hand grip rendered on top so hand wraps the weapon hilt */}
+                            <circle cx="0" cy="0" r="7.5" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
 
                             {/* Attack Slash Blade Arc & Spark Effect (Tangan Nyerang) */}
                             {animationState === 'attack' && (
@@ -345,11 +421,38 @@ export default function CharacterVisual({
                         </g>
                     </motion.g>
 
-                    {/* Left Hand Guard */}
+                    {/* Left Hand & Offhand Accessory */}
                     <g transform="translate(52, 102)">
-                        <circle cx="0" cy="0" r="8" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
+                        {/* Armored gauntlet cuff on shield/offhand */}
                         {armorItem && (
-                            <circle cx="-2" cy="0" r="11" fill="none" stroke={secondary} strokeWidth="2.5" opacity="0.85" />
+                            <rect x="-8" y="-7" width="16" height="14" rx="4" fill="#0f172a" stroke={primary} strokeWidth="1.5" />
+                        )}
+                        {/* Hand fist */}
+                        <circle cx="0" cy="0" r="7.5" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
+
+                        {/* Ring Accessory (acc_luck_ring) worn on the hand */}
+                        {accessoryItem && (accessoryItem.id === 'acc_luck_ring' || accessoryItem.icon === '💍') && (
+                            <g transform="translate(0, 0)">
+                                {/* Golden band with sapphire gem on the hand */}
+                                <circle cx="0" cy="0" r="4.5" fill="none" stroke="#f59e0b" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 4px #fbbf24)' }} />
+                                <circle cx="0" cy="-3.5" r="2" fill="#38bdf8" />
+                                {/* Subtle sparkling charm */}
+                                <motion.g
+                                    animate={{ scale: [1, 1.15, 1], y: [0, -2, 0] }}
+                                    transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                                >
+                                    <text
+                                        x="-10"
+                                        y="-8"
+                                        textAnchor="middle"
+                                        dominantBaseline="central"
+                                        fontSize="14"
+                                        style={{ filter: 'drop-shadow(0 0 6px #f59e0b)' }}
+                                    >
+                                        💍
+                                    </text>
+                                </motion.g>
+                            </g>
                         )}
                     </g>
                 </svg>

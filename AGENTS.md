@@ -6,7 +6,9 @@
 
 ## 2. Git Workflow Rules
 - **Batch Commits Only**: Commit only ONCE at the end of executing the user's complete request/cycle with a concise summary message. Do NOT commit after every single file edit.
-- **NO Git Push**: NEVER execute `git push` unless the user explicitly asks for it.
+- **Feature Branch & Push**: Buat branch baru dan push ke branch tersebut ketika user meminta push.
+- **STRICT BAN: Merge ke Main Tanpa Perintah Eksplisit**: DILARANG KERAS melakukan merge ke branch `main` kecuali USER SECARA EKSPLISIT menyuruh untuk merge ke `main` ("merge ke main").
+- **NO Git Push**: JANGAN PERNAH menjalankan `git push` kecuali atas instruksi eksplisit dari user.
 
 ## 3. Verification & Testing Policy
 - **NO Browser Tool Execution**: NEVER run `browser_subagent` or open browser tools to self-verify UI.
