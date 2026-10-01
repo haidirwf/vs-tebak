@@ -338,6 +338,7 @@ export default function Sidebar() {
 
             {showLogoutConfirm && (
                 <div
+                    className="modal-overlay"
                     style={{
                         position: 'fixed',
                         inset: 0,
@@ -348,6 +349,9 @@ export default function Sidebar() {
                         justifyContent: 'center',
                         zIndex: 1000,
                         padding: '16px',
+                        overflow: 'hidden',
+                        touchAction: 'none',
+                        overscrollBehavior: 'none',
                     }}
                     onClick={() => setShowLogoutConfirm(false)}
                 >

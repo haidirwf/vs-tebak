@@ -466,28 +466,23 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         const icon = result === 'win' ? '🏆' : result === 'lose' ? '💀' : '🤝'
         const color = result === 'win' ? 'var(--color-signal-orange)' : result === 'lose' ? 'var(--accent-red)' : '#00d4ff'
         return (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: 'calc(100vh - 120px)',
-                    width: '100%',
-                    padding: '16px',
-                    boxSizing: 'border-box',
-                }}
-            >
+            <div className="battle-fullscreen-stage">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="product-demo-panel battle-result-card"
                     style={{
+                        width: '100%',
+                        maxWidth: '440px',
                         backgroundColor: '#141414',
                         border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
                         boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
                         textAlign: 'center',
+                        padding: 'clamp(14px, 2.2vh, 20px) 18px',
+                        boxSizing: 'border-box',
+                        overflow: 'hidden',
+                        touchAction: 'none',
                     }}
                 >
                     <div style={{ fontSize: '38px', marginBottom: '4px', lineHeight: 1 }}>{icon}</div>

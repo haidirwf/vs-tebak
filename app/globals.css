@@ -190,17 +190,53 @@ body {
   }
 }
 
-/* Modal containment and scroll protection */
-.modal-overlay,
-[role="dialog"] {
+/* Modal containment and scroll protection - completely non-scrollable */
+.modal-overlay {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  overflow: hidden !important;
+  touch-action: none !important;
   overscroll-behavior: none !important;
-  -webkit-overflow-scrolling: touch;
-  touch-action: none;
+  -webkit-overflow-scrolling: auto !important;
+  padding: 16px !important;
+  box-sizing: border-box !important;
 }
 
-.modal-overlay > * {
-  touch-action: pan-y;
-  overscroll-behavior: contain;
+.modal-overlay > *,
+[role="dialog"],
+[data-slot="dialog-content"] {
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+  overflow: hidden !important;
+  max-height: 94dvh !important;
+  box-sizing: border-box !important;
+}
+
+/* Fullscreen centered non-scrollable stage (waiting room, lobby, outcome) */
+.battle-fullscreen-stage {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  height: 100% !important;
+  min-height: 100dvh !important;
+  max-height: 100dvh !important;
+  width: 100% !important;
+  padding: clamp(10px, 2.5vh, 20px) 16px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
+.battle-fullscreen-stage > * {
+  overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
 }
 
 /* Linearity Studio Grid: Sparse 64px hairline matrix on Void */
@@ -2092,10 +2128,19 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ===================================================
-   MOBILE LIVE BATTLE FULL-FOCUS STYLES
-   Saat battle di mobile, sembunyikan navbar & sidebar 
-   agar layar fokus penuh pada arena battle.
+   LIVE BATTLE & STAGE FULL-FOCUS STYLES
+   Saat battle di layar room, kunci scrollbar dan layar
+   agar tidak bisa di-scroll atau memantul.
    =================================================== */
+.dashboard-shell.in-live-battle .dashboard-content {
+  padding: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+  overflow-y: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
 @media (max-width: 767px) {
   .dashboard-shell.in-live-battle .dashboard-sidebar {
     display: none !important;
@@ -2106,19 +2151,33 @@ input::placeholder, textarea::placeholder {
   }
 
   .dashboard-shell.in-live-battle .dashboard-main {
-    height: 100vh !important;
-    max-height: 100vh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
   }
 
   .dashboard-shell.in-live-battle .dashboard-content {
     padding: 0 !important;
-    height: 100% !important;
+    padding-bottom: 0 !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow: hidden !important;
+    overflow-y: hidden !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
   }
 
   .battle-active-page {
     padding: 8px !important;
-    min-height: 100vh !important;
+    min-height: 100dvh !important;
+    height: 100dvh !important;
+    max-height: 100dvh !important;
     justify-content: flex-start !important;
+    overflow: hidden !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
   }
 }
 

@@ -956,22 +956,30 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     // Phase: Waiting for opponent (only player1 sees this)
     if (phase === 'waiting') {
         return (
-            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
+            <div className="battle-fullscreen-stage">
                 <motion.div
-                    initial={{ opacity: 0, y: 16 }}
+                    initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="product-demo-panel"
-                    style={{ width: '100%', maxWidth: '480px', textAlign: 'center' }}
+                    style={{
+                        width: '100%',
+                        maxWidth: '440px',
+                        textAlign: 'center',
+                        padding: 'clamp(16px, 2.5vh, 24px) 20px',
+                        overflow: 'hidden',
+                        touchAction: 'none',
+                        boxSizing: 'border-box',
+                    }}
                 >
                     {/* Topbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '16px', marginBottom: '24px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '12px', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
                         <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
                             ID: {battle.id.slice(0, 8)}
                         </span>
                     </div>
 
                     {/* Animated Radar Swords */}
-                    <div style={{ position: 'relative', width: '80px', height: '80px', margin: '0 auto 20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ position: 'relative', width: '70px', height: '70px', margin: '0 auto 16px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <motion.div
                             animate={{ rotate: 360 }}
                             transition={{ repeat: Infinity, duration: 3, ease: 'linear' }}
@@ -984,15 +992,15 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         />
                         <div
                             style={{
-                                width: '60px',
-                                height: '60px',
-                                borderRadius: '16px',
+                                width: '54px',
+                                height: '54px',
+                                borderRadius: '14px',
                                 backgroundColor: 'rgba(245, 197, 66, 0.12)',
                                 border: '1px solid rgba(245, 197, 66, 0.4)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                fontSize: '26px',
+                                fontSize: '24px',
                                 boxShadow: '0 0 20px rgba(245, 197, 66, 0.25)',
                             }}
                         >
@@ -1000,15 +1008,15 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         </div>
                     </div>
 
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: '#ffffff', marginBottom: '6px' }}>
                         Menunggu Lawan Masuk...
                     </h2>
-                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', maxWidth: '440px', margin: '0 auto 20px', lineHeight: 1.5 }}>
+                    <p style={{ color: 'var(--color-fog)', fontSize: '12.5px', maxWidth: '420px', margin: '0 auto 16px', lineHeight: 1.45 }}>
                         Bagikan kode room ini kepada teman atau rekan sekelasmu untuk bergabung ke dalam duel:
                     </p>
 
                     {/* Room Code Card */}
-                    <div className="battle-room-code-card">
+                    <div className="battle-room-code-card" style={{ marginBottom: '16px' }}>
                         <span className="battle-room-code-text">
                             {battle.room_code}
                         </span>
@@ -1045,8 +1053,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             onClick={handleExitGame}
                             className="btn-dark-outline"
                             style={{
-                                padding: '10px 24px',
-                                fontSize: '13px',
+                                padding: '8px 22px',
+                                fontSize: '12.5px',
                                 color: 'var(--accent-red)',
                                 borderColor: 'rgba(232, 64, 64, 0.4)',
                             }}
@@ -1064,18 +1072,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const myReady = iAmReady
         const oppReady = opponentReady
         return (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: 'calc(100vh - 120px)',
-                    width: '100%',
-                    padding: '16px',
-                    boxSizing: 'border-box',
-                }}
-            >
+            <div className="battle-fullscreen-stage">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.96 }}
                     animate={{ opacity: 1, scale: 1 }}
@@ -1083,12 +1080,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     style={{
                         width: '100%',
                         maxWidth: '440px',
-                        padding: '20px 18px',
+                        padding: 'clamp(14px, 2.2vh, 20px) 18px',
                         backgroundColor: '#141414',
                         border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
                         boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
                         boxSizing: 'border-box',
+                        overflow: 'hidden',
+                        touchAction: 'none',
                     }}
                 >
                     {/* Header: Title & Room Badge */}
@@ -1348,28 +1347,23 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const icon = isDraw ? '🤝' : won ? '🏆' : '💀'
 
         return (
-            <div
-                style={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    minHeight: 'calc(100vh - 120px)',
-                    width: '100%',
-                    padding: '16px',
-                    boxSizing: 'border-box',
-                }}
-            >
+            <div className="battle-fullscreen-stage">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     className="product-demo-panel battle-result-card"
                     style={{
+                        width: '100%',
+                        maxWidth: '440px',
                         backgroundColor: '#141414',
                         border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
                         boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
                         textAlign: 'center',
+                        padding: 'clamp(14px, 2.2vh, 20px) 18px',
+                        boxSizing: 'border-box',
+                        overflow: 'hidden',
+                        touchAction: 'none',
                     }}
                 >
                     <div style={{ fontSize: '38px', marginBottom: '4px', lineHeight: 1 }}>{icon}</div>
@@ -1791,7 +1785,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
-                            overscrollBehavior: 'contain',
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
                         }}
                         onClick={() => setShowSurrenderConfirm(false)}
                     >

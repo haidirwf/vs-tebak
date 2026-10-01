@@ -335,6 +335,7 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={() => setRedeemResult(null)}
+                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
@@ -345,6 +346,9 @@ export default function VoucherStoreClient({ initialXp, vouchers, initialHistory
                             alignItems: 'center',
                             justifyContent: 'center',
                             padding: '16px',
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
                         }}
                     >
                         <motion.div

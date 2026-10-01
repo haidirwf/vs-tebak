@@ -716,6 +716,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
+                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
@@ -725,6 +726,9 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                             justifyContent: 'center',
                             padding: '16px',
                             zIndex: 1000,
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
                         }}
                         onClick={() => setCompletionFeedback(null)}
                     >

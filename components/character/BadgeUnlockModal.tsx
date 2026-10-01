@@ -39,7 +39,9 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '16px',
-                    overscrollBehavior: 'contain',
+                    overflow: 'hidden',
+                    touchAction: 'none',
+                    overscrollBehavior: 'none',
                 }}
                 onClick={onClose}
             >

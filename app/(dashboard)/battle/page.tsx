@@ -768,7 +768,9 @@ export default function BattlePage() {
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
-                            overscrollBehavior: 'contain',
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
                         }}
                         onClick={() => setMode('select')}
                     >
@@ -780,8 +782,9 @@ export default function BattlePage() {
                             style={{
                                 width: '100%',
                                 maxWidth: '400px',
-                                maxHeight: '90vh',
-                                overflowY: 'auto',
+                                maxHeight: '94dvh',
+                                overflow: 'hidden',
+                                touchAction: 'none',
                                 padding: '20px 18px',
                                 backgroundColor: '#141414',
                                 borderRadius: '12px',
@@ -901,7 +904,9 @@ export default function BattlePage() {
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
-                            overscrollBehavior: 'contain',
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
                         }}
                         onClick={() => { setMode('select'); setRoomCode(''); setError(null) }}
                     >
@@ -913,8 +918,9 @@ export default function BattlePage() {
                             style={{
                                 width: '100%',
                                 maxWidth: '340px',
-                                maxHeight: '90vh',
-                                overflowY: 'auto',
+                                maxHeight: '94dvh',
+                                overflow: 'hidden',
+                                touchAction: 'none',
                                 padding: '20px 18px',
                                 backgroundColor: '#141414',
                                 borderRadius: '12px',
@@ -1028,7 +1034,9 @@ export default function BattlePage() {
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
-                            overscrollBehavior: 'contain',
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
                         }}
                     >
                         <motion.div

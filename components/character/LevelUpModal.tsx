@@ -34,7 +34,9 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '16px',
-                    overscrollBehavior: 'contain',
+                    overflow: 'hidden',
+                    touchAction: 'none',
+                    overscrollBehavior: 'none',
                 }}
                 onClick={onClose}
             >

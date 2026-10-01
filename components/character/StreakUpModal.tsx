@@ -34,7 +34,9 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '16px',
-                    overscrollBehavior: 'contain',
+                    overflow: 'hidden',
+                    touchAction: 'none',
+                    overscrollBehavior: 'none',
                 }}
                 onClick={onClose}
             >
