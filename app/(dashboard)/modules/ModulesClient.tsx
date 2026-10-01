@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Module, UserModule, ModuleCategory } from '@/types'
-import { Search, BookOpen, Clock, Zap, CheckCircle, Flame } from 'lucide-react'
+import { Search, BookOpen, Clock, Zap, CheckCircle, Flame, Loader2 } from 'lucide-react'
 import { classHasBonusForCategory } from '@/lib/game/xp'
 
 interface ModulesClientProps {
@@ -44,6 +44,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 export default function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps) {
     const [search, setSearch] = useState('')
     const [activeCategory, setActiveCategory] = useState<ModuleCategory | 'all'>('all')
+    const [navigatingSlug, setNavigatingSlug] = useState<string | null>(null)
 
     const getUserModule = (moduleId: string) => userModules.find(um => um.module_id === moduleId)
 
@@ -55,7 +56,32 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
     })
 
     return (
-        <div className="responsive-page modules-page" style={{ padding: '24px' }}>
+        <div className="responsive-page modules-page" style={{ padding: '24px', position: 'relative' }}>
+            {/* Top Loading Bar when navigating to a module */}
+            {navigatingSlug && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                        zIndex: 9999,
+                        overflow: 'hidden',
+                    }}
+                >
+                    <div
+                        style={{
+                            height: '100%',
+                            backgroundColor: '#F5C542',
+                            boxShadow: '0 0 12px #F5C542',
+                            animation: 'indeterminateProgress 1.2s infinite ease-in-out',
+                            width: '35%',
+                        }}
+                    />
+                </div>
+            )}
             {/* Header with glass effect background */}
             <div style={{ marginBottom: '32px', textAlign: 'left' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
@@ -137,7 +163,12 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                 transition={{ delay: i * 0.04 }}
                                 whileHover={{ y: -6 }}
                             >
-                                <Link href={`/modules/${module.slug}`} className="modules-card-link" style={{ textDecoration: 'none', display: 'block', height: '100%' }}>
+                                <Link
+                                    href={`/modules/${module.slug}`}
+                                    onClick={() => setNavigatingSlug(module.slug)}
+                                    className="modules-card-link"
+                                    style={{ textDecoration: 'none', display: 'block', height: '100%', position: 'relative' }}
+                                >
                                     <div className="card modules-card" style={{
                                         padding: '24px', cursor: 'pointer', height: '100%',
                                         position: 'relative',
@@ -148,6 +179,43 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                         transition: 'all 0.3s ease',
                                         boxShadow: '0 12px 30px rgba(0,0,0,0.5)'
                                     }}>
+                                        {/* Loading Overlay */}
+                                        {navigatingSlug === module.slug && (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    backgroundColor: 'rgba(10, 10, 10, 0.82)',
+                                                    backdropFilter: 'blur(4px)',
+                                                    WebkitBackdropFilter: 'blur(4px)',
+                                                    zIndex: 10,
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    gap: '10px',
+                                                    borderRadius: '17px',
+                                                }}
+                                            >
+                                                <Loader2
+                                                    size={30}
+                                                    className="animate-spin"
+                                                    style={{ color: '#F5C542' }}
+                                                />
+                                                <span
+                                                    style={{
+                                                        fontSize: '13px',
+                                                        fontWeight: 600,
+                                                        color: '#ffffff',
+                                                        fontFamily: 'var(--font-heading)',
+                                                        letterSpacing: '0.02em',
+                                                    }}
+                                                >
+                                                    Membuka Modul...
+                                                </span>
+                                            </div>
+                                        )}
+
                                         {/* Status Icon Background */}
                                         <div style={{
                                             position: 'absolute', top: '-10px', right: '-10px',
