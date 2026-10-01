@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Question, Battle, Profile, AvatarClass } from '@/types'
-import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords } from 'lucide-react'
+import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords, Volume2, VolumeX, Music } from 'lucide-react'
 import { getClassBonusDescription, AVATAR_CLASS_STATS } from '@/lib/game/xp'
 import { calculateCharacterStats } from '@/lib/game/character'
 import CharacterVisual from '@/components/character/CharacterVisual'
@@ -73,6 +73,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [battleLog, setBattleLog] = useState<string>('Pilih jawaban terbaik untuk melancarkan serangan duel!')
     const [opponentAnsweredThisRound, setOpponentAnsweredThisRound] = useState(false)
     const [copiedRoomCode, setCopiedRoomCode] = useState(false)
+    const [audioMuted, setAudioMuted] = useState(() => battleSounds.getIsMuted())
+    const [bgmMuted, setBgmMuted] = useState(() => battleSounds.getIsBgmMuted())
+
+    useEffect(() => {
+        return battleSounds.subscribe(() => {
+            setAudioMuted(battleSounds.getIsMuted())
+            setBgmMuted(battleSounds.getIsBgmMuted())
+        })
+    }, [])
+
     const classBenefitText = getClassBonusDescription(currentUser.avatar_class)
 
     const channelRef = useRef<ReturnType<typeof supabase.channel> | null>(null)
@@ -190,8 +200,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
             setOpponentScore(resolvedOppScore)
             setPhase('finished')
+            battleSounds.stopBattleBGM()
             const outcome = forcedOutcome ?? getBattleOutcome(finalMyScore, resolvedOppScore, isSurrender)
             setFinalOutcome(outcome)
+            if (outcome === 'win') {
+                battleSounds.playVictory()
+            } else if (outcome === 'lose') {
+                battleSounds.playDefeat()
+            }
             const opponentIdFallback = opponent?.id ?? currentUser.id
             const winner =
                 outcome === 'draw'
@@ -300,6 +316,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
                     setCombatText({ target: 'me', text: `⏰ TIMEOUT! -${hpDamage} HP`, type: 'miss' })
                     setMeAnimation('hurt')
+                    battleSounds.playWrongAnswer()
+                    battleSounds.playMiss()
                     setBattleLog('⌛ Waktu habis! Kamu kehilangan giliran dan terkena penalti HP.')
                     setTimeout(() => setMeAnimation('idle'), 600)
                     setTimeout(() => setCombatText(null), 1200)
@@ -323,6 +341,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         }
                     }, 1500)
                     return 0
+                }
+                if (prev <= 4 && prev > 1) {
+                    battleSounds.playTimeWarning()
                 }
                 return prev - 1
             })
@@ -701,14 +722,29 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     useEffect(() => {
         if (countdown !== null && phase === 'lobby') {
             if (countdown > 0) {
+                battleSounds.playCountdownBeep(false)
                 const timer = setTimeout(() => setCountdown(c => (c as number) - 1), 1000)
                 return () => clearTimeout(timer)
             } else {
+                battleSounds.playCountdownBeep(true)
+                battleSounds.playMatchStart()
                 setPhase('playing')
                 setCountdown(null)
             }
         }
     }, [countdown, phase])
+
+    // Manage Battle BGM life cycle
+    useEffect(() => {
+        if (phase === 'playing') {
+            battleSounds.startBattleBGM()
+        } else {
+            battleSounds.stopBattleBGM()
+        }
+        return () => {
+            battleSounds.stopBattleBGM()
+        }
+    }, [phase])
 
     // Helper class info & customization stats
     const myClassKey = (currentUser.avatar_class || 'warrior').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
@@ -751,6 +787,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             const isCrit = rollCrit || nextCombo >= 2
             const isUltimate = myMp >= 100
             const effectiveDamage = isUltimate ? baseHpDamage * 2 : isCrit ? baseHpDamage + 8 : baseHpDamage
+
+            if (isUltimate) {
+                battleSounds.playUltimateSkill()
+            } else if (nextCombo >= 2) {
+                battleSounds.playComboStreak(nextCombo)
+            } else {
+                battleSounds.playCorrectAnswer()
+            }
 
             // Play attack sound and trigger lunge/hand animation
             battleSounds.playAttackSwing()
@@ -826,6 +870,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             }, 600)
             setTimeout(() => setCombatText(null), 1100)
         } else {
+            battleSounds.playWrongAnswer()
             battleSounds.playMiss()
             setComboCount(0)
             const reduction = myStats.battleBuffs.damageReductionPct
@@ -1441,7 +1486,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                         }}
                     >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span
                                 style={{
                                     fontFamily: 'var(--font-inter)',
@@ -1452,6 +1497,52 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             >
                                 Soal {safeQuestionIndex + 1} dari {questions.length}
                             </span>
+
+                            {/* Sound & Music Controls */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => battleSounds.toggleBgm()}
+                                    title={bgmMuted ? 'Nyalakan Musik (BGM)' : 'Matikan Musik (BGM)'}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        padding: '4px 8px',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                        backgroundColor: bgmMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(245, 197, 66, 0.12)',
+                                        color: bgmMuted ? 'var(--color-steel)' : 'var(--color-gold)',
+                                        fontSize: '11px',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <Music size={12} />
+                                    <span>{bgmMuted ? 'BGM Off' : 'BGM'}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => battleSounds.toggleMute()}
+                                    title={audioMuted ? 'Nyalakan Efek Suara (SFX)' : 'Matikan Efek Suara (SFX)'}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        padding: '4px 8px',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                        backgroundColor: audioMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(34, 197, 94, 0.12)',
+                                        color: audioMuted ? 'var(--color-steel)' : 'var(--accent-green)',
+                                        fontSize: '11px',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {audioMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+                                    <span>{audioMuted ? 'SFX Off' : 'SFX'}</span>
+                                </button>
+                            </div>
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>

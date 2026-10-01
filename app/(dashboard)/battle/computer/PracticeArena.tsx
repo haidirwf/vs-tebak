@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sword, CheckCircle, XCircle, Flame, Swords } from 'lucide-react'
+import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music } from 'lucide-react'
 import { Question, Profile, AvatarClass } from '@/types'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
 import { battleSounds } from '@/lib/game/battle-sounds'
@@ -88,6 +88,26 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         type: 'damage' | 'crit' | 'miss'
     } | null>(null)
     const [battleLog, setBattleLog] = useState('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk melancarkan serangan!')
+    const [audioMuted, setAudioMuted] = useState(() => battleSounds.getIsMuted())
+    const [bgmMuted, setBgmMuted] = useState(() => battleSounds.getIsBgmMuted())
+
+    useEffect(() => {
+        return battleSounds.subscribe(() => {
+            setAudioMuted(battleSounds.getIsMuted())
+            setBgmMuted(battleSounds.getIsBgmMuted())
+        })
+    }, [])
+
+    useEffect(() => {
+        if (started && !finished) {
+            battleSounds.startBattleBGM()
+        } else {
+            battleSounds.stopBattleBGM()
+        }
+        return () => {
+            battleSounds.stopBattleBGM()
+        }
+    }, [started, finished])
 
     const availableQuestions = useMemo(() => {
         if (selectedCategory === 'general') return questionPool
@@ -154,14 +174,13 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     function endGame(finalMy: number, finalBot: number, forcedResult?: 'win' | 'lose' | 'draw') {
         resetTimers()
         setFinished(true)
-        if (forcedResult) {
-            setResult(forcedResult)
-        } else if (finalMy > finalBot) {
-            setResult('win')
-        } else if (finalMy < finalBot) {
-            setResult('lose')
-        } else {
-            setResult('draw')
+        battleSounds.stopBattleBGM()
+        const outcome = forcedResult || (finalMy > finalBot ? 'win' : finalMy < finalBot ? 'lose' : 'draw')
+        setResult(outcome)
+        if (outcome === 'win') {
+            battleSounds.playVictory()
+        } else if (outcome === 'lose') {
+            battleSounds.playDefeat()
         }
     }
 
@@ -200,6 +219,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         setCombatText(null)
         setBattleLog('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk menyerang AI Sentinel!')
         setStarted(true)
+        battleSounds.playMatchStart()
+        battleSounds.startBattleBGM()
     }
 
     useEffect(() => {
@@ -213,6 +234,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     clearInterval(timerRef.current!)
                     setShowAnswer(true)
                     setComboCount(0)
+                    battleSounds.playWrongAnswer()
                     battleSounds.playMiss()
                     const newHp = Math.max(0, myHp - 15)
                     setMyHp(newHp)
@@ -233,6 +255,9 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                         goNextQuestion(myScore, botScore)
                     }, 1250)
                     return 0
+                }
+                if (prev <= 4 && prev > 1) {
+                    battleSounds.playTimeWarning()
                 }
                 return prev - 1
             })
@@ -261,6 +286,14 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             const isCrit = nextCombo >= 2
             const isUltimate = myMp >= 100
             const effectiveDamage = isUltimate ? hpDamage * 2 : isCrit ? hpDamage + 8 : hpDamage
+
+            if (isUltimate) {
+                battleSounds.playUltimateSkill()
+            } else if (nextCombo >= 2) {
+                battleSounds.playComboStreak(nextCombo)
+            } else {
+                battleSounds.playCorrectAnswer()
+            }
 
             // Attacker whoosh sound & lunge/hand animation
             battleSounds.playAttackSwing()
@@ -317,6 +350,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             }, 600)
             setTimeout(() => setCombatText(null), 1100)
         } else {
+            battleSounds.playWrongAnswer()
             battleSounds.playMiss()
             setComboCount(0)
             const newMyHp = Math.max(0, myHp - hpDamage)
@@ -588,7 +622,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                         }}
                     >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                             <span
                                 style={{
                                     fontFamily: 'var(--font-inter)',
@@ -599,6 +633,52 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             >
                                 Soal {currentQ + 1} dari {questions.length}
                             </span>
+
+                            {/* Sound & Music Controls */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => battleSounds.toggleBgm()}
+                                    title={bgmMuted ? 'Nyalakan Musik (BGM)' : 'Matikan Musik (BGM)'}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        padding: '4px 8px',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                        backgroundColor: bgmMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(245, 197, 66, 0.12)',
+                                        color: bgmMuted ? 'var(--color-steel)' : 'var(--color-gold)',
+                                        fontSize: '11px',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <Music size={12} />
+                                    <span>{bgmMuted ? 'BGM Off' : 'BGM'}</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => battleSounds.toggleMute()}
+                                    title={audioMuted ? 'Nyalakan Efek Suara (SFX)' : 'Matikan Efek Suara (SFX)'}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        padding: '4px 8px',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                                        backgroundColor: audioMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(34, 197, 94, 0.12)',
+                                        color: audioMuted ? 'var(--color-steel)' : 'var(--accent-green)',
+                                        fontSize: '11px',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    {audioMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
+                                    <span>{audioMuted ? 'SFX Off' : 'SFX'}</span>
+                                </button>
+                            </div>
                         </div>
 
                         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
