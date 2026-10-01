@@ -228,9 +228,6 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                         {/* Stats */}
                                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px' }}>
-                                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '13.5px', color: 'var(--accent-gold)', fontWeight: 700 }}>
-                                                    Lv.{user.level}
-                                                </span>
                                                 <span
                                                     style={{
                                                         display: 'inline-flex',
@@ -248,6 +245,9 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                                 >
                                                     <span>Lihat Profil</span>
                                                     <ChevronRight size={12} />
+                                                </span>
+                                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '13.5px', color: 'var(--accent-gold)', fontWeight: 700 }}>
+                                                    Lv.{user.level}
                                                 </span>
                                             </div>
                                             <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginTop: '2px' }}>
