@@ -87,30 +87,6 @@ export default function Sidebar() {
 
                 {profile && (
                     <div className="dashboard-mobile-actions">
-                        {isStreakActiveToday(profile.last_active, profile.streak_count) && (
-                            <div
-                                className="dashboard-mobile-streak"
-                                title={`Streak ${profile.streak_count} hari`}
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                    borderRadius: '8px',
-                                    padding: '4px 8px',
-                                    border: '1px solid var(--accent-red-border)',
-                                    backgroundColor: 'var(--accent-red-bg)',
-                                    color: 'var(--accent-red)',
-                                    fontFamily: 'var(--font-inter)',
-                                    fontSize: '11px',
-                                    fontWeight: 500,
-                                    whiteSpace: 'nowrap',
-                                }}
-                            >
-                                <Flame size={12} />
-                                {profile.streak_count}
-                            </div>
-                        )}
-
                         <Link
                             href="/profile"
                             className="dashboard-mobile-profile"
@@ -143,10 +119,33 @@ export default function Sidebar() {
                                 <span style={{ fontFamily: 'var(--font-inter)', fontSize: '11px', color: 'var(--color-gold)', fontWeight: 600, lineHeight: 1 }}>
                                     Lv.{profile.level}
                                 </span>
+                                {profile.streak_count > 0 && (
+                                    <span
+                                        title={`Streak ${profile.streak_count} hari`}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '2px',
+                                            borderRadius: '6px',
+                                            padding: '2px 5px',
+                                            border: '1px solid var(--accent-red-border)',
+                                            backgroundColor: 'var(--accent-red-bg)',
+                                            color: 'var(--accent-red)',
+                                            fontFamily: 'var(--font-inter)',
+                                            fontSize: '10.5px',
+                                            fontWeight: 600,
+                                            lineHeight: 1,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        <Flame size={10} />
+                                        {profile.streak_count}
+                                    </span>
+                                )}
                             </span>
                         </Link>
 
-                        {/* XP Badge outside profile box on the right */}
+                        {/* XP Badge outside profile box on the right (hanya angka pada mobile) */}
                         <div
                             style={{
                                 display: 'inline-flex',
@@ -166,7 +165,7 @@ export default function Sidebar() {
                             }}
                         >
                             <Coins size={11} style={{ color: 'var(--color-gold)' }} />
-                            <span>{profile.xp.toLocaleString()} XP</span>
+                            <span>{profile.xp.toLocaleString()}</span>
                         </div>
                     </div>
                 )}
@@ -185,8 +184,33 @@ export default function Sidebar() {
                             {CLASS_EMOJI[profile.avatar_class]}
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                {profile.username}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                    {profile.username}
+                                </div>
+                                {profile.streak_count > 0 && (
+                                    <span
+                                        title={`Streak ${profile.streak_count} hari`}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '2px',
+                                            borderRadius: '6px',
+                                            padding: '1px 5px',
+                                            border: '1px solid var(--accent-red-border)',
+                                            backgroundColor: 'var(--accent-red-bg)',
+                                            color: 'var(--accent-red)',
+                                            fontFamily: 'var(--font-inter)',
+                                            fontSize: '10px',
+                                            fontWeight: 600,
+                                            lineHeight: 1,
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        <Flame size={10} />
+                                        {profile.streak_count}
+                                    </span>
+                                )}
                             </div>
                             <div style={{ fontSize: '11px', color: 'var(--color-gold)' }}>
                                 Level {profile.level} {profile.avatar_class.charAt(0).toUpperCase() + profile.avatar_class.slice(1)}
