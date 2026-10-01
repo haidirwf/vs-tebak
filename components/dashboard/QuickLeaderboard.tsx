@@ -91,7 +91,7 @@ export default function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardPro
                         <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 500, margin: 0, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             Top Hero Pelajar
                         </h3>
-                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>Klik untuk melihat profil</span>
+                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>Peringkat mingguan tertinggi</span>
                     </div>
                 </div>
 
