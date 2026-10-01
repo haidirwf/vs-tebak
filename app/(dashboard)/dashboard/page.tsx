@@ -14,7 +14,7 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function DashboardPage() {
     const router = useRouter()
-    const [mounted, setMounted] = useState(typeof window !== 'undefined')
+    const [mounted, setMounted] = useState(false)
     const { profile } = useUserStore()
     const {
         quests,
