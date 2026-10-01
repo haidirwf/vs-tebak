@@ -80,21 +80,94 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                         <X size={16} />
                     </button>
 
-                    {/* Flame Icon Badge */}
-                    <div
-                        style={{
-                            width: '54px',
-                            height: '54px',
-                            borderRadius: '14px',
-                            backgroundColor: 'rgba(239, 68, 68, 0.12)',
-                            border: '1px solid rgba(239, 68, 68, 0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 16px',
-                        }}
-                    >
-                        <Flame size={24} style={{ color: 'var(--accent-red)' }} />
+                    {/* Flame Icon Badge with dynamic flame pulse and aura */}
+                    <div style={{ position: 'relative', width: '64px', height: '64px', margin: '0 auto 16px' }}>
+                        {/* Outer ambient glow pulse */}
+                        <motion.div
+                            animate={{
+                                scale: [1, 1.25, 1],
+                                opacity: [0.35, 0.7, 0.35],
+                            }}
+                            transition={{
+                                duration: 2,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                            style={{
+                                position: 'absolute',
+                                inset: -4,
+                                borderRadius: '18px',
+                                backgroundColor: 'rgba(239, 68, 68, 0.25)',
+                                filter: 'blur(8px)',
+                            }}
+                        />
+
+                        {/* Floating sparks around badge */}
+                        {[
+                            { top: '-4px', left: '10px', delay: 0 },
+                            { top: '6px', right: '-4px', delay: 0.4 },
+                            { bottom: '2px', left: '-2px', delay: 0.8 },
+                        ].map((spark, idx) => (
+                            <motion.div
+                                key={idx}
+                                animate={{
+                                    y: [-2, -8, -2],
+                                    opacity: [0, 1, 0],
+                                    scale: [0.8, 1.2, 0.8],
+                                }}
+                                transition={{
+                                    duration: 1.6,
+                                    repeat: Infinity,
+                                    delay: spark.delay,
+                                    ease: 'easeInOut',
+                                }}
+                                style={{
+                                    position: 'absolute',
+                                    ...spark,
+                                    color: 'var(--accent-red)',
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <Sparkles size={11} />
+                            </motion.div>
+                        ))}
+
+                        <motion.div
+                            animate={{
+                                scale: [1, 1.06, 1],
+                            }}
+                            transition={{
+                                duration: 1.8,
+                                repeat: Infinity,
+                                ease: 'easeInOut',
+                            }}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                borderRadius: '16px',
+                                backgroundColor: 'rgba(239, 68, 68, 0.14)',
+                                border: '1px solid rgba(239, 68, 68, 0.45)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                                zIndex: 1,
+                            }}
+                        >
+                            <motion.div
+                                animate={{
+                                    scale: [1, 1.15, 1],
+                                    rotate: [0, -5, 5, 0],
+                                }}
+                                transition={{
+                                    duration: 1.4,
+                                    repeat: Infinity,
+                                    ease: 'easeInOut',
+                                }}
+                            >
+                                <Flame size={28} style={{ color: 'var(--accent-red)' }} />
+                            </motion.div>
+                        </motion.div>
                     </div>
 
                     {/* Subtitle / Header */}
@@ -109,54 +182,69 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                             letterSpacing: '0.04em',
                             color: 'var(--accent-red)',
                             textTransform: 'uppercase',
-                            marginBottom: '10px',
+                            marginBottom: '12px',
                         }}
                     >
                         <Sparkles size={12} />
                         Streak Harian Naik
                     </div>
 
-                    {/* Streak Transition Indicator */}
+                    {/* Streak Transition Indicator with animated arrival */}
                     <div
                         style={{
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '12px',
-                            marginBottom: '14px',
+                            marginBottom: '16px',
                         }}
                     >
                         <div
                             style={{
                                 fontFamily: 'var(--font-mono)',
-                                fontSize: '28px',
+                                fontSize: '26px',
                                 fontWeight: 700,
                                 color: 'var(--color-silver)',
                                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
                                 borderRadius: '10px',
-                                padding: '6px 16px',
-                                minWidth: '60px',
+                                padding: '6px 14px',
+                                minWidth: '55px',
                             }}
                         >
                             {oldStreak}
                         </div>
-                        <span style={{ color: 'var(--accent-red)', fontSize: '20px', fontWeight: 600 }}>→</span>
-                        <div
+                        <motion.span
+                            animate={{ x: [0, 3, 0] }}
+                            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+                            style={{ color: 'var(--accent-red)', fontSize: '20px', fontWeight: 600 }}
+                        >
+                            →
+                        </motion.span>
+                        <motion.div
+                            initial={{ scale: 0.6, opacity: 0 }}
+                            animate={{ scale: [0.6, 1.15, 1], opacity: 1 }}
+                            transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
                             style={{
                                 fontFamily: 'var(--font-mono)',
                                 fontSize: '32px',
                                 fontWeight: 700,
                                 color: '#ffffff',
-                                backgroundColor: 'rgba(239, 68, 68, 0.14)',
-                                border: '1px solid rgba(239, 68, 68, 0.45)',
+                                backgroundColor: 'rgba(239, 68, 68, 0.16)',
+                                border: '1px solid rgba(239, 68, 68, 0.5)',
                                 borderRadius: '10px',
                                 padding: '6px 18px',
                                 minWidth: '65px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '6px',
+                                boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)',
                             }}
                         >
+                            <Flame size={18} style={{ color: 'var(--accent-red)' }} />
                             {newStreak}
-                        </div>
+                        </motion.div>
                     </div>
 
                     <h3
