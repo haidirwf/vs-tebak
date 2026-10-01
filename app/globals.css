@@ -805,14 +805,16 @@ input::placeholder, textarea::placeholder {
 
 .character-main-grid {
   display: grid !important;
-  grid-template-columns: 1fr !important;
+  grid-template-columns: minmax(0, 1fr) !important;
   gap: 18px !important;
   align-items: start;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 @media (min-width: 900px) {
   .character-main-grid {
-    grid-template-columns: minmax(300px, 380px) 1fr !important;
+    grid-template-columns: minmax(300px, 380px) minmax(0, 1fr) !important;
     gap: 24px !important;
   }
 }
@@ -839,37 +841,82 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.character-right-column {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 640px) {
+  .character-right-column {
+    padding: 14px 12px !important;
+  }
+}
+
 .character-nav-tabs {
   display: flex !important;
   align-items: center;
   gap: 8px;
+  width: 100% !important;
+  max-width: 100% !important;
   overflow-x: auto !important;
+  overflow-y: hidden !important;
   white-space: nowrap !important;
   flex-wrap: nowrap !important;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
   padding-bottom: 8px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.character-nav-tabs::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .character-nav-tabs > button {
+  flex: 0 0 auto !important;
   flex-shrink: 0 !important;
   white-space: nowrap !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .character-filter-tabs {
   display: flex !important;
   align-items: center;
   gap: 6px;
+  width: 100% !important;
+  max-width: 100% !important;
   overflow-x: auto !important;
+  overflow-y: hidden !important;
   white-space: nowrap !important;
   flex-wrap: nowrap !important;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none;
+  touch-action: pan-x;
+  overscroll-behavior-x: contain;
   padding-bottom: 4px;
 }
 
+.character-filter-tabs::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
 .character-filter-tabs > button {
+  flex: 0 0 auto !important;
   flex-shrink: 0 !important;
   white-space: nowrap !important;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .character-items-grid {

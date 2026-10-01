@@ -94,6 +94,66 @@ export default function CharacterPage() {
     const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
     const [mounted, setMounted] = useState(false)
 
+    const navTabsRef = useRef<HTMLDivElement>(null)
+    const filterTabsRef = useRef<HTMLDivElement>(null)
+
+    // Smooth drag-scroll support for touch & mouse
+    useEffect(() => {
+        const attachDragScroll = (el: HTMLDivElement | null) => {
+            if (!el) return () => {}
+            let isDown = false
+            let startX = 0
+            let scrollLeft = 0
+            let hasMoved = false
+
+            const onMouseDown = (e: MouseEvent) => {
+                isDown = true
+                hasMoved = false
+                startX = e.pageX - el.offsetLeft
+                scrollLeft = el.scrollLeft
+            }
+            const onMouseLeave = () => { isDown = false }
+            const onMouseUp = () => { isDown = false }
+            const onMouseMove = (e: MouseEvent) => {
+                if (!isDown) return
+                const x = e.pageX - el.offsetLeft
+                const walk = (x - startX) * 1.4
+                if (Math.abs(walk) > 4) {
+                    hasMoved = true
+                    el.scrollLeft = scrollLeft - walk
+                }
+            }
+            const onClickCapture = (e: MouseEvent) => {
+                if (hasMoved) {
+                    e.stopPropagation()
+                    hasMoved = false
+                }
+            }
+
+            el.addEventListener('mousedown', onMouseDown)
+            el.addEventListener('mouseleave', onMouseLeave)
+            el.addEventListener('mouseup', onMouseUp)
+            el.addEventListener('mousemove', onMouseMove)
+            el.addEventListener('click', onClickCapture, true)
+
+            return () => {
+                el.removeEventListener('mousedown', onMouseDown)
+                el.removeEventListener('mouseleave', onMouseLeave)
+                el.removeEventListener('mouseup', onMouseUp)
+                el.removeEventListener('mousemove', onMouseMove)
+                el.removeEventListener('click', onClickCapture, true)
+            }
+        }
+
+        const cleanupNav = attachDragScroll(navTabsRef.current)
+        const cleanupFilter = attachDragScroll(filterTabsRef.current)
+
+        return () => {
+            cleanupNav()
+            cleanupFilter()
+        }
+    }, [activeTab])
+
     useEffect(() => {
         setMounted(true)
     }, [])
@@ -805,7 +865,7 @@ export default function CharacterPage() {
 
                 {/* RIGHT COLUMN: Unified Inventory & Shop Box */}
                 <div
-                    className="card"
+                    className="card character-right-column"
                     style={{
                         padding: '20px',
                         backgroundColor: '#141414',
@@ -815,10 +875,13 @@ export default function CharacterPage() {
                         flexDirection: 'column',
                         gap: '16px',
                         minWidth: 0,
+                        maxWidth: '100%',
+                        overflow: 'hidden',
+                        boxSizing: 'border-box',
                     }}
                 >
                     {/* Navigation Tabs */}
-                    <div className="character-nav-tabs">
+                    <div ref={navTabsRef} className="character-nav-tabs">
                         <button
                             type="button"
                             onClick={() => setActiveTab('inventory')}
@@ -888,7 +951,7 @@ export default function CharacterPage() {
 
                     {/* Slot Filter Buttons (For Inventory & Shop) */}
                     {activeTab !== 'perks' && (
-                        <div className="character-filter-tabs">
+                        <div ref={filterTabsRef} className="character-filter-tabs">
                             {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map(flt => (
                                 <button
                                     key={flt}
