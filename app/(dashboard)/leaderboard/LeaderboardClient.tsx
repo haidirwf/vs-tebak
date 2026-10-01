@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Link from 'next/link'
 import { motion } from 'framer-motion'
 
 const CLASS_EMOJIS: Record<string, string> = { warrior: '⚔️', mage: '🔮', archer: '🏹', healer: '✨' }
@@ -85,20 +86,26 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 const u2 = list[1]
                                 if (!u2) return null
                                 return (
-                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
-                                        style={{ flex: 1, minWidth: 0, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥈</div>
-                                        <div style={{
-                                            width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
-                                            border: '2px solid #C0C0C0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
-                                            boxShadow: '0 0 16px rgba(192,192,192,0.3)', marginBottom: '8px',
-                                        }}>
-                                            {CLASS_EMOJIS[u2.avatar_class] || '🎮'}
-                                        </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u2.username}</div>
-                                        <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(192,192,192,0.08)', border: '1px solid rgba(192,192,192,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#C0C0C0' }}>2</div>
-                                    </motion.div>
+                                    <Link
+                                        href={`/profile/${u2.id}`}
+                                        style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, maxWidth: '160px' }}
+                                    >
+                                        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }}
+                                            whileHover={{ y: -4 }}
+                                            style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}>
+                                            <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥈</div>
+                                            <div style={{
+                                                width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
+                                                border: '2px solid #C0C0C0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
+                                                boxShadow: '0 0 16px rgba(192,192,192,0.3)', marginBottom: '8px',
+                                            }}>
+                                                {CLASS_EMOJIS[u2.avatar_class] || '🎮'}
+                                            </div>
+                                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: '#ffffff' }}>{u2.username}</div>
+                                            <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
+                                            <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(192,192,192,0.08)', border: '1px solid rgba(192,192,192,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#C0C0C0' }}>2</div>
+                                        </motion.div>
+                                    </Link>
                                 )
                             })()}
 
@@ -108,20 +115,26 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 const u1 = list[0]
                                 if (!u1) return null
                                 return (
-                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
-                                        style={{ flex: 1, minWidth: 0, maxWidth: '180px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ fontSize: '32px', marginBottom: '4px' }}>👑 🥇</div>
-                                        <div style={{
-                                            width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#141414',
-                                            border: '3px solid #F5C542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px',
-                                            boxShadow: '0 0 24px rgba(245, 197, 66, 0.45)', marginBottom: '8px',
-                                        }}>
-                                            {CLASS_EMOJIS[u1.avatar_class] || '🎮'}
-                                        </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, color: '#F5C542', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
-                                        <div style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '95px', width: '100%', backgroundColor: 'rgba(245, 197, 66, 0.12)', border: '1px solid rgba(245, 197, 66, 0.35)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 400, color: '#F5C542', boxShadow: '0 -4px 16px rgba(245, 197, 66, 0.2)' }}>1</div>
-                                    </motion.div>
+                                    <Link
+                                        href={`/profile/${u1.id}`}
+                                        style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, maxWidth: '180px' }}
+                                    >
+                                        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }}
+                                            whileHover={{ y: -4 }}
+                                            style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}>
+                                            <div style={{ fontSize: '32px', marginBottom: '4px' }}>👑 🥇</div>
+                                            <div style={{
+                                                width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#141414',
+                                                border: '3px solid #F5C542', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '30px',
+                                                boxShadow: '0 0 24px rgba(245, 197, 66, 0.45)', marginBottom: '8px',
+                                            }}>
+                                                {CLASS_EMOJIS[u1.avatar_class] || '🎮'}
+                                            </div>
+                                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, color: '#F5C542', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
+                                            <div style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
+                                            <div style={{ height: '95px', width: '100%', backgroundColor: 'rgba(245, 197, 66, 0.12)', border: '1px solid rgba(245, 197, 66, 0.35)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 400, color: '#F5C542', boxShadow: '0 -4px 16px rgba(245, 197, 66, 0.2)' }}>1</div>
+                                        </motion.div>
+                                    </Link>
                                 )
                             })()}
 
@@ -131,20 +144,26 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                 const u3 = list[2]
                                 if (!u3) return null
                                 return (
-                                    <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
-                                        style={{ flex: 1, minWidth: 0, maxWidth: '160px', textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                                        <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥉</div>
-                                        <div style={{
-                                            width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
-                                            border: '2px solid #CD7F32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
-                                            boxShadow: '0 0 16px rgba(205,127,50,0.3)', marginBottom: '8px',
-                                        }}>
-                                            {CLASS_EMOJIS[u3.avatar_class] || '🎮'}
-                                        </div>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u3.username}</div>
-                                        <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
-                                        <div style={{ height: '55px', width: '100%', backgroundColor: 'rgba(205,127,50,0.08)', border: '1px solid rgba(205,127,50,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#CD7F32' }}>3</div>
-                                    </motion.div>
+                                    <Link
+                                        href={`/profile/${u3.id}`}
+                                        style={{ textDecoration: 'none', color: 'inherit', flex: 1, minWidth: 0, maxWidth: '160px' }}
+                                    >
+                                        <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }}
+                                            whileHover={{ y: -4 }}
+                                            style={{ textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}>
+                                            <div style={{ fontSize: '24px', marginBottom: '4px' }}>🥉</div>
+                                            <div style={{
+                                                width: '52px', height: '52px', borderRadius: '50%', backgroundColor: '#141414',
+                                                border: '2px solid #CD7F32', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px',
+                                                boxShadow: '0 0 16px rgba(205,127,50,0.3)', marginBottom: '8px',
+                                            }}>
+                                                {CLASS_EMOJIS[u3.avatar_class] || '🎮'}
+                                            </div>
+                                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: '#ffffff' }}>{u3.username}</div>
+                                            <div style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
+                                            <div style={{ height: '55px', width: '100%', backgroundColor: 'rgba(205,127,50,0.08)', border: '1px solid rgba(205,127,50,0.25)', borderTopLeftRadius: '17.1429px', borderTopRightRadius: '17.1429px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 400, color: '#CD7F32' }}>3</div>
+                                        </motion.div>
+                                    </Link>
                                 )
                             })()}
                         </div>
@@ -154,59 +173,68 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                         {(tab === 'all' ? allTime : weekly).map((user, i) => {
                             const isMe = user.id === currentUserId
                             return (
-                                <motion.div key={user.id} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
-                                    style={{
-                                        display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px',
-                                        borderBottom: i < (tab === 'all' ? allTime : weekly).length - 1 ? '1px solid var(--border)' : 'none',
-                                        backgroundColor: isMe ? 'rgba(245,197,66,0.05)' : 'transparent',
-                                    }}>
-                                    {/* Rank */}
-                                    <div style={{ width: '32px', textAlign: 'center', flexShrink: 0 }}>
-                                        {MEDAL[i] ? (
-                                            <span style={{ fontSize: '18px' }}>{MEDAL[i]}</span>
-                                        ) : (
-                                            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, color: 'var(--text-muted)' }}>
-                                                {i + 1}
-                                            </span>
-                                        )}
-                                    </div>
+                                <Link
+                                    key={user.id}
+                                    href={`/profile/${user.id}`}
+                                    style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
+                                >
+                                    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
+                                        whileHover={{ backgroundColor: isMe ? 'rgba(245,197,66,0.1)' : 'rgba(255,255,255,0.03)' }}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px',
+                                            borderBottom: i < (tab === 'all' ? allTime : weekly).length - 1 ? '1px solid var(--border)' : 'none',
+                                            backgroundColor: isMe ? 'rgba(245,197,66,0.05)' : 'transparent',
+                                            cursor: 'pointer',
+                                            transition: 'background-color 0.15s ease',
+                                        }}>
+                                        {/* Rank */}
+                                        <div style={{ width: '32px', textAlign: 'center', flexShrink: 0 }}>
+                                            {MEDAL[i] ? (
+                                                <span style={{ fontSize: '18px' }}>{MEDAL[i]}</span>
+                                            ) : (
+                                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, color: 'var(--text-muted)' }}>
+                                                    {i + 1}
+                                                </span>
+                                            )}
+                                        </div>
 
-                                    {/* Avatar */}
-                                    <div style={{
-                                        width: '36px', height: '36px', borderRadius: '4px', flexShrink: 0,
-                                        backgroundColor: 'var(--bg-tertiary)',
-                                        border: `1px solid ${CLASS_COLORS[user.avatar_class] || 'var(--border)'}`,
-                                        display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
-                                    }}>
-                                        {CLASS_EMOJIS[user.avatar_class] || '🎮'}
-                                    </div>
+                                        {/* Avatar */}
+                                        <div style={{
+                                            width: '36px', height: '36px', borderRadius: '4px', flexShrink: 0,
+                                            backgroundColor: 'var(--bg-tertiary)',
+                                            border: `1px solid ${CLASS_COLORS[user.avatar_class] || 'var(--border)'}`,
+                                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px',
+                                        }}>
+                                            {CLASS_EMOJIS[user.avatar_class] || '🎮'}
+                                        </div>
 
-                                    {/* Info */}
-                                    <div style={{ flex: 1, minWidth: 0 }}>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                            <span style={{
-                                                fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
-                                                color: isMe ? 'var(--accent-gold)' : 'var(--text-primary)',
-                                            }}>
-                                                {user.username}
-                                            </span>
-                                            {isMe && <span style={{ fontSize: '10px', color: 'var(--accent-gold)', fontWeight: 600 }}>YOU</span>}
+                                        {/* Info */}
+                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <span style={{
+                                                    fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700,
+                                                    color: isMe ? 'var(--accent-gold)' : 'var(--text-primary)',
+                                                }}>
+                                                    {user.username}
+                                                </span>
+                                                {isMe && <span style={{ fontSize: '10px', color: 'var(--accent-gold)', fontWeight: 600 }}>YOU</span>}
+                                            </div>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                                {user.school_name || 'Sekolah tidak diisi'}{user.city ? `, ${user.city}` : ''}
+                                            </div>
                                         </div>
-                                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                                            {user.school_name || 'Sekolah tidak diisi'}{user.city ? `, ${user.city}` : ''}
-                                        </div>
-                                    </div>
 
-                                    {/* Stats */}
-                                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', color: 'var(--accent-gold)', fontWeight: 700 }}>
-                                            Lv.{user.level}
+                                        {/* Stats */}
+                                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', color: 'var(--accent-gold)', fontWeight: 700 }}>
+                                                Lv.{user.level}
+                                            </div>
+                                            <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                                {tab === 'all' ? `${user.xp.toLocaleString()} XP` : `${user.streak_count} hari 🔥`}
+                                            </div>
                                         </div>
-                                        <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                                            {tab === 'all' ? `${user.xp.toLocaleString()} XP` : `${user.streak_count} hari 🔥`}
-                                        </div>
-                                    </div>
-                                </motion.div>
+                                    </motion.div>
+                                </Link>
                             )
                         })}
                         {(tab === 'all' ? allTime : weekly).length === 0 && (

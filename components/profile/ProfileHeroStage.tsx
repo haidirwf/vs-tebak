@@ -40,6 +40,7 @@ interface ProfileHeroStageProps {
     completedModulesCount: number
     battlesTotal: number
     battlesWon: number
+    isOwnProfile?: boolean
 }
 
 const SLOT_META: Record<ItemSlot, { name: string; emoji: string }> = {
@@ -54,19 +55,20 @@ export default function ProfileHeroStage({
     completedModulesCount,
     battlesTotal,
     battlesWon,
+    isOwnProfile = true,
 }: ProfileHeroStageProps) {
     const { characterEquipped } = useContentStore()
 
     const avatarClass = (profile.avatar_class || 'warrior') as AvatarClass
     const roleInfo = CHARACTER_ROLES[avatarClass] || CHARACTER_ROLES.warrior
 
-    // Resolve equipped items from store cache or profile
+    // Resolve equipped items from store cache (if own profile) or profile record
     const equipped = useMemo(() => {
-        if (characterEquipped && Object.keys(characterEquipped).length > 0) {
+        if (isOwnProfile && characterEquipped && Object.keys(characterEquipped).length > 0) {
             return characterEquipped
         }
         return resolveEquippedMap(avatarClass, profile.equipped_items, profile.character_created ?? true)
-    }, [characterEquipped, avatarClass, profile.equipped_items, profile.character_created])
+    }, [isOwnProfile, characterEquipped, avatarClass, profile.equipped_items, profile.character_created])
 
     // Calculate total character combat stats
     const stats = useMemo(() => {
@@ -184,21 +186,23 @@ export default function ProfileHeroStage({
                         <span style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
                             Perlengkapan Terpasang
                         </span>
-                        <Link
-                            href="/character"
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                gap: '4px',
-                                fontSize: '11px',
-                                color: roleInfo.themeColor,
-                                textDecoration: 'none',
-                                fontWeight: 600,
-                            }}
-                        >
-                            <span>Atur Gear</span>
-                            <ArrowRight size={11} />
-                        </Link>
+                        {isOwnProfile && (
+                            <Link
+                                href="/character"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    fontSize: '11px',
+                                    color: roleInfo.themeColor,
+                                    textDecoration: 'none',
+                                    fontWeight: 600,
+                                }}
+                            >
+                                <span>Atur Gear</span>
+                                <ArrowRight size={11} />
+                            </Link>
+                        )}
                     </div>
 
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
