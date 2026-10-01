@@ -17,17 +17,12 @@ const loginSchema = z.object({
 
 type LoginForm = z.infer<typeof loginSchema>
 
-const DEFAULT_DEMO_EMAIL = 'akundemo@skillungo.com'
-const DEFAULT_DEMO_PASSWORD = 'siswa123'
-
 export default function LoginPage() {
     const router = useRouter()
     const [error, setError] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(false)
-    const demoEmail = process.env.NEXT_PUBLIC_DEMO_EMAIL || DEFAULT_DEMO_EMAIL
-    const demoPassword = process.env.NEXT_PUBLIC_DEMO_PASSWORD || DEFAULT_DEMO_PASSWORD
 
-    const { register, handleSubmit, setValue, formState: { errors } } = useForm<LoginForm>({
+    const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
         resolver: zodResolver(loginSchema),
     })
 
@@ -50,16 +45,6 @@ export default function LoginPage() {
         }
 
         window.location.href = '/dashboard'
-    }
-
-    const fillDemoCredentials = () => {
-        setError(null)
-        setValue('email', demoEmail, { shouldValidate: true, shouldDirty: true })
-        setValue('password', demoPassword, { shouldValidate: true, shouldDirty: true })
-    }
-
-    const handleDemoLogin = async () => {
-        await onSubmit({ email: demoEmail, password: demoPassword })
     }
 
     return (
@@ -229,45 +214,6 @@ export default function LoginPage() {
                             Daftar sekarang
                         </Link>
                     </p>
-
-                    <div style={{ marginTop: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                        <button
-                            type="button"
-                            onClick={fillDemoCredentials}
-                            style={{
-                                padding: '10px 12px',
-                                borderRadius: '8px',
-                                border: '1px solid var(--surface-border)',
-                                backgroundColor: 'var(--surface-elevated)',
-                                color: 'var(--text-secondary)',
-                                cursor: 'pointer',
-                                fontSize: '12px',
-                                fontWeight: 500,
-                                transition: 'all 0.2s',
-                            }}
-                        >
-                            Isi Akun Demo
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleDemoLogin}
-                            disabled={isLoading}
-                            style={{
-                                padding: '10px 12px',
-                                borderRadius: '8px',
-                                border: '1px solid rgba(8, 195, 128, 0.3)',
-                                backgroundColor: 'rgba(8, 195, 128, 0.1)',
-                                color: '#08c380',
-                                cursor: isLoading ? 'not-allowed' : 'pointer',
-                                opacity: isLoading ? 0.7 : 1,
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                transition: 'all 0.2s',
-                            }}
-                        >
-                            Masuk Akun Demo (juri)
-                        </button>
-                    </div>
                 </div>
             </motion.div>
         </div>
