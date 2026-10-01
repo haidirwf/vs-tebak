@@ -50,31 +50,34 @@ export default function LoginPage() {
     return (
         <div
             style={{
-                minHeight: '100vh',
+                minHeight: '100dvh',
+                height: '100dvh',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'var(--surface-canvas)',
                 backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(245, 197, 66, 0.08), transparent 60%)',
-                padding: '20px 16px',
+                padding: 'clamp(14px, 3vh, 24px) 16px',
                 boxSizing: 'border-box',
                 overflowX: 'hidden',
+                overflowY: 'auto',
                 width: '100%',
             }}
         >
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4 }}
-                style={{ width: '100%', maxWidth: '420px' }}
+                transition={{ duration: 0.35 }}
+                style={{ width: '100%', maxWidth: '400px', margin: 'auto 0' }}
             >
                 {/* Logo */}
-                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '8px', textDecoration: 'none' }}>
+                <div style={{ textAlign: 'center', marginBottom: 'clamp(14px, 2.5vh, 24px)' }}>
+                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '6px', textDecoration: 'none' }}>
                         <div
                             style={{
-                                width: '38px',
-                                height: '38px',
+                                width: '34px',
+                                height: '34px',
                                 borderRadius: '10px',
                                 backgroundColor: 'rgba(245, 197, 66, 0.15)',
                                 border: '1px solid rgba(245, 197, 66, 0.4)',
@@ -84,32 +87,32 @@ export default function LoginPage() {
                                 boxShadow: '0 0 16px rgba(245, 197, 66, 0.25)',
                             }}
                         >
-                            <Swords size={20} style={{ color: 'var(--color-gold)' }} />
+                            <Swords size={18} style={{ color: 'var(--color-gold)' }} />
                         </div>
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 500, letterSpacing: '-0.02em', color: '#ffffff' }}>
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 500, letterSpacing: '-0.02em', color: '#ffffff' }}>
                             Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
                         </span>
                     </Link>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>Masuk ke studio petualangan belajarmu</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '12.5px', margin: 0 }}>Masuk ke studio petualangan belajarmu</p>
                 </div>
 
                 {/* Form Card */}
                 <div
                     className="card auth-card"
                     style={{
-                        padding: '36px',
-                        borderRadius: '17.1429px',
+                        padding: 'clamp(20px, 4vw, 32px)',
+                        borderRadius: '16px',
                         backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
-                        boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
                     }}
                 >
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '24px', color: '#ffffff' }}>
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '18px', color: '#ffffff' }}>
                         Login
                     </h1>
 
                     {error && (
-                        <div style={{ backgroundColor: 'rgba(255, 51, 85, 0.08)', border: '1px solid rgba(255, 51, 85, 0.3)', borderRadius: '12px', padding: '12px 14px', marginBottom: '20px', fontSize: '13px', color: '#ff3355' }}>
+                        <div style={{ backgroundColor: 'rgba(255, 51, 85, 0.08)', border: '1px solid rgba(255, 51, 85, 0.3)', borderRadius: '10px', padding: '10px 12px', marginBottom: '16px', fontSize: '12.5px', color: '#ff3355' }}>
                             {error}
                         </div>
                     )}

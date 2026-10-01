@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
     maxInactiveAge: 300 * 1000,
     pagesBufferLength: 10,
   },
+  async rewrites() {
+    return [
+      { source: '/signup', destination: '/register' },
+    ];
+  },
 };
 
 export default nextConfig;

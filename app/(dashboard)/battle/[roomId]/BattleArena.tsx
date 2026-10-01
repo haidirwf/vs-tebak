@@ -173,6 +173,30 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         router.push('/battle')
     }
 
+    // Automatically clean up waiting battle room when host leaves or unmounts
+    useEffect(() => {
+        if (!isPlayer1 || phase !== 'waiting') return
+
+        const handleBeforeUnload = () => {
+            const endpoint = `/api/battle/${battle.id}`
+            if (navigator.sendBeacon) {
+                const payload = new Blob([JSON.stringify({ reason: 'host_leave' })], { type: 'application/json' })
+                navigator.sendBeacon(endpoint, payload)
+            } else {
+                fetch(endpoint, { method: 'DELETE', keepalive: true }).catch(() => {})
+            }
+        }
+
+        window.addEventListener('beforeunload', handleBeforeUnload)
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload)
+            if (phase === 'waiting' && !finalizedRef.current) {
+                fetch(`/api/battle/${battle.id}`, { method: 'DELETE', keepalive: true }).catch(() => {})
+            }
+        }
+    }, [isPlayer1, phase, battle.id])
+
     const endBattle = useCallback(async (
         finalMyScore: number,
         finalOppScore: number,

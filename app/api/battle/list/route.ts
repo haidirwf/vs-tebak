@@ -19,8 +19,16 @@ export async function GET(request: NextRequest) {
         }, { status: 429 })
     }
 
-    // Ambil semua battle yang statusnya 'waiting', belum ada player2,
-    // dan BUKAN milik user yang sedang request (biar ga main sama diri sendiri)
+    // 1. Bersihkan ghost rooms: room berstatus 'waiting' yang sudah lebih dari 3 menit ditinggalkan host
+    const staleThreshold = new Date(Date.now() - 3 * 60 * 1000).toISOString()
+    await supabase
+        .from('battles')
+        .delete()
+        .eq('status', 'waiting')
+        .lt('created_at', staleThreshold)
+
+    // 2. Ambil hanya battle berstatus 'waiting' aktif (dibuat dalam 3 menit terakhir),
+    // belum ada player2, dan BUKAN milik user yang sedang request
     const { data: openRooms, error } = await supabase
         .from('battles')
         .select(`
@@ -36,6 +44,7 @@ export async function GET(request: NextRequest) {
         .eq('status', 'waiting')
         .is('player2_id', null)
         .neq('player1_id', user.id)
+        .gte('created_at', staleThreshold)
         .order('created_at', { ascending: false })
         .limit(10)
 

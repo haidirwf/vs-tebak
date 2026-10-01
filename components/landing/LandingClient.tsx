@@ -205,14 +205,14 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 32px',
+          padding: '0 clamp(12px, 3vw, 32px)',
           backgroundColor: 'rgba(10, 10, 10, 0.85)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderBottom: '1px solid var(--surface-border)',
         }}
       >
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '10px', textDecoration: 'none' }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
           <div
             style={{
               width: '32px',
@@ -223,6 +223,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              flexShrink: 0,
             }}
           >
             <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
@@ -231,7 +232,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             <span
               style={{
                 fontFamily: 'var(--font-heading)',
-                fontSize: '18px',
+                fontSize: '17px',
                 fontWeight: 500,
                 color: '#ffffff',
                 letterSpacing: '-0.02em',
@@ -286,16 +287,17 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           </a>
         </nav>
 
-        {/* Action Buttons (Pill conversion control per Linearity spec) */}
-        <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+        {/* Action Buttons */}
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
           {isLoggedIn ? (
             <Link
               href="/dashboard"
               className="btn-signal-orange"
               style={{
-                padding: '8px 18px',
+                padding: '7px 14px',
                 fontSize: '12px',
                 textDecoration: 'none',
+                whiteSpace: 'nowrap',
               }}
             >
               <LayoutDashboard size={14} /> Dashboard <ChevronRight size={13} />
@@ -306,9 +308,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 href="/login"
                 className="btn-dark-outline"
                 style={{
-                  padding: '7px 16px',
+                  padding: '6px 12px',
                   fontSize: '12px',
                   textDecoration: 'none',
+                  whiteSpace: 'nowrap',
                 }}
               >
                 Masuk
@@ -317,12 +320,17 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 href="/register"
                 className="btn-signal-orange"
                 style={{
-                  padding: '8px 18px',
+                  padding: '7px 13px',
                   fontSize: '12px',
                   textDecoration: 'none',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                Mulai Gratis <ChevronRight size={13} />
+                <span>Daftar</span>
+                <span className="desktop-only">
+                  &nbsp;Gratis
+                </span>
+                <ChevronRight size={13} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '2px' }} />
               </Link>
             </>
           )}
@@ -339,6 +347,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               color: '#ffffff',
               cursor: 'pointer',
               display: 'none',
+              flexShrink: 0,
             }}
           >
             {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}

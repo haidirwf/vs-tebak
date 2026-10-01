@@ -31,6 +31,14 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
     const [isLoading, setIsLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
 
+    const handleBack = () => {
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+            router.back()
+        } else {
+            router.push('/dashboard')
+        }
+    }
+
     useEffect(() => {
         const supabase = createClient()
 
@@ -121,24 +129,28 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                 <p style={{ color: 'var(--color-steel)', fontSize: '13px', lineHeight: 1.5, marginBottom: '24px' }}>
                     Profil pelajar atau pahlawan yang kamu cari tidak tersedia atau belum terdaftar di Skillungo.
                 </p>
-                <Link
-                    href="/leaderboard"
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        gap: '6px',
-                        padding: '10px 18px',
-                        borderRadius: '8px',
-                        backgroundColor: '#F5C542',
-                        color: '#0a0a0a',
-                        fontWeight: 600,
-                        fontSize: '13px',
-                        textDecoration: 'none',
-                    }}
-                >
-                    <ArrowLeft size={14} />
-                    <span>Kembali ke Leaderboard</span>
-                </Link>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button
+                        type="button"
+                        onClick={handleBack}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '10px 20px',
+                            borderRadius: '8px',
+                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                            color: '#ffffff',
+                            fontWeight: 600,
+                            fontSize: '13px',
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <ArrowLeft size={14} />
+                        <span>Kembali</span>
+                    </button>
+                </div>
             </div>
         )
     }
@@ -147,26 +159,35 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
             {/* Navigation Back */}
             <div style={{ marginBottom: '20px' }}>
-                <Link
-                    href="/leaderboard"
+                <button
+                    type="button"
+                    onClick={handleBack}
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
                         gap: '6px',
                         color: 'var(--text-secondary)',
-                        textDecoration: 'none',
                         fontSize: '12.5px',
                         fontWeight: 500,
-                        padding: '6px 10px',
+                        padding: '6px 14px',
                         borderRadius: '8px',
                         backgroundColor: 'rgba(255, 255, 255, 0.03)',
                         border: '1px solid rgba(255, 255, 255, 0.08)',
-                        transition: 'color 0.15s ease',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s ease, color 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#ffffff'
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.color = 'var(--text-secondary)'
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'
                     }}
                 >
                     <ArrowLeft size={14} />
-                    <span>Leaderboard</span>
-                </Link>
+                    <span>Kembali</span>
+                </button>
             </div>
 
             {/* Header Title */}

@@ -60,6 +60,7 @@ export default function BattlePage() {
         try {
             // Direct query to Supabase PostgREST (0 load to Vercel Serverless Functions)
             const { data: { user } } = await supabase.auth.getUser()
+            const staleThreshold = new Date(Date.now() - 3 * 60 * 1000).toISOString()
 
             let query = supabase
                 .from('battles')
@@ -75,6 +76,7 @@ export default function BattlePage() {
                 `)
                 .eq('status', 'waiting')
                 .is('player2_id', null)
+                .gte('created_at', staleThreshold)
                 .order('created_at', { ascending: false })
                 .limit(10)
 
@@ -105,6 +107,7 @@ export default function BattlePage() {
                 .select('id, room_code, category, created_at, player1_id')
                 .eq('status', 'waiting')
                 .is('player2_id', null)
+                .gte('created_at', staleThreshold)
                 .order('created_at', { ascending: false })
                 .limit(10)
 
@@ -350,10 +353,21 @@ export default function BattlePage() {
         if (!codeToJoin.trim()) { setError('Masukkan kode room'); return }
         setLoading(true)
         setError(null)
-        const res = await fetch(`/api/battle?code=${codeToJoin.toUpperCase().trim()}`)
-        const data = await res.json()
-        if (data.error) { setError(data.error); setLoading(false); return }
-        router.push(`/battle/${data.battle.id}`)
+        try {
+            const res = await fetch(`/api/battle?code=${codeToJoin.toUpperCase().trim()}`)
+            const data = await res.json()
+            if (data.error) {
+                setError(data.error === 'Room tidak ditemukan' ? 'Room duel sudah tidak tersedia atau telah ditutup host.' : data.error)
+                setLoading(false)
+                fetchRooms()
+                return
+            }
+            router.push(`/battle/${data.battle.id}`)
+        } catch {
+            setError('Gagal bergabung ke room. Silakan coba lagi.')
+            setLoading(false)
+            fetchRooms()
+        }
     }
 
     async function handleMatchmaking() {

@@ -126,30 +126,33 @@ export default function RegisterPage() {
     return (
         <div
             style={{
-                minHeight: '100vh',
+                minHeight: '100dvh',
                 display: 'flex',
+                flexDirection: 'column',
                 alignItems: 'center',
                 justifyContent: 'center',
                 backgroundColor: 'var(--surface-canvas)',
                 backgroundImage: 'radial-gradient(ellipse at 50% 10%, rgba(245, 197, 66, 0.08), transparent 60%)',
-                padding: '20px 16px',
+                padding: 'clamp(14px, 3vh, 28px) 16px',
                 boxSizing: 'border-box',
                 overflowX: 'hidden',
+                overflowY: 'auto',
                 width: '100%',
             }}
         >
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                style={{ width: '100%', maxWidth: '480px' }}
+                transition={{ duration: 0.35 }}
+                style={{ width: '100%', maxWidth: '460px', margin: 'auto 0' }}
             >
                 {/* Logo */}
-                <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '10px', marginBottom: '6px', textDecoration: 'none' }}>
+                <div style={{ textAlign: 'center', marginBottom: 'clamp(14px, 2.5vh, 22px)' }}>
+                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '6px', textDecoration: 'none' }}>
                         <div
                             style={{
-                                width: '36px',
-                                height: '36px',
+                                width: '34px',
+                                height: '34px',
                                 borderRadius: '10px',
                                 backgroundColor: 'rgba(245, 197, 66, 0.15)',
                                 border: '1px solid rgba(245, 197, 66, 0.4)',
@@ -165,25 +168,25 @@ export default function RegisterPage() {
                             Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
                         </span>
                     </Link>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>Mulai petualangan belajarmu hari ini</p>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '12.5px', margin: 0 }}>Mulai petualangan belajarmu hari ini</p>
                 </div>
 
                 <div
                     className="card auth-card"
                     style={{
-                        padding: '36px',
-                        borderRadius: '17.1429px',
+                        padding: 'clamp(20px, 4vw, 32px)',
+                        borderRadius: '16px',
                         backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
-                        boxShadow: '0 20px 50px rgba(0,0,0,0.8)',
+                        boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
                     }}
                 >
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 400, letterSpacing: '-0.01em', marginBottom: '24px', color: '#ffffff' }}>
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '18px', color: '#ffffff' }}>
                         Buat Akun
                     </h1>
 
                     {error && (
-                        <div style={{ backgroundColor: 'rgba(255, 51, 85, 0.08)', border: '1px solid rgba(255, 51, 85, 0.3)', borderRadius: '12px', padding: '12px 14px', marginBottom: '18px', fontSize: '13px', color: '#ff3355' }}>
+                        <div style={{ backgroundColor: 'rgba(255, 51, 85, 0.08)', border: '1px solid rgba(255, 51, 85, 0.3)', borderRadius: '10px', padding: '10px 12px', marginBottom: '16px', fontSize: '12.5px', color: '#ff3355' }}>
                             {error}
                         </div>
                     )}

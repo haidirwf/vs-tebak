@@ -2,10 +2,11 @@
 
 import React, { useEffect, useState, use } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import ProfileHeroStage from '@/components/profile/ProfileHeroStage'
 import BadgeIcon from '@/components/character/BadgeIcon'
-import { ArrowLeft, ArrowRight, Share2, Copy, Check, ExternalLink } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useUserStore } from '@/stores/userStore'
 import { Profile } from '@/types'
@@ -15,6 +16,7 @@ interface PublicStudentProfilePageProps {
 }
 
 export default function PublicStudentProfilePage({ params }: PublicStudentProfilePageProps) {
+    const router = useRouter()
     const resolvedParams = use(params)
     const rawParam = decodeURIComponent(resolvedParams.username || '')
 
@@ -27,7 +29,14 @@ export default function PublicStudentProfilePage({ params }: PublicStudentProfil
     const [battlesWon, setBattlesWon] = useState(0)
     const [isLoading, setIsLoading] = useState(true)
     const [notFound, setNotFound] = useState(false)
-    const [copied, setCopied] = useState(false)
+
+    const handleBack = () => {
+        if (typeof window !== 'undefined' && window.history.length > 1) {
+            router.back()
+        } else {
+            router.push('/dashboard')
+        }
+    }
 
     useEffect(() => {
         const supabase = createClient()
@@ -104,14 +113,6 @@ export default function PublicStudentProfilePage({ params }: PublicStudentProfil
 
     const isOwnProfile = currentUser?.id === targetProfile?.id
 
-    const handleCopyLink = () => {
-        if (typeof window === 'undefined' || !targetProfile) return
-        const profileUrl = `${window.location.origin}/pelajar/${targetProfile.username}`
-        navigator.clipboard.writeText(profileUrl)
-        setCopied(true)
-        setTimeout(() => setCopied(false), 2000)
-    }
-
     if (isLoading) {
         return (
             <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
@@ -134,43 +135,27 @@ export default function PublicStudentProfilePage({ params }: PublicStudentProfil
                 <p style={{ color: 'var(--color-steel)', fontSize: '13px', lineHeight: 1.5, marginBottom: '24px' }}>
                     Profil pelajar dengan username <strong>&quot;{rawParam}&quot;</strong> belum terdaftar atau tautan tidak valid.
                 </p>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
-                    <Link
-                        href="/dashboard"
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <button
+                        type="button"
+                        onClick={handleBack}
                         style={{
                             display: 'inline-flex',
                             alignItems: 'center',
                             gap: '6px',
-                            padding: '10px 18px',
+                            padding: '10px 20px',
                             borderRadius: '8px',
                             backgroundColor: 'rgba(255, 255, 255, 0.05)',
                             border: '1px solid rgba(255, 255, 255, 0.12)',
                             color: '#ffffff',
                             fontWeight: 600,
                             fontSize: '13px',
-                            textDecoration: 'none',
-                        }}
-                    >
-                        <span>Ke Dashboard</span>
-                    </Link>
-                    <Link
-                        href="/leaderboard"
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '10px 18px',
-                            borderRadius: '8px',
-                            backgroundColor: '#F5C542',
-                            color: '#0a0a0a',
-                            fontWeight: 600,
-                            fontSize: '13px',
-                            textDecoration: 'none',
+                            cursor: 'pointer',
                         }}
                     >
                         <ArrowLeft size={14} />
-                        <span>Leaderboard</span>
-                    </Link>
+                        <span>Kembali</span>
+                    </button>
                 </div>
             </div>
         )
@@ -178,72 +163,37 @@ export default function PublicStudentProfilePage({ params }: PublicStudentProfil
 
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
-            {/* Top Navigation Bar */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Link
-                        href="/dashboard"
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            color: 'var(--text-secondary)',
-                            textDecoration: 'none',
-                            fontSize: '12.5px',
-                            fontWeight: 500,
-                            padding: '6px 12px',
-                            borderRadius: '8px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
-                        }}
-                    >
-                        <ArrowLeft size={14} />
-                        <span>Dashboard</span>
-                    </Link>
-                    <Link
-                        href="/leaderboard"
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            color: 'var(--text-secondary)',
-                            textDecoration: 'none',
-                            fontSize: '12.5px',
-                            fontWeight: 500,
-                            padding: '6px 12px',
-                            borderRadius: '8px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
-                        }}
-                    >
-                        <span>Leaderboard</span>
-                    </Link>
-                </div>
-
-                {/* Share & Copy Public Profile Link */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <button
-                        type="button"
-                        onClick={handleCopyLink}
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            fontSize: '12px',
-                            fontWeight: 600,
-                            padding: '6px 12px',
-                            borderRadius: '8px',
-                            backgroundColor: copied ? 'rgba(34, 197, 94, 0.15)' : 'rgba(255, 255, 255, 0.05)',
-                            border: `1px solid ${copied ? 'rgba(34, 197, 94, 0.35)' : 'rgba(255, 255, 255, 0.12)'}`,
-                            color: copied ? 'var(--accent-green)' : '#ffffff',
-                            cursor: 'pointer',
-                            transition: 'all 0.15s ease',
-                        }}
-                    >
-                        {copied ? <Check size={13} /> : <Copy size={13} />}
-                        <span>{copied ? 'Tautan Disalin!' : `skillungo.vercel.app/pelajar/${targetProfile.username}`}</span>
-                    </button>
-                </div>
+            {/* Top Navigation Bar: Back button only */}
+            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
+                <button
+                    type="button"
+                    onClick={handleBack}
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        color: 'var(--text-secondary)',
+                        fontSize: '12.5px',
+                        fontWeight: 500,
+                        padding: '6px 14px',
+                        borderRadius: '8px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        cursor: 'pointer',
+                        transition: 'background-color 0.15s ease, color 0.15s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                        e.currentTarget.style.color = '#ffffff'
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
+                    }}
+                    onMouseLeave={(e) => {
+                        e.currentTarget.style.color = 'var(--text-secondary)'
+                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'
+                    }}
+                >
+                    <ArrowLeft size={14} />
+                    <span>Kembali</span>
+                </button>
             </div>
 
             {/* Header Title */}
