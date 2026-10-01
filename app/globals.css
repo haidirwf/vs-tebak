@@ -829,6 +829,16 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.character-shop-toolbar {
+  display: none !important;
+}
+
+@media (min-width: 768px) {
+  .character-shop-toolbar {
+    display: flex !important;
+  }
+}
+
 .character-nav-tabs {
   display: flex !important;
   align-items: center;

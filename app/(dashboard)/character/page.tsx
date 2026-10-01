@@ -1144,8 +1144,8 @@ export default function CharacterPage() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
                             {/* Shop Sorting & Count Toolbar */}
                             <div
+                                className="character-shop-toolbar"
                                 style={{
-                                    display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
                                     flexWrap: 'wrap',
