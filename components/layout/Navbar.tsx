@@ -1,6 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
 import {
     Flame,
     Sparkles,
@@ -10,10 +11,13 @@ import {
     Ticket,
     Trophy,
     User,
+    Volume2,
+    VolumeX,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
 import { isStreakActiveToday } from '@/lib/game/streak'
+import { battleSounds } from '@/lib/game/battle-sounds'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const PAGE_CONFIG: Record<string, { title: string; icon: any; color: string }> = {
@@ -29,6 +33,18 @@ const PAGE_CONFIG: Record<string, { title: string; icon: any; color: string }> =
 export default function Navbar() {
     const pathname = usePathname()
     const { profile } = useUserStore()
+    const [isMuted, setIsMuted] = useState(() => battleSounds.getIsMuted())
+
+    useEffect(() => {
+        return battleSounds.subscribe(() => {
+            setIsMuted(battleSounds.getIsMuted())
+        })
+    }, [])
+
+    const toggleAudio = () => {
+        const nextState = battleSounds.toggleMute()
+        setIsMuted(nextState)
+    }
 
     const activeConfig = Object.entries(PAGE_CONFIG).find(([key]) =>
         key === pathname || pathname.startsWith(key + '/')
@@ -198,6 +214,28 @@ export default function Navbar() {
                         <span>{profile.xp.toLocaleString()} XP</span>
                     </motion.div>
                 )}
+
+                {/* Sound Quick Toggle Button */}
+                <button
+                    type="button"
+                    onClick={toggleAudio}
+                    title={isMuted ? 'Aktifkan Suara Efek' : 'Senyapkan Suara Efek'}
+                    aria-label="Toggle Sound"
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.05)',
+                        border: '1px solid var(--surface-border)',
+                        borderRadius: '8px',
+                        padding: '6px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: isMuted ? 'var(--text-muted)' : 'var(--color-gold)',
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                    }}
+                >
+                    {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                </button>
 
                 {/* Theme Toggle (Disembunyikan sementara, hapus komentar untuk mengaktifkan kembali) */}
                 {/* <ThemeToggle /> */}

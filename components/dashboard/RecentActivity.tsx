@@ -2,7 +2,7 @@
 
 import { formatDistanceToNow } from 'date-fns'
 import { id as idLocale } from 'date-fns/locale'
-import { Zap, History } from 'lucide-react'
+import { Zap, History, Swords, BookOpen, Target } from 'lucide-react'
 import { motion } from 'framer-motion'
 
 interface RecentActivityProps {
@@ -15,6 +15,48 @@ interface RecentActivityProps {
         reason: string | null
         created_at: string
     }>
+}
+
+function getActivityMeta(reason: string | null) {
+    const raw = (reason || '').toLowerCase()
+    if (raw.includes('battle') || raw.includes('duel') || raw.includes('pvp')) {
+        return {
+            Icon: Swords,
+            color: '#ef4444',
+            bg: 'rgba(239, 68, 68, 0.12)',
+            border: 'rgba(239, 68, 68, 0.28)',
+            badgeBg: 'rgba(239, 68, 68, 0.1)',
+            badgeBorder: 'rgba(239, 68, 68, 0.25)',
+        }
+    }
+    if (raw.includes('modul') || raw.includes('materi') || raw.includes('tahap')) {
+        return {
+            Icon: BookOpen,
+            color: '#38bdf8',
+            bg: 'rgba(56, 189, 248, 0.12)',
+            border: 'rgba(56, 189, 248, 0.28)',
+            badgeBg: 'rgba(56, 189, 248, 0.1)',
+            badgeBorder: 'rgba(56, 189, 248, 0.25)',
+        }
+    }
+    if (raw.includes('quest') || raw.includes('misi') || raw.includes('daily')) {
+        return {
+            Icon: Target,
+            color: '#10b981',
+            bg: 'rgba(16, 185, 129, 0.12)',
+            border: 'rgba(16, 185, 129, 0.28)',
+            badgeBg: 'rgba(16, 185, 129, 0.1)',
+            badgeBorder: 'rgba(16, 185, 129, 0.25)',
+        }
+    }
+    return {
+        Icon: Zap,
+        color: '#F5C542',
+        bg: 'rgba(245, 197, 66, 0.1)',
+        border: 'rgba(245, 197, 66, 0.28)',
+        badgeBg: 'rgba(245, 197, 66, 0.1)',
+        badgeBorder: 'rgba(245, 197, 66, 0.25)',
+    }
 }
 
 function formatReason(reason: string | null): string {
@@ -94,69 +136,73 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    {xpLogs.slice(0, 5).map((log, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: i * 0.04 }}
-                            whileHover={{ x: 3, borderColor: '#F5C542' }}
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '12px',
-                                padding: '10px 14px',
-                                borderRadius: '12px',
-                                backgroundColor: '#0d0d0d',
-                                border: '1px solid #222222',
-                                transition: 'border-color 0.2s ease',
-                            }}
-                        >
-                            <div
+                    {xpLogs.slice(0, 5).map((log, i) => {
+                        const meta = getActivityMeta(log.reason)
+                        const MetaIcon = meta.Icon
+                        return (
+                            <motion.div
+                                key={i}
+                                initial={{ opacity: 0, y: 8 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: i * 0.04 }}
+                                whileHover={{ x: 3, borderColor: meta.color }}
                                 style={{
-                                    width: '32px',
-                                    height: '32px',
-                                    borderRadius: '8.57143px',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                    border: '1px solid rgba(245, 197, 66, 0.25)',
                                     display: 'flex',
                                     alignItems: 'center',
-                                    justifyContent: 'center',
-                                    color: '#F5C542',
-                                    flexShrink: 0,
+                                    gap: '12px',
+                                    padding: '10px 14px',
+                                    borderRadius: '12px',
+                                    backgroundColor: '#0d0d0d',
+                                    border: '1px solid #222222',
+                                    transition: 'border-color 0.2s ease',
                                 }}
                             >
-                                <Zap size={14} />
-                            </div>
-
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                    {formatReason(log.reason)}
-                                </div>
-                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                                    {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: idLocale })}
-                                </div>
-                            </div>
-
-                            <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                                <span
+                                <div
                                     style={{
-                                        fontFamily: 'var(--font-heading)',
-                                        fontSize: '11px',
-                                        fontWeight: 600,
-                                        color: '#F5C542',
-                                        backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                        border: '1px solid rgba(245, 197, 66, 0.25)',
-                                        padding: '2px 8px',
-                                        borderRadius: '6px',
-                                        whiteSpace: 'nowrap',
+                                        width: '32px',
+                                        height: '32px',
+                                        borderRadius: '8px',
+                                        backgroundColor: meta.bg,
+                                        border: `1px solid ${meta.border}`,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        color: meta.color,
+                                        flexShrink: 0,
                                     }}
                                 >
-                                    +{log.xp_amount} XP
-                                </span>
-                            </div>
-                        </motion.div>
-                    ))}
+                                    <MetaIcon size={15} />
+                                </div>
+
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: '13px', color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', fontWeight: 500, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                        {formatReason(log.reason)}
+                                    </div>
+                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                        {formatDistanceToNow(new Date(log.created_at), { addSuffix: true, locale: idLocale })}
+                                    </div>
+                                </div>
+
+                                <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                                    <span
+                                        style={{
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '11px',
+                                            fontWeight: 600,
+                                            color: meta.color,
+                                            backgroundColor: meta.badgeBg,
+                                            border: `1px solid ${meta.badgeBorder}`,
+                                            padding: '2px 8px',
+                                            borderRadius: '6px',
+                                            whiteSpace: 'nowrap',
+                                        }}
+                                    >
+                                        +{log.xp_amount} XP
+                                    </span>
+                                </div>
+                            </motion.div>
+                        )
+                    })}
                 </div>
             )}
         </div>

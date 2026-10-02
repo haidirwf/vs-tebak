@@ -1848,14 +1848,16 @@ input::placeholder, textarea::placeholder {
 .battle-option-btn {
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
-  padding: 8px 10px !important;
-  border-radius: 8px !important;
+  gap: 10px !important;
+  padding: 10px 12px !important;
+  min-height: 44px !important;
+  border-radius: 10px !important;
   width: 100% !important;
   box-sizing: border-box !important;
   word-break: break-word !important;
   overflow-wrap: break-word !important;
   text-align: left !important;
+  touch-action: manipulation !important;
 }
 
 @media (min-width: 640px) {
