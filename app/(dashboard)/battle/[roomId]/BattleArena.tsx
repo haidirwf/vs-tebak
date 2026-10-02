@@ -30,9 +30,25 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         if (isDev) console.debug('[battle]', ...args)
     }
 
-    // Derive initial phase
+    // Reconnect session recovery key
+    const battleSessionKey = `battle_session_${initialBattle.id}_${currentUser.id}`
+
+    // Derive initial phase & recovered progress
+    const getSavedBattleSession = () => {
+        if (typeof window === 'undefined') return null
+        try {
+            const raw = sessionStorage.getItem(battleSessionKey)
+            return raw ? JSON.parse(raw) : null
+        } catch {
+            return null
+        }
+    }
+
+    const savedSession = getSavedBattleSession()
+
     const initPhase = (): BattlePhase => {
         if (initialBattle.status === 'finished') return 'finished'
+        if (savedSession?.phase === 'playing') return 'playing'
         if (initialBattle.player1_id && initialBattle.player2_id) return 'lobby'
         return 'waiting'
     }
@@ -51,21 +67,21 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [iAmFinished, setIAmFinished] = useState(false)
     const [opponentFinished, setOpponentFinished] = useState(false)
 
-    // Quiz state
-    const [currentQ, setCurrentQ] = useState(0)
-    const [myScore, setMyScore] = useState(0)
-    const [opponentScore, setOpponentScore] = useState(0)
-    const [timeLeft, setTimeLeft] = useState(15)
+    // Quiz state (recovered from session if reloaded)
+    const [currentQ, setCurrentQ] = useState<number>(() => savedSession?.currentQ ?? 0)
+    const [myScore, setMyScore] = useState<number>(() => savedSession?.myScore ?? 0)
+    const [opponentScore, setOpponentScore] = useState<number>(() => savedSession?.opponentScore ?? 0)
+    const [timeLeft, setTimeLeft] = useState<number>(15)
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
     const [showAnswer, setShowAnswer] = useState(false)
     const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
     const [xpResult, setXpResult] = useState<{ base: number; bonus: number } | null>(null)
     const [finalOutcome, setFinalOutcome] = useState<BattleOutcome | null>(null)
-    const [comboCount, setComboCount] = useState(0)
-    const [myHp, setMyHp] = useState(100)
-    const [oppHp, setOppHp] = useState(100)
-    const [myMp, setMyMp] = useState(30)
-    const [oppMp, setOppMp] = useState(30)
+    const [comboCount, setComboCount] = useState<number>(() => savedSession?.comboCount ?? 0)
+    const [myHp, setMyHp] = useState<number>(() => savedSession?.myHp ?? 100)
+    const [oppHp, setOppHp] = useState<number>(100)
+    const [myMp, setMyMp] = useState<number>(30)
+    const [oppMp, setOppMp] = useState<number>(30)
     const [combatText, setCombatText] = useState<{ target: 'me' | 'opp'; text: string; type: 'crit' | 'damage' | 'miss' } | null>(null)
     const [meAnimation, setMeAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
     const [oppAnimation, setOppAnimation] = useState<'idle' | 'attack' | 'hurt'>('idle')
@@ -94,9 +110,30 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const opponentFinalScoreRef = useRef<number | null>(null)
     const finalizeFallbackRequestedRef = useRef(false)
     const finalizeFallbackTimerRef = useRef<NodeJS.Timeout | null>(null)
-    const myHpRef = useRef(100)
+    const myHpRef = useRef(myHp)
     const oppHpRef = useRef(100)
     const knockoutHandledRef = useRef(false)
+
+    // Auto-save & clean up battle session snapshot
+    useEffect(() => {
+        if (typeof window === 'undefined') return
+        if (phase === 'playing') {
+            try {
+                sessionStorage.setItem(battleSessionKey, JSON.stringify({
+                    phase: 'playing',
+                    currentQ,
+                    myScore,
+                    opponentScore,
+                    myHp,
+                    comboCount,
+                }))
+            } catch {}
+        } else if (phase === 'finished') {
+            try {
+                sessionStorage.removeItem(battleSessionKey)
+            } catch {}
+        }
+    }, [phase, currentQ, myScore, opponentScore, myHp, comboCount, battleSessionKey])
 
     const isPlayer1 = battle.player1_id === currentUser.id
     const syncXpToUserStore = useCallback(async (

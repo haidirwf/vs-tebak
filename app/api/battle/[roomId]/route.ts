@@ -106,8 +106,10 @@ export async function PATCH(
     const body = await request.json() as { myScore?: number; opponentScore?: number }
     const myScore = Number(body.myScore)
     const opponentScore = Number(body.opponentScore)
-    if (!Number.isFinite(myScore) || !Number.isFinite(opponentScore) || myScore < 0 || opponentScore < 0) {
-        return NextResponse.json({ error: 'Invalid score payload' }, { status: 400 })
+    // Server-side anti-cheat: Skor per ronde maksimal ~40 poin (10 ronde = max ~400 + margin buff 500)
+    const MAX_POSSIBLE_SCORE = 500
+    if (!Number.isFinite(myScore) || !Number.isFinite(opponentScore) || myScore < 0 || opponentScore < 0 || myScore > MAX_POSSIBLE_SCORE || opponentScore > MAX_POSSIBLE_SCORE) {
+        return NextResponse.json({ error: 'Invalid or suspicious score payload' }, { status: 400 })
     }
 
     const { data: battle, error } = await supabase

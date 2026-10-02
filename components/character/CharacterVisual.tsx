@@ -18,7 +18,7 @@ interface CharacterVisualProps {
     showRoleBadge?: boolean
 }
 
-export default function CharacterVisual({
+function CharacterVisual({
     role,
     equipped = {},
     size = 220,
@@ -486,3 +486,5 @@ export default function CharacterVisual({
         </div>
     )
 }
+
+export default React.memo(CharacterVisual)

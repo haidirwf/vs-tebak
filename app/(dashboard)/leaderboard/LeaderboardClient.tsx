@@ -307,46 +307,65 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 const me = list[myIndex]
                 return (
                     <div style={{
-                        position: 'sticky', bottom: '16px', marginTop: '20px', zIndex: 50,
-                        backgroundColor: 'var(--bg-secondary)', border: '2px solid var(--accent-gold)',
-                        borderRadius: '8px', padding: '12px 18px', display: 'flex', alignItems: 'center',
-                        justifyContent: 'space-between', boxShadow: '0 8px 30px rgba(245, 197, 66, 0.25)',
+                        position: 'sticky',
+                        bottom: 0,
+                        zIndex: 40,
+                        margin: '16px -12px -14px',
+                        padding: '12px 14px',
+                        backgroundColor: 'rgba(10, 10, 10, 0.92)',
+                        backdropFilter: 'blur(12px)',
+                        WebkitBackdropFilter: 'blur(12px)',
+                        borderTop: '1px solid rgba(245, 197, 66, 0.3)',
+                        boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.6)',
                     }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0 }}>
-                                #{myIndex + 1}
-                            </div>
-                            <div style={{ minWidth: 0, overflow: 'hidden' }}>
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                    {me.username} (Peringkat Kamu)
+                        <div style={{
+                            maxWidth: '800px',
+                            margin: '0 auto',
+                            backgroundColor: 'var(--bg-secondary)',
+                            border: '1px solid var(--accent-gold)',
+                            borderRadius: '10px',
+                            padding: '10px 16px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0 }}>
+                                    #{myIndex + 1}
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '2px' }}>
-                                    <span>Lv.{me.level} · {CLASS_EMOJIS[me.avatar_class]} {me.avatar_class}</span>
-                                    <Link
-                                        href={`/pelajar/${encodeURIComponent(me.username)}`}
-                                        style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '3px',
-                                            fontSize: '10.5px',
-                                            fontWeight: 600,
-                                            color: 'var(--accent-gold)',
-                                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                            border: '1px solid rgba(245, 197, 66, 0.35)',
-                                            padding: '1px 6px',
-                                            borderRadius: '6px',
-                                            textDecoration: 'none',
-                                            whiteSpace: 'nowrap',
-                                        }}
-                                    >
-                                        <span>Lihat Profil</span>
-                                        <ChevronRight size={10} />
-                                    </Link>
+                                <div style={{ minWidth: 0, overflow: 'hidden' }}>
+                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13.5px', fontWeight: 700, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {me.username} <span style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 600 }}>(Kamu)</span>
+                                    </div>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '11px', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', marginTop: '1px' }}>
+                                        <span>Lv.{me.level} · {CLASS_EMOJIS[me.avatar_class]} {me.avatar_class}</span>
+                                        <Link
+                                            href={`/pelajar/${encodeURIComponent(me.username)}`}
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '3px',
+                                                fontSize: '10.5px',
+                                                fontWeight: 600,
+                                                color: 'var(--accent-gold)',
+                                                backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                                border: '1px solid rgba(245, 197, 66, 0.35)',
+                                                padding: '1px 6px',
+                                                borderRadius: '6px',
+                                                textDecoration: 'none',
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            <span>Lihat Profil</span>
+                                            <ChevronRight size={10} />
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0, marginLeft: '12px' }}>
-                            {tab === 'all' ? `${me.xp.toLocaleString()} XP` : `${me.streak_count} Hari 🔥`}
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0, marginLeft: '12px' }}>
+                                {tab === 'all' ? `${me.xp.toLocaleString()} XP` : `${me.streak_count} Hari 🔥`}
+                            </div>
                         </div>
                     </div>
                 )
