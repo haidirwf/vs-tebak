@@ -13,6 +13,7 @@ import {
     User,
     Volume2,
     VolumeX,
+    ShoppingBag,
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
@@ -25,7 +26,8 @@ const PAGE_CONFIG: Record<string, { title: string; icon: any; color: string }> =
     '/modules': { title: 'Modul Belajar', icon: BookOpen, color: 'var(--accent-cyan)' },
     '/character': { title: 'Karakter & Kostumisasi', icon: Swords, color: '#a855f7' },
     '/battle': { title: 'Battle Arena', icon: Swords, color: 'var(--accent-red)' },
-    '/voucher': { title: 'Toko Voucher', icon: Ticket, color: 'var(--accent-gold)' },
+    '/shop': { title: 'Toko Petualang', icon: ShoppingBag, color: 'var(--accent-gold)' },
+    '/voucher': { title: 'Toko Petualang', icon: ShoppingBag, color: 'var(--accent-gold)' },
     '/leaderboard': { title: 'Leaderboard', icon: Trophy, color: 'var(--accent-green)' },
     '/profile': { title: 'Profil', icon: User, color: 'var(--accent-cyan)' },
 }

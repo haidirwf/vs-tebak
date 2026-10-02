@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Swords, BookOpen, Ticket, Trophy, Compass, ArrowUpRight, Sparkles, Flame } from 'lucide-react'
+import { Swords, BookOpen, Ticket, Trophy, Compass, ArrowUpRight, Sparkles, Flame, ShoppingBag } from 'lucide-react'
 
 interface QuickActionsProps {
     modulesCompletedCount?: number
@@ -35,16 +35,16 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
             badge: 'Duel Panas',
         },
         {
-            title: 'Toko Voucher',
-            subtitle: 'Klaim Diskon Kantin',
-            desc: 'Tukarkan tabungan XP dengan voucher jajan nyata',
-            href: '/voucher',
-            icon: Ticket,
+            title: 'Toko Petualang',
+            subtitle: 'Voucher & Aksesoris',
+            desc: 'Tukarkan tabungan XP dengan voucher kantin atau gear pahlawan',
+            href: '/shop',
+            icon: ShoppingBag,
             color: 'var(--accent-gold)',
             bg: 'var(--accent-gold-bg)',
             border: 'var(--accent-gold-border)',
-            cta: 'Katalog Voucher',
-            badge: 'Hadiah',
+            cta: 'Buka Toko',
+            badge: 'Toko & Hadiah',
         },
         {
             title: 'Leaderboard',

@@ -1492,8 +1492,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             <Link href="/leaderboard" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
               Leaderboard Sekolah
             </Link>
-            <Link href="/voucher" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
-              Toko Voucher
+            <Link href="/shop" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+              Toko Petualang
             </Link>
             <Link href="/login" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
               Masuk Akun

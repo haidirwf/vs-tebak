@@ -6,7 +6,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
-import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame, Ticket, Shield, Coins } from 'lucide-react'
+import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame, Ticket, Shield, Coins, ShoppingBag } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getXpProgress } from '@/lib/game/xp'
 import { isStreakActiveToday } from '@/lib/game/streak'
@@ -16,7 +16,7 @@ const navItems = [
     { href: '/character', icon: Shield, label: 'Karakter' },
     { href: '/modules', icon: BookOpen, label: 'Modul' },
     { href: '/battle', icon: Swords, label: 'Battle' },
-    { href: '/voucher', icon: Ticket, label: 'Voucher' },
+    { href: '/shop', icon: ShoppingBag, label: 'Toko' },
     { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
     { href: '/profile', icon: User, label: 'Profil' },
 ]
