@@ -19,13 +19,15 @@ export async function GET(request: NextRequest) {
         }, { status: 429 })
     }
 
-    // 1. Bersihkan ghost rooms: room berstatus 'waiting' yang sudah lebih dari 3 menit ditinggalkan host
+    // 1. Bersihkan ghost rooms secara non-blocking (tidak menahan latency response GET)
     const staleThreshold = new Date(Date.now() - 3 * 60 * 1000).toISOString()
-    await supabase
-        .from('battles')
-        .delete()
-        .eq('status', 'waiting')
-        .lt('created_at', staleThreshold)
+    void Promise.resolve(
+        supabase
+            .from('battles')
+            .delete()
+            .eq('status', 'waiting')
+            .lt('created_at', staleThreshold)
+    ).catch(() => {})
 
     // 2. Ambil hanya battle berstatus 'waiting' aktif (dibuat dalam 3 menit terakhir),
     // belum ada player2, dan BUKAN milik user yang sedang request

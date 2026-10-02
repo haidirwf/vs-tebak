@@ -2239,3 +2239,10 @@ input::placeholder, textarea::placeholder {
   --radius-full: 9999px;
   --radius: 17.1429px;
 }
+
+/* High-Performance Rendering for Long Lists (Virtual paint off-screen) */
+.optimized-list-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 58px;
+}
+

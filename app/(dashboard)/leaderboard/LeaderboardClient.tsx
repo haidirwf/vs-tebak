@@ -179,7 +179,11 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                     href={`/pelajar/${encodeURIComponent(user.username)}`}
                                     style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                                 >
-                                    <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.03 }}
+                                    <motion.div
+                                        initial={{ opacity: 0, x: -10 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: Math.min(i, 8) * 0.02 }}
+                                        className="optimized-list-item"
                                         whileHover={{ backgroundColor: isMe ? 'rgba(245,197,66,0.1)' : 'rgba(255,255,255,0.03)' }}
                                         style={{
                                             display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px',
@@ -271,7 +275,12 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
             {tab === 'school' && (
                 <div className="card" style={{ borderRadius: '17.1429px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', overflow: 'hidden', boxShadow: '0 12px 30px rgba(0,0,0,0.5)' }}>
                     {schoolRanking.map((school, i) => (
-                        <motion.div key={school.school} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.04 }}
+                        <motion.div
+                            key={school.school}
+                            initial={{ opacity: 0, x: -10 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            transition={{ delay: Math.min(i, 8) * 0.02 }}
+                            className="optimized-list-item"
                             style={{
                                 display: 'flex', alignItems: 'center', gap: '12px', padding: '14px 16px',
                                 borderBottom: i < schoolRanking.length - 1 ? '1px solid #222222' : 'none',
