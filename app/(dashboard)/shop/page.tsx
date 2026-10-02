@@ -169,12 +169,11 @@ function ShopPageContent() {
 
     return (
         <ShopClient
-            initialTab={tabParam && ['voucher', 'items', 'inventory'].includes(tabParam) ? tabParam : 'voucher'}
+            initialTab={tabParam === 'items' ? 'items' : 'voucher'}
             initialXp={profile?.xp ?? 0}
             vouchers={vouchers}
             initialHistory={voucherHistory}
             initialInventory={initialInventory}
-            initialEquipped={initialEquipped}
         />
     )
 }

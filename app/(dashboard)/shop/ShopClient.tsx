@@ -1,29 +1,23 @@
 'use client'
 
-import { useMemo, useState, useCallback, useEffect } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
     Ticket,
     ShoppingBag,
-    Package,
     Copy,
     CheckCircle,
     Zap,
     SlidersHorizontal,
-    Loader2,
     Shield,
-    Sparkles,
     Check,
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore, VoucherItem, RedemptionItem } from '@/stores/contentStore'
 import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
-import { createClient } from '@/lib/supabase/client'
-import { formatDistanceToNow } from 'date-fns'
-import { id as idLocale } from 'date-fns/locale'
 
-export type ShopTab = 'voucher' | 'items' | 'inventory'
+export type ShopTab = 'voucher' | 'items'
 export type ShopSortOption = 'rating_price_asc' | 'rating_price_desc' | 'price_asc' | 'price_desc' | 'rating_desc'
 
 interface ShopClientProps {
@@ -32,7 +26,6 @@ interface ShopClientProps {
     vouchers: VoucherItem[]
     initialHistory: RedemptionItem[]
     initialInventory: GameItem[]
-    initialEquipped: EquippedItemsMap
 }
 
 interface RedeemResult {
@@ -100,11 +93,9 @@ export default function ShopClient({
     vouchers,
     initialHistory,
     initialInventory,
-    initialEquipped,
 }: ShopClientProps) {
     const { profile, updateXP } = useUserStore()
-    const { setCharacterInventoryData } = useContentStore()
-    const supabase = useMemo(() => createClient(), [])
+    const { characterEquipped, setCharacterInventoryData } = useContentStore()
 
     // State: Active Tab
     const [activeTab, setActiveTab] = useState<ShopTab>(initialTab)
@@ -118,9 +109,8 @@ export default function ShopClient({
     const [redeemModalSource, setRedeemModalSource] = useState<RedeemModalSource>('claim')
     const [copied, setCopied] = useState(false)
 
-    // State: Items & Inventory
+    // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
-    const [equipped, setEquipped] = useState<EquippedItemsMap>(initialEquipped)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
     const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
@@ -156,12 +146,6 @@ export default function ShopClient({
             return a.cost_xp - b.cost_xp
         })
     }, [selectedSlotFilter, profile?.avatar_class, shopSort])
-
-    // Filtered Inventory
-    const filteredInventory = useMemo(() => {
-        if (selectedSlotFilter === 'all') return inventory
-        return inventory.filter((item) => item.slot === selectedSlotFilter)
-    }, [inventory, selectedSlotFilter])
 
     // Auto dismiss notification
     useEffect(() => {
@@ -268,7 +252,7 @@ export default function ShopClient({
                 const updatedInventory = [...inventory, data.item]
                 setInventory(updatedInventory)
                 setCharacterInventoryData({
-                    equipped,
+                    equipped: (profile?.equipped_items || characterEquipped || {}) as EquippedItemsMap,
                     inventory: updatedInventory,
                 })
                 if (data.currentXp !== undefined) {
@@ -284,81 +268,6 @@ export default function ShopClient({
         }
     }
 
-    // Handlers: Equip / Unequip Item
-    async function handleEquipItem(item: GameItem, action: 'equip' | 'unequip') {
-        const previousEquipped = { ...equipped }
-        const newEquipped = { ...equipped }
-
-        if (action === 'equip') {
-            newEquipped[item.slot] = item.id
-        } else {
-            delete newEquipped[item.slot]
-        }
-
-        setEquipped(newEquipped)
-        if (profile) {
-            useUserStore.getState().setProfile({
-                ...profile,
-                equipped_items: newEquipped,
-            })
-        }
-        setCharacterInventoryData({
-            equipped: newEquipped,
-            inventory,
-        })
-
-        setItemActionLoadingId(item.id)
-        try {
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) throw new Error('Pengguna tidak terautentikasi')
-
-            if (action === 'equip') {
-                await supabase
-                    .from('user_inventory')
-                    .update({ is_equipped: false })
-                    .eq('user_id', user.id)
-                    .eq('slot', item.slot)
-
-                await supabase
-                    .from('user_inventory')
-                    .update({ is_equipped: true })
-                    .eq('user_id', user.id)
-                    .eq('item_id', item.id)
-            } else {
-                await supabase
-                    .from('user_inventory')
-                    .update({ is_equipped: false })
-                    .eq('user_id', user.id)
-                    .eq('slot', item.slot)
-            }
-
-            await supabase
-                .from('profiles')
-                .update({ equipped_items: newEquipped })
-                .eq('id', user.id)
-
-            setNotification({
-                type: 'success',
-                message: action === 'equip' ? `${item.name} berhasil dipakai!` : `${item.name} dilepas.`,
-            })
-        } catch (e: any) {
-            setEquipped(previousEquipped)
-            if (profile) {
-                useUserStore.getState().setProfile({
-                    ...profile,
-                    equipped_items: previousEquipped,
-                })
-            }
-            setCharacterInventoryData({
-                equipped: previousEquipped,
-                inventory,
-            })
-            setNotification({ type: 'error', message: e.message || 'Gagal mengubah perlengkapan.' })
-        } finally {
-            setItemActionLoadingId(null)
-        }
-    }
-
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
@@ -367,7 +276,7 @@ export default function ShopClient({
                     Toko Petualang
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
-                    Tukarkan poin XP dengan voucher kantin sekolah, beli perlengkapan kostum avatar, atau kelola inventori item pahlawanmu.
+                    Tukarkan poin XP dengan voucher kantin sekolah atau beli perlengkapan kostum avatar pahlawanmu.
                 </p>
             </div>
 
@@ -414,12 +323,12 @@ export default function ShopClient({
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    <span>Inventori: <strong style={{ color: '#ffffff' }}>{inventory.length}</strong> item</span>
+                    <span>Koleksi Toko: <strong style={{ color: '#38bdf8' }}>{filteredShopItems.length}</strong> item</span>
                     <span>Voucher Diklaim: <strong style={{ color: '#08c380' }}>{history.length}</strong></span>
                 </div>
             </div>
 
-            {/* Main Tabs Navigation */}
+            {/* Main Tabs Navigation (Only Voucher Kantin & Toko Aksesoris) */}
             <div
                 style={{
                     display: 'flex',
@@ -477,30 +386,6 @@ export default function ShopClient({
                 >
                     <ShoppingBag size={16} />
                     <span>Toko Aksesoris</span>
-                </button>
-
-                <button
-                    type="button"
-                    onClick={() => setActiveTab('inventory')}
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '10px 18px',
-                        borderRadius: '10px',
-                        border: activeTab === 'inventory' ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid transparent',
-                        backgroundColor: activeTab === 'inventory' ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
-                        color: activeTab === 'inventory' ? '#10b981' : 'var(--text-secondary)',
-                        fontFamily: 'var(--font-heading)',
-                        fontSize: '13px',
-                        fontWeight: 600,
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease',
-                        whiteSpace: 'nowrap',
-                    }}
-                >
-                    <Package size={16} />
-                    <span>Inventori Saya ({inventory.length})</span>
                 </button>
             </div>
 
@@ -932,227 +817,6 @@ export default function ShopClient({
                                                     }}
                                                 >
                                                     {isLoading ? 'Membuka...' : canAfford ? 'Buka Item' : 'XP Kurang'}
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                )
-                            })}
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* TAB 3: INVENTORI SAYA */}
-            {activeTab === 'inventory' && (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* Slot Filter Chips */}
-                    <div
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            flexWrap: 'wrap',
-                            padding: '12px 16px',
-                            backgroundColor: 'var(--surface-card)',
-                            borderRadius: '12px',
-                            border: '1px solid var(--surface-border)',
-                        }}
-                    >
-                        {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => (
-                            <button
-                                key={slotKey}
-                                type="button"
-                                onClick={() => setSelectedSlotFilter(slotKey)}
-                                style={{
-                                    padding: '6px 12px',
-                                    borderRadius: '8px',
-                                    border: `1px solid ${selectedSlotFilter === slotKey ? 'rgba(16, 185, 129, 0.4)' : 'var(--surface-border)'}`,
-                                    backgroundColor: selectedSlotFilter === slotKey ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
-                                    color: selectedSlotFilter === slotKey ? '#10b981' : 'var(--text-secondary)',
-                                    fontSize: '12px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.15s ease',
-                                }}
-                            >
-                                {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
-                            </button>
-                        ))}
-                    </div>
-
-                    {filteredInventory.length === 0 ? (
-                        <div
-                            style={{
-                                padding: '40px 20px',
-                                textAlign: 'center',
-                                backgroundColor: 'var(--surface-card)',
-                                borderRadius: '14px',
-                                border: '1px dashed var(--surface-border)',
-                                color: 'var(--text-secondary)',
-                            }}
-                        >
-                            <Package size={32} style={{ margin: '0 auto 10px', opacity: 0.5 }} />
-                            <p style={{ margin: '0 0 12px 0', fontSize: '13px' }}>
-                                Belum ada item pahlawan yang tersimpan di slot ini.
-                            </p>
-                            <button
-                                type="button"
-                                onClick={() => setActiveTab('items')}
-                                style={{
-                                    padding: '8px 18px',
-                                    borderRadius: '8px',
-                                    backgroundColor: '#38bdf8',
-                                    color: '#050505',
-                                    border: 'none',
-                                    fontSize: '12px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Kunjungi Toko Aksesoris
-                            </button>
-                        </div>
-                    ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
-                            {filteredInventory.map((item) => {
-                                const isEquipped = equipped[item.slot] === item.id
-                                const rarity = RARITY_CONFIG[item.rarity]
-                                const slotMeta = SLOT_LABELS[item.slot]
-                                const isLoading = itemActionLoadingId === item.id
-
-                                return (
-                                    <div
-                                        key={item.id}
-                                        style={{
-                                            padding: '14px',
-                                            borderRadius: '14px',
-                                            backgroundColor: '#121212',
-                                            border: `1px solid ${isEquipped ? 'rgba(245, 197, 66, 0.45)' : 'var(--surface-border)'}`,
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            justifyContent: 'space-between',
-                                            gap: '12px',
-                                            boxShadow: isEquipped ? '0 0 14px rgba(245, 197, 66, 0.15)' : '0 6px 18px rgba(0,0,0,0.3)',
-                                        }}
-                                    >
-                                        <div>
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
-                                                <span
-                                                    style={{
-                                                        fontSize: '11px',
-                                                        color: 'var(--text-secondary)',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                                                        padding: '2px 8px',
-                                                        borderRadius: '6px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.06)',
-                                                    }}
-                                                >
-                                                    {slotMeta?.emoji} {slotMeta?.name}
-                                                </span>
-
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                    {isEquipped && (
-                                                        <span
-                                                            style={{
-                                                                fontSize: '10px',
-                                                                fontWeight: 600,
-                                                                color: '#F5C542',
-                                                                backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                                                border: '1px solid rgba(245, 197, 66, 0.3)',
-                                                                padding: '1px 6px',
-                                                                borderRadius: '4px',
-                                                            }}
-                                                        >
-                                                            Terpasang
-                                                        </span>
-                                                    )}
-                                                    <span
-                                                        style={{
-                                                            fontSize: '10px',
-                                                            color: rarity.color,
-                                                            fontWeight: 600,
-                                                            padding: '1px 6px',
-                                                            borderRadius: '4px',
-                                                            backgroundColor: rarity.bg,
-                                                            border: `1px solid ${rarity.border}`,
-                                                        }}
-                                                    >
-                                                        {rarity.label}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                                                <div
-                                                    style={{
-                                                        width: '42px',
-                                                        height: '42px',
-                                                        borderRadius: '10px',
-                                                        backgroundColor: '#0a0a0a',
-                                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        fontSize: '20px',
-                                                        flexShrink: 0,
-                                                    }}
-                                                >
-                                                    {item.icon}
-                                                </div>
-                                                <div style={{ minWidth: 0 }}>
-                                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                                        {item.name}
-                                                    </div>
-                                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                                                        {item.buff.label}
-                                                    </span>
-                                                </div>
-                                            </div>
-
-                                            <p style={{ fontSize: '11.5px', color: 'var(--text-secondary)', margin: 0, lineHeight: '1.4' }}>
-                                                {item.description}
-                                            </p>
-                                        </div>
-
-                                        <div style={{ paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                                            {isEquipped ? (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleEquipItem(item, 'unequip')}
-                                                    disabled={isLoading}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '7px 12px',
-                                                        borderRadius: '8px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.12)',
-                                                        backgroundColor: 'transparent',
-                                                        color: 'var(--text-secondary)',
-                                                        fontSize: '11.5px',
-                                                        fontWeight: 600,
-                                                        cursor: 'pointer',
-                                                    }}
-                                                >
-                                                    {isLoading ? 'Memproses...' : 'Lepas Perlengkapan'}
-                                                </button>
-                                            ) : (
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleEquipItem(item, 'equip')}
-                                                    disabled={isLoading}
-                                                    style={{
-                                                        width: '100%',
-                                                        padding: '7px 12px',
-                                                        borderRadius: '8px',
-                                                        border: 'none',
-                                                        backgroundColor: '#10b981',
-                                                        color: '#050505',
-                                                        fontSize: '11.5px',
-                                                        fontWeight: 600,
-                                                        cursor: 'pointer',
-                                                    }}
-                                                >
-                                                    {isLoading ? 'Memproses...' : 'Gunakan'}
                                                 </button>
                                             )}
                                         </div>
