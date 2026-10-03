@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { motion } from 'framer-motion'
 import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
@@ -50,7 +50,7 @@ const CLASS_CONFIG: Record<string, { color: string; bg: string; border: string; 
     },
 }
 
-export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerProps) {
+function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerProps) {
     const classStat = AVATAR_CLASS_STATS[profile.avatar_class] || AVATAR_CLASS_STATS['warrior']
     const roleCfg = CLASS_CONFIG[profile.avatar_class] || CLASS_CONFIG['warrior']
 
@@ -361,3 +361,6 @@ export default function HeroBanner({ profile, modulesCompletedCount, xpLogs = []
         </motion.div>
     )
 }
+
+export default React.memo(HeroBanner)
+

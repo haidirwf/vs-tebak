@@ -91,7 +91,7 @@ const ATTACK_VISUALS: Record<AttackType, {
     },
 }
 
-export default function BattleArenaStage({
+function BattleArenaStage({
     player,
     opponent,
     activeAttack,
@@ -642,3 +642,51 @@ export default function BattleArenaStage({
         </div>
     )
 }
+
+function arePropsEqual(prev: BattleArenaStageProps, next: BattleArenaStageProps) {
+    if (prev.activeAttack !== next.activeAttack) return false
+    if (prev.combatText !== next.combatText) return false
+    if (prev.comboCount !== next.comboCount) return false
+    if (prev.battleLog !== next.battleLog) return false
+    if (prev.className !== next.className) return false
+
+    const p1 = prev.player
+    const p2 = next.player
+    if (
+        p1.name !== p2.name ||
+        p1.avatarClass !== p2.avatarClass ||
+        p1.hp !== p2.hp ||
+        p1.maxHp !== p2.maxHp ||
+        p1.mp !== p2.mp ||
+        p1.score !== p2.score ||
+        p1.animationState !== p2.animationState ||
+        p1.level !== p2.level ||
+        p1.schoolName !== p2.schoolName ||
+        p1.equipped !== p2.equipped
+    ) {
+        return false
+    }
+
+    const o1 = prev.opponent
+    const o2 = next.opponent
+    if (
+        o1.name !== o2.name ||
+        o1.avatarClass !== o2.avatarClass ||
+        o1.hp !== o2.hp ||
+        o1.maxHp !== o2.maxHp ||
+        o1.mp !== o2.mp ||
+        o1.score !== o2.score ||
+        o1.animationState !== o2.animationState ||
+        o1.level !== o2.level ||
+        o1.isBot !== o2.isBot ||
+        o1.schoolName !== o2.schoolName ||
+        o1.equipped !== o2.equipped
+    ) {
+        return false
+    }
+
+    return true
+}
+
+export default React.memo(BattleArenaStage, arePropsEqual)
+

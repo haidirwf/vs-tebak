@@ -2246,3 +2246,9 @@ input::placeholder, textarea::placeholder {
   contain-intrinsic-size: 0 58px;
 }
 
+.optimized-card-item {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 320px;
+}
+
+
