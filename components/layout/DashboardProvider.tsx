@@ -56,9 +56,23 @@ export function DashboardProvider({
             const now = Date.now()
             if (!lastSync || now - Number(lastSync) > 300_000) {
                 sessionStorage.setItem(cacheKey, String(now))
-                fetch('/api/user/sync', { method: 'POST' }).catch(() => {
-                    // Ignore background sync errors
-                })
+                fetch('/api/user/sync', { method: 'POST' })
+                    .then((res) => res.json())
+                    .then((data) => {
+                        if (data?.ok && data?.streakUpdated && typeof data.streakCount === 'number') {
+                            const { profile: currentProfile, setProfile } = useUserStore.getState()
+                            if (currentProfile && (currentProfile.streak_count !== data.streakCount || currentProfile.last_active !== data.lastActive)) {
+                                setProfile({
+                                    ...currentProfile,
+                                    streak_count: data.streakCount,
+                                    last_active: data.lastActive,
+                                })
+                            }
+                        }
+                    })
+                    .catch(() => {
+                        // Ignore background sync errors
+                    })
             }
         }
     }, [profile, setProfile, setLoading, hasCompletedCreation])

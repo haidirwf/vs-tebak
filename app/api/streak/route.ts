@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getEffectiveStreak, shouldResetStreak } from '@/lib/game/streak'
+import { checkStreakStatus } from '@/lib/game/streak'
 import { NextResponse } from 'next/server'
 
 export async function POST() {
@@ -18,21 +18,23 @@ export async function POST() {
 
     if (!profile) return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
 
-    let currentStreak = profile.streak_count || 0
+    const streakStatus = checkStreakStatus(profile.last_active, profile.streak_count || 0)
     let updated = false
 
-    if (currentStreak > 0 && shouldResetStreak(profile.last_active, currentStreak)) {
-        currentStreak = 0
+    if (streakStatus.shouldUpdate || profile.last_active !== streakStatus.lastActive) {
         updated = true
         await supabase
             .from('profiles')
-            .update({ streak_count: 0 })
+            .update({
+                streak_count: streakStatus.streakCount,
+                last_active: streakStatus.lastActive,
+            })
             .eq('id', user.id)
     }
 
     return NextResponse.json({
-        streak: getEffectiveStreak(profile.last_active, currentStreak),
-        lastActive: profile.last_active,
+        streak: streakStatus.streakCount,
+        lastActive: streakStatus.lastActive,
         updated,
     })
 }
