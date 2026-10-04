@@ -1189,7 +1189,7 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 768px) {
   .battle-action-card {
-    padding: 20px !important;
+    padding: 18px !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 }
@@ -1212,12 +1212,32 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.battle-action-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-steel);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.battle-action-card:hover .battle-action-arrow {
+  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  transform: translate(1px, -1px);
+}
+
 .battle-action-title {
   font-family: var(--font-heading);
   font-size: 15px !important;
   font-weight: 600;
   color: #ffffff;
-  margin: 0 0 2px 0 !important;
+  margin: 0 0 4px 0 !important;
   line-height: 1.25;
   letter-spacing: -0.015em;
   white-space: nowrap !important;
@@ -1227,24 +1247,14 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 768px) {
   .battle-action-title {
-    font-size: 18px !important;
-    margin-bottom: 4px !important;
+    font-size: 17px !important;
+    margin-bottom: 6px !important;
   }
-}
-
-.battle-action-subtitle {
-  font-size: 11px;
-  font-family: var(--font-inter);
-  font-weight: 500;
-  margin-bottom: 6px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .battle-action-desc {
   color: var(--text-secondary);
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   line-height: 1.45 !important;
   margin: 0;
   min-width: 0 !important;
@@ -1258,29 +1268,8 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 768px) {
   .battle-action-desc {
-    font-size: 12px !important;
+    font-size: 12.5px !important;
     line-height: 1.5 !important;
-  }
-}
-
-.battle-action-footer {
-  margin-top: 14px !important;
-  padding-top: 10px !important;
-  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  font-size: 11.5px !important;
-  font-weight: 500 !important;
-  font-family: var(--font-inter) !important;
-  white-space: nowrap !important;
-}
-
-@media (min-width: 768px) {
-  .battle-action-footer {
-    margin-top: 16px !important;
-    padding-top: 12px !important;
-    font-size: 12px !important;
   }
 }
 

@@ -431,58 +431,46 @@ export default function BattlePage() {
         {
             key: 'create',
             label: 'Buat Room',
-            subtitle: 'Host Duel Pribadi',
-            badge: 'Kustom',
             icon: Swords,
-            desc: 'Buat arena tandingmu sendiri dan tantang teman beradu kuis.',
-            cta: 'Atur Room',
+            desc: 'Bikin arena tanding kuis sendiri dan undang temanmu.',
             action: () => { setError(null); setMode('create') },
             color: 'var(--accent-gold)',
             bg: 'var(--accent-gold-bg)',
             border: 'var(--accent-gold-border)',
-            glow: 'rgba(245, 197, 66, 0.18)',
+            glow: 'rgba(245, 197, 66, 0.16)',
         },
         {
             key: 'join',
             label: 'Join Room',
-            subtitle: 'Akses Kode PIN',
-            badge: 'Kode',
             icon: KeyRound,
-            desc: 'Masuk ke arena lawan menggunakan kode room rahasia.',
-            cta: 'Input Kode',
+            desc: 'Masuk ke arena lawan memakai kode room yang dibagikan.',
             action: () => { setError(null); setMode('join') },
             color: 'var(--accent-cyan)',
             bg: 'var(--accent-cyan-bg)',
             border: 'var(--accent-cyan-border)',
-            glow: 'rgba(56, 189, 248, 0.18)',
+            glow: 'rgba(56, 189, 248, 0.16)',
         },
         {
             key: 'matchmaking',
             label: 'Matchmaking',
-            subtitle: 'PvP Otomatis',
-            badge: 'Acak',
             icon: Flame,
-            desc: 'Sistem mencarikan lawan seimbang untukmu secara otomatis.',
-            cta: 'Cari Lawan',
+            desc: 'Sistem mencarikan lawan seimbang secara otomatis & cepat.',
             action: handleMatchmaking,
             color: 'var(--accent-green)',
             bg: 'var(--accent-green-bg)',
             border: 'var(--accent-green-border)',
-            glow: 'rgba(34, 197, 94, 0.18)',
+            glow: 'rgba(34, 197, 94, 0.16)',
         },
         {
             key: 'practice',
             label: 'Vs Computer',
-            subtitle: 'Latihan AI Bot',
-            badge: 'Solo',
             icon: Bot,
-            desc: 'Asah kecepatan duel kuis melawan AI tanpa menunggu lawan.',
-            cta: 'Mulai Latihan',
+            desc: 'Latihan asah kecepatan kuis melawan bot AI tanpa antrean.',
             action: () => router.push('/battle/computer'),
             color: 'var(--accent-purple)',
             bg: 'var(--accent-purple-bg)',
             border: 'var(--accent-purple-border)',
-            glow: 'rgba(168, 85, 247, 0.18)',
+            glow: 'rgba(168, 85, 247, 0.16)',
         },
     ]
 
@@ -516,70 +504,45 @@ export default function BattlePage() {
                                 style={{ cursor: 'pointer', height: '100%', minWidth: 0 }}
                             >
                                 <div className="card hover-lift battle-action-card">
-                                    {/* Corner Radial Glow */}
+                                    {/* Subtle Corner Glow */}
                                     <div
                                         style={{
                                             position: 'absolute',
                                             top: '-20px',
                                             right: '-20px',
-                                            width: '80px',
-                                            height: '80px',
+                                            width: '70px',
+                                            height: '70px',
                                             background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
                                             pointerEvents: 'none',
                                         }}
                                     />
 
-                                    <div>
-                                        {/* Top Row: Icon + Badge & Arrow */}
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
-                                            <div
-                                                className="battle-action-icon"
-                                                style={{
-                                                    backgroundColor: item.bg,
-                                                    border: `1px solid ${item.border}`,
-                                                    color: item.color,
-                                                }}
-                                            >
-                                                <Icon size={18} />
-                                            </div>
-
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <span
-                                                    style={{
-                                                        fontSize: '11px',
-                                                        fontFamily: 'var(--font-inter)',
-                                                        fontWeight: 500,
-                                                        color: item.color,
-                                                        backgroundColor: item.bg,
-                                                        border: `1px solid ${item.border}`,
-                                                        padding: '2px 8px',
-                                                        borderRadius: '6px',
-                                                    }}
-                                                >
-                                                    {item.badge}
-                                                </span>
-                                                <ArrowUpRight size={14} style={{ color: 'var(--color-steel)' }} />
-                                            </div>
+                                    {/* Top Row: Icon + Single Action Indicator */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                                        <div
+                                            className="battle-action-icon"
+                                            style={{
+                                                backgroundColor: item.bg,
+                                                border: `1px solid ${item.border}`,
+                                                color: item.color,
+                                            }}
+                                        >
+                                            <Icon size={18} />
                                         </div>
 
-                                        {/* Title, Subtitle, & Description */}
-                                        <div style={{ minWidth: 0 }}>
-                                            <h3 className="battle-action-title">
-                                                {item.label}
-                                            </h3>
-                                            <div className="battle-action-subtitle" style={{ color: item.color }}>
-                                                {item.subtitle}
-                                            </div>
-                                            <p className="battle-action-desc">
-                                                {item.desc}
-                                            </p>
+                                        <div className="battle-action-arrow">
+                                            <ArrowUpRight size={15} />
                                         </div>
                                     </div>
 
-                                    {/* Footer CTA with Arrow */}
-                                    <div className="battle-action-footer" style={{ color: item.color }}>
-                                        <span>{item.cta}</span>
-                                        <ArrowUpRight size={14} style={{ flexShrink: 0 }} />
+                                    {/* Content: Title & Clear Concise Description */}
+                                    <div style={{ minWidth: 0 }}>
+                                        <h3 className="battle-action-title">
+                                            {item.label}
+                                        </h3>
+                                        <p className="battle-action-desc">
+                                            {item.desc}
+                                        </p>
                                     </div>
                                 </div>
                             </motion.div>
