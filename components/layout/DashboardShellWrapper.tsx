@@ -2,7 +2,7 @@
 
 import React, { useRef, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
-import Sidebar from '@/components/layout/Sidebar'
+import Topbar from '@/components/layout/Topbar'
 import Navbar from '@/components/layout/Navbar'
 
 interface DashboardShellWrapperProps {
@@ -28,9 +28,22 @@ export default function DashboardShellWrapper({ children }: DashboardShellWrappe
     return (
         <div
             className={`dashboard-shell ${isLiveBattle ? 'in-live-battle' : ''}`}
-            style={{ display: 'flex', minHeight: '100dvh', height: '100dvh', width: '100%', maxWidth: '100vw', overflow: 'hidden' }}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                minHeight: '100dvh',
+                height: '100dvh',
+                width: '100%',
+                maxWidth: '100vw',
+                overflow: 'hidden',
+                position: 'relative',
+            }}
         >
-            <Sidebar />
+            {!isLiveBattle && (
+                <div className="dashboard-topbar">
+                    <Topbar />
+                </div>
+            )}
             <div
                 className="dashboard-main"
                 style={{
@@ -43,9 +56,6 @@ export default function DashboardShellWrapper({ children }: DashboardShellWrappe
                     overflow: 'hidden',
                 }}
             >
-                <div className="dashboard-topbar">
-                    <Navbar />
-                </div>
                 <main
                     ref={contentRef}
                     className="dashboard-content"
@@ -62,6 +72,7 @@ export default function DashboardShellWrapper({ children }: DashboardShellWrappe
                     {children}
                 </main>
             </div>
+            {!isLiveBattle && <Navbar />}
         </div>
     )
 }

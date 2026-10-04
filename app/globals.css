@@ -735,12 +735,25 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 768px) {
   .dashboard-content {
-    padding-bottom: 24px !important;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)) !important;
   }
 }
 
 .dashboard-topbar {
-  display: none;
+  display: block !important;
+  width: 100% !important;
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  top: 0;
+  z-index: 40;
+}
+
+.dashboard-bottom-navbar {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 50 !important;
 }
 
 .dashboard-sidebar {
@@ -2006,7 +2019,7 @@ input::placeholder, textarea::placeholder {
   }
 
   .dashboard-shell {
-    flex-direction: row;
+    flex-direction: column !important;
     height: 100vh !important;
     overflow: hidden !important;
   }
@@ -2016,11 +2029,12 @@ input::placeholder, textarea::placeholder {
   }
 
   .dashboard-topbar {
-    display: block;
+    display: block !important;
   }
 
   .dashboard-content {
     will-change: contents;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
   }
 
   .modules-grid {
@@ -2034,12 +2048,7 @@ input::placeholder, textarea::placeholder {
   }
 
   .dashboard-sidebar {
-    width: 270px !important;
-    height: 100vh !important;
-    position: sticky !important;
-    top: 0;
-    border-right: 1px solid var(--surface-border);
-    border-bottom: none;
+    display: none !important;
   }
 
   .battle-select-layout {
@@ -2141,6 +2150,12 @@ input::placeholder, textarea::placeholder {
   overflow-y: hidden !important;
   touch-action: none !important;
   overscroll-behavior: none !important;
+}
+
+.dashboard-shell.in-live-battle .dashboard-topbar,
+.dashboard-shell.in-live-battle .dashboard-bottom-navbar,
+.dashboard-shell.in-live-battle .dashboard-sidebar {
+  display: none !important;
 }
 
 @media (max-width: 767px) {

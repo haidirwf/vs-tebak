@@ -1,251 +1,130 @@
 'use client'
 
+import React from 'react'
+import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import React, { useState, useEffect } from 'react'
+import { motion } from 'framer-motion'
 import {
-    Flame,
-    Sparkles,
-    LayoutDashboard,
+    Home,
     BookOpen,
     Swords,
-    Ticket,
+    Shield,
+    ShoppingBag,
     Trophy,
     User,
-    Volume2,
-    VolumeX,
-    ShoppingBag,
 } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useUserStore } from '@/stores/userStore'
-import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
-import { battleSounds } from '@/lib/game/battle-sounds'
-import ThemeToggle from '@/components/layout/ThemeToggle'
 
-const PAGE_CONFIG: Record<string, { title: string; icon: any; color: string }> = {
-    '/dashboard': { title: 'Dashboard', icon: LayoutDashboard, color: 'var(--accent-gold)' },
-    '/modules': { title: 'Modul Belajar', icon: BookOpen, color: 'var(--accent-cyan)' },
-    '/character': { title: 'Karakter & Kostumisasi', icon: Swords, color: '#a855f7' },
-    '/battle': { title: 'Battle Arena', icon: Swords, color: 'var(--accent-red)' },
-    '/shop': { title: 'Toko Petualang', icon: ShoppingBag, color: 'var(--accent-gold)' },
-    '/voucher': { title: 'Toko Petualang', icon: ShoppingBag, color: 'var(--accent-gold)' },
-    '/leaderboard': { title: 'Leaderboard', icon: Trophy, color: 'var(--accent-green)' },
-    '/profile': { title: 'Profil', icon: User, color: 'var(--accent-cyan)' },
-}
+// Navigasi bawah selayaknya Duolingo - hanya icon recognizable tanpa teks judul
+const NAV_ITEMS = [
+    { href: '/dashboard', icon: Home, label: 'Beranda' },
+    { href: '/modules', icon: BookOpen, label: 'Modul Belajar' },
+    { href: '/battle', icon: Swords, label: 'Battle Arena' },
+    { href: '/character', icon: Shield, label: 'Karakter & Kostum' },
+    { href: '/shop', icon: ShoppingBag, label: 'Toko Petualang' },
+    { href: '/leaderboard', icon: Trophy, label: 'Papan Peringkat' },
+    { href: '/profile', icon: User, label: 'Profil Pahlawan' },
+]
 
 export default function Navbar() {
     const pathname = usePathname()
-    const { profile } = useUserStore()
-    const [isMuted, setIsMuted] = useState(() => battleSounds.getIsMuted())
-
-    const effectiveStreak = profile ? getEffectiveStreak(profile.last_active, profile.streak_count) : 0
-    const isPendingStreak = profile ? isStreakPendingToday(profile.last_active, profile.streak_count) : false
-
-    useEffect(() => {
-        return battleSounds.subscribe(() => {
-            setIsMuted(battleSounds.getIsMuted())
-        })
-    }, [])
-
-    const toggleAudio = () => {
-        const nextState = battleSounds.toggleMute()
-        setIsMuted(nextState)
-    }
-
-    const activeConfig = Object.entries(PAGE_CONFIG).find(([key]) =>
-        key === pathname || pathname.startsWith(key + '/')
-    )?.[1] || { title: 'Skillungo', icon: LayoutDashboard, color: 'var(--accent-gold)' }
-
-    const Icon = activeConfig.icon
 
     return (
-        <header
-            className="dashboard-navbar"
+        <nav
+            className="dashboard-bottom-navbar"
+            aria-label="Main Navigation"
             style={{
-                height: '56px',
-                backgroundColor: 'rgba(10, 10, 10, 0.85)',
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
+                paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+                backgroundColor: 'rgba(10, 10, 10, 0.92)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
-                borderBottom: '1px solid var(--surface-border)',
+                borderTop: '1px solid var(--surface-border)',
+                zIndex: 50,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 24px',
-                position: 'sticky',
-                top: 0,
-                zIndex: 10,
-                transition: 'background-color 0.2s ease, border-color 0.2s ease',
+                justifyContent: 'center',
+                boxShadow: '0 -4px 24px rgba(0, 0, 0, 0.45)',
             }}
         >
-            {/* Ambient subtle glow line saat pindah halaman */}
-            <motion.div
-                key={`glow-${pathname}`}
-                initial={{ scaleX: 0, opacity: 1 }}
-                animate={{ scaleX: 1, opacity: [1, 0.8, 0] }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
+            <div
                 style={{
-                    position: 'absolute',
-                    bottom: -1,
-                    left: 0,
-                    right: 0,
-                    height: '2px',
-                    background: `linear-gradient(90deg, transparent 0%, ${activeConfig.color} 40%, var(--accent-gold) 70%, transparent 100%)`,
-                    transformOrigin: 'left',
-                    pointerEvents: 'none',
+                    width: '100%',
+                    maxWidth: '560px',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-around',
+                    padding: '0 8px',
                 }}
-            />
+            >
+                {NAV_ITEMS.map((item) => {
+                    const isActive =
+                        pathname === item.href ||
+                        (item.href !== '/dashboard' && pathname.startsWith(item.href))
+                    const Icon = item.icon
 
-            {/* Title & Icon saat rute berpindah (transisi ringan tanpa blur) */}
-            <div style={{ position: 'relative', overflow: 'hidden', height: '32px', display: 'flex', alignItems: 'center' }}>
-                <AnimatePresence mode="popLayout">
-                    <motion.div
-                        key={pathname}
-                        initial={{ opacity: 0, x: -8 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 8 }}
-                        transition={{ duration: 0.15, ease: 'easeOut' }}
-                        style={{ display: 'flex', alignItems: 'center', gap: '10px' }}
-                    >
-                        <div
+                    return (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            prefetch={true}
+                            title={item.label}
+                            aria-label={item.label}
                             style={{
-                                width: '28px',
-                                height: '28px',
-                                borderRadius: '6px',
-                                backgroundColor: `${activeConfig.color}15`,
-                                border: `1px solid ${activeConfig.color}35`,
+                                textDecoration: 'none',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: activeConfig.color,
-                                boxShadow: `0 0 12px ${activeConfig.color}25`,
+                                flex: 1,
+                                maxWidth: '56px',
+                                height: '44px',
                             }}
                         >
-                            <Icon size={16} />
-                        </div>
+                            <motion.div
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.92 }}
+                                transition={{ type: 'spring', stiffness: 450, damping: 25 }}
+                                style={{
+                                    width: '42px',
+                                    height: '42px',
+                                    borderRadius: '10px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    position: 'relative',
+                                    backgroundColor: isActive ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
+                                    border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
+                                    color: isActive ? 'var(--color-gold)' : 'rgba(255, 255, 255, 0.48)',
+                                    transition: 'color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease',
+                                }}
+                            >
+                                <Icon size={21} strokeWidth={isActive ? 2.3 : 1.8} />
 
-                        <h2
-                            className="dashboard-navbar-title"
-                            style={{
-                                fontFamily: 'var(--font-heading)',
-                                fontSize: '17px',
-                                fontWeight: 400,
-                                color: 'var(--text-primary)',
-                                margin: 0,
-                                letterSpacing: '-0.015em',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '8px',
-                            }}
-                        >
-                            {activeConfig.title}
-                        </h2>
-                    </motion.div>
-                </AnimatePresence>
+                                {/* Subtle top line active indicator */}
+                                {isActive && (
+                                    <motion.div
+                                        layoutId="bottomNavIndicator"
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-1px',
+                                            left: '8px',
+                                            right: '8px',
+                                            height: '2px',
+                                            borderRadius: '2px',
+                                            backgroundColor: 'var(--color-gold)',
+                                        }}
+                                        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
+                                    />
+                                )}
+                            </motion.div>
+                        </Link>
+                    )
+                })}
             </div>
-
-            <div className="dashboard-navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                {/* Streak Badge with pulsing flame */}
-                {profile && effectiveStreak > 0 && (
-                    <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                        title={isPendingStreak ? `Streak ${effectiveStreak} hari (belum aktif hari ini)` : `Streak ${effectiveStreak} hari (aktif hari ini)`}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            padding: '4px 10px',
-                            borderRadius: '8px',
-                            backgroundColor: 'var(--accent-red-bg)',
-                            border: isPendingStreak ? '1px dashed var(--accent-red-border)' : '1px solid var(--accent-red-border)',
-                            cursor: 'default',
-                        }}
-                    >
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.2, 1],
-                                rotate: [0, -6, 6, 0],
-                            }}
-                            transition={{
-                                duration: 1.8,
-                                repeat: Infinity,
-                                ease: 'easeInOut',
-                            }}
-                            style={{ display: 'flex', alignItems: 'center' }}
-                        >
-                            <Flame size={14} style={{ color: 'var(--accent-red)' }} />
-                        </motion.div>
-                        <span
-                            style={{
-                                fontSize: '12px',
-                                fontWeight: 500,
-                                color: 'var(--accent-red)',
-                                fontFamily: 'var(--font-inter)',
-                            }}
-                        >
-                            {effectiveStreak} Hari
-                        </span>
-                    </motion.div>
-                )}
-
-                {/* XP Badge with micro-interaction */}
-                {profile && (
-                    <motion.div
-                        className="dashboard-navbar-xp"
-                        whileHover={{ scale: 1.05, borderColor: 'var(--color-gold)' }}
-                        whileTap={{ scale: 0.95 }}
-                        transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-                        style={{
-                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                            border: '1px solid rgba(245, 197, 66, 0.35)',
-                            borderRadius: '8px',
-                            padding: '4px 12px',
-                            fontSize: '12px',
-                            fontFamily: 'var(--font-inter)',
-                            fontWeight: 600,
-                            color: 'var(--color-gold)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '6px',
-                            cursor: 'default',
-                        }}
-                    >
-                        <motion.div
-                            animate={{ rotate: [0, 15, -15, 0] }}
-                            transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                            style={{ display: 'inline-flex' }}
-                        >
-                            <Sparkles size={12} style={{ color: 'var(--color-gold)' }} />
-                        </motion.div>
-                        <span>{profile.xp.toLocaleString()} XP</span>
-                    </motion.div>
-                )}
-
-                {/* Sound Quick Toggle Button */}
-                <button
-                    type="button"
-                    onClick={toggleAudio}
-                    title={isMuted ? 'Aktifkan Suara Efek' : 'Senyapkan Suara Efek'}
-                    aria-label="Toggle Sound"
-                    style={{
-                        background: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid var(--surface-border)',
-                        borderRadius: '8px',
-                        padding: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: isMuted ? 'var(--text-muted)' : 'var(--color-gold)',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease',
-                    }}
-                >
-                    {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                </button>
-
-                {/* Theme Toggle (Disembunyikan sementara, hapus komentar untuk mengaktifkan kembali) */}
-                {/* <ThemeToggle /> */}
-            </div>
-        </header>
+        </nav>
     )
 }
