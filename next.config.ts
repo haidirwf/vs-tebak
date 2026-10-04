@@ -10,6 +10,11 @@ const nextConfig: NextConfig = {
     maxInactiveAge: 300 * 1000,
     pagesBufferLength: 10,
   },
+  async redirects() {
+    return [
+      { source: '/voucher', destination: '/shop?tab=vouchers', permanent: true },
+    ];
+  },
   async rewrites() {
     return [
       { source: '/signup', destination: '/register' },

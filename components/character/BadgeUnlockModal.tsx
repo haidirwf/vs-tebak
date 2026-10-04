@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Trophy, Sparkles, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import BadgeIcon from '@/components/character/BadgeIcon'
 
 interface BadgeUnlockModalProps {
@@ -87,57 +87,32 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                         <X size={16} />
                     </button>
 
-                    {/* Trophy Icon Badge */}
+                    {/* Badge Icon Hero */}
                     <div
                         style={{
-                            width: '54px',
-                            height: '54px',
-                            borderRadius: '14px',
-                            backgroundColor: 'rgba(56, 189, 248, 0.12)',
-                            border: '1px solid rgba(56, 189, 248, 0.3)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            margin: '0 auto 16px',
-                        }}
-                    >
-                        <Trophy size={24} style={{ color: 'var(--accent-cyan)' }} />
-                    </div>
-
-                    {/* Subtitle / Header */}
-                    <div
-                        style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '5px',
-                            fontFamily: 'var(--font-inter)',
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            letterSpacing: '0.04em',
-                            color: 'var(--accent-cyan)',
-                            textTransform: 'uppercase',
-                            marginBottom: '14px',
-                        }}
-                    >
-                        <Sparkles size={12} />
-                        Lencana Terbuka
-                    </div>
-
-                    {/* Badge Icon Display */}
-                    <div
-                        style={{
-                            width: '72px',
-                            height: '72px',
+                            width: '76px',
+                            height: '76px',
                             borderRadius: '16px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                            border: '1px solid rgba(255, 255, 255, 0.1)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                            border: '1px solid rgba(245, 197, 66, 0.35)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            margin: '0 auto 14px',
+                            margin: '8px auto 16px',
                         }}
                     >
-                        <BadgeIcon icon={badge.icon_url} size={40} color="var(--accent-gold)" />
+                        <BadgeIcon icon={badge.icon_url} size={44} color="#F5C542" />
+                    </div>
+
+                    <div
+                        style={{
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            color: '#F5C542',
+                            marginBottom: '6px',
+                        }}
+                    >
+                        Lencana Baru Terbuka
                     </div>
 
                     <h3

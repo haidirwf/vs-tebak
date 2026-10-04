@@ -5,8 +5,10 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music } from 'lucide-react'
 import { Question, Profile, AvatarClass } from '@/types'
+import { calculateCharacterStats } from '@/lib/game/character'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
 import { battleSounds } from '@/lib/game/battle-sounds'
+import PostBattleReviewModal, { QuizReviewItem } from '@/components/battle/PostBattleReviewModal'
 
 type PracticeCategory = 'coding' | 'design' | 'productivity' | 'business' | 'general'
 
@@ -90,6 +92,16 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     const [battleLog, setBattleLog] = useState('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk melancarkan serangan!')
     const [audioMuted, setAudioMuted] = useState(() => battleSounds.getIsMuted())
     const [bgmMuted, setBgmMuted] = useState(() => battleSounds.getIsBgmMuted())
+    const [quizReviews, setQuizReviews] = useState<QuizReviewItem[]>([])
+    const [showReviewModal, setShowReviewModal] = useState(false)
+
+    const myStats = useMemo(() => {
+        return calculateCharacterStats(
+            ((currentUser?.avatar_class as AvatarClass) || 'warrior'),
+            currentUser?.level || 1,
+            (currentUser?.equipped_items as any) || {}
+        )
+    }, [currentUser?.avatar_class, currentUser?.level, currentUser?.equipped_items])
 
     useEffect(() => {
         return battleSounds.subscribe(() => {
@@ -150,10 +162,12 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             setTimeout(() => {
                 battleSounds.playHitImpact(false)
                 setMeAnimation('hurt')
-                const newHp = Math.max(0, myHp - 12)
+                const reduction = myStats.battleBuffs.damageReductionPct || 0
+                const incomingDamage = Math.max(1, Math.round(12 * (1 - reduction / 100)))
+                const newHp = Math.max(0, myHp - incomingDamage)
                 setMyHp(newHp)
-                setCombatText({ target: 'me', text: '⚡ -12 HP', type: 'damage' })
-                setBattleLog('🤖 AI Sentinel melancarkan serangan pulsa energi kilat (-12 HP)!')
+                setCombatText({ target: 'me', text: `⚡ -${incomingDamage} HP`, type: 'damage' })
+                setBattleLog(`🤖 AI Sentinel melancarkan serangan pulsa energi kilat (-${incomingDamage} HP)!`)
                 setTimeout(() => setMeAnimation('idle'), 500)
                 setTimeout(() => setCombatText(null), 1100)
 
@@ -190,7 +204,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             return
         }
         setCurrentQ(prev => prev + 1)
-        setTimeLeft(QUESTION_TIME)
+        setTimeLeft(QUESTION_TIME + (myStats.battleBuffs.extraTimerSec || 0))
         setSelectedAnswer(null)
         setShowAnswer(false)
         setBotAnswered(false)
@@ -203,7 +217,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         if (picked.length === 0) return
         setQuestions(picked)
         setCurrentQ(0)
-        setTimeLeft(QUESTION_TIME)
+        setTimeLeft(QUESTION_TIME + (myStats.battleBuffs.extraTimerSec || 0))
         setMyScore(0)
         setBotScore(0)
         setSelectedAnswer(null)
@@ -216,6 +230,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         setBotHp(100)
         setMyMp(30)
         setBotMp(20)
+        setQuizReviews([])
+        setShowReviewModal(false)
         setCombatText(null)
         setBattleLog('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk menyerang AI Sentinel!')
         setStarted(true)
@@ -236,11 +252,26 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     setComboCount(0)
                     battleSounds.playWrongAnswer()
                     battleSounds.playMiss()
-                    const newHp = Math.max(0, myHp - 15)
+
+                    setQuizReviews(r => [
+                        ...r,
+                        {
+                            questionText: currentQuestion.question_text,
+                            options: currentQuestion.options,
+                            correctOption: currentQuestion.correct_option,
+                            selectedOption: null,
+                            explanation: currentQuestion.explanation,
+                            isCorrect: false,
+                        }
+                    ])
+
+                    const reduction = myStats.battleBuffs.damageReductionPct || 0
+                    const timeoutPenalty = Math.max(1, Math.round(15 * (1 - reduction / 100)))
+                    const newHp = Math.max(0, myHp - timeoutPenalty)
                     setMyHp(newHp)
-                    setCombatText({ target: 'me', text: '⏰ TIMEOUT! -15 HP', type: 'miss' })
+                    setCombatText({ target: 'me', text: `⏰ TIMEOUT! -${timeoutPenalty} HP`, type: 'miss' })
                     setMeAnimation('hurt')
-                    setBattleLog('⌛ Waktu habis! Kamu terkena penalti giliran dan kehilangan 15 HP.')
+                    setBattleLog(`⌛ Waktu habis! Kamu terkena penalti giliran dan kehilangan ${timeoutPenalty} HP.`)
                     setTimeout(() => setMeAnimation('idle'), 600)
                     setTimeout(() => setCombatText(null), 1100)
 
@@ -265,7 +296,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
 
         return () => resetTimers()
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [started, finished, currentQ, currentQuestion, myHp, botScore, myScore])
+    }, [started, finished, currentQ, currentQuestion, myHp, botScore, myScore, myStats])
 
     function handleAnswer(idx: number) {
         if (!currentQuestion || showAnswer || selectedAnswer !== null) return
@@ -275,17 +306,32 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
 
         const isCorrect = idx === currentQuestion.correct_option
         const bonus = Math.floor(timeLeft * 0.5)
-        const updatedMyScore = myScore + (isCorrect ? 10 + bonus : 0)
+        const extraAtk = myStats.battleBuffs.extraAtkPoints || 0
+        const updatedMyScore = myScore + (isCorrect ? 10 + bonus + extraAtk : 0)
         setMyScore(updatedMyScore)
+
+        setQuizReviews(r => [
+            ...r,
+            {
+                questionText: currentQuestion.question_text,
+                options: currentQuestion.options,
+                correctOption: currentQuestion.correct_option,
+                selectedOption: idx,
+                explanation: currentQuestion.explanation,
+                isCorrect,
+            }
+        ])
 
         const hpDamage = 14
         const playerClass = ((currentUser?.avatar_class as AvatarClass) || 'warrior')
         if (isCorrect) {
             const nextCombo = comboCount + 1
             setComboCount(nextCombo)
-            const isCrit = nextCombo >= 2
+            const rollCrit = (Math.random() * 100) < (myStats.battleBuffs.critChancePct || 0)
+            const isCrit = nextCombo >= 2 || rollCrit
             const isUltimate = myMp >= 100
-            const effectiveDamage = isUltimate ? hpDamage * 2 : isCrit ? hpDamage + 8 : hpDamage
+            const baseDamage = hpDamage + extraAtk
+            const effectiveDamage = isUltimate ? baseDamage * 2 : isCrit ? baseDamage + 8 : baseDamage
 
             if (isUltimate) {
                 battleSounds.playUltimateSkill()
@@ -336,6 +382,11 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 setMyMp(mp => Math.min(100, mp + 25))
             }
 
+            // Shield recovery from Healer / accessory buff
+            if (myStats.battleBuffs.shieldRegenPoints > 0) {
+                setMyHp(hp => Math.min(100, hp + myStats.battleBuffs.shieldRegenPoints))
+            }
+
             setBattleLog(
                 isUltimate
                     ? `🔥 ULTIMATE BURST! Serangan pamungkas melumpuhkan sistem pertahanan AI Sentinel (-${effectiveDamage} HP)!`
@@ -353,15 +404,17 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             battleSounds.playWrongAnswer()
             battleSounds.playMiss()
             setComboCount(0)
-            const newMyHp = Math.max(0, myHp - hpDamage)
+            const reduction = myStats.battleBuffs.damageReductionPct || 0
+            const incomingDamage = Math.max(1, Math.round(hpDamage * (1 - reduction / 100)))
+            const newMyHp = Math.max(0, myHp - incomingDamage)
             setMyHp(newMyHp)
             setCombatText({
                 target: 'me',
-                text: `❌ Meleset! -${hpDamage} HP`,
+                text: `❌ Meleset! -${incomingDamage} HP`,
                 type: 'miss',
             })
             setMeAnimation('hurt')
-            setBattleLog(`🛡️ Serangan meleset! AI Sentinel membalas dengan serangan balik (-${hpDamage} HP).`)
+            setBattleLog(`🛡️ Serangan meleset! AI Sentinel membalas dengan serangan balik (-${incomingDamage} HP).`)
             setTimeout(() => setMeAnimation('idle'), 600)
             setTimeout(() => setCombatText(null), 1100)
 
@@ -562,6 +615,14 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                         <button
                             type="button"
+                            onClick={() => setShowReviewModal(true)}
+                            className="btn-dark-outline"
+                            style={{ padding: '9px 18px', fontSize: '12.5px', borderRadius: '8px' }}
+                        >
+                            Review Soal ({quizReviews.length})
+                        </button>
+                        <button
+                            type="button"
                             onClick={() => {
                                 setStarted(false)
                                 setFinished(false)
@@ -582,6 +643,12 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             <Swords size={15} /> Main Lagi
                         </motion.button>
                     </div>
+
+                    <PostBattleReviewModal
+                        isOpen={showReviewModal}
+                        onClose={() => setShowReviewModal(false)}
+                        reviews={quizReviews}
+                    />
                 </motion.div>
             </div>
         )

@@ -177,6 +177,19 @@ export default function BattlePage() {
         }
     }, [supabase, fetchRooms])
 
+    // Auto-detect invite link with query param ?join=ROOMCODE
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search)
+            const joinCode = params.get('join')
+            if (joinCode) {
+                setRoomCode(joinCode.toUpperCase().trim())
+                setError(null)
+                setMode('join')
+            }
+        }
+    }, [])
+
     // 1. Stopwatch timer: starts immediately when mode becomes 'matchmaking'
     useEffect(() => {
         if (mode !== 'matchmaking') {

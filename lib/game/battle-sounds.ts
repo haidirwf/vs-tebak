@@ -18,7 +18,7 @@ class SoundSynthesizer {
         if (typeof window !== 'undefined') {
             try {
                 this.isMuted = localStorage.getItem('skillungo_sfx_muted') === 'true'
-                this.isBgmMuted = localStorage.getItem('skillungo_bgm_muted') === 'true'
+                this.isBgmMuted = localStorage.getItem('skillungo_bgm_muted') !== 'false'
             } catch {
                 // Ignore localStorage errors
             }

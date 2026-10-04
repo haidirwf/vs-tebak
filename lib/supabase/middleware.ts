@@ -35,7 +35,6 @@ export async function updateSession(request: NextRequest) {
         '/battle',
         '/leaderboard',
         '/profile',
-        '/voucher',
         '/shop',
         '/character',
     ]

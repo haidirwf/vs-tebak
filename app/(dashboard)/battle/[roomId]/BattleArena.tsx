@@ -5,12 +5,13 @@ import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
 import { Question, Battle, Profile, AvatarClass } from '@/types'
-import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords, Volume2, VolumeX, Music } from 'lucide-react'
+import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords, Volume2, VolumeX, Music, Share2 } from 'lucide-react'
 import { getClassBonusDescription, AVATAR_CLASS_STATS } from '@/lib/game/xp'
 import { calculateCharacterStats } from '@/lib/game/character'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
 import { battleSounds } from '@/lib/game/battle-sounds'
+import PostBattleReviewModal, { QuizReviewItem } from '@/components/battle/PostBattleReviewModal'
 
 interface BattleArenaProps {
     battle: Battle
@@ -89,6 +90,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [battleLog, setBattleLog] = useState<string>('Pilih jawaban terbaik untuk melancarkan serangan duel!')
     const [opponentAnsweredThisRound, setOpponentAnsweredThisRound] = useState(false)
     const [copiedRoomCode, setCopiedRoomCode] = useState(false)
+    const [copiedInviteLink, setCopiedInviteLink] = useState(false)
+    const [quizReviews, setQuizReviews] = useState<QuizReviewItem[]>([])
+    const [showReviewModal, setShowReviewModal] = useState(false)
     const [audioMuted, setAudioMuted] = useState(() => battleSounds.getIsMuted())
     const [bgmMuted, setBgmMuted] = useState(() => battleSounds.getIsBgmMuted())
 
@@ -363,6 +367,22 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     clearInterval(timerRef.current!)
                     setShowAnswer(true)
                     setComboCount(0)
+
+                    const currentQuestion = questions[currentQ]
+                    if (currentQuestion) {
+                        setQuizReviews(r => [
+                            ...r,
+                            {
+                                questionText: currentQuestion.question_text,
+                                options: currentQuestion.options,
+                                correctOption: currentQuestion.correct_option,
+                                selectedOption: null,
+                                explanation: currentQuestion.explanation,
+                                isCorrect: false,
+                            }
+                        ])
+                    }
+
                     const hpDamage = Math.max(14, Math.floor(100 / Math.max(questions.length, 1)))
                     const newMyHp = Math.max(0, myHpRef.current - hpDamage)
                     setMyHp(newMyHp)
@@ -833,6 +853,18 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         const isCorrect = idx === q.correct_option
         const bonus = Math.floor(timeLeft * 0.5)
 
+        setQuizReviews(r => [
+            ...r,
+            {
+                questionText: q.question_text,
+                options: q.options,
+                correctOption: q.correct_option,
+                selectedOption: idx,
+                explanation: q.explanation,
+                isCorrect,
+            }
+        ])
+
         // Customization Buffs
         const extraAtk = myStats.battleBuffs.extraAtkPoints
         const rollCrit = (Math.random() * 100) < myStats.battleBuffs.critChancePct
@@ -990,6 +1022,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         setTimeout(() => setCopiedRoomCode(false), 2000)
     }
 
+    const handleCopyInviteLink = () => {
+        if (!battle?.room_code || typeof window === 'undefined') return
+        const inviteUrl = `${window.location.origin}/battle?join=${battle.room_code}`
+        navigator.clipboard.writeText(inviteUrl)
+        setCopiedInviteLink(true)
+        setTimeout(() => setCopiedInviteLink(false), 2000)
+    }
+
     // Phase: Waiting for opponent (only player1 sees this)
     if (phase === 'waiting') {
         return (
@@ -1057,29 +1097,54 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         <span className="battle-room-code-text">
                             {battle.room_code}
                         </span>
-                        <button
-                            type="button"
-                            onClick={handleCopyRoomCode}
-                            className="battle-room-code-btn"
-                            style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '6px',
-                                padding: '8px 14px',
-                                borderRadius: '8px',
-                                backgroundColor: copiedRoomCode ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-                                border: `1px solid ${copiedRoomCode ? 'var(--color-vector-green)' : 'rgba(255, 255, 255, 0.15)'}`,
-                                color: copiedRoomCode ? 'var(--color-vector-green)' : '#ffffff',
-                                fontSize: '12px',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                                transition: 'all 0.15s ease',
-                            }}
-                        >
-                            {copiedRoomCode ? <Check size={14} /> : <Copy size={14} />}
-                            {copiedRoomCode ? 'Tersalin!' : 'Salin Kode'}
-                        </button>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                            <button
+                                type="button"
+                                onClick={handleCopyRoomCode}
+                                className="battle-room-code-btn"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    padding: '8px 14px',
+                                    borderRadius: '8px',
+                                    backgroundColor: copiedRoomCode ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.08)',
+                                    border: `1px solid ${copiedRoomCode ? 'var(--color-vector-green)' : 'rgba(255, 255, 255, 0.15)'}`,
+                                    color: copiedRoomCode ? 'var(--color-vector-green)' : '#ffffff',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                }}
+                            >
+                                {copiedRoomCode ? <Check size={14} /> : <Copy size={14} />}
+                                {copiedRoomCode ? 'Kode Tersalin!' : 'Salin Kode'}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCopyInviteLink}
+                                className="battle-room-code-btn"
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    gap: '6px',
+                                    padding: '8px 14px',
+                                    borderRadius: '8px',
+                                    backgroundColor: copiedInviteLink ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 197, 66, 0.12)',
+                                    border: `1px solid ${copiedInviteLink ? 'var(--color-vector-green)' : 'rgba(245, 197, 66, 0.35)'}`,
+                                    color: copiedInviteLink ? 'var(--color-vector-green)' : '#F5C542',
+                                    fontSize: '12px',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    transition: 'all 0.15s ease',
+                                }}
+                            >
+                                {copiedInviteLink ? <Check size={14} /> : <Share2 size={14} />}
+                                {copiedInviteLink ? 'Link Tersalin!' : 'Salin Link Duel'}
+                            </button>
+                        </div>
                     </div>
 
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -1487,6 +1552,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', flexWrap: 'wrap' }}>
                         <button
                             type="button"
+                            onClick={() => setShowReviewModal(true)}
+                            className="btn-dark-outline battle-finish-btn"
+                            style={{ padding: '9px 18px', fontSize: '12.5px', borderRadius: '8px' }}
+                        >
+                            Review Soal ({quizReviews.length})
+                        </button>
+                        <button
+                            type="button"
                             onClick={() => router.push('/battle')}
                             className="btn-dark-outline battle-finish-btn"
                             style={{ padding: '9px 18px', fontSize: '12.5px', borderRadius: '8px' }}
@@ -1504,6 +1577,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             <Swords size={15} /> Main Lagi
                         </motion.button>
                     </div>
+
+                    <PostBattleReviewModal
+                        isOpen={showReviewModal}
+                        onClose={() => setShowReviewModal(false)}
+                        reviews={quizReviews}
+                    />
                 </motion.div>
             </div>
         )
