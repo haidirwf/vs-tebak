@@ -91,7 +91,7 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
             }
         }
 
-        const daysLabels = ['SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB', 'MIN']
+        const daysLabels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
         const days = []
 
         for (let i = 0; i < 7; i++) {
@@ -104,7 +104,6 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
             days.push({
                 dateStr,
                 dayName: daysLabels[i],
-                dayNumber: format(dayDate, 'd'),
                 isToday,
                 isPast,
                 hasActivity,
@@ -278,8 +277,8 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                         {/* Flame Box Indicator */}
                                         <div
                                             style={{
-                                                width: '26px',
-                                                height: '26px',
+                                                width: '28px',
+                                                height: '28px',
                                                 borderRadius: '6px',
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -312,18 +311,6 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                                 <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
                                             )}
                                         </div>
-
-                                        {/* Nomor Tanggal */}
-                                        <span
-                                            style={{
-                                                fontFamily: 'var(--font-inter)',
-                                                fontSize: '10px',
-                                                fontWeight: day.isToday ? 600 : 400,
-                                                color: day.isToday ? 'var(--color-gold)' : day.hasActivity ? '#ffffff' : 'var(--color-steel)',
-                                            }}
-                                        >
-                                            {day.dayNumber}
-                                        </span>
                                     </div>
                                 )
                             })}
