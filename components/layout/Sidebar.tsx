@@ -13,9 +13,9 @@ import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
 
 const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/character', icon: Shield, label: 'Karakter' },
     { href: '/modules', icon: BookOpen, label: 'Modul' },
     { href: '/battle', icon: Swords, label: 'Battle' },
+    { href: '/character', icon: Shield, label: 'Karakter' },
     { href: '/shop', icon: ShoppingBag, label: 'Toko' },
     { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
     { href: '/profile', icon: User, label: 'Profil' },
