@@ -147,31 +147,44 @@ export default function ProfileHeroStage({
                 </div>
 
                 {/* Character 2D Visual Stage */}
-                <div style={{ position: 'relative', margin: '4px 0 12px' }}>
+                <div
+                    style={{
+                        position: 'relative',
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '16px 0',
+                        margin: '4px 0 14px',
+                        background: `radial-gradient(circle, ${roleInfo.themeColor}14 0%, rgba(20, 20, 20, 0) 70%)`,
+                        borderRadius: '16px',
+                    }}
+                >
                     <CharacterVisual
                         role={avatarClass}
                         equipped={equipped}
-                        size={180}
+                        size={190}
                         showAura={true}
                         interactive={true}
+                        showRoleBadge={false}
                     />
                 </div>
 
                 {/* Hero Identity */}
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: '#ffffff' }}>
+                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
                         {profile.username}
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                        {roleInfo.title} — {roleInfo.subtitle}
+                    <div style={{ fontSize: '12px', color: 'var(--color-steel)', marginTop: '3px', fontWeight: 500 }}>
+                        {roleInfo.title} <span style={{ opacity: 0.5 }}>—</span> {roleInfo.subtitle}
                     </div>
                     {(profile.school_name || profile.city) && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', color: 'var(--color-fog)', marginTop: '6px' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', color: 'var(--color-fog)', marginTop: '8px', padding: '3px 10px', borderRadius: '6px', backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
                             <School size={12} />
                             <span>{profile.school_name || 'Pelajar'}</span>
                             {profile.city && (
                                 <>
-                                    <span>·</span>
+                                    <span style={{ opacity: 0.4 }}>•</span>
                                     <MapPin size={12} />
                                     <span>{profile.city}</span>
                                 </>
@@ -181,8 +194,8 @@ export default function ProfileHeroStage({
                 </div>
 
                 {/* Active Equipment Slots */}
-                <div style={{ width: '100%', marginTop: 'auto', borderTop: '1px solid #222222', paddingTop: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div style={{ width: '100%', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                         <span style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
                             Perlengkapan Terpasang
                         </span>
@@ -217,32 +230,33 @@ export default function ProfileHeroStage({
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '8px',
-                                        padding: '7px 9px',
-                                        borderRadius: '8px',
-                                        backgroundColor: item ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.015)',
+                                        gap: '9px',
+                                        padding: '8px 10px',
+                                        borderRadius: '10px',
+                                        backgroundColor: item ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.012)',
                                         border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'rgba(255, 255, 255, 0.06)'}`,
                                         minWidth: 0,
+                                        transition: 'all 0.15s ease',
                                     }}
                                 >
                                     <div
                                         style={{
-                                            width: '26px',
-                                            height: '26px',
-                                            borderRadius: '6px',
-                                            backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                                            width: '28px',
+                                            height: '28px',
+                                            borderRadius: '7px',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.45)',
                                             border: '1px solid rgba(255, 255, 255, 0.08)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            fontSize: '13px',
+                                            fontSize: '14px',
                                             flexShrink: 0,
                                         }}
                                     >
                                         {item ? item.icon : slotMeta.emoji}
                                     </div>
                                     <div style={{ minWidth: 0, flex: 1 }}>
-                                        <div style={{ fontSize: '9px', color: 'var(--color-steel)' }}>
+                                        <div style={{ fontSize: '9.5px', color: 'var(--color-steel)', textTransform: 'capitalize' }}>
                                             {slotMeta.name}
                                         </div>
                                         <div

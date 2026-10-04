@@ -564,6 +564,7 @@ export default function CharacterPage() {
                             size={190}
                             showAura={true}
                             interactive={true}
+                            showRoleBadge={false}
                         />
 
                         {/* Hero Name & Lore */}
