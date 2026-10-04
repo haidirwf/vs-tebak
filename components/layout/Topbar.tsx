@@ -50,10 +50,6 @@ export default function Topbar() {
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
                 borderBottom: '1px solid var(--surface-border)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: '0 16px',
                 position: 'sticky',
                 top: 0,
                 zIndex: 40,
@@ -61,8 +57,21 @@ export default function Topbar() {
                 transition: 'background-color 0.2s ease, border-color 0.2s ease',
             }}
         >
-            {/* Ujung Kiri: Nama User dan Level (Logo & teks Skillungo telah dihapus) */}
-            <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div
+                className="topbar-inner-content"
+                style={{
+                    maxWidth: '1240px',
+                    margin: '0 auto',
+                    width: '100%',
+                    height: '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    boxSizing: 'border-box',
+                }}
+            >
+                {/* Ujung Kiri: Nama User dan Level (Logo & teks Skillungo telah dihapus) */}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                 {profile ? (
                     <Link
                         href="/profile"
@@ -245,6 +254,7 @@ export default function Topbar() {
                 >
                     <LogOut size={15} />
                 </button>
+            </div>
             </div>
 
             {/* Modal Konfirmasi Logout */}

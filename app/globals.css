@@ -748,6 +748,22 @@ input::placeholder, textarea::placeholder {
   z-index: 40;
 }
 
+.topbar-inner-content {
+  padding: 0 12px;
+}
+
+@media (min-width: 640px) {
+  .topbar-inner-content {
+    padding: 0 20px;
+  }
+}
+
+@media (min-width: 768px) {
+  .topbar-inner-content {
+    padding: 0 24px;
+  }
+}
+
 .dashboard-bottom-navbar {
   position: fixed !important;
   bottom: 0 !important;
