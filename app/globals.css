@@ -64,6 +64,10 @@
   --accent-green-bg: rgba(34, 197, 94, 0.1);
   --accent-green-border: rgba(34, 197, 94, 0.28);
 
+  --accent-purple: #A855F7;
+  --accent-purple-bg: rgba(168, 85, 247, 0.1);
+  --accent-purple-border: rgba(168, 85, 247, 0.28);
+
   /* --- TYPOGRAPHY (LINEARITY SPEC) --- */
   --font-inter: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-acidgrotesk: var(--font-acidgrotesk), 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -1154,7 +1158,7 @@ input::placeholder, textarea::placeholder {
 .battle-select-actions {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px !important;
+  gap: 12px !important;
   width: 100%;
   margin-bottom: 0 !important;
 }
@@ -1162,40 +1166,38 @@ input::placeholder, textarea::placeholder {
 @media (min-width: 768px) {
   .battle-select-actions {
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-    gap: 14px !important;
+    gap: 16px !important;
   }
 }
 
 .battle-action-card {
   height: 100%;
   min-width: 0 !important;
-  padding: 10px 8px !important;
+  padding: 16px 14px !important;
   border-radius: 12px !important;
-  background-color: var(--surface-card);
-  border: 1px solid var(--surface-border);
+  background-color: var(--surface-card) !important;
+  border: 1px solid var(--surface-border) !important;
   display: flex !important;
   flex-direction: column !important;
-  gap: 6px !important;
+  justify-content: space-between !important;
   position: relative;
   overflow: hidden !important;
   box-sizing: border-box !important;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
 }
 
 @media (min-width: 768px) {
   .battle-action-card {
-    padding: 22px !important;
-    border-radius: 12px !important;
-    gap: 16px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    padding: 20px !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   }
 }
 
 .battle-action-icon {
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: 8px !important;
+  width: 36px !important;
+  height: 36px !important;
+  border-radius: 9px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
@@ -1204,19 +1206,20 @@ input::placeholder, textarea::placeholder {
 
 @media (min-width: 768px) {
   .battle-action-icon {
-    width: 44px !important;
-    height: 44px !important;
+    width: 40px !important;
+    height: 40px !important;
     border-radius: 10px !important;
   }
 }
 
 .battle-action-title {
   font-family: var(--font-heading);
-  font-size: 13px !important;
+  font-size: 15px !important;
   font-weight: 600;
   color: #ffffff;
   margin: 0 0 2px 0 !important;
   line-height: 1.25;
+  letter-spacing: -0.015em;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -1225,20 +1228,26 @@ input::placeholder, textarea::placeholder {
 @media (min-width: 768px) {
   .battle-action-title {
     font-size: 18px !important;
-    margin-bottom: 6px !important;
+    margin-bottom: 4px !important;
   }
+}
+
+.battle-action-subtitle {
+  font-size: 11px;
+  font-family: var(--font-inter);
+  font-weight: 500;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .battle-action-desc {
   color: var(--text-secondary);
-  font-size: 10.5px !important;
-  line-height: 1.35 !important;
+  font-size: 11.5px !important;
+  line-height: 1.45 !important;
   margin: 0;
   min-width: 0 !important;
-  overflow: hidden;
-}
-
-.mobile-desc {
   display: -webkit-box !important;
   -webkit-line-clamp: 2 !important;
   -webkit-box-orient: vertical !important;
@@ -1247,58 +1256,30 @@ input::placeholder, textarea::placeholder {
   word-break: break-word !important;
 }
 
-.mobile-cta {
-  display: inline-block;
-}
-
-.desktop-desc,
-.desktop-cta {
-  display: none !important;
-}
-
-@media (min-width: 640px) {
-  .mobile-desc,
-  .mobile-cta {
-    display: none !important;
-  }
-  .desktop-desc {
-    display: block !important;
-    font-size: 13px !important;
+@media (min-width: 768px) {
+  .battle-action-desc {
+    font-size: 12px !important;
     line-height: 1.5 !important;
-    -webkit-line-clamp: unset !important;
-  }
-  .desktop-cta {
-    display: inline-block !important;
   }
 }
 
 .battle-action-footer {
-  margin-top: auto !important;
-  padding-top: 4px !important;
+  margin-top: 14px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
   display: flex !important;
   align-items: center !important;
-  gap: 4px !important;
+  justify-content: space-between !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  font-family: var(--font-inter) !important;
   white-space: nowrap !important;
-  overflow: hidden !important;
 }
 
 @media (min-width: 768px) {
   .battle-action-footer {
-    padding-top: 8px !important;
-    gap: 6px !important;
-  }
-}
-
-.battle-action-cta {
-  font-size: 10.5px !important;
-  font-weight: 600;
-  font-family: var(--font-heading);
-  letter-spacing: 0.02em;
-  white-space: nowrap !important;
-}
-
-@media (min-width: 768px) {
-  .battle-action-cta {
+    margin-top: 16px !important;
+    padding-top: 12px !important;
     font-size: 12px !important;
   }
 }
