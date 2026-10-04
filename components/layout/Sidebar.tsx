@@ -363,7 +363,7 @@ export default function Sidebar() {
                             padding: '24px',
                             backgroundColor: '#0c0c0c',
                             border: '1px solid rgba(255, 255, 255, 0.15)',
-                            borderRadius: '17.1429px',
+                            borderRadius: '12px',
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >

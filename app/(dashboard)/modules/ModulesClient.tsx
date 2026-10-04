@@ -172,7 +172,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                                     <div className="card modules-card" style={{
                                         padding: '24px', cursor: 'pointer', height: '100%',
                                         position: 'relative',
-                                        borderRadius: '17.1429px',
+                                        borderRadius: '12px',
                                         backgroundColor: 'var(--surface-card)',
                                         border: `1px solid ${isCompleted ? 'rgba(8, 195, 128, 0.4)' : 'var(--surface-border)'}`,
                                         overflow: 'hidden',

@@ -775,7 +775,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             style={{
               padding: '20px',
               backgroundColor: 'var(--color-carbon)',
-              borderRadius: '17.1429px',
+              borderRadius: '12px',
               border: '1px solid rgba(255, 255, 255, 0.1)',
             }}
           >
@@ -1166,7 +1166,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         </div>
       </section>
 
-      {/* ── 5. Features Grid (17.1429px Cards, Hairline Outlines) ── */}
+      {/* ── 5. Features Grid (12px Cards, Hairline Outlines) ── */}
       <section
         id="fitur"
         style={{

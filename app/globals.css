@@ -89,22 +89,22 @@
   --spacing-56: 56px;
   --spacing-168: 168px;
 
-  /* --- SHAPES & RADII (LINEARITY EXACT SPEC) --- */
-  --radius: 17.1429px;
-  --radius-cards: 17.1429px;
-  --radius-buttons: 9999px;
-  --radius-pills: 9999px;
-  --radius-links: 9999px;
-  --radius-inputs: 17.1429px;
-  --radius-product-panels: 25.7143px;
+  /* --- SHAPES & RADII (MODERATE ROUNDED STANDARD) --- */
+  --radius: 12px;
+  --radius-cards: 12px;
+  --radius-buttons: 10px;
+  --radius-pills: 10px;
+  --radius-links: 10px;
+  --radius-inputs: 10px;
+  --radius-product-panels: 12px;
   --radius-campaign-tiles: 12px;
-  --radius-images: 8.57143px;
-  --radius-navpills: 9999px;
+  --radius-images: 8px;
+  --radius-navpills: 10px;
 
-  --radius-sm: 8.57143px;
-  --radius-md: 12px;
-  --radius-lg: 17.1429px;
-  --radius-xl: 25.7143px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
 
   /* --- ELEVATION & GLOW --- */
@@ -302,7 +302,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
    LINEARITY COMPONENTS & UTILITIES
    =================================================== */
 
-/* Standard Card: 17.1429px radius, hairline white border on Near-Black */
+/* Standard Card: 12px radius, hairline white border on Near-Black */
 .card {
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
@@ -417,7 +417,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   border-color: rgba(255, 255, 255, 0.12);
 }
 
-/* Hero Prompt Composer (Carbon #292929 shell, 17.1429px radius) */
+/* Hero Prompt Composer (Carbon #292929 shell, 12px radius) */
 .hero-prompt-composer {
   background-color: var(--color-carbon);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -551,7 +551,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   background-color: var(--color-carbon);
 }
 
-/* Forms & Inputs: Linearity 17.1429px radius */
+/* Forms & Inputs: Linearity 12px radius */
 input, select, textarea {
   background-color: var(--color-near-black);
   border: 1px solid var(--surface-border);
@@ -1150,7 +1150,7 @@ input::placeholder, textarea::placeholder {
 @media (min-width: 768px) {
   .battle-action-card {
     padding: 22px !important;
-    border-radius: 17.1429px !important;
+    border-radius: 12px !important;
     gap: 16px !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
   }
@@ -2232,12 +2232,12 @@ input::placeholder, textarea::placeholder {
   --font-heading: 'Space Grotesk', 'AcidGrotesk', ui-sans-serif, system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-  --radius-sm: 8.57143px;
-  --radius-md: 12px;
-  --radius-lg: 17.1429px;
-  --radius-xl: 25.7143px;
+  --radius-sm: 8px;
+  --radius-md: 10px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
   --radius-full: 9999px;
-  --radius: 17.1429px;
+  --radius: 12px;
 }
 
 /* High-Performance Rendering for Long Lists (Virtual paint off-screen) */
