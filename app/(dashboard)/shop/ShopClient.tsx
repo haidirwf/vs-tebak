@@ -256,61 +256,34 @@ export default function ShopClient({
     return (
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
-            <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '6px', color: '#ffffff' }}>
-                    Toko Petualang
-                </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
-                    Tukarkan poin XP dengan voucher kantin sekolah atau beli perlengkapan kostum avatar pahlawanmu.
-                </p>
-            </div>
-
-            {/* XP Status & Balance Bar */}
-            <div
-                className="card"
-                style={{
-                    padding: '16px 20px',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '12px',
-                    borderRadius: '14px',
-                    backgroundColor: 'var(--surface-card)',
-                    border: '1px solid var(--surface-border)',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                }}
-            >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div
-                        style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '8px',
-                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                            border: '1px solid rgba(245, 197, 66, 0.28)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#F5C542',
-                            flexShrink: 0,
-                        }}
-                    >
-                        <Zap size={18} />
-                    </div>
-                    <div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Saldo XP Saat Ini</div>
-                        <div style={{ color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700 }}>
-                            {displayXp.toLocaleString()} XP
+            <div style={{ marginBottom: '20px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.01em', margin: 0, color: '#ffffff' }}>
+                            Toko Petualang
+                        </h1>
+                        <div
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '4px 10px',
+                                borderRadius: '8px',
+                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                border: '1px solid rgba(245, 197, 66, 0.25)',
+                                color: '#F5C542',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                            }}
+                        >
+                            <Zap size={14} />
+                            <span>{displayXp.toLocaleString()} XP</span>
                         </div>
                     </div>
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    <span>Koleksi Toko: <strong style={{ color: '#38bdf8' }}>{filteredShopItems.length}</strong> item</span>
-                    <span>Voucher Diklaim: <strong style={{ color: '#08c380' }}>{history.length}</strong></span>
-                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                    Tukarkan poin XP dengan voucher kantin atau beli perlengkapan karakter.
+                </p>
             </div>
 
             {/* Main Tabs Navigation (Only Voucher Kantin & Toko Aksesoris) */}
