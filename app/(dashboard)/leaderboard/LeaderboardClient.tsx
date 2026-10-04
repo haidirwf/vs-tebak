@@ -317,28 +317,25 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 return (
                     <div style={{
                         position: 'fixed',
-                        bottom: 'calc(62px + env(safe-area-inset-bottom, 0px))',
+                        bottom: 'calc(74px + env(safe-area-inset-bottom, 0px))',
                         left: 0,
                         right: 0,
                         zIndex: 40,
-                        padding: '8px 16px',
-                        backgroundColor: 'rgba(10, 10, 10, 0.95)',
-                        backdropFilter: 'blur(12px)',
-                        WebkitBackdropFilter: 'blur(12px)',
-                        borderTop: '1px solid rgba(245, 197, 66, 0.25)',
-                        boxShadow: '0 -6px 20px rgba(0, 0, 0, 0.6)',
+                        padding: '0 16px',
+                        pointerEvents: 'none',
                     }}>
                         <div style={{
                             maxWidth: '800px',
                             margin: '0 auto',
                             backgroundColor: '#141414',
                             border: '1px solid var(--accent-gold)',
-                            borderRadius: '10px',
-                            padding: '10px 14px',
+                            borderRadius: '12px',
+                            padding: '10px 16px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(245, 197, 66, 0.15)',
+                            pointerEvents: 'auto',
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0 }}>
