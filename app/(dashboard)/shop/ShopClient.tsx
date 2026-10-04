@@ -8,7 +8,6 @@ import {
     Copy,
     CheckCircle,
     Zap,
-    Shield,
     Check,
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
@@ -596,7 +595,7 @@ export default function ShopClient({
                             </button>
                         </div>
                     ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
+                        <div className="shop-items-grid">
                             {filteredShopItems.map((item) => {
                                 const isOwned = ownedItemIds.has(item.id)
                                 const rarity = RARITY_CONFIG[item.rarity]
@@ -608,109 +607,155 @@ export default function ShopClient({
                                     <div
                                         key={item.id}
                                         style={{
-                                            padding: '14px',
-                                            borderRadius: '14px',
+                                            padding: '10px',
+                                            borderRadius: '12px',
                                             backgroundColor: '#121212',
                                             border: `1px solid ${rarity.border}`,
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'space-between',
-                                            gap: '12px',
+                                            gap: '8px',
                                             opacity: isOwned ? 0.8 : 1,
-                                            boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
+                                            boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                                            position: 'relative',
                                         }}
                                     >
                                         <div>
                                             {/* Top badges */}
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', marginBottom: '6px' }}>
                                                 <span
                                                     style={{
-                                                        fontSize: '11px',
+                                                        fontSize: '9.5px',
                                                         color: 'var(--text-secondary)',
                                                         backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                                                        padding: '2px 8px',
-                                                        borderRadius: '6px',
+                                                        padding: '2px 5px',
+                                                        borderRadius: '4px',
                                                         border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     {slotMeta?.emoji} {slotMeta?.name}
                                                 </span>
+                                                <span
+                                                    style={{
+                                                        fontSize: '9px',
+                                                        fontWeight: 600,
+                                                        padding: '1px 5px',
+                                                        borderRadius: '4px',
+                                                        color: rarity.color,
+                                                        backgroundColor: rarity.bg,
+                                                        border: `1px solid ${rarity.border}`,
+                                                        whiteSpace: 'nowrap',
+                                                    }}
+                                                >
+                                                    {rarity.label}
+                                                </span>
                                             </div>
 
                                             {/* Item Identity */}
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                                 <div
                                                     style={{
-                                                        width: '42px',
-                                                        height: '42px',
-                                                        borderRadius: '10px',
+                                                        width: '34px',
+                                                        height: '34px',
+                                                        borderRadius: '8px',
                                                         backgroundColor: '#0a0a0a',
                                                         border: '1px solid rgba(255, 255, 255, 0.1)',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        fontSize: '20px',
+                                                        fontSize: '18px',
                                                         flexShrink: 0,
                                                     }}
                                                 >
                                                     {item.icon}
                                                 </div>
-                                                <div style={{ minWidth: 0 }}>
-                                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                <div style={{ minWidth: 0, flex: 1 }}>
+                                                    <div
+                                                        style={{
+                                                            fontFamily: 'var(--font-heading)',
+                                                            fontSize: '12px',
+                                                            fontWeight: 600,
+                                                            color: '#ffffff',
+                                                            whiteSpace: 'nowrap',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                        }}
+                                                    >
                                                         {item.name}
                                                     </div>
-                                                    <span style={{ fontSize: '10.5px', color: rarity.color, fontWeight: 600 }}>
-                                                        {rarity.label}
-                                                    </span>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '9.5px',
+                                                            fontWeight: 600,
+                                                            color: '#38bdf8',
+                                                            marginTop: '1px',
+                                                            overflow: 'hidden',
+                                                            textOverflow: 'ellipsis',
+                                                            whiteSpace: 'nowrap',
+                                                        }}
+                                                    >
+                                                        ⚡ {item.buff.label}
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <p style={{ fontSize: '11.5px', color: 'var(--text-secondary)', margin: '0 0 10px 0', lineHeight: '1.4' }}>
-                                                {item.description}
-                                            </p>
-
-                                            {/* Stat Buff */}
-                                            <div
+                                            <p
                                                 style={{
-                                                    fontSize: '11px',
-                                                    padding: '4px 8px',
-                                                    borderRadius: '6px',
-                                                    backgroundColor: 'rgba(56, 189, 248, 0.08)',
-                                                    border: '1px solid rgba(56, 189, 248, 0.2)',
-                                                    color: '#38bdf8',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '5px',
-                                                    marginBottom: '10px',
+                                                    fontSize: '10.5px',
+                                                    color: 'var(--text-secondary)',
+                                                    margin: '0 0 6px 0',
+                                                    lineHeight: 1.35,
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    minHeight: '2.7em',
                                                 }}
                                             >
-                                                <Shield size={12} />
-                                                <span>{item.buff.label}</span>
-                                            </div>
+                                                {item.description}
+                                            </p>
                                         </div>
 
                                         {/* Bottom Action */}
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                                            <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                gap: '6px',
+                                                paddingTop: '8px',
+                                                borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    fontSize: '11px',
+                                                    color: '#F5C542',
+                                                    fontWeight: 700,
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
                                                 {item.cost_xp === 0 ? 'Gratis' : `${item.cost_xp.toLocaleString()} XP`}
                                             </span>
 
                                             {isOwned ? (
                                                 <span
                                                     style={{
-                                                        fontSize: '11px',
+                                                        fontSize: '9.5px',
                                                         color: '#08c380',
                                                         backgroundColor: 'rgba(8, 195, 128, 0.1)',
                                                         border: '1px solid rgba(8, 195, 128, 0.25)',
-                                                        padding: '4px 10px',
-                                                        borderRadius: '6px',
+                                                        padding: '3px 6px',
+                                                        borderRadius: '5px',
                                                         fontWeight: 600,
                                                         display: 'inline-flex',
                                                         alignItems: 'center',
-                                                        gap: '4px',
+                                                        gap: '3px',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    <Check size={12} /> Dimiliki
+                                                    <Check size={11} /> Dimiliki
                                                 </span>
                                             ) : (
                                                 <button
@@ -718,19 +763,20 @@ export default function ShopClient({
                                                     onClick={() => handleBuyItem(item)}
                                                     disabled={!canAfford || isLoading}
                                                     style={{
-                                                        padding: '6px 14px',
-                                                        borderRadius: '8px',
+                                                        padding: '4px 8px',
+                                                        borderRadius: '6px',
                                                         border: 'none',
                                                         backgroundColor: canAfford ? '#38bdf8' : '#1e1e1e',
                                                         color: canAfford ? '#050505' : 'var(--text-muted)',
                                                         fontFamily: 'var(--font-heading)',
-                                                        fontSize: '11.5px',
-                                                        fontWeight: 600,
+                                                        fontSize: '11px',
+                                                        fontWeight: 700,
                                                         cursor: canAfford ? 'pointer' : 'not-allowed',
                                                         transition: 'all 0.15s ease',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    {isLoading ? 'Membuka...' : canAfford ? 'Buka Item' : 'XP Kurang'}
+                                                    {isLoading ? '...' : canAfford ? 'Beli' : 'Kurang'}
                                                 </button>
                                             )}
                                         </div>

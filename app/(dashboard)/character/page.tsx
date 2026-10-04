@@ -920,26 +920,26 @@ export default function CharacterPage() {
                                             <div
                                                 key={item.id}
                                                 style={{
-                                                    padding: '12px',
+                                                    padding: '10px',
                                                     borderRadius: '12px',
                                                     backgroundColor: '#161616',
                                                     border: `1px solid ${isEquipped ? 'rgba(245, 197, 66, 0.45)' : 'rgba(255, 255, 255, 0.08)'}`,
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     justifyContent: 'space-between',
-                                                    gap: '10px',
+                                                    gap: '8px',
                                                     position: 'relative',
                                                 }}
                                             >
                                                 <div>
                                                     {/* Header: Slot Badge & Rarity / Equipped status */}
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px', flexWrap: 'wrap' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', marginBottom: '6px' }}>
                                                         <span
                                                             style={{
-                                                                fontSize: '10px',
+                                                                fontSize: '9.5px',
                                                                 color: 'var(--color-steel)',
                                                                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                                                padding: '2px 6px',
+                                                                padding: '2px 5px',
                                                                 borderRadius: '4px',
                                                                 border: '1px solid rgba(255, 255, 255, 0.06)',
                                                                 whiteSpace: 'nowrap',
@@ -947,13 +947,13 @@ export default function CharacterPage() {
                                                         >
                                                             {slotMeta?.emoji} {slotMeta?.name}
                                                         </span>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
                                                             {isEquipped && (
                                                                 <span
                                                                     style={{
-                                                                        fontSize: '9.5px',
+                                                                        fontSize: '9px',
                                                                         fontWeight: 700,
-                                                                        padding: '1px 6px',
+                                                                        padding: '1px 5px',
                                                                         borderRadius: '4px',
                                                                         color: '#F5C542',
                                                                         backgroundColor: 'rgba(245, 197, 66, 0.12)',
@@ -961,14 +961,14 @@ export default function CharacterPage() {
                                                                         whiteSpace: 'nowrap',
                                                                     }}
                                                                 >
-                                                                    Terpasang
+                                                                    Aktif
                                                                 </span>
                                                             )}
                                                             <span
                                                                 style={{
-                                                                    fontSize: '9.5px',
+                                                                    fontSize: '9px',
                                                                     fontWeight: 600,
-                                                                    padding: '1px 6px',
+                                                                    padding: '1px 5px',
                                                                     borderRadius: '4px',
                                                                     color: rarity.color,
                                                                     backgroundColor: rarity.bg,
@@ -982,28 +982,28 @@ export default function CharacterPage() {
                                                     </div>
 
                                                     {/* Item Icon & Title */}
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                                         <div
                                                             style={{
-                                                                width: '38px',
-                                                                height: '38px',
+                                                                width: '34px',
+                                                                height: '34px',
                                                                 borderRadius: '8px',
                                                                 backgroundColor: '#121212',
                                                                 border: '1px solid rgba(255, 255, 255, 0.1)',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
-                                                                fontSize: '20px',
+                                                                fontSize: '18px',
                                                                 flexShrink: 0,
                                                             }}
                                                         >
                                                             {item.icon}
                                                         </div>
-                                                        <div style={{ minWidth: 0 }}>
+                                                        <div style={{ minWidth: 0, flex: 1 }}>
                                                             <div
                                                                 style={{
                                                                     fontFamily: 'var(--font-heading)',
-                                                                    fontSize: '13px',
+                                                                    fontSize: '12px',
                                                                     fontWeight: 600,
                                                                     color: '#ffffff',
                                                                     overflow: 'hidden',
@@ -1015,10 +1015,10 @@ export default function CharacterPage() {
                                                             </div>
                                                             <div
                                                                 style={{
-                                                                    fontSize: '10.5px',
+                                                                    fontSize: '9.5px',
                                                                     fontWeight: 600,
                                                                     color: 'var(--color-vector-green)',
-                                                                    marginTop: '2px',
+                                                                    marginTop: '1px',
                                                                     overflow: 'hidden',
                                                                     textOverflow: 'ellipsis',
                                                                     whiteSpace: 'nowrap',
@@ -1031,7 +1031,7 @@ export default function CharacterPage() {
 
                                                     <p
                                                         style={{
-                                                            fontSize: '11px',
+                                                            fontSize: '10.5px',
                                                             color: 'var(--color-fog)',
                                                             margin: '0 0 6px 0',
                                                             lineHeight: 1.35,
@@ -1039,6 +1039,7 @@ export default function CharacterPage() {
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
+                                                            minHeight: '2.7em',
                                                         }}
                                                     >
                                                         {item.description}
@@ -1054,7 +1055,7 @@ export default function CharacterPage() {
                                                             onClick={() => handleEquipToggle(item, 'unequip')}
                                                             style={{
                                                                 width: '100%',
-                                                                padding: '6px 10px',
+                                                                padding: '6px 8px',
                                                                 borderRadius: '6px',
                                                                 border: '1px solid rgba(239, 68, 68, 0.35)',
                                                                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -1064,7 +1065,7 @@ export default function CharacterPage() {
                                                                 cursor: 'pointer',
                                                             }}
                                                         >
-                                                            {actionLoadingId === item.id ? 'Memproses...' : 'Lepas'}
+                                                            {actionLoadingId === item.id ? '...' : 'Lepas'}
                                                         </button>
                                                     ) : (
                                                         <button
@@ -1073,7 +1074,7 @@ export default function CharacterPage() {
                                                             onClick={() => handleEquipToggle(item, 'equip')}
                                                             style={{
                                                                 width: '100%',
-                                                                padding: '6px 10px',
+                                                                padding: '6px 8px',
                                                                 borderRadius: '6px',
                                                                 border: 'none',
                                                                 backgroundColor: '#F5C542',
@@ -1084,7 +1085,7 @@ export default function CharacterPage() {
                                                                 cursor: 'pointer',
                                                             }}
                                                         >
-                                                            {actionLoadingId === item.id ? 'Memproses...' : 'Gunakan'}
+                                                            {actionLoadingId === item.id ? '...' : 'Gunakan'}
                                                         </button>
                                                     )}
                                                 </div>
