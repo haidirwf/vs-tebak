@@ -85,7 +85,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                 padding: '24px',
                 position: 'relative',
                 overflow: 'hidden',
-                borderRadius: '17.1429px',
+                borderRadius: '12px',
                 backgroundColor: 'var(--surface-card)',
                 border: '1px solid var(--surface-border)',
                 boxShadow: '0 12px 30px rgba(0,0,0,0.5)',

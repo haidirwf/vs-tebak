@@ -83,7 +83,7 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                 overflow: 'hidden',
                                 backgroundColor: 'var(--surface-card)',
                                 border: '1px solid var(--surface-border)',
-                                borderRadius: '17.1429px',
+                                borderRadius: '12px',
                                 cursor: 'pointer',
                             }}
                         >
