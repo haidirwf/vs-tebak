@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react'
+import Link from 'next/link'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
@@ -84,14 +85,13 @@ export default function CharacterPage() {
         return []
     }, [characterInventory, avatarClass, profile?.character_created])
 
-    const [activeTab, setActiveTab] = useState<'inventory' | 'shop' | 'perks'>('inventory')
+    const [activeTab, setActiveTab] = useState<'inventory' | 'perks'>('inventory')
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
     const [equipped, setEquipped] = useState<EquippedItemsMap>(resolvedInitialEquipped)
     const [inventory, setInventory] = useState<GameItem[]>(resolvedInitialInventory)
     const [isLoadingData, setIsLoadingData] = useState(!characterInventoryFetchedAt && !profile?.character_created)
     const [actionLoadingId, setActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
-    const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
     const [mounted, setMounted] = useState(false)
 
     const navTabsRef = useRef<HTMLDivElement>(null)
@@ -417,100 +417,12 @@ export default function CharacterPage() {
         }
     }
 
-    // Handle Unlock/Claim with XP Requirement
-    async function handleBuyItem(item: GameItem) {
-        if (!profile || profile.xp < item.cost_xp) {
-            setNotification({
-                type: 'error',
-                message: `Syarat XP belum terpenuhi! Butuh minimal ${item.cost_xp} XP, saat ini kamu memiliki ${profile?.xp || 0} XP.`
-            })
-            return
-        }
-
-        setActionLoadingId(item.id)
-        setNotification(null)
-        try {
-            const res = await fetch('/api/character/buy', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ itemId: item.id }),
-            })
-            const data = await res.json()
-            if (!res.ok || data.error) {
-                setNotification({ type: 'error', message: data.error || 'Gagal membuka item.' })
-            } else {
-                const updatedInventory = [...inventory, data.item]
-                setInventory(updatedInventory)
-                setCharacterInventoryData({
-                    equipped,
-                    inventory: updatedInventory,
-                })
-                if (data.currentXp !== undefined) {
-                    updateXP(data.currentXp)
-                }
-                setNotification({ type: 'success', message: data.message })
-            }
-        } catch (e: any) {
-            setNotification({ type: 'error', message: e.message || 'Terjadi kesalahan jaringan.' })
-        } finally {
-            setActionLoadingId(null)
-        }
-    }
-
-    // Filter items
+    // Filter inventory items
     const filteredInventory = useMemo(() => {
         if (selectedSlotFilter === 'all') return inventory
         return inventory.filter(it => it.slot === selectedSlotFilter)
     }, [inventory, selectedSlotFilter])
 
-    const filteredShopItems = useMemo(() => {
-        // Hanya item yang bisa dibeli (item starter gratis tidak ditampilkan di toko)
-        const eligible = GAME_ITEMS.filter(it => {
-            if (it.is_starter || it.cost_xp <= 0) return false
-            return it.class_req === 'all' || it.class_req === avatarClass
-        })
-
-        const filtered = selectedSlotFilter === 'all'
-            ? eligible
-            : eligible.filter(it => it.slot === selectedSlotFilter)
-
-        return [...filtered].sort((a, b) => {
-            const weightA = RARITY_META[a.rarity]?.weight || 0
-            const weightB = RARITY_META[b.rarity]?.weight || 0
-            const priceA = a.cost_xp || 0
-            const priceB = b.cost_xp || 0
-
-            switch (shopSort) {
-                case 'rating_price_asc':
-                    // Rating rendah ke tinggi (Rare -> Epic -> Legendary), lalu harga termurah
-                    if (weightA !== weightB) return weightA - weightB
-                    return priceA - priceB
-
-                case 'rating_price_desc':
-                    // Rating tertinggi ke terendah (Legendary -> Epic -> Rare), lalu harga termahal
-                    if (weightA !== weightB) return weightB - weightA
-                    return priceB - priceA
-
-                case 'price_asc':
-                    // Harga termurah ke termahal
-                    if (priceA !== priceB) return priceA - priceB
-                    return weightA - weightB
-
-                case 'price_desc':
-                    // Harga termahal ke termurah
-                    if (priceA !== priceB) return priceB - priceA
-                    return weightB - weightA
-
-                case 'rating_desc':
-                    // Rating tertinggi ke terendah
-                    if (weightA !== weightB) return weightB - weightA
-                    return priceA - priceB
-
-                default:
-                    return weightA - weightB
-            }
-        })
-    }, [avatarClass, selectedSlotFilter, shopSort])
 
     return (
         <div className="responsive-page" style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -545,27 +457,8 @@ export default function CharacterPage() {
                         <span>Kostumisasi & Karakter</span>
                     </h1>
                     <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: 0 }}>
-                        Atur perlengkapan tempur, buka aksesoris berdasarkan pencapaian XP, dan tingkatkan buff tempur duelmu.
+                        Atur perlengkapan tempur pahlawanmu dan tingkatkan buff duelmu.
                     </p>
-                </div>
-
-                {/* XP Balance / Milestone Display */}
-                <div
-                    style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '8px',
-                        padding: '8px 16px',
-                        borderRadius: '10px',
-                        backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                        border: '1px solid rgba(245, 197, 66, 0.3)',
-                    }}
-                >
-                    <Coins size={18} style={{ color: '#F5C542' }} />
-                    <span style={{ fontSize: '12px', color: 'var(--color-silver)' }}>Total XP:</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '15px', fontWeight: 700, color: '#F5C542' }}>
-                        {profile?.xp || 0} XP
-                    </span>
                 </div>
             </div>
 
@@ -904,27 +797,28 @@ export default function CharacterPage() {
                             <span>Inventori ({inventory.length})</span>
                         </button>
 
-                        <button
-                            type="button"
-                            onClick={() => setActiveTab('shop')}
+                        <Link
+                            href="/shop?tab=items"
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
                                 padding: '8px 14px',
                                 borderRadius: '8px',
-                                border: activeTab === 'shop' ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid transparent',
-                                backgroundColor: activeTab === 'shop' ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-                                color: activeTab === 'shop' ? '#38bdf8' : 'var(--color-fog)',
+                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                color: 'var(--color-fog)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
                                 fontWeight: 700,
+                                textDecoration: 'none',
                                 cursor: 'pointer',
+                                transition: 'all 0.15s ease',
                             }}
                         >
                             <ShoppingBag size={15} />
-                            <span>Toko Aksesoris</span>
-                        </button>
+                            <span>Buka Toko ↗</span>
+                        </Link>
 
                         <button
                             type="button"
@@ -997,10 +891,10 @@ export default function CharacterPage() {
                                     <p style={{ margin: '0 0 10px 0', fontSize: '13px' }}>
                                         Belum ada item di slot ini.
                                     </p>
-                                    <button
-                                        type="button"
-                                        onClick={() => setActiveTab('shop')}
+                                    <Link
+                                        href="/shop?tab=items"
                                         style={{
+                                            display: 'inline-block',
                                             padding: '8px 18px',
                                             borderRadius: '8px',
                                             backgroundColor: '#F5C542',
@@ -1009,11 +903,12 @@ export default function CharacterPage() {
                                             fontSize: '12px',
                                             fontWeight: 700,
                                             fontFamily: 'var(--font-heading)',
+                                            textDecoration: 'none',
                                             cursor: 'pointer',
                                         }}
                                     >
-                                        Buka Toko Aksesoris
-                                    </button>
+                                        Buka Toko Aksesoris ↗
+                                    </Link>
                                 </div>
                             ) : (
                                 <div className="character-items-grid">
@@ -1191,318 +1086,6 @@ export default function CharacterPage() {
                                                             }}
                                                         >
                                                             {actionLoadingId === item.id ? 'Memproses...' : 'Gunakan'}
-                                                        </button>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        )
-                                    })}
-                                </div>
-                            )}
-                        </div>
-                    )}
-
-                    {/* TAB 2: SHOP (Beli dengan XP) */}
-                    {activeTab === 'shop' && (
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                            {/* Shop Sorting & Count Toolbar */}
-                            <div
-                                className="character-shop-toolbar"
-                                style={{
-                                    alignItems: 'center',
-                                    justifyContent: 'space-between',
-                                    flexWrap: 'wrap',
-                                    gap: '10px',
-                                    padding: '10px 14px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                                    borderRadius: '10px',
-                                    border: '1px solid rgba(255, 255, 255, 0.06)',
-                                }}
-                            >
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--color-fog)' }}>
-                                    <SlidersHorizontal size={14} style={{ color: '#38bdf8' }} />
-                                    <span>
-                                        Koleksi Toko: <strong style={{ color: '#ffffff' }}>{filteredShopItems.length}</strong> aksesoris
-                                    </span>
-                                </div>
-
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                    <label htmlFor="shop-sort-selector" style={{ fontSize: '11.5px', color: 'var(--color-fog)', whiteSpace: 'nowrap' }}>
-                                        Urutkan:
-                                    </label>
-                                    <select
-                                        id="shop-sort-selector"
-                                        value={shopSort}
-                                        onChange={(e) => setShopSort(e.target.value as ShopSortOption)}
-                                        style={{
-                                            padding: '6px 10px',
-                                            borderRadius: '6px',
-                                            backgroundColor: '#161616',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            color: '#ffffff',
-                                            fontSize: '11.5px',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                            outline: 'none',
-                                        }}
-                                    >
-                                        <option value="rating_price_asc">Rating & Syarat XP: Rendah → Tinggi</option>
-                                        <option value="rating_price_desc">Rating & Syarat XP: Tinggi → Rendah</option>
-                                        <option value="price_asc">Syarat XP: Terendah</option>
-                                        <option value="price_desc">Syarat XP: Tertinggi</option>
-                                        <option value="rating_desc">Rating Tertinggi</option>
-                                    </select>
-                                </div>
-                            </div>
-
-                            {filteredShopItems.length === 0 ? (
-                                <div
-                                    style={{
-                                        padding: '36px',
-                                        textAlign: 'center',
-                                        backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                                        borderRadius: '12px',
-                                        border: '1px dashed rgba(255, 255, 255, 0.1)',
-                                        color: 'var(--color-fog)',
-                                    }}
-                                >
-                                    <ShoppingBag size={28} style={{ margin: '0 auto 10px', opacity: 0.6 }} />
-                                    <p style={{ margin: '0 0 10px 0', fontSize: '13px' }}>
-                                        Tidak ada item toko yang cocok dengan filter slot ini.
-                                    </p>
-                                    <button
-                                        type="button"
-                                        onClick={() => setSelectedSlotFilter('all')}
-                                        style={{
-                                            padding: '6px 14px',
-                                            borderRadius: '6px',
-                                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                            color: '#ffffff',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            fontSize: '11px',
-                                            fontWeight: 600,
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        Tampilkan Semua Slot
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="character-items-grid">
-                                    {filteredShopItems.map((item) => {
-                                        const isOwned = ownedIds.has(item.id)
-                                        const rarity = RARITY_CONFIG[item.rarity]
-                                        const tierMeta = RARITY_META[item.rarity] || { stars: 1, starText: '★☆☆☆', tierLabel: 'Tier I' }
-                                        const slotMeta = SLOT_LABELS[item.slot]
-                                        const canAfford = (profile?.xp || 0) >= item.cost_xp
-
-                                        return (
-                                            <div
-                                                key={item.id}
-                                                style={{
-                                                    padding: '12px',
-                                                    borderRadius: '12px',
-                                                    backgroundColor: '#161616',
-                                                    border: `1px solid ${rarity.border}`,
-                                                    display: 'flex',
-                                                    flexDirection: 'column',
-                                                    justifyContent: 'space-between',
-                                                    gap: '10px',
-                                                    opacity: isOwned ? 0.75 : 1,
-                                                }}
-                                            >
-                                                <div>
-                                                    {/* Header: Slot Badge & Rating/Rarity */}
-                                                    <div
-                                                        style={{
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'space-between',
-                                                            gap: '6px',
-                                                            marginBottom: '8px',
-                                                            flexWrap: 'wrap',
-                                                        }}
-                                                    >
-                                                        <span
-                                                            style={{
-                                                                fontSize: '10px',
-                                                                color: 'var(--color-steel)',
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                                                padding: '2px 6px',
-                                                                borderRadius: '4px',
-                                                                border: '1px solid rgba(255, 255, 255, 0.06)',
-                                                                whiteSpace: 'nowrap',
-                                                            }}
-                                                        >
-                                                            {slotMeta?.emoji} {slotMeta?.name}
-                                                        </span>
-
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                                                            <span
-                                                                style={{
-                                                                    fontSize: '10.5px',
-                                                                    color: rarity.color,
-                                                                    letterSpacing: '0.5px',
-                                                                    fontWeight: 700,
-                                                                }}
-                                                                title={`Rating: ${tierMeta.stars} Bintang (${tierMeta.tierLabel})`}
-                                                            >
-                                                                {tierMeta.starText}
-                                                            </span>
-                                                            <span
-                                                                style={{
-                                                                    fontSize: '9.5px',
-                                                                    fontWeight: 600,
-                                                                    padding: '1px 6px',
-                                                                    borderRadius: '4px',
-                                                                    color: rarity.color,
-                                                                    backgroundColor: rarity.bg,
-                                                                    border: `1px solid ${rarity.border}`,
-                                                                    whiteSpace: 'nowrap',
-                                                                }}
-                                                            >
-                                                                {rarity.label}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-
-                                                    {/* Item Icon & Title */}
-                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '6px' }}>
-                                                        <div
-                                                            style={{
-                                                                width: '38px',
-                                                                height: '38px',
-                                                                borderRadius: '8px',
-                                                                backgroundColor: '#121212',
-                                                                border: '1px solid rgba(255, 255, 255, 0.1)',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                fontSize: '20px',
-                                                                flexShrink: 0,
-                                                            }}
-                                                        >
-                                                            {item.icon}
-                                                        </div>
-                                                        <div style={{ minWidth: 0 }}>
-                                                            <div
-                                                                style={{
-                                                                    fontFamily: 'var(--font-heading)',
-                                                                    fontSize: '13px',
-                                                                    fontWeight: 600,
-                                                                    color: '#ffffff',
-                                                                    overflow: 'hidden',
-                                                                    textOverflow: 'ellipsis',
-                                                                    whiteSpace: 'nowrap',
-                                                                }}
-                                                            >
-                                                                {item.name}
-                                                            </div>
-                                                            <div
-                                                                style={{
-                                                                    fontSize: '10.5px',
-                                                                    fontWeight: 600,
-                                                                    color: 'var(--color-vector-green)',
-                                                                    marginTop: '2px',
-                                                                    overflow: 'hidden',
-                                                                    textOverflow: 'ellipsis',
-                                                                    whiteSpace: 'nowrap',
-                                                                }}
-                                                            >
-                                                                ⚡ {item.buff.label}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <p
-                                                        style={{
-                                                            fontSize: '11px',
-                                                            color: 'var(--color-fog)',
-                                                            margin: '0 0 6px 0',
-                                                            lineHeight: 1.35,
-                                                            display: '-webkit-box',
-                                                            WebkitLineClamp: 2,
-                                                            WebkitBoxOrient: 'vertical',
-                                                            overflow: 'hidden',
-                                                        }}
-                                                    >
-                                                        {item.description}
-                                                    </p>
-                                                </div>
-
-                                                {/* Footer: Clean Price & Action Button */}
-                                                <div
-                                                    style={{
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'space-between',
-                                                        paddingTop: '8px',
-                                                        borderTop: '1px solid rgba(255, 255, 255, 0.06)',
-                                                        marginTop: 'auto',
-                                                        gap: '8px',
-                                                    }}
-                                                >
-                                                    <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                                        <span style={{ fontSize: '10px', color: 'var(--color-fog)', lineHeight: 1.2 }}>Syarat XP</span>
-                                                        <span
-                                                            style={{
-                                                                fontFamily: 'var(--font-mono)',
-                                                                fontSize: '12.5px',
-                                                                fontWeight: 700,
-                                                                color: isOwned ? 'var(--color-steel)' : canAfford ? '#F5C542' : 'var(--color-silver)',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '4px',
-                                                                marginTop: '1px',
-                                                            }}
-                                                        >
-                                                            <Coins size={13} style={{ color: isOwned ? 'var(--color-steel)' : '#F5C542' }} />
-                                                            {item.cost_xp} XP
-                                                        </span>
-                                                    </div>
-
-                                                    {isOwned ? (
-                                                        <div
-                                                            style={{
-                                                                padding: '6px 10px',
-                                                                borderRadius: '6px',
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                                                color: 'var(--color-steel)',
-                                                                fontSize: '11px',
-                                                                fontWeight: 600,
-                                                                whiteSpace: 'nowrap',
-                                                            }}
-                                                        >
-                                                            Dimiliki
-                                                        </div>
-                                                    ) : (
-                                                        <button
-                                                            type="button"
-                                                            disabled={actionLoadingId === item.id || !canAfford}
-                                                            onClick={() => handleBuyItem(item)}
-                                                            style={{
-                                                                padding: '6px 12px',
-                                                                borderRadius: '6px',
-                                                                border: 'none',
-                                                                backgroundColor: canAfford ? '#F5C542' : 'rgba(255, 255, 255, 0.08)',
-                                                                color: canAfford ? '#050505' : 'var(--color-steel)',
-                                                                fontSize: '11px',
-                                                                fontWeight: 700,
-                                                                fontFamily: 'var(--font-heading)',
-                                                                cursor: canAfford ? 'pointer' : 'not-allowed',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                gap: '5px',
-                                                                whiteSpace: 'nowrap',
-                                                            }}
-                                                        >
-                                                            {actionLoadingId === item.id ? (
-                                                                <span>Membuka...</span>
-                                                            ) : canAfford ? (
-                                                                <span>Klaim</span>
-                                                            ) : (
-                                                                <span>Terkunci</span>
-                                                            )}
                                                         </button>
                                                     )}
                                                 </div>

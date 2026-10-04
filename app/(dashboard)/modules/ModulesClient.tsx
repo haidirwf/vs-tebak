@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Module, UserModule, ModuleCategory } from '@/types'
@@ -41,19 +41,30 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
     business: <Flame size={20} />,
 }
 
-export default function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps) {
+function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps) {
     const [search, setSearch] = useState('')
     const [activeCategory, setActiveCategory] = useState<ModuleCategory | 'all'>('all')
     const [navigatingSlug, setNavigatingSlug] = useState<string | null>(null)
 
-    const getUserModule = (moduleId: string) => userModules.find(um => um.module_id === moduleId)
+    const userModulesMap = useMemo(() => {
+        const map = new Map<string, UserModule>()
+        for (const um of userModules) {
+            map.set(um.module_id, um)
+        }
+        return map
+    }, [userModules])
 
-    const filtered = modules.filter(m => {
-        const matchCategory = activeCategory === 'all' || m.category === activeCategory
-        const matchSearch = !search || m.title.toLowerCase().includes(search.toLowerCase()) ||
-            (m.description?.toLowerCase().includes(search.toLowerCase()))
-        return matchCategory && matchSearch
-    })
+    const getUserModule = (moduleId: string) => userModulesMap.get(moduleId)
+
+    const filtered = useMemo(() => {
+        const q = search.toLowerCase().trim()
+        return modules.filter(m => {
+            const matchCategory = activeCategory === 'all' || m.category === activeCategory
+            const matchSearch = !q || m.title.toLowerCase().includes(q) ||
+                (m.description?.toLowerCase().includes(q) ?? false)
+            return matchCategory && matchSearch
+        })
+    }, [modules, activeCategory, search])
 
     return (
         <div className="responsive-page modules-page" style={{ padding: '24px', position: 'relative' }}>
@@ -157,7 +168,7 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
                         return (
                             <motion.div
                                 key={module.id}
-                                className="modules-grid-item"
+                                className="modules-grid-item optimized-card-item"
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 transition={{ delay: i * 0.04 }}
@@ -345,3 +356,6 @@ export default function ModulesClient({ modules, userModules, avatarClass }: Mod
         </div>
     )
 }
+
+export default React.memo(ModulesClient)
+

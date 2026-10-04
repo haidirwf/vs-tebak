@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Trophy, ChevronRight } from 'lucide-react'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import { useContentStore } from '@/stores/contentStore'
 
 interface QuickLeaderboardProps {
     currentUserId?: string
@@ -33,10 +34,31 @@ const FALLBACK_PLAYERS: TopPlayerItem[] = [
     { rank: 3, username: 'Budi_Pixel', name: 'Budi_Pixel', class: '🏹', xp: '15,100', school: 'SMK Telkom Malang' },
 ]
 
-export default function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
-    const [players, setPlayers] = useState<TopPlayerItem[]>(FALLBACK_PLAYERS)
+function getInitialPlayers(): TopPlayerItem[] {
+    const cached = useContentStore.getState().allTimeLeaderboard
+    if (cached && cached.length > 0) {
+        return cached.slice(0, 4).map((p, idx) => ({
+            rank: idx + 1,
+            username: p.username,
+            name: p.full_name || p.username,
+            class: CLASS_EMOJIS[p.avatar_class] || '⚔️',
+            xp: (p.xp || 0).toLocaleString(),
+            school: p.school_name || 'Sekolah Indonesia',
+        }))
+    }
+    return FALLBACK_PLAYERS
+}
+
+function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
+    const [players, setPlayers] = useState<TopPlayerItem[]>(getInitialPlayers)
 
     useEffect(() => {
+        const { allTimeLeaderboard, leaderboardFetchedAt } = useContentStore.getState()
+        if (allTimeLeaderboard && allTimeLeaderboard.length > 0 && leaderboardFetchedAt && (Date.now() - leaderboardFetchedAt < 60_000)) {
+            // Already fresh from content store cache
+            return
+        }
+
         const supabase = createClient()
 
         async function fetchTopStudents() {
@@ -190,3 +212,6 @@ export default function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardPro
         </div>
     )
 }
+
+export default React.memo(QuickLeaderboard)
+
