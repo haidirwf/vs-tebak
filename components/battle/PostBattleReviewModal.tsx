@@ -1,5 +1,7 @@
 'use client'
 
+import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Check, AlertCircle, BookOpen } from 'lucide-react'
 
@@ -19,45 +21,47 @@ interface PostBattleReviewModalProps {
 }
 
 export default function PostBattleReviewModal({ isOpen, onClose, reviews }: PostBattleReviewModalProps) {
-    if (!isOpen) return null
+    const [mounted, setMounted] = useState(false)
+
+    useEffect(() => {
+        setMounted(true)
+    }, [])
+
+    if (!isOpen || !mounted || typeof document === 'undefined') return null
 
     const correctCount = reviews.filter(r => r.isCorrect).length
     const totalCount = reviews.length
 
-    return (
+    const modalContent = (
         <AnimatePresence>
             <div
                 className="modal-overlay"
                 style={{
                     position: 'fixed',
                     inset: 0,
-                    zIndex: 1050,
-                    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                    zIndex: 2000,
+                    backgroundColor: 'rgba(0, 0, 0, 0.82)',
                     backdropFilter: 'blur(8px)',
                     WebkitBackdropFilter: 'blur(8px)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     padding: '16px',
-                    overflowY: 'auto',
                 }}
                 onClick={onClose}
             >
                 <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    initial={{ opacity: 0, scale: 0.95, y: 8 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    transition={{ type: 'spring', duration: 0.35, bounce: 0.15 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                    transition={{ type: 'spring', duration: 0.35, bounce: 0.12 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="card"
+                    className="card quiz-review-modal-card"
                     style={{
                         backgroundColor: '#141414',
-                        border: '1px solid rgba(255, 255, 255, 0.12)',
+                        border: '1px solid rgba(255, 255, 255, 0.14)',
                         borderRadius: '16px',
-                        padding: '24px 20px',
-                        maxWidth: '560px',
-                        width: '100%',
-                        maxHeight: '85vh',
+                        padding: '20px',
                         display: 'flex',
                         flexDirection: 'column',
                         boxShadow: '0 24px 48px rgba(0, 0, 0, 0.95)',
@@ -65,30 +69,46 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                     }}
                 >
                     {/* Header */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: '12px', marginBottom: '16px', paddingBottom: '14px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'flex-start',
+                            justifyContent: 'space-between',
+                            gap: '12px',
+                            marginBottom: '14px',
+                            paddingBottom: '12px',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                            flexShrink: 0,
+                        }}
+                    >
                         <div>
                             <h3
                                 style={{
                                     fontFamily: 'var(--font-heading)',
-                                    fontSize: '18px',
+                                    fontSize: '17px',
                                     fontWeight: 700,
                                     color: '#ffffff',
-                                    margin: '0 0 4px',
+                                    margin: '0 0 3px',
                                 }}
                             >
                                 Pembahasan Soal Duel
                             </h3>
-                            <p style={{ margin: 0, fontSize: '12px', color: 'var(--text-secondary)' }}>
-                                {correctCount} dari {totalCount} jawaban dijawab dengan benar
-                            </p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
+                                <span>{correctCount} dari {totalCount} benar</span>
+                                <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+                                <span style={{ color: correctCount === totalCount ? 'var(--color-vector-green)' : '#F5C542', fontWeight: 600 }}>
+                                    Akurasi {totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0}%
+                                </span>
+                            </div>
                         </div>
+
                         <button
                             type="button"
                             onClick={onClose}
                             aria-label="Tutup"
                             style={{
-                                background: 'none',
-                                border: '1px solid rgba(255, 255, 255, 0.12)',
+                                background: 'rgba(255, 255, 255, 0.06)',
+                                border: '1px solid rgba(255, 255, 255, 0.1)',
                                 borderRadius: '8px',
                                 color: 'var(--text-secondary)',
                                 cursor: 'pointer',
@@ -107,12 +127,13 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                     <div
                         style={{
                             overflowY: 'auto',
-                            paddingRight: '4px',
+                            paddingRight: '6px',
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: '14px',
-                            marginBottom: '16px',
-                            flex: 1,
+                            gap: '12px',
+                            marginBottom: '14px',
+                            minHeight: 0,
+                            flex: '1 1 auto',
                         }}
                     >
                         {reviews.length === 0 ? (
@@ -128,36 +149,36 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                     <div
                                         key={idx}
                                         style={{
-                                            backgroundColor: '#1a1a1a',
+                                            backgroundColor: '#181818',
                                             borderRadius: '12px',
                                             border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
-                                            padding: '14px',
+                                            padding: '12px 14px',
                                             display: 'flex',
                                             flexDirection: 'column',
-                                            gap: '10px',
+                                            gap: '8px',
                                         }}
                                     >
                                         {/* Status Header */}
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                            <span style={{ fontSize: '11.5px', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                                                Soal {idx + 1}
+                                            <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                                                Soal #{idx + 1}
                                             </span>
                                             <span
                                                 style={{
-                                                    fontSize: '11px',
+                                                    fontSize: '10.5px',
                                                     fontWeight: 600,
                                                     display: 'inline-flex',
                                                     alignItems: 'center',
                                                     gap: '4px',
-                                                    padding: '3px 8px',
+                                                    padding: '2px 7px',
                                                     borderRadius: '6px',
                                                     backgroundColor: item.isCorrect ? 'rgba(34, 197, 94, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                                                    border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+                                                    border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.28)' : 'rgba(239, 68, 68, 0.28)'}`,
                                                     color: item.isCorrect ? 'var(--color-vector-green)' : 'var(--accent-red)',
                                                 }}
                                             >
                                                 {item.isCorrect ? <Check size={12} /> : <AlertCircle size={12} />}
-                                                {item.isCorrect ? 'Benar' : item.selectedOption === null ? 'Waktu Habis' : 'Kurang Tepat'}
+                                                {item.isCorrect ? 'Jawaban Benar' : item.selectedOption === null ? 'Waktu Habis' : 'Jawaban Salah'}
                                             </span>
                                         </div>
 
@@ -167,39 +188,62 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                                 fontSize: '13px',
                                                 fontWeight: 600,
                                                 color: '#ffffff',
-                                                lineHeight: 1.45,
+                                                lineHeight: 1.4,
                                             }}
                                         >
                                             {item.questionText}
                                         </div>
 
-                                        {/* Answers Comparison */}
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '12px' }}>
+                                        {/* Answers Comparison Grid (side-by-side on desktop, stacked on mobile) */}
+                                        <div className="quiz-review-answer-grid">
+                                            {/* Your Answer */}
                                             <div
                                                 style={{
                                                     padding: '8px 10px',
                                                     borderRadius: '8px',
                                                     backgroundColor: item.isCorrect ? 'rgba(34, 197, 94, 0.08)' : 'rgba(239, 68, 68, 0.08)',
-                                                    border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`,
-                                                    color: item.isCorrect ? 'var(--color-vector-green)' : 'var(--accent-red)',
+                                                    border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.22)' : 'rgba(239, 68, 68, 0.22)'}`,
+                                                    gridColumn: item.isCorrect ? '1 / -1' : undefined,
                                                 }}
                                             >
-                                                <span style={{ fontWeight: 600, color: 'var(--text-secondary)', marginRight: '6px' }}>Jawaban Anda:</span>
-                                                {selectedText}
+                                                <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '2px' }}>
+                                                    Jawaban Kamu:
+                                                </div>
+                                                <div
+                                                    style={{
+                                                        fontSize: '12px',
+                                                        fontWeight: 500,
+                                                        color: item.isCorrect ? 'var(--color-vector-green)' : 'var(--accent-red)',
+                                                        lineHeight: 1.35,
+                                                    }}
+                                                >
+                                                    {selectedText}
+                                                </div>
                                             </div>
 
+                                            {/* Correct Answer if you were wrong */}
                                             {!item.isCorrect && (
                                                 <div
                                                     style={{
                                                         padding: '8px 10px',
                                                         borderRadius: '8px',
                                                         backgroundColor: 'rgba(34, 197, 94, 0.08)',
-                                                        border: '1px solid rgba(34, 197, 94, 0.25)',
-                                                        color: 'var(--color-vector-green)',
+                                                        border: '1px solid rgba(34, 197, 94, 0.22)',
                                                     }}
                                                 >
-                                                    <span style={{ fontWeight: 600, color: 'var(--text-secondary)', marginRight: '6px' }}>Kunci Jawaban:</span>
-                                                    {correctText}
+                                                    <div style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)', marginBottom: '2px' }}>
+                                                        Kunci Jawaban:
+                                                    </div>
+                                                    <div
+                                                        style={{
+                                                            fontSize: '12px',
+                                                            fontWeight: 500,
+                                                            color: 'var(--color-vector-green)',
+                                                            lineHeight: 1.35,
+                                                        }}
+                                                    >
+                                                        {correctText}
+                                                    </div>
                                                 </div>
                                             )}
                                         </div>
@@ -208,20 +252,19 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                         {item.explanation && (
                                             <div
                                                 style={{
-                                                    marginTop: '2px',
                                                     padding: '8px 10px',
                                                     borderRadius: '8px',
                                                     backgroundColor: 'rgba(56, 189, 248, 0.06)',
-                                                    border: '1px solid rgba(56, 189, 248, 0.2)',
+                                                    border: '1px solid rgba(56, 189, 248, 0.18)',
                                                     fontSize: '11.5px',
                                                     color: '#bae6fd',
-                                                    lineHeight: 1.45,
+                                                    lineHeight: 1.4,
                                                     display: 'flex',
                                                     alignItems: 'flex-start',
                                                     gap: '6px',
                                                 }}
                                             >
-                                                <BookOpen size={13} style={{ flexShrink: 0, marginTop: '2px' }} />
+                                                <BookOpen size={13} style={{ flexShrink: 0, marginTop: '2px', color: '#38bdf8' }} />
                                                 <div>
                                                     <strong style={{ color: '#e0f2fe' }}>Pembahasan: </strong>
                                                     {item.explanation}
@@ -235,18 +278,18 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                     </div>
 
                     {/* Footer */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', flexShrink: 0 }}>
                         <button
                             type="button"
                             onClick={onClose}
                             style={{
                                 width: '100%',
-                                padding: '10px 16px',
+                                padding: '9px 16px',
                                 borderRadius: '8px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.08)',
                                 border: '1px solid rgba(255, 255, 255, 0.15)',
                                 color: '#ffffff',
-                                fontSize: '12.5px',
+                                fontSize: '12px',
                                 fontWeight: 600,
                                 cursor: 'pointer',
                                 transition: 'all 0.15s ease',
@@ -259,4 +302,6 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
             </div>
         </AnimatePresence>
     )
+
+    return createPortal(modalContent, document.body)
 }

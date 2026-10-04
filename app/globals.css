@@ -1026,6 +1026,30 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+/* Post-Battle Review Modal Responsive Layout */
+.quiz-review-modal-card {
+  width: 100% !important;
+  max-width: 480px !important;
+  max-height: min(85vh, 600px) !important;
+}
+
+.quiz-review-answer-grid {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+@media (min-width: 640px) {
+  .quiz-review-modal-card {
+    max-width: 640px !important;
+  }
+  .quiz-review-answer-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 10px !important;
+  }
+}
+
 .modules-card-link {
   display: block;
   width: 100%;
