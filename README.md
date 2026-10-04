@@ -5,8 +5,6 @@
   **Gamified Learning & Real-Time 1v1 Battle Platform for Indonesian Vocational & High School Students**
 
 [![Version](https://img.shields.io/badge/version-0.1.0-blue.svg)](package.json)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](https://github.com)
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.1-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![React 19](https://img.shields.io/badge/React-19.2-61DAFB?style=flat&logo=react)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript)](https://www.typescriptlang.org/)
@@ -35,7 +33,6 @@ Siswa dapat memilih kelas karakter avatar RPG, menaklukkan modul pembelajaran be
 - [Security Hardening & Privacy](#-security-hardening--privacy)
 - [Deployment Guide](#-deployment-guide)
 - [Contributing](#-contributing)
-- [License](#-license)
 
 ---
 
@@ -256,20 +253,3 @@ Kontribusi dan saran pengembangan selalu disambut baik! Untuk berkontribusi:
    ```
 4. Push ke branch Anda: `git push origin feature/fitur-keren`.
 5. Buat sebuah **Pull Request** baru.
-
----
-
-## License
-
-Proyek ini dilisensikan di bawah naungan **[MIT License](LICENSE)**.
-
-```text
-Copyright (c) 2026 Skillungo contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions...
-```
