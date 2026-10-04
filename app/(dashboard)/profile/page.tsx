@@ -6,7 +6,8 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import ProfileHeroStage from '@/components/profile/ProfileHeroStage'
 import BadgeIcon from '@/components/character/BadgeIcon'
-import { ArrowRight, LogOut } from 'lucide-react'
+import { ArrowRight, LogOut, Flame, RotateCcw } from 'lucide-react'
+import StreakOnboardingModal from '@/components/onboarding/StreakOnboardingModal'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
@@ -25,6 +26,7 @@ export default function ProfilePage() {
     } = useContentStore()
 
     const [isLoading, setIsLoading] = useState(!profileStatsFetchedAt)
+    const [showReplayStreakModal, setShowReplayStreakModal] = useState(false)
 
     useEffect(() => {
         const supabase = createClient()
@@ -190,6 +192,66 @@ export default function ProfilePage() {
                 )}
             </motion.div>
 
+            {/* Streak Goal Settings & Replay Onboarding Section */}
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.25 }}
+                style={{
+                    backgroundColor: '#141414',
+                    border: '1px solid #282828',
+                    borderRadius: '16px',
+                    padding: '22px',
+                    marginBottom: '20px',
+                }}
+            >
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div
+                            style={{
+                                padding: '10px',
+                                borderRadius: '12px',
+                                backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                                border: '1px solid rgba(245, 158, 11, 0.25)',
+                                color: 'var(--accent-gold)',
+                                fontSize: '20px',
+                            }}
+                        >
+                            🔥
+                        </div>
+                        <div>
+                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                                Target Streak Harian
+                            </h3>
+                            <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                                Target komitmen belajar: <strong style={{ color: 'var(--accent-gold)' }}>{profile.streak_goal_minutes || 10} Menit / Hari</strong>
+                            </p>
+                        </div>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => setShowReplayStreakModal(true)}
+                        style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            padding: '8px 14px',
+                            borderRadius: '10px',
+                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                            border: '1px solid rgba(245, 158, 11, 0.25)',
+                            color: 'var(--accent-gold)',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <RotateCcw size={14} />
+                        <span>Ubah Target / Ulang FTUE Streak</span>
+                    </button>
+                </div>
+            </motion.div>
+
             {/* Completed Modules Section */}
             <motion.div
                 initial={{ opacity: 0, y: 16 }}
@@ -283,6 +345,15 @@ export default function ProfilePage() {
                     </div>
                 )}
             </motion.div>
+
+            {/* Render Replay Streak Onboarding Modal */}
+            {profile && (
+                <StreakOnboardingModal
+                    isOpen={showReplayStreakModal}
+                    profile={profile}
+                    onComplete={() => setShowReplayStreakModal(false)}
+                />
+            )}
 
             {/* Logout Action */}
             <motion.div

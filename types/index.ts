@@ -22,6 +22,8 @@ export interface Profile {
   last_active: string | null
   equipped_items?: Record<string, string> | null
   character_created?: boolean | null
+  has_completed_streak_onboarding?: boolean | null
+  streak_goal_minutes?: number | null
   created_at: string
 }
 
