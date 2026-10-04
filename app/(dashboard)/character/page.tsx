@@ -941,13 +941,13 @@ export default function CharacterPage() {
 
                                                 <div>
                                                     {/* Header: Slot Badge & Rarity / Equipped status */}
-                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '4px', marginBottom: '8px' }}>
                                                         <span
                                                             style={{
-                                                                fontSize: '10.5px',
+                                                                fontSize: '10px',
                                                                 color: 'var(--text-secondary)',
                                                                 backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                                                padding: '2px 7px',
+                                                                padding: '2px 6px',
                                                                 borderRadius: '6px',
                                                                 border: '1px solid rgba(255, 255, 255, 0.08)',
                                                                 whiteSpace: 'nowrap',
@@ -955,13 +955,13 @@ export default function CharacterPage() {
                                                         >
                                                             {slotMeta?.emoji} {slotMeta?.name}
                                                         </span>
-                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexWrap: 'wrap' }}>
                                                             {isEquipped && (
                                                                 <span
                                                                     style={{
-                                                                        fontSize: '10px',
+                                                                        fontSize: '9.5px',
                                                                         fontWeight: 700,
-                                                                        padding: '2px 6px',
+                                                                        padding: '2px 5px',
                                                                         borderRadius: '5px',
                                                                         color: '#F5C542',
                                                                         backgroundColor: 'rgba(245, 197, 66, 0.15)',
@@ -974,9 +974,9 @@ export default function CharacterPage() {
                                                             )}
                                                             <span
                                                                 style={{
-                                                                    fontSize: '10px',
+                                                                    fontSize: '9.5px',
                                                                     fontWeight: 600,
-                                                                    padding: '2px 7px',
+                                                                    padding: '2px 6px',
                                                                     borderRadius: '6px',
                                                                     color: rarity.color,
                                                                     backgroundColor: rarity.bg,
