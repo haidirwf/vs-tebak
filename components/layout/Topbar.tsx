@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import {
     Flame,
-    Sparkles,
+    Zap,
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
@@ -126,7 +126,7 @@ export default function Topbar() {
                                 cursor: 'default',
                             }}
                         >
-                            <Sparkles size={13} style={{ color: 'var(--color-gold)' }} />
+                            <Zap size={14} style={{ color: 'var(--color-gold)' }} />
                             <span>{profile.xp.toLocaleString()} XP</span>
                         </div>
                     )}
