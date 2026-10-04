@@ -1000,21 +1000,29 @@ input::placeholder, textarea::placeholder {
 .shop-items-grid {
   display: grid !important;
   grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 8px !important;
+  gap: 10px !important;
 }
 
 @media (min-width: 480px) {
   .character-items-grid,
   .shop-items-grid {
-    gap: 10px !important;
+    gap: 12px !important;
   }
 }
 
 @media (min-width: 640px) {
   .character-items-grid,
   .shop-items-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
     gap: 14px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .character-items-grid,
+  .shop-items-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+    gap: 16px !important;
   }
 }
 

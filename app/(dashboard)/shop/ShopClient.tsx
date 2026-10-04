@@ -605,30 +605,44 @@ export default function ShopClient({
                                     <div
                                         key={item.id}
                                         style={{
-                                            padding: '10px',
+                                            padding: '14px 12px',
                                             borderRadius: '12px',
-                                            backgroundColor: '#121212',
+                                            backgroundColor: '#141414',
                                             border: `1px solid ${rarity.border}`,
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'space-between',
                                             gap: '8px',
-                                            opacity: isOwned ? 0.8 : 1,
+                                            opacity: isOwned ? 0.82 : 1,
                                             boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
                                             position: 'relative',
+                                            overflow: 'hidden',
                                         }}
                                     >
+                                        {/* Corner Ambient Glow for Rarity recognition */}
+                                        <div
+                                            style={{
+                                                position: 'absolute',
+                                                top: '-25px',
+                                                right: '-25px',
+                                                width: '85px',
+                                                height: '85px',
+                                                background: `radial-gradient(circle, ${rarity.bg} 0%, transparent 70%)`,
+                                                pointerEvents: 'none',
+                                            }}
+                                        />
+
                                         <div>
                                             {/* Top badges */}
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px', marginBottom: '6px' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
                                                 <span
                                                     style={{
-                                                        fontSize: '9.5px',
+                                                        fontSize: '10.5px',
                                                         color: 'var(--text-secondary)',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                                                        padding: '2px 5px',
-                                                        borderRadius: '4px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                                        padding: '2px 7px',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
                                                         whiteSpace: 'nowrap',
                                                     }}
                                                 >
@@ -636,10 +650,10 @@ export default function ShopClient({
                                                 </span>
                                                 <span
                                                     style={{
-                                                        fontSize: '9px',
+                                                        fontSize: '10px',
                                                         fontWeight: 600,
-                                                        padding: '1px 5px',
-                                                        borderRadius: '4px',
+                                                        padding: '2px 7px',
+                                                        borderRadius: '6px',
                                                         color: rarity.color,
                                                         backgroundColor: rarity.bg,
                                                         border: `1px solid ${rarity.border}`,
@@ -650,19 +664,19 @@ export default function ShopClient({
                                                 </span>
                                             </div>
 
-                                            {/* Item Identity */}
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                            {/* Item Identity: Prominent Icon + Two-line Title & Buff */}
+                                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
                                                 <div
                                                     style={{
-                                                        width: '34px',
-                                                        height: '34px',
-                                                        borderRadius: '8px',
-                                                        backgroundColor: '#0a0a0a',
-                                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                        width: '42px',
+                                                        height: '42px',
+                                                        borderRadius: '10px',
+                                                        backgroundColor: rarity.bg,
+                                                        border: `1px solid ${rarity.border}`,
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        fontSize: '18px',
+                                                        fontSize: '22px',
                                                         flexShrink: 0,
                                                     }}
                                                 >
@@ -672,43 +686,51 @@ export default function ShopClient({
                                                     <div
                                                         style={{
                                                             fontFamily: 'var(--font-heading)',
-                                                            fontSize: '12px',
+                                                            fontSize: '13.5px',
                                                             fontWeight: 600,
                                                             color: '#ffffff',
-                                                            whiteSpace: 'nowrap',
+                                                            lineHeight: 1.3,
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
-                                                            textOverflow: 'ellipsis',
                                                         }}
                                                     >
                                                         {item.name}
                                                     </div>
-                                                    <div
-                                                        style={{
-                                                            fontSize: '9.5px',
-                                                            fontWeight: 600,
-                                                            color: '#38bdf8',
-                                                            marginTop: '1px',
-                                                            overflow: 'hidden',
-                                                            textOverflow: 'ellipsis',
-                                                            whiteSpace: 'nowrap',
-                                                        }}
-                                                    >
-                                                        ⚡ {item.buff.label}
+                                                    <div style={{ marginTop: '4px' }}>
+                                                        <span
+                                                            style={{
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '3px',
+                                                                fontSize: '10.5px',
+                                                                fontWeight: 600,
+                                                                color: '#38bdf8',
+                                                                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                                                                border: '1px solid rgba(56, 189, 248, 0.28)',
+                                                                padding: '2px 6px',
+                                                                borderRadius: '5px',
+                                                                lineHeight: 1.25,
+                                                            }}
+                                                        >
+                                                            ⚡ {item.buff.label}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
 
                                             <p
                                                 style={{
-                                                    fontSize: '10.5px',
+                                                    fontSize: '11.5px',
                                                     color: 'var(--text-secondary)',
                                                     margin: '0 0 6px 0',
-                                                    lineHeight: 1.35,
+                                                    lineHeight: 1.45,
                                                     display: '-webkit-box',
                                                     WebkitLineClamp: 2,
                                                     WebkitBoxOrient: 'vertical',
                                                     overflow: 'hidden',
-                                                    minHeight: '2.7em',
+                                                    minHeight: '2.8em',
                                                 }}
                                             >
                                                 {item.description}
@@ -722,15 +744,16 @@ export default function ShopClient({
                                                 alignItems: 'center',
                                                 justifyContent: 'space-between',
                                                 gap: '6px',
-                                                paddingTop: '8px',
-                                                borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                                                paddingTop: '10px',
+                                                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
                                             }}
                                         >
                                             <span
                                                 style={{
-                                                    fontSize: '11px',
+                                                    fontSize: '12.5px',
                                                     color: '#F5C542',
                                                     fontWeight: 700,
+                                                    fontFamily: 'var(--font-heading)',
                                                     whiteSpace: 'nowrap',
                                                 }}
                                             >
@@ -740,20 +763,20 @@ export default function ShopClient({
                                             {isOwned ? (
                                                 <span
                                                     style={{
-                                                        fontSize: '9.5px',
+                                                        fontSize: '10.5px',
                                                         color: '#08c380',
                                                         backgroundColor: 'rgba(8, 195, 128, 0.1)',
                                                         border: '1px solid rgba(8, 195, 128, 0.25)',
-                                                        padding: '3px 6px',
-                                                        borderRadius: '5px',
+                                                        padding: '4px 8px',
+                                                        borderRadius: '6px',
                                                         fontWeight: 600,
                                                         display: 'inline-flex',
                                                         alignItems: 'center',
-                                                        gap: '3px',
+                                                        gap: '4px',
                                                         whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    <Check size={11} /> Dimiliki
+                                                    <Check size={12} /> Dimiliki
                                                 </span>
                                             ) : (
                                                 <button
@@ -761,13 +784,13 @@ export default function ShopClient({
                                                     onClick={() => handleBuyItem(item)}
                                                     disabled={!canAfford || isLoading}
                                                     style={{
-                                                        padding: '4px 8px',
-                                                        borderRadius: '6px',
+                                                        padding: '5px 12px',
+                                                        borderRadius: '7px',
                                                         border: 'none',
-                                                        backgroundColor: canAfford ? '#38bdf8' : '#1e1e1e',
-                                                        color: canAfford ? '#050505' : 'var(--text-muted)',
+                                                        backgroundColor: canAfford ? '#F5C542' : '#1e1e1e',
+                                                        color: canAfford ? '#0a0a0a' : 'var(--text-muted)',
                                                         fontFamily: 'var(--font-heading)',
-                                                        fontSize: '11px',
+                                                        fontSize: '11.5px',
                                                         fontWeight: 700,
                                                         cursor: canAfford ? 'pointer' : 'not-allowed',
                                                         transition: 'all 0.15s ease',
