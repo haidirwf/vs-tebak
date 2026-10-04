@@ -7,13 +7,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import {
     Flame,
     Sparkles,
-    Volume2,
-    VolumeX,
     LogOut,
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
-import { battleSounds } from '@/lib/game/battle-sounds'
 import { createClient } from '@/lib/supabase/client'
 
 const CLASS_COLORS: Record<string, string> = {
@@ -33,22 +30,10 @@ const CLASS_EMOJI: Record<string, string> = {
 export default function Topbar() {
     const router = useRouter()
     const { profile } = useUserStore()
-    const [isMuted, setIsMuted] = useState(() => battleSounds.getIsMuted())
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
     const effectiveStreak = profile ? getEffectiveStreak(profile.last_active, profile.streak_count) : 0
     const isPendingStreak = profile ? isStreakPendingToday(profile.last_active, profile.streak_count) : false
-
-    useEffect(() => {
-        return battleSounds.subscribe(() => {
-            setIsMuted(battleSounds.getIsMuted())
-        })
-    }, [])
-
-    const toggleAudio = () => {
-        const nextState = battleSounds.toggleMute()
-        setIsMuted(nextState)
-    }
 
     async function handleLogout() {
         const supabase = createClient()
@@ -238,28 +223,6 @@ export default function Topbar() {
                         <span>{profile.xp.toLocaleString()} XP</span>
                     </div>
                 )}
-
-                {/* Sound Quick Toggle Button */}
-                <button
-                    type="button"
-                    onClick={toggleAudio}
-                    title={isMuted ? 'Aktifkan Suara Efek' : 'Senyapkan Suara Efek'}
-                    aria-label="Toggle Sound"
-                    style={{
-                        background: 'rgba(255, 255, 255, 0.04)',
-                        border: '1px solid var(--surface-border)',
-                        borderRadius: '8px',
-                        padding: '6px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: isMuted ? 'var(--text-muted)' : 'var(--color-gold)',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease',
-                    }}
-                >
-                    {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                </button>
 
                 {/* Logout Button */}
                 <button
