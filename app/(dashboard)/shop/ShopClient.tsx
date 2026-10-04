@@ -8,7 +8,6 @@ import {
     Copy,
     CheckCircle,
     Zap,
-    SlidersHorizontal,
     Shield,
     Check,
 } from 'lucide-react'
@@ -18,7 +17,6 @@ import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
 
 export type ShopTab = 'voucher' | 'items'
-export type ShopSortOption = 'price_asc' | 'price_desc' | 'name_asc' | 'name_desc'
 
 interface ShopClientProps {
     initialTab?: ShopTab
@@ -106,7 +104,6 @@ export default function ShopClient({
     // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
-    const [shopSort, setShopSort] = useState<ShopSortOption>('price_asc')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
@@ -114,7 +111,7 @@ export default function ShopClient({
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
     const ownedItemIds = useMemo(() => new Set(inventory.map((item) => item.id)), [inventory])
 
-    // Filtered & Sorted Shop Items
+    // Filtered Shop Items (sorted by price ascending)
     const filteredShopItems = useMemo(() => {
         let items = GAME_ITEMS.filter((item) => {
             if (selectedSlotFilter !== 'all' && item.slot !== selectedSlotFilter) return false
@@ -124,13 +121,8 @@ export default function ShopClient({
             return true
         })
 
-        return items.sort((a, b) => {
-            if (shopSort === 'price_desc') return b.cost_xp - a.cost_xp
-            if (shopSort === 'name_asc') return a.name.localeCompare(b.name)
-            if (shopSort === 'name_desc') return b.name.localeCompare(a.name)
-            return a.cost_xp - b.cost_xp
-        })
-    }, [selectedSlotFilter, profile?.avatar_class, shopSort])
+        return items.sort((a, b) => a.cost_xp - b.cost_xp)
+    }, [selectedSlotFilter, profile?.avatar_class])
 
     // Auto dismiss notification
     useEffect(() => {
@@ -567,31 +559,6 @@ export default function ShopClient({
                                     {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
                                 </button>
                             ))}
-                        </div>
-
-                        {/* Sort Dropdown (Ke Kanan) */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
-                            <SlidersHorizontal size={14} style={{ color: 'var(--text-secondary)' }} />
-                            <select
-                                value={shopSort}
-                                onChange={(e) => setShopSort(e.target.value as ShopSortOption)}
-                                aria-label="Urutkan item toko"
-                                style={{
-                                    padding: '6px 10px',
-                                    borderRadius: '8px',
-                                    backgroundColor: '#161616',
-                                    border: '1px solid var(--surface-border)',
-                                    color: '#ffffff',
-                                    fontSize: '12px',
-                                    cursor: 'pointer',
-                                    outline: 'none',
-                                }}
-                            >
-                                <option value="price_asc">Harga: Terendah</option>
-                                <option value="price_desc">Harga: Tertinggi</option>
-                                <option value="name_asc">Nama: A - Z</option>
-                                <option value="name_desc">Nama: Z - A</option>
-                            </select>
                         </div>
                     </div>
 
