@@ -39,8 +39,6 @@ const RARITY_META: Record<ItemRarity, { weight: number; stars: number; starText:
     legendary: { weight: 4, stars: 4, starText: '★★★★', tierLabel: 'Tier IV' },
 }
 
-type ShopSortOption = 'rating_price_asc' | 'rating_price_desc' | 'price_asc' | 'price_desc' | 'rating_desc'
-
 const SLOT_LABELS: Record<ItemSlot, { name: string; emoji: string }> = {
     weapon: { name: 'Senjata', emoji: '🗡️' },
     head: { name: 'Kepala', emoji: '🪖' },

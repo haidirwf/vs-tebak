@@ -18,7 +18,7 @@ import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
 
 export type ShopTab = 'voucher' | 'items'
-export type ShopSortOption = 'rating_price_asc' | 'rating_price_desc' | 'price_asc' | 'price_desc' | 'rating_desc'
+export type ShopSortOption = 'price_asc' | 'price_desc' | 'name_asc' | 'name_desc'
 
 interface ShopClientProps {
     initialTab?: ShopTab
@@ -46,12 +46,6 @@ const SLOT_LABELS: Record<ItemSlot, { name: string; emoji: string }> = {
     accessory: { name: 'Aksesoris', emoji: '💍' },
 }
 
-const RARITY_META: Record<string, { stars: number; starText: string; tierLabel: string }> = {
-    common: { stars: 1, starText: '★☆☆☆', tierLabel: 'Tier I' },
-    rare: { stars: 2, starText: '★★☆☆', tierLabel: 'Tier II' },
-    epic: { stars: 3, starText: '★★★☆', tierLabel: 'Tier III' },
-    legendary: { stars: 4, starText: '★★★★', tierLabel: 'Tier IV' },
-}
 
 function toStringValue(value: unknown, fallback = ''): string {
     return typeof value === 'string' ? value : fallback
@@ -112,7 +106,7 @@ export default function ShopClient({
     // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
-    const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
+    const [shopSort, setShopSort] = useState<ShopSortOption>('price_asc')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
@@ -130,19 +124,10 @@ export default function ShopClient({
             return true
         })
 
-        const rarityWeights: Record<string, number> = { common: 1, rare: 2, epic: 3, legendary: 4 }
-
         return items.sort((a, b) => {
-            if (shopSort === 'price_asc') return a.cost_xp - b.cost_xp
             if (shopSort === 'price_desc') return b.cost_xp - a.cost_xp
-            if (shopSort === 'rating_desc') return (rarityWeights[b.rarity] || 0) - (rarityWeights[a.rarity] || 0)
-            if (shopSort === 'rating_price_desc') {
-                const diff = (rarityWeights[b.rarity] || 0) - (rarityWeights[a.rarity] || 0)
-                if (diff !== 0) return diff
-                return b.cost_xp - a.cost_xp
-            }
-            const diff = (rarityWeights[a.rarity] || 0) - (rarityWeights[b.rarity] || 0)
-            if (diff !== 0) return diff
+            if (shopSort === 'name_asc') return a.name.localeCompare(b.name)
+            if (shopSort === 'name_desc') return b.name.localeCompare(a.name)
             return a.cost_xp - b.cost_xp
         })
     }, [selectedSlotFilter, profile?.avatar_class, shopSort])
@@ -232,7 +217,7 @@ export default function ShopClient({
         if (!profile || displayXp < item.cost_xp) {
             setNotification({
                 type: 'error',
-                message: `Syarat XP belum terpenuhi! Butuh minimal ${item.cost_xp} XP, saat ini kamu memiliki ${displayXp} XP.`,
+                message: `XP belum cukup! Butuh ${item.cost_xp} XP, saat ini kamu memiliki ${displayXp} XP.`,
             })
             return
         }
@@ -611,12 +596,13 @@ export default function ShopClient({
                             ))}
                         </div>
 
-                        {/* Sort Dropdown */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {/* Sort Dropdown (Ke Kanan) */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginLeft: 'auto' }}>
                             <SlidersHorizontal size={14} style={{ color: 'var(--text-secondary)' }} />
                             <select
                                 value={shopSort}
                                 onChange={(e) => setShopSort(e.target.value as ShopSortOption)}
+                                aria-label="Urutkan item toko"
                                 style={{
                                     padding: '6px 10px',
                                     borderRadius: '8px',
@@ -628,11 +614,10 @@ export default function ShopClient({
                                     outline: 'none',
                                 }}
                             >
-                                <option value="rating_price_asc">Tier & Syarat XP: Terendah</option>
-                                <option value="rating_price_desc">Tier & Syarat XP: Tertinggi</option>
-                                <option value="price_asc">Syarat XP: Terendah</option>
-                                <option value="price_desc">Syarat XP: Tertinggi</option>
-                                <option value="rating_desc">Tier Tertinggi</option>
+                                <option value="price_asc">Harga: Terendah</option>
+                                <option value="price_desc">Harga: Tertinggi</option>
+                                <option value="name_asc">Nama: A - Z</option>
+                                <option value="name_desc">Nama: Z - A</option>
                             </select>
                         </div>
                     </div>
@@ -675,7 +660,6 @@ export default function ShopClient({
                             {filteredShopItems.map((item) => {
                                 const isOwned = ownedItemIds.has(item.id)
                                 const rarity = RARITY_CONFIG[item.rarity]
-                                const tierMeta = RARITY_META[item.rarity] || { stars: 1, starText: '★☆☆☆', tierLabel: 'Tier I' }
                                 const slotMeta = SLOT_LABELS[item.slot]
                                 const canAfford = displayXp >= item.cost_xp
                                 const isLoading = itemActionLoadingId === item.id
@@ -710,16 +694,6 @@ export default function ShopClient({
                                                     }}
                                                 >
                                                     {slotMeta?.emoji} {slotMeta?.name}
-                                                </span>
-                                                <span
-                                                    style={{
-                                                        fontSize: '10.5px',
-                                                        color: rarity.color,
-                                                        fontWeight: 700,
-                                                        letterSpacing: '0.5px',
-                                                    }}
-                                                >
-                                                    {tierMeta.starText}
                                                 </span>
                                             </div>
 
@@ -778,7 +752,7 @@ export default function ShopClient({
                                         {/* Bottom Action */}
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
                                             <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
-                                                {item.cost_xp === 0 ? 'Gratis' : `Syarat ${item.cost_xp} XP`}
+                                                {item.cost_xp === 0 ? 'Gratis' : `${item.cost_xp.toLocaleString()} XP`}
                                             </span>
 
                                             {isOwned ? (
