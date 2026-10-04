@@ -1009,7 +1009,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     }}
                 >
                     {/* Topbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '12px', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '16px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
                             ID: {battle.id.slice(0, 8)}
                         </span>
@@ -1133,9 +1133,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            paddingBottom: '12px',
                             marginBottom: '16px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                             gap: '8px',
                         }}
                     >

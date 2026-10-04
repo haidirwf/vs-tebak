@@ -612,9 +612,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            paddingBottom: '16px',
-                            marginBottom: '20px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                            marginBottom: '16px',
                         }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>

@@ -944,8 +944,6 @@ input::placeholder, textarea::placeholder {
   -ms-overflow-style: none;
   touch-action: pan-x;
   overscroll-behavior-x: contain;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .character-nav-tabs::-webkit-scrollbar {
@@ -1336,9 +1334,7 @@ input::placeholder, textarea::placeholder {
   justify-content: space-between !important;
   flex-wrap: wrap !important;
   gap: 10px !important;
-  padding-bottom: 12px !important;
   margin-bottom: 14px !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
 .battle-room-title {

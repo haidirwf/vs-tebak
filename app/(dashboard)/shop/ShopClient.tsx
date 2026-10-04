@@ -284,8 +284,6 @@ export default function ShopClient({
                     alignItems: 'center',
                     gap: '8px',
                     marginBottom: '20px',
-                    borderBottom: '1px solid var(--surface-border)',
-                    paddingBottom: '10px',
                     overflowX: 'auto',
                 }}
             >

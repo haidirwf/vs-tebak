@@ -433,8 +433,6 @@ export default function CharacterPage() {
                     flexWrap: 'wrap',
                     gap: '16px',
                     marginBottom: '24px',
-                    paddingBottom: '16px',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                 }}
             >
                 <div>
