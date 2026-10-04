@@ -11,7 +11,6 @@ import {
     Shield,
     ShoppingBag,
     Trophy,
-    User,
 } from 'lucide-react'
 
 // Navigasi bawah selayaknya Duolingo - hanya icon recognizable tanpa teks judul
@@ -22,7 +21,6 @@ const NAV_ITEMS = [
     { href: '/character', icon: Shield, label: 'Karakter & Kostum' },
     { href: '/shop', icon: ShoppingBag, label: 'Toko Petualang' },
     { href: '/leaderboard', icon: Trophy, label: 'Papan Peringkat' },
-    { href: '/profile', icon: User, label: 'Profil Pahlawan' },
 ]
 
 export default function Navbar() {
