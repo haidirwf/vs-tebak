@@ -6,6 +6,7 @@ import { Profile } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { measureAsync } from '@/lib/utils/timing'
 import { extractAuthSessionFromCookies, isSessionExpiringSoon } from '@/lib/auth/token-utils'
+import { shouldResetStreak } from '@/lib/game/streak'
 
 /**
  * Deduplicated getAuthenticatedUser.
@@ -63,6 +64,21 @@ export const getAuthenticatedProfile = cache(async (explicitUserId?: string): Pr
             .select('*')
             .eq('id', userId)
             .maybeSingle()
+
+        if (!profile) return null
+
+        // Jika streak sudah mati (melewatkan minimal 1 hari penuh), reset streak_count ke 0
+        if (profile.streak_count > 0 && shouldResetStreak(profile.last_active, profile.streak_count)) {
+            profile.streak_count = 0
+            // Async sync ke DB tanpa memblokir rendering
+            ;(async () => {
+                try {
+                    await supabase.from('profiles').update({ streak_count: 0 }).eq('id', userId)
+                } catch (err) {
+                    console.error('Failed to reset dead streak in DB:', err)
+                }
+            })()
+        }
 
         return (profile as Profile) || null
     }, 400)

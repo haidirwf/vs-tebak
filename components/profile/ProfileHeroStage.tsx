@@ -15,7 +15,7 @@ import {
     RARITY_CONFIG 
 } from '@/lib/game/items'
 import { getXpProgress } from '@/lib/game/xp'
-import { isStreakActiveToday } from '@/lib/game/streak'
+import { getEffectiveStreak } from '@/lib/game/streak'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import { useContentStore } from '@/stores/contentStore'
 import { 
@@ -86,7 +86,7 @@ export default function ProfileHeroStage({
         ? `${Math.round((battlesWon / battlesTotal) * 100)}%`
         : '0%'
 
-    const streakActive = isStreakActiveToday(profile.last_active, profile.streak_count)
+    const effectiveStreak = getEffectiveStreak(profile.last_active, profile.streak_count)
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '24px' }}>
@@ -125,7 +125,7 @@ export default function ProfileHeroStage({
                         <span>{roleInfo.name}</span>
                     </div>
 
-                    {streakActive && (
+                    {effectiveStreak > 0 && (
                         <div
                             style={{
                                 display: 'flex',
@@ -141,7 +141,7 @@ export default function ProfileHeroStage({
                             }}
                         >
                             <Flame size={13} />
-                            <span>{profile.streak_count} Hari Beruntun</span>
+                            <span>{effectiveStreak} Hari Beruntun</span>
                         </div>
                     )}
                 </div>

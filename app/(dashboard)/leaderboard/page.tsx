@@ -5,6 +5,7 @@ import LeaderboardClient from './LeaderboardClient'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore, LeaderboardUser, SchoolRanking } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
+import { getEffectiveStreak } from '@/lib/game/streak'
 
 export default function LeaderboardPage() {
     const { profile } = useUserStore()
@@ -26,19 +27,32 @@ export default function LeaderboardPage() {
                 const [allTimeRes, weeklyRes, schoolRpcRes] = await Promise.all([
                     supabase
                         .from('profiles')
-                        .select('id, username, full_name, school_name, city, avatar_class, level, xp, streak_count')
+                        .select('id, username, full_name, school_name, city, avatar_class, level, xp, streak_count, last_active')
                         .order('xp', { ascending: false })
                         .limit(100),
                     supabase
                         .from('profiles')
-                        .select('id, username, full_name, school_name, city, avatar_class, level, xp, streak_count')
+                        .select('id, username, full_name, school_name, city, avatar_class, level, xp, streak_count, last_active')
                         .order('streak_count', { ascending: false })
                         .limit(50),
                     supabase
                         .rpc('get_school_rankings', { p_limit: 20 }),
                 ])
 
-                const allUsers = (allTimeRes.data || []) as LeaderboardUser[]
+                const rawAll = (allTimeRes.data || []) as LeaderboardUser[]
+                const allUsers: LeaderboardUser[] = rawAll.map((u) => ({
+                    ...u,
+                    streak_count: getEffectiveStreak(u.last_active || null, u.streak_count || 0),
+                }))
+
+                const rawWeekly = (weeklyRes.data || []) as LeaderboardUser[]
+                const weeklyUsers: LeaderboardUser[] = rawWeekly
+                    .map((u) => ({
+                        ...u,
+                        streak_count: getEffectiveStreak(u.last_active || null, u.streak_count || 0),
+                    }))
+                    .sort((a, b) => b.streak_count - a.streak_count)
+
                 let computedSchoolRanking: SchoolRanking[] = []
 
                 if (schoolRpcRes.data && Array.isArray(schoolRpcRes.data) && schoolRpcRes.data.length > 0) {
@@ -66,7 +80,7 @@ export default function LeaderboardPage() {
 
                 setLeaderboardData({
                     allTime: allUsers,
-                    weekly: (weeklyRes.data || []) as LeaderboardUser[],
+                    weekly: weeklyUsers,
                     schoolRanking: computedSchoolRanking,
                 })
             } catch (err) {

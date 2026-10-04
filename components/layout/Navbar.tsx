@@ -17,7 +17,7 @@ import {
 } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useUserStore } from '@/stores/userStore'
-import { isStreakActiveToday } from '@/lib/game/streak'
+import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
 import { battleSounds } from '@/lib/game/battle-sounds'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 
@@ -36,6 +36,9 @@ export default function Navbar() {
     const pathname = usePathname()
     const { profile } = useUserStore()
     const [isMuted, setIsMuted] = useState(() => battleSounds.getIsMuted())
+
+    const effectiveStreak = profile ? getEffectiveStreak(profile.last_active, profile.streak_count) : 0
+    const isPendingStreak = profile ? isStreakPendingToday(profile.last_active, profile.streak_count) : false
 
     useEffect(() => {
         return battleSounds.subscribe(() => {
@@ -141,11 +144,12 @@ export default function Navbar() {
 
             <div className="dashboard-navbar-right" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                 {/* Streak Badge with pulsing flame */}
-                {profile && isStreakActiveToday(profile.last_active, profile.streak_count) && (
+                {profile && effectiveStreak > 0 && (
                     <motion.div
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+                        title={isPendingStreak ? `Streak ${effectiveStreak} hari (belum aktif hari ini)` : `Streak ${effectiveStreak} hari (aktif hari ini)`}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
@@ -153,7 +157,7 @@ export default function Navbar() {
                             padding: '4px 10px',
                             borderRadius: '8px',
                             backgroundColor: 'var(--accent-red-bg)',
-                            border: '1px solid var(--accent-red-border)',
+                            border: isPendingStreak ? '1px dashed var(--accent-red-border)' : '1px solid var(--accent-red-border)',
                             cursor: 'default',
                         }}
                     >
@@ -179,7 +183,7 @@ export default function Navbar() {
                                 fontFamily: 'var(--font-inter)',
                             }}
                         >
-                            {profile.streak_count} Hari
+                            {effectiveStreak} Hari
                         </span>
                     </motion.div>
                 )}

@@ -7,6 +7,7 @@ import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
 import { Flame, MapPin, School } from 'lucide-react'
 import { startOfWeek, addDays, format, differenceInCalendarDays, parseISO, isSameDay } from 'date-fns'
+import { getEffectiveStreak } from '@/lib/game/streak'
 
 interface HeroBannerProps {
     profile: Profile
@@ -74,15 +75,16 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
             }
         }
 
-        if (profile.last_active && profile.streak_count > 0) {
+        const effectiveStreak = profile.last_active && profile.streak_count > 0
+            ? getEffectiveStreak(profile.last_active, profile.streak_count)
+            : 0
+
+        if (profile.last_active && effectiveStreak > 0) {
             try {
-                const lastActiveDate = parseISO(profile.last_active)
-                const daysSinceLastActive = differenceInCalendarDays(now, lastActiveDate)
-                if (daysSinceLastActive <= 1) {
-                    for (let i = 0; i < profile.streak_count; i++) {
-                        const d = addDays(lastActiveDate, -i)
-                        activeDates.add(format(d, 'yyyy-MM-dd'))
-                    }
+                const lastActiveDate = parseISO(profile.last_active.slice(0, 10))
+                for (let i = 0; i < effectiveStreak; i++) {
+                    const d = addDays(lastActiveDate, -i)
+                    activeDates.add(format(d, 'yyyy-MM-dd'))
                 }
             } catch {
                 // Ignore parse errors
@@ -245,7 +247,8 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                         >
                             {weekDays.map((day) => {
                                 const isLit = day.hasActivity
-                                const isTodayPending = day.isToday && !day.hasActivity
+                                const isStreakAliveNow = getEffectiveStreak(profile.last_active, profile.streak_count) > 0
+                                const isTodayPending = day.isToday && !day.hasActivity && isStreakAliveNow
 
                                 return (
                                     <div
