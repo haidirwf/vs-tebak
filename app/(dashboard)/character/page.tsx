@@ -444,15 +444,11 @@ export default function CharacterPage() {
                             letterSpacing: '-0.01em',
                             marginBottom: '4px',
                             color: '#ffffff',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '10px',
                         }}
                     >
-                        <span>⚔️</span>
-                        <span>Kostumisasi & Karakter</span>
+                        🛡️ Karakter & Kostum
                     </h1>
-                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: 0 }}>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                         Atur perlengkapan tempur pahlawanmu dan tingkatkan buff duelmu.
                     </p>
                 </div>

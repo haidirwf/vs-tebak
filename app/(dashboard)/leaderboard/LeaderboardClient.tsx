@@ -53,9 +53,11 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', paddingBottom: currentUserId && (tab === 'all' || tab === 'weekly') ? '160px' : '24px' }}>
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
-                    🏆 Leaderboard
+                    🏆 Papan Peringkat
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Ranking terbaik pelajar Indonesia</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                    Ranking terbaik pelajar Indonesia
+                </p>
             </div>
 
             {/* Tabs */}
