@@ -3,7 +3,7 @@
 import { create } from 'zustand'
 import { Profile } from '@/types'
 import { calculateLevel } from '@/lib/game/xp'
-import { isStreakActiveToday } from '@/lib/game/streak'
+import { isStreakActiveToday, getEffectiveStreak } from '@/lib/game/streak'
 
 interface BadgeUnlockData {
     id: string
@@ -38,27 +38,38 @@ export const useUserStore = create<UserStore>((set, get) => ({
     setProfile: (incomingProfile) => {
         const { profile: currentProfile } = get()
 
-        if (incomingProfile && currentProfile && incomingProfile.id === currentProfile.id) {
+        let normalizedProfile = incomingProfile
+        if (incomingProfile) {
+            const effectiveStreak = getEffectiveStreak(incomingProfile.last_active, incomingProfile.streak_count)
+            if (effectiveStreak !== incomingProfile.streak_count) {
+                normalizedProfile = {
+                    ...incomingProfile,
+                    streak_count: effectiveStreak,
+                }
+            }
+        }
+
+        if (normalizedProfile && currentProfile && normalizedProfile.id === currentProfile.id) {
             const autoPopups: UserPopup[] = []
-            if (incomingProfile.level > currentProfile.level) {
+            if (normalizedProfile.level > currentProfile.level) {
                 autoPopups.push({
                     type: 'level_up',
-                    data: { oldLevel: currentProfile.level, newLevel: incomingProfile.level },
+                    data: { oldLevel: currentProfile.level, newLevel: normalizedProfile.level },
                 })
             }
             if (
-                incomingProfile.streak_count > currentProfile.streak_count &&
-                isStreakActiveToday(incomingProfile.last_active, incomingProfile.streak_count)
+                normalizedProfile.streak_count > currentProfile.streak_count &&
+                isStreakActiveToday(normalizedProfile.last_active, normalizedProfile.streak_count)
             ) {
                 autoPopups.push({
                     type: 'streak_up',
-                    data: { oldStreak: currentProfile.streak_count, newStreak: incomingProfile.streak_count },
+                    data: { oldStreak: currentProfile.streak_count, newStreak: normalizedProfile.streak_count },
                 })
             }
             if (autoPopups.length > 0) get().enqueuePopups(autoPopups)
         }
 
-        set({ profile: incomingProfile })
+        set({ profile: normalizedProfile })
     },
     setLoading: (isLoading) => set({ isLoading }),
 

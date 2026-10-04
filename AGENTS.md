@@ -18,5 +18,6 @@
 - **STRICT BAN: Dot Bulat Bersinar**: DILARANG menambahkan dot bulat bersinar (misalnya `width: 8px, height: 8px, borderRadius: 9999px, boxShadow: 0 0 8px...` warna hijau, oranye, kuning, atau warna lainnya).
 - **STRICT BAN: Pil Status Kapsul**: DILARANG menggunakan pil kapsul (`borderRadius: 9999px`) yang berlebihan sebagai label/topbar status.
 - **STRICT BAN: Banner Teks Uppercase**: DILARANG menambahkan banner topbar teks UPPERCASE mencolok dengan letter-spacing renggang (seperti "MENUNGGU PENANTANG BATTLE 1V1", "LOBBY PERSIAPAN BATTLE 1V1", "ARENA DUEL 1V1", dll.).
+- **STRICT BAN: Over-Information & Elemen UI Redundan (Card Clutter)**: DILARANG menumpuk terlalu banyak label berulang pada satu kartu (seperti memasang badge kategori, subjudul, footer CTA, dan dobel ikon panah sekaligus yang mengulang maksud yang sama). Kartu aksi harus mengutamakan hierarki jernih & fungsional: 1 ikon penanda tematik, 1 penunjuk arah tunggal (single action arrow), 1 judul aksi yang jelas, dan 1 deskripsi ringkas (maksimal 2 baris).
 - **Desain Pengganti yang Bersih**: Gunakan tipografi natural (Sentence case), tata letak minimalis tanpa dekorasi dot/pill yang berisik, dan jika membutuhkan penampung status gunakan sudut rounded lembut standar (8px–12px) tanpa efek glowing dot.
 

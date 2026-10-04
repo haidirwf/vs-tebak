@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
 import { Flame } from 'lucide-react'
-import { isStreakActiveToday } from '@/lib/game/streak'
+import { getEffectiveStreak } from '@/lib/game/streak'
 
 interface CharacterCardProps {
     profile: Profile
@@ -69,18 +69,22 @@ export default function CharacterCard({ profile, showStats = true }: CharacterCa
                 </div>
 
                 {/* Streak */}
-                {isStreakActiveToday(profile.last_active, profile.streak_count) && (
-                    <div style={{
-                        display: 'flex', alignItems: 'center', gap: '4px',
-                        backgroundColor: 'rgba(232,64,64,0.1)', border: '1px solid rgba(232,64,64,0.3)',
-                        borderRadius: '4px', padding: '4px 8px',
-                    }}>
-                        <Flame size={12} style={{ color: 'var(--accent-red)' }} />
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-red)' }}>
-                            {profile.streak_count}
-                        </span>
-                    </div>
-                )}
+                {(() => {
+                    const effectiveStreak = getEffectiveStreak(profile.last_active, profile.streak_count)
+                    if (effectiveStreak <= 0) return null
+                    return (
+                        <div style={{
+                            display: 'flex', alignItems: 'center', gap: '4px',
+                            backgroundColor: 'rgba(232,64,64,0.1)', border: '1px solid rgba(232,64,64,0.3)',
+                            borderRadius: '4px', padding: '4px 8px',
+                        }}>
+                            <Flame size={12} style={{ color: 'var(--accent-red)' }} />
+                            <span style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--accent-red)' }}>
+                                {effectiveStreak}
+                            </span>
+                        </div>
+                    )
+                })()}
             </div>
 
             {/* XP Bar */}

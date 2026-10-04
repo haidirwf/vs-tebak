@@ -7,6 +7,7 @@ import { Profile } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
 import { Flame, MapPin, School } from 'lucide-react'
 import { startOfWeek, addDays, format, differenceInCalendarDays, parseISO, isSameDay } from 'date-fns'
+import { getEffectiveStreak } from '@/lib/game/streak'
 
 interface HeroBannerProps {
     profile: Profile
@@ -74,22 +75,23 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
             }
         }
 
-        if (profile.last_active && profile.streak_count > 0) {
+        const effectiveStreak = profile.last_active && profile.streak_count > 0
+            ? getEffectiveStreak(profile.last_active, profile.streak_count)
+            : 0
+
+        if (profile.last_active && effectiveStreak > 0) {
             try {
-                const lastActiveDate = parseISO(profile.last_active)
-                const daysSinceLastActive = differenceInCalendarDays(now, lastActiveDate)
-                if (daysSinceLastActive <= 1) {
-                    for (let i = 0; i < profile.streak_count; i++) {
-                        const d = addDays(lastActiveDate, -i)
-                        activeDates.add(format(d, 'yyyy-MM-dd'))
-                    }
+                const lastActiveDate = parseISO(profile.last_active.slice(0, 10))
+                for (let i = 0; i < effectiveStreak; i++) {
+                    const d = addDays(lastActiveDate, -i)
+                    activeDates.add(format(d, 'yyyy-MM-dd'))
                 }
             } catch {
                 // Ignore parse errors
             }
         }
 
-        const daysLabels = ['SEN', 'SEL', 'RAB', 'KAM', 'JUM', 'SAB', 'MIN']
+        const daysLabels = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
         const days = []
 
         for (let i = 0; i < 7; i++) {
@@ -102,7 +104,6 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
             days.push({
                 dateStr,
                 dayName: daysLabels[i],
-                dayNumber: format(dayDate, 'd'),
                 isToday,
                 isPast,
                 hasActivity,
@@ -245,7 +246,8 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                         >
                             {weekDays.map((day) => {
                                 const isLit = day.hasActivity
-                                const isTodayPending = day.isToday && !day.hasActivity
+                                const isStreakAliveNow = getEffectiveStreak(profile.last_active, profile.streak_count) > 0
+                                const isTodayPending = day.isToday && !day.hasActivity && isStreakAliveNow
 
                                 return (
                                     <div
@@ -275,8 +277,8 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                         {/* Flame Box Indicator */}
                                         <div
                                             style={{
-                                                width: '26px',
-                                                height: '26px',
+                                                width: '28px',
+                                                height: '28px',
                                                 borderRadius: '6px',
                                                 display: 'flex',
                                                 alignItems: 'center',
@@ -309,18 +311,6 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                                 <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
                                             )}
                                         </div>
-
-                                        {/* Nomor Tanggal */}
-                                        <span
-                                            style={{
-                                                fontFamily: 'var(--font-inter)',
-                                                fontSize: '10px',
-                                                fontWeight: day.isToday ? 600 : 400,
-                                                color: day.isToday ? 'var(--color-gold)' : day.hasActivity ? '#ffffff' : 'var(--color-steel)',
-                                            }}
-                                        >
-                                            {day.dayNumber}
-                                        </span>
                                     </div>
                                 )
                             })}

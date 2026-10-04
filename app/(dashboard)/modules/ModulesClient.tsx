@@ -94,11 +94,11 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                 </div>
             )}
             {/* Header with glass effect background */}
-            <div style={{ marginBottom: '32px', textAlign: 'left' }}>
+            <div style={{ marginBottom: '24px', textAlign: 'left' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     📚 Modul Belajar
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                     Jelajahi berbagai modul interaktif untuk menguasai skill.
                 </p>
             </div>

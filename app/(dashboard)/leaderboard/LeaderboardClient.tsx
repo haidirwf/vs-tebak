@@ -50,12 +50,14 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
     ]
 
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', paddingBottom: currentUserId && (tab === 'all' || tab === 'weekly') ? '90px' : '24px' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', paddingBottom: currentUserId && (tab === 'all' || tab === 'weekly') ? '160px' : '24px' }}>
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
-                    🏆 Leaderboard
+                    🏆 Papan Peringkat
                 </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px' }}>Ranking terbaik pelajar Indonesia</p>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                    Ranking terbaik pelajar Indonesia
+                </p>
             </div>
 
             {/* Tabs */}
@@ -317,26 +319,25 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 return (
                     <div style={{
                         position: 'fixed',
-                        bottom: 0,
+                        bottom: 'calc(74px + env(safe-area-inset-bottom, 0px))',
                         left: 0,
                         right: 0,
                         zIndex: 40,
-                        padding: '10px 16px calc(10px + env(safe-area-inset-bottom, 0px))',
-                        backgroundColor: '#0a0a0a',
-                        borderTop: '1px solid rgba(245, 197, 66, 0.35)',
-                        boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.8)',
+                        padding: '0 16px',
+                        pointerEvents: 'none',
                     }}>
                         <div style={{
                             maxWidth: '800px',
                             margin: '0 auto',
                             backgroundColor: '#141414',
                             border: '1px solid var(--accent-gold)',
-                            borderRadius: '10px',
-                            padding: '10px 14px',
+                            borderRadius: '12px',
+                            padding: '10px 16px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            boxShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+                            boxShadow: '0 8px 32px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(245, 197, 66, 0.15)',
+                            pointerEvents: 'auto',
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0 }}>

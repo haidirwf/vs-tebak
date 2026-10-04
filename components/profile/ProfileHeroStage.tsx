@@ -15,7 +15,7 @@ import {
     RARITY_CONFIG 
 } from '@/lib/game/items'
 import { getXpProgress } from '@/lib/game/xp'
-import { isStreakActiveToday } from '@/lib/game/streak'
+import { getEffectiveStreak } from '@/lib/game/streak'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import { useContentStore } from '@/stores/contentStore'
 import { 
@@ -86,7 +86,7 @@ export default function ProfileHeroStage({
         ? `${Math.round((battlesWon / battlesTotal) * 100)}%`
         : '0%'
 
-    const streakActive = isStreakActiveToday(profile.last_active, profile.streak_count)
+    const effectiveStreak = getEffectiveStreak(profile.last_active, profile.streak_count)
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '20px', marginBottom: '24px' }}>
@@ -125,7 +125,7 @@ export default function ProfileHeroStage({
                         <span>{roleInfo.name}</span>
                     </div>
 
-                    {streakActive && (
+                    {effectiveStreak > 0 && (
                         <div
                             style={{
                                 display: 'flex',
@@ -141,37 +141,50 @@ export default function ProfileHeroStage({
                             }}
                         >
                             <Flame size={13} />
-                            <span>{profile.streak_count} Hari Beruntun</span>
+                            <span>{effectiveStreak} Hari Beruntun</span>
                         </div>
                     )}
                 </div>
 
                 {/* Character 2D Visual Stage */}
-                <div style={{ position: 'relative', margin: '4px 0 12px' }}>
+                <div
+                    style={{
+                        position: 'relative',
+                        width: '100%',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: '16px 0',
+                        margin: '4px 0 14px',
+                        background: `radial-gradient(circle, ${roleInfo.themeColor}14 0%, rgba(20, 20, 20, 0) 70%)`,
+                        borderRadius: '16px',
+                    }}
+                >
                     <CharacterVisual
                         role={avatarClass}
                         equipped={equipped}
-                        size={180}
+                        size={190}
                         showAura={true}
                         interactive={true}
+                        showRoleBadge={false}
                     />
                 </div>
 
                 {/* Hero Identity */}
                 <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: '#ffffff' }}>
+                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', letterSpacing: '-0.01em' }}>
                         {profile.username}
                     </div>
-                    <div style={{ fontSize: '12px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                        {roleInfo.title} — {roleInfo.subtitle}
+                    <div style={{ fontSize: '12px', color: 'var(--color-steel)', marginTop: '3px', fontWeight: 500 }}>
+                        {roleInfo.title} <span style={{ opacity: 0.5 }}>—</span> {roleInfo.subtitle}
                     </div>
                     {(profile.school_name || profile.city) && (
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', color: 'var(--color-fog)', marginTop: '6px' }}>
+                        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '6px', fontSize: '11px', color: 'var(--color-fog)', marginTop: '8px', padding: '3px 10px', borderRadius: '6px', backgroundColor: 'rgba(255, 255, 255, 0.03)', border: '1px solid rgba(255, 255, 255, 0.05)' }}>
                             <School size={12} />
                             <span>{profile.school_name || 'Pelajar'}</span>
                             {profile.city && (
                                 <>
-                                    <span>·</span>
+                                    <span style={{ opacity: 0.4 }}>•</span>
                                     <MapPin size={12} />
                                     <span>{profile.city}</span>
                                 </>
@@ -181,8 +194,8 @@ export default function ProfileHeroStage({
                 </div>
 
                 {/* Active Equipment Slots */}
-                <div style={{ width: '100%', marginTop: 'auto', borderTop: '1px solid #222222', paddingTop: '16px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+                <div style={{ width: '100%', marginTop: 'auto', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
                         <span style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
                             Perlengkapan Terpasang
                         </span>
@@ -217,32 +230,33 @@ export default function ProfileHeroStage({
                                     style={{
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '8px',
-                                        padding: '7px 9px',
-                                        borderRadius: '8px',
-                                        backgroundColor: item ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.015)',
+                                        gap: '9px',
+                                        padding: '8px 10px',
+                                        borderRadius: '10px',
+                                        backgroundColor: item ? 'rgba(255, 255, 255, 0.03)' : 'rgba(255, 255, 255, 0.012)',
                                         border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'rgba(255, 255, 255, 0.06)'}`,
                                         minWidth: 0,
+                                        transition: 'all 0.15s ease',
                                     }}
                                 >
                                     <div
                                         style={{
-                                            width: '26px',
-                                            height: '26px',
-                                            borderRadius: '6px',
-                                            backgroundColor: 'rgba(0, 0, 0, 0.35)',
+                                            width: '28px',
+                                            height: '28px',
+                                            borderRadius: '7px',
+                                            backgroundColor: 'rgba(0, 0, 0, 0.45)',
                                             border: '1px solid rgba(255, 255, 255, 0.08)',
                                             display: 'flex',
                                             alignItems: 'center',
                                             justifyContent: 'center',
-                                            fontSize: '13px',
+                                            fontSize: '14px',
                                             flexShrink: 0,
                                         }}
                                     >
                                         {item ? item.icon : slotMeta.emoji}
                                     </div>
                                     <div style={{ minWidth: 0, flex: 1 }}>
-                                        <div style={{ fontSize: '9px', color: 'var(--color-steel)' }}>
+                                        <div style={{ fontSize: '9.5px', color: 'var(--color-steel)', textTransform: 'capitalize' }}>
                                             {slotMeta.name}
                                         </div>
                                         <div
@@ -340,97 +354,99 @@ export default function ProfileHeroStage({
                                 color: roleInfo.themeColor,
                                 backgroundColor: 'rgba(255, 255, 255, 0.04)',
                                 border: '1px solid rgba(255, 255, 255, 0.08)',
-                                padding: '3px 8px',
+                                padding: '4px 10px',
                                 borderRadius: '6px',
                                 fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
                             }}
                         >
-                            Tier Level {profile.level}
+                            Tier Lv.{profile.level}
                         </div>
                     </div>
 
                     {/* 6 Stats Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '14px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))', gap: '8px', marginBottom: '14px' }}>
                         {/* HP */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Heart size={13} />
-                                <span>Health (HP)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#ef4444', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Heart size={13} style={{ flexShrink: 0 }} />
+                                <span>Health</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.hp}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 Daya tahan duel
                             </div>
                         </div>
 
                         {/* MP */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#38bdf8', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Droplets size={13} />
-                                <span>Mana (MP)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#38bdf8', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Droplets size={13} style={{ flexShrink: 0 }} />
+                                <span>Mana</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.mp}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 Kapasitas skill
                             </div>
                         </div>
 
                         {/* ATK */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#f59e0b', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Swords size={13} />
-                                <span>Attack (ATK)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#f59e0b', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Swords size={13} style={{ flexShrink: 0 }} />
+                                <span>Attack</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.atk}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                                {stats.battleBuffs.extraAtkPoints > 0 ? `+${stats.battleBuffs.extraAtkPoints} Poin Jawaban` : 'Serangan dasar'}
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {stats.battleBuffs.extraAtkPoints > 0 ? `+${stats.battleBuffs.extraAtkPoints} Poin Jwb` : 'Serangan dasar'}
                             </div>
                         </div>
 
                         {/* DEF */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Shield size={13} />
-                                <span>Defense (DEF)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#10b981', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Shield size={13} style={{ flexShrink: 0 }} />
+                                <span>Defense</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.def}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                                {stats.battleBuffs.damageReductionPct > 0 ? `Reduksi -${stats.battleBuffs.damageReductionPct}%` : 'Pertahanan dasar'}
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {stats.battleBuffs.damageReductionPct > 0 ? `Reduksi -${stats.battleBuffs.damageReductionPct}%` : 'Pertahanan'}
                             </div>
                         </div>
 
                         {/* CRIT */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#a855f7', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Crosshair size={13} />
-                                <span>Critical Rate</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#a855f7', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Crosshair size={13} style={{ flexShrink: 0 }} />
+                                <span>Critical</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.crit}%
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                                Peluang 1.5x skor
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                Peluang 1.5x
                             </div>
                         </div>
 
                         {/* SPEED */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#06b6d4', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Clock size={13} />
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#06b6d4', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Clock size={13} style={{ flexShrink: 0 }} />
                                 <span>Speed</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.speed}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {stats.battleBuffs.extraTimerSec > 0 ? `+${stats.battleBuffs.extraTimerSec}s Ronde` : 'Waktu standar'}
                             </div>
                         </div>

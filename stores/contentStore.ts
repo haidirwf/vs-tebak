@@ -16,6 +16,7 @@ export interface LeaderboardUser {
     level: number
     xp: number
     streak_count: number
+    last_active?: string | null
 }
 
 export interface SchoolRanking {

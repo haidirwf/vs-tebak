@@ -6,6 +6,7 @@ import { Profile } from '@/types'
 import { User } from '@supabase/supabase-js'
 import { measureAsync } from '@/lib/utils/timing'
 import { extractAuthSessionFromCookies, isSessionExpiringSoon } from '@/lib/auth/token-utils'
+import { checkStreakStatus } from '@/lib/game/streak'
 
 /**
  * Deduplicated getAuthenticatedUser.
@@ -63,6 +64,26 @@ export const getAuthenticatedProfile = cache(async (explicitUserId?: string): Pr
             .select('*')
             .eq('id', userId)
             .maybeSingle()
+
+        if (!profile) return null
+
+        // Sinkronisasi status streak saat login / kunjungan harian
+        const streakStatus = checkStreakStatus(profile.last_active, profile.streak_count || 0)
+        if (streakStatus.shouldUpdate || profile.last_active !== streakStatus.lastActive) {
+            profile.streak_count = streakStatus.streakCount
+            profile.last_active = streakStatus.lastActive
+            // Async sync ke DB tanpa memblokir rendering
+            ;(async () => {
+                try {
+                    await supabase.from('profiles').update({
+                        streak_count: streakStatus.streakCount,
+                        last_active: streakStatus.lastActive,
+                    }).eq('id', userId)
+                } catch (err) {
+                    console.error('Failed to sync login streak in DB:', err)
+                }
+            })()
+        }
 
         return (profile as Profile) || null
     }, 400)

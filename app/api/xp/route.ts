@@ -4,7 +4,7 @@ import { calculateLevel, getClassBonusAmount, getClassXpBonus } from '@/lib/game
 import { updateQuestProgress } from '@/lib/game/quests'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 import { format } from 'date-fns'
-import { checkStreakStatus } from '@/lib/game/streak'
+import { checkStreakStatus, getTodayDateString } from '@/lib/game/streak'
 import { ensureUserBadges } from '@/lib/game/badges'
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
 
@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
             retry_after_ms: rate.retryAfterMs,
         }, { status: 429 })
     }
-    const today = format(new Date(), 'yyyy-MM-dd')
+    const today = getTodayDateString()
 
     const body = await request.json() as { action?: XpAction; moduleId?: string; battleId?: string }
     const action = body.action

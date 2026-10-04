@@ -6,7 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import ProfileHeroStage from '@/components/profile/ProfileHeroStage'
 import BadgeIcon from '@/components/character/BadgeIcon'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, LogOut } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
@@ -282,6 +282,45 @@ export default function ProfilePage() {
                         ))}
                     </div>
                 )}
+            </motion.div>
+
+            {/* Logout Action */}
+            <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.35, delay: 0.35 }}
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    marginTop: '28px',
+                    marginBottom: '16px',
+                }}
+            >
+                <button
+                    onClick={async () => {
+                        const supabase = createClient()
+                        await supabase.auth.signOut()
+                        router.push('/login')
+                    }}
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '10px 20px',
+                        borderRadius: '10px',
+                        backgroundColor: 'rgba(255, 51, 68, 0.08)',
+                        border: '1px solid rgba(255, 51, 68, 0.25)',
+                        color: 'var(--accent-red)',
+                        fontFamily: 'var(--font-inter)',
+                        fontSize: '13px',
+                        fontWeight: 500,
+                        cursor: 'pointer',
+                        transition: 'all 0.15s ease',
+                    }}
+                >
+                    <LogOut size={16} />
+                    <span>Keluar dari Akun</span>
+                </button>
             </motion.div>
         </div>
     )

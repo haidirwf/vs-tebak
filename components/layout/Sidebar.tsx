@@ -8,8 +8,8 @@ import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { Swords, LayoutDashboard, BookOpen, Zap, Trophy, User, LogOut, ChevronRight, Flame, Ticket, Shield, Coins, ShoppingBag } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
-import { getXpProgress } from '@/lib/game/xp'
-import { isStreakActiveToday } from '@/lib/game/streak'
+import { getXpProgress, calculateLevel } from '@/lib/game/xp'
+import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
 
 const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -41,9 +41,11 @@ export default function Sidebar() {
     const { profile } = useUserStore()
     const [showLogoutConfirm, setShowLogoutConfirm] = useState(false)
 
-    const xpProgress = profile
-        ? getXpProgress(profile.xp - getTotalXpAtLevel(profile.level), profile.xp_to_next_level)
-        : 0
+    const effectiveStreak = profile ? getEffectiveStreak(profile.last_active, profile.streak_count) : 0
+    const isPendingStreak = profile ? isStreakPendingToday(profile.last_active, profile.streak_count) : false
+
+    const xpCalc = profile ? calculateLevel(profile.xp) : null
+    const xpProgress = xpCalc ? getXpProgress(xpCalc.currentXp, xpCalc.xpToNext) : 0
 
     async function handleLogout() {
         const supabase = createClient()
@@ -87,16 +89,16 @@ export default function Sidebar() {
 
                 {profile && (
                     <div className="dashboard-mobile-actions">
-                        {profile.streak_count > 0 && (
+                        {effectiveStreak > 0 && (
                             <span
-                                title={`Streak ${profile.streak_count} hari`}
+                                title={isPendingStreak ? `Streak ${effectiveStreak} hari (belum aktif hari ini)` : `Streak ${effectiveStreak} hari`}
                                 style={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
                                     gap: '3px',
                                     borderRadius: '8px',
                                     padding: '4px 7px',
-                                    border: '1px solid var(--accent-red-border)',
+                                    border: isPendingStreak ? '1px dashed var(--accent-red-border)' : '1px solid var(--accent-red-border)',
                                     backgroundColor: 'var(--accent-red-bg)',
                                     color: 'var(--accent-red)',
                                     fontFamily: 'var(--font-inter)',
@@ -108,7 +110,7 @@ export default function Sidebar() {
                                 }}
                             >
                                 <Flame size={11} />
-                                <span>{profile.streak_count}</span>
+                                <span>{effectiveStreak}</span>
                             </span>
                         )}
 
@@ -190,16 +192,16 @@ export default function Sidebar() {
                                 <div style={{ fontFamily: 'var(--font-inter)', fontWeight: 500, fontSize: '13px', color: '#ffffff', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                     {profile.username}
                                 </div>
-                                {profile.streak_count > 0 && (
+                                {effectiveStreak > 0 && (
                                     <span
-                                        title={`Streak ${profile.streak_count} hari`}
+                                        title={isPendingStreak ? `Streak ${effectiveStreak} hari (belum aktif hari ini)` : `Streak ${effectiveStreak} hari`}
                                         style={{
                                             display: 'inline-flex',
                                             alignItems: 'center',
                                             gap: '2px',
                                             borderRadius: '6px',
                                             padding: '1px 5px',
-                                            border: '1px solid var(--accent-red-border)',
+                                            border: isPendingStreak ? '1px dashed var(--accent-red-border)' : '1px solid var(--accent-red-border)',
                                             backgroundColor: 'var(--accent-red-bg)',
                                             color: 'var(--accent-red)',
                                             fontFamily: 'var(--font-inter)',
@@ -210,7 +212,7 @@ export default function Sidebar() {
                                         }}
                                     >
                                         <Flame size={10} />
-                                        {profile.streak_count}
+                                        {effectiveStreak}
                                     </span>
                                 )}
                             </div>

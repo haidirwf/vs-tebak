@@ -186,6 +186,9 @@ Untuk menjaga estetika profesional, rapi, dan konsisten, aplikasi **DILARANG KER
    - Dilarang menggunakan banner topbar teks UPPERCASE mencolok dengan *letter-spacing* sangat renggang yang mengganggu konsentrasi (seperti "MENUNGGU PENANTANG BATTLE 1V1"). Gunakan tipografi natural (*Sentence case*).
 4. **DILARANG: Direct Merge ke Main / Git Push Tanpa Instruksi Eksplisit**
    - Mengikuti panduan alur kerja agen, dilarang melakukang merge ke branch `main` atau menjalankan `git push` tanpa instruksi eksplisit dari pengguna.
+5. **DILARANG: Over-Information & Redundansi Elemen Kartu (Card Clutter & Duplicate Affordances)**
+   - Dilarang menumpuk terlalu banyak penanda teks dan visual yang menduplikasi maksud yang sama dalam satu kartu aksi (misalnya: ikon + badge + panah atas + subjudul + deskripsi + divider + tombol CTA bawah + panah bawah).
+   - Kartu aksi harus mengutamakan kejernihan informasi (*content-first*): cukup 1 ikon tematik, 1 penunjuk arah tunggal (*single action arrow*), 1 judul aksi tegas, dan 1 deskripsi singkat (maksimal 2 baris). Hindari pengulangan teks yang sama di badge, judul, subjudul, dan CTA.
 
 ---
 

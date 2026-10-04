@@ -1009,7 +1009,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     }}
                 >
                     {/* Topbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingBottom: '12px', marginBottom: '16px', borderBottom: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', marginBottom: '16px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontFamily: 'var(--font-mono)' }}>
                             ID: {battle.id.slice(0, 8)}
                         </span>
@@ -1133,9 +1133,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
-                            paddingBottom: '12px',
                             marginBottom: '16px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
                             gap: '8px',
                         }}
                     >
@@ -1555,64 +1553,66 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
                             {/* Sound & Music Controls */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <button
-                                    type="button"
-                                    onClick={() => battleSounds.toggleBgm()}
-                                    title={bgmMuted ? 'Nyalakan Musik (BGM)' : 'Matikan Musik (BGM)'}
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '4px',
-                                        padding: '4px 8px',
-                                        borderRadius: '8px',
-                                        border: '1px solid rgba(255, 255, 255, 0.12)',
-                                        backgroundColor: bgmMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(245, 197, 66, 0.12)',
-                                        color: bgmMuted ? 'var(--color-steel)' : 'var(--color-gold)',
-                                        fontSize: '11px',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    <Music size={12} />
-                                    <span>{bgmMuted ? 'BGM Off' : 'BGM'}</span>
-                                </button>
-                                <button
-                                    type="button"
-                                    onClick={() => battleSounds.toggleMute()}
-                                    title={audioMuted ? 'Nyalakan Efek Suara (SFX)' : 'Matikan Efek Suara (SFX)'}
-                                    style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '4px',
-                                        padding: '4px 8px',
-                                        borderRadius: '8px',
-                                        border: '1px solid rgba(255, 255, 255, 0.12)',
-                                        backgroundColor: audioMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(34, 197, 94, 0.12)',
-                                        color: audioMuted ? 'var(--color-steel)' : 'var(--accent-green)',
-                                        fontSize: '11px',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    {audioMuted ? <VolumeX size={12} /> : <Volume2 size={12} />}
-                                    <span>{audioMuted ? 'SFX Off' : 'SFX'}</span>
-                                </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => battleSounds.toggleBgm()}
+                                        title={bgmMuted ? 'Nyalakan Musik (BGM)' : 'Matikan Musik (BGM)'}
+                                        aria-label={bgmMuted ? 'Nyalakan Musik (BGM)' : 'Matikan Musik (BGM)'}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: '28px',
+                                            height: '28px',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                                            backgroundColor: bgmMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(245, 197, 66, 0.12)',
+                                            color: bgmMuted ? 'var(--color-steel)' : 'var(--color-gold)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease',
+                                        }}
+                                    >
+                                        <Music size={14} />
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => battleSounds.toggleMute()}
+                                        title={audioMuted ? 'Nyalakan Efek Suara (SFX)' : 'Matikan Efek Suara (SFX)'}
+                                        aria-label={audioMuted ? 'Nyalakan Efek Suara (SFX)' : 'Matikan Efek Suara (SFX)'}
+                                        style={{
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: '28px',
+                                            height: '28px',
+                                            borderRadius: '8px',
+                                            border: '1px solid rgba(255, 255, 255, 0.12)',
+                                            backgroundColor: audioMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(34, 197, 94, 0.12)',
+                                            color: audioMuted ? 'var(--color-steel)' : 'var(--accent-green)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease',
+                                        }}
+                                    >
+                                        {audioMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                            <span
-                                style={{
-                                    fontSize: '12px',
-                                    color: 'var(--color-signal-orange)',
-                                    fontWeight: 600,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                }}
-                            >
-                                <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Ronde Aktif'}
-                            </span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                {comboCount > 1 && (
+                                    <span
+                                        style={{
+                                            fontSize: '12px',
+                                            color: 'var(--color-signal-orange)',
+                                            fontWeight: 700,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                        }}
+                                    >
+                                        <Flame size={14} /> x{comboCount} COMBO!
+                                    </span>
+                                )}
                             <span
                                 style={{
                                     fontSize: '12px',

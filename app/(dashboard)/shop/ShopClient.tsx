@@ -8,8 +8,6 @@ import {
     Copy,
     CheckCircle,
     Zap,
-    SlidersHorizontal,
-    Shield,
     Check,
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
@@ -18,7 +16,6 @@ import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
 
 export type ShopTab = 'voucher' | 'items'
-export type ShopSortOption = 'rating_price_asc' | 'rating_price_desc' | 'price_asc' | 'price_desc' | 'rating_desc'
 
 interface ShopClientProps {
     initialTab?: ShopTab
@@ -46,12 +43,6 @@ const SLOT_LABELS: Record<ItemSlot, { name: string; emoji: string }> = {
     accessory: { name: 'Aksesoris', emoji: '💍' },
 }
 
-const RARITY_META: Record<string, { stars: number; starText: string; tierLabel: string }> = {
-    common: { stars: 1, starText: '★☆☆☆', tierLabel: 'Tier I' },
-    rare: { stars: 2, starText: '★★☆☆', tierLabel: 'Tier II' },
-    epic: { stars: 3, starText: '★★★☆', tierLabel: 'Tier III' },
-    legendary: { stars: 4, starText: '★★★★', tierLabel: 'Tier IV' },
-}
 
 function toStringValue(value: unknown, fallback = ''): string {
     return typeof value === 'string' ? value : fallback
@@ -112,7 +103,6 @@ export default function ShopClient({
     // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
-    const [shopSort, setShopSort] = useState<ShopSortOption>('rating_price_asc')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
@@ -120,7 +110,7 @@ export default function ShopClient({
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
     const ownedItemIds = useMemo(() => new Set(inventory.map((item) => item.id)), [inventory])
 
-    // Filtered & Sorted Shop Items
+    // Filtered Shop Items (sorted by price ascending)
     const filteredShopItems = useMemo(() => {
         let items = GAME_ITEMS.filter((item) => {
             if (selectedSlotFilter !== 'all' && item.slot !== selectedSlotFilter) return false
@@ -130,22 +120,8 @@ export default function ShopClient({
             return true
         })
 
-        const rarityWeights: Record<string, number> = { common: 1, rare: 2, epic: 3, legendary: 4 }
-
-        return items.sort((a, b) => {
-            if (shopSort === 'price_asc') return a.cost_xp - b.cost_xp
-            if (shopSort === 'price_desc') return b.cost_xp - a.cost_xp
-            if (shopSort === 'rating_desc') return (rarityWeights[b.rarity] || 0) - (rarityWeights[a.rarity] || 0)
-            if (shopSort === 'rating_price_desc') {
-                const diff = (rarityWeights[b.rarity] || 0) - (rarityWeights[a.rarity] || 0)
-                if (diff !== 0) return diff
-                return b.cost_xp - a.cost_xp
-            }
-            const diff = (rarityWeights[a.rarity] || 0) - (rarityWeights[b.rarity] || 0)
-            if (diff !== 0) return diff
-            return a.cost_xp - b.cost_xp
-        })
-    }, [selectedSlotFilter, profile?.avatar_class, shopSort])
+        return items.sort((a, b) => a.cost_xp - b.cost_xp)
+    }, [selectedSlotFilter, profile?.avatar_class])
 
     // Auto dismiss notification
     useEffect(() => {
@@ -232,7 +208,7 @@ export default function ShopClient({
         if (!profile || displayXp < item.cost_xp) {
             setNotification({
                 type: 'error',
-                message: `Syarat XP belum terpenuhi! Butuh minimal ${item.cost_xp} XP, saat ini kamu memiliki ${displayXp} XP.`,
+                message: `XP belum cukup! Butuh ${item.cost_xp} XP, saat ini kamu memiliki ${displayXp} XP.`,
             })
             return
         }
@@ -272,60 +248,33 @@ export default function ShopClient({
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
             {/* Header */}
             <div style={{ marginBottom: '24px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '6px', color: '#ffffff' }}>
-                    Toko Petualang
-                </h1>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
-                    Tukarkan poin XP dengan voucher kantin sekolah atau beli perlengkapan kostum avatar pahlawanmu.
-                </p>
-            </div>
-
-            {/* XP Status & Balance Bar */}
-            <div
-                className="card"
-                style={{
-                    padding: '16px 20px',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    flexWrap: 'wrap',
-                    gap: '12px',
-                    borderRadius: '14px',
-                    backgroundColor: 'var(--surface-card)',
-                    border: '1px solid var(--surface-border)',
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.4)',
-                }}
-            >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div
-                        style={{
-                            width: '36px',
-                            height: '36px',
-                            borderRadius: '8px',
-                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                            border: '1px solid rgba(245, 197, 66, 0.28)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            color: '#F5C542',
-                            flexShrink: 0,
-                        }}
-                    >
-                        <Zap size={18} />
-                    </div>
-                    <div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Saldo XP Saat Ini</div>
-                        <div style={{ color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700 }}>
-                            {displayXp.toLocaleString()} XP
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', margin: 0, color: '#ffffff' }}>
+                            🛍️ Toko Petualang
+                        </h1>
+                        <div
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '4px 10px',
+                                borderRadius: '8px',
+                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                border: '1px solid rgba(245, 197, 66, 0.25)',
+                                color: '#F5C542',
+                                fontSize: '12px',
+                                fontWeight: 600,
+                            }}
+                        >
+                            <Zap size={14} />
+                            <span>{displayXp.toLocaleString()} XP</span>
                         </div>
                     </div>
                 </div>
-
-                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                    <span>Koleksi Toko: <strong style={{ color: '#38bdf8' }}>{filteredShopItems.length}</strong> item</span>
-                    <span>Voucher Diklaim: <strong style={{ color: '#08c380' }}>{history.length}</strong></span>
-                </div>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
+                    Tukarkan poin XP dengan voucher kantin atau beli perlengkapan karakter.
+                </p>
             </div>
 
             {/* Main Tabs Navigation (Only Voucher Kantin & Toko Aksesoris) */}
@@ -335,8 +284,6 @@ export default function ShopClient({
                     alignItems: 'center',
                     gap: '8px',
                     marginBottom: '20px',
-                    borderBottom: '1px solid var(--surface-border)',
-                    paddingBottom: '10px',
                     overflowX: 'auto',
                 }}
             >
@@ -610,31 +557,6 @@ export default function ShopClient({
                                 </button>
                             ))}
                         </div>
-
-                        {/* Sort Dropdown */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <SlidersHorizontal size={14} style={{ color: 'var(--text-secondary)' }} />
-                            <select
-                                value={shopSort}
-                                onChange={(e) => setShopSort(e.target.value as ShopSortOption)}
-                                style={{
-                                    padding: '6px 10px',
-                                    borderRadius: '8px',
-                                    backgroundColor: '#161616',
-                                    border: '1px solid var(--surface-border)',
-                                    color: '#ffffff',
-                                    fontSize: '12px',
-                                    cursor: 'pointer',
-                                    outline: 'none',
-                                }}
-                            >
-                                <option value="rating_price_asc">Tier & Syarat XP: Terendah</option>
-                                <option value="rating_price_desc">Tier & Syarat XP: Tertinggi</option>
-                                <option value="price_asc">Syarat XP: Terendah</option>
-                                <option value="price_desc">Syarat XP: Tertinggi</option>
-                                <option value="rating_desc">Tier Tertinggi</option>
-                            </select>
-                        </div>
                     </div>
 
                     {/* Items Grid */}
@@ -671,11 +593,10 @@ export default function ShopClient({
                             </button>
                         </div>
                     ) : (
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '14px' }}>
+                        <div className="shop-items-grid">
                             {filteredShopItems.map((item) => {
                                 const isOwned = ownedItemIds.has(item.id)
                                 const rarity = RARITY_CONFIG[item.rarity]
-                                const tierMeta = RARITY_META[item.rarity] || { stars: 1, starText: '★☆☆☆', tierLabel: 'Tier I' }
                                 const slotMeta = SLOT_LABELS[item.slot]
                                 const canAfford = displayXp >= item.cost_xp
                                 const isLoading = itemActionLoadingId === item.id
@@ -684,116 +605,175 @@ export default function ShopClient({
                                     <div
                                         key={item.id}
                                         style={{
-                                            padding: '14px',
-                                            borderRadius: '14px',
-                                            backgroundColor: '#121212',
+                                            padding: '14px 12px',
+                                            borderRadius: '12px',
+                                            backgroundColor: '#141414',
                                             border: `1px solid ${rarity.border}`,
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'space-between',
-                                            gap: '12px',
-                                            opacity: isOwned ? 0.8 : 1,
-                                            boxShadow: '0 6px 18px rgba(0,0,0,0.3)',
+                                            gap: '8px',
+                                            opacity: isOwned ? 0.82 : 1,
+                                            boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                                            position: 'relative',
+                                            overflow: 'hidden',
                                         }}
                                     >
+                                        {/* Corner Ambient Glow for Rarity recognition */}
+                                        <div
+                                            style={{
+                                                position: 'absolute',
+                                                top: '-25px',
+                                                right: '-25px',
+                                                width: '85px',
+                                                height: '85px',
+                                                background: `radial-gradient(circle, ${rarity.bg} 0%, transparent 70%)`,
+                                                pointerEvents: 'none',
+                                            }}
+                                        />
+
                                         <div>
                                             {/* Top badges */}
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
                                                 <span
                                                     style={{
-                                                        fontSize: '11px',
+                                                        fontSize: '10.5px',
                                                         color: 'var(--text-secondary)',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
-                                                        padding: '2px 8px',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                                        padding: '2px 7px',
                                                         borderRadius: '6px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     {slotMeta?.emoji} {slotMeta?.name}
                                                 </span>
                                                 <span
                                                     style={{
-                                                        fontSize: '10.5px',
+                                                        fontSize: '10px',
+                                                        fontWeight: 600,
+                                                        padding: '2px 7px',
+                                                        borderRadius: '6px',
                                                         color: rarity.color,
-                                                        fontWeight: 700,
-                                                        letterSpacing: '0.5px',
+                                                        backgroundColor: rarity.bg,
+                                                        border: `1px solid ${rarity.border}`,
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    {tierMeta.starText}
+                                                    {rarity.label}
                                                 </span>
                                             </div>
 
-                                            {/* Item Identity */}
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                                            {/* Item Identity: Prominent Icon + Two-line Title & Buff */}
+                                            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
                                                 <div
                                                     style={{
                                                         width: '42px',
                                                         height: '42px',
                                                         borderRadius: '10px',
-                                                        backgroundColor: '#0a0a0a',
-                                                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                        backgroundColor: rarity.bg,
+                                                        border: `1px solid ${rarity.border}`,
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
-                                                        fontSize: '20px',
+                                                        fontSize: '22px',
                                                         flexShrink: 0,
                                                     }}
                                                 >
                                                     {item.icon}
                                                 </div>
-                                                <div style={{ minWidth: 0 }}>
-                                                    <div style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                <div style={{ minWidth: 0, flex: 1 }}>
+                                                    <div
+                                                        style={{
+                                                            fontFamily: 'var(--font-heading)',
+                                                            fontSize: '13.5px',
+                                                            fontWeight: 600,
+                                                            color: '#ffffff',
+                                                            lineHeight: 1.3,
+                                                            display: '-webkit-box',
+                                                            WebkitLineClamp: 2,
+                                                            WebkitBoxOrient: 'vertical',
+                                                            overflow: 'hidden',
+                                                        }}
+                                                    >
                                                         {item.name}
                                                     </div>
-                                                    <span style={{ fontSize: '10.5px', color: rarity.color, fontWeight: 600 }}>
-                                                        {rarity.label}
-                                                    </span>
+                                                    <div style={{ marginTop: '4px' }}>
+                                                        <span
+                                                            style={{
+                                                                display: 'inline-flex',
+                                                                alignItems: 'center',
+                                                                gap: '3px',
+                                                                fontSize: '10.5px',
+                                                                fontWeight: 600,
+                                                                color: '#38bdf8',
+                                                                backgroundColor: 'rgba(56, 189, 248, 0.1)',
+                                                                border: '1px solid rgba(56, 189, 248, 0.28)',
+                                                                padding: '2px 6px',
+                                                                borderRadius: '5px',
+                                                                lineHeight: 1.25,
+                                                            }}
+                                                        >
+                                                            ⚡ {item.buff.label}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
 
-                                            <p style={{ fontSize: '11.5px', color: 'var(--text-secondary)', margin: '0 0 10px 0', lineHeight: '1.4' }}>
-                                                {item.description}
-                                            </p>
-
-                                            {/* Stat Buff */}
-                                            <div
+                                            <p
                                                 style={{
-                                                    fontSize: '11px',
-                                                    padding: '4px 8px',
-                                                    borderRadius: '6px',
-                                                    backgroundColor: 'rgba(56, 189, 248, 0.08)',
-                                                    border: '1px solid rgba(56, 189, 248, 0.2)',
-                                                    color: '#38bdf8',
-                                                    display: 'inline-flex',
-                                                    alignItems: 'center',
-                                                    gap: '5px',
-                                                    marginBottom: '10px',
+                                                    fontSize: '11.5px',
+                                                    color: 'var(--text-secondary)',
+                                                    margin: '0 0 6px 0',
+                                                    lineHeight: 1.45,
+                                                    display: '-webkit-box',
+                                                    WebkitLineClamp: 2,
+                                                    WebkitBoxOrient: 'vertical',
+                                                    overflow: 'hidden',
+                                                    minHeight: '2.8em',
                                                 }}
                                             >
-                                                <Shield size={12} />
-                                                <span>{item.buff.label}</span>
-                                            </div>
+                                                {item.description}
+                                            </p>
                                         </div>
 
                                         {/* Bottom Action */}
-                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
-                                            <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
-                                                {item.cost_xp === 0 ? 'Gratis' : `Syarat ${item.cost_xp} XP`}
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                gap: '6px',
+                                                paddingTop: '10px',
+                                                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                            }}
+                                        >
+                                            <span
+                                                style={{
+                                                    fontSize: '12.5px',
+                                                    color: '#F5C542',
+                                                    fontWeight: 700,
+                                                    fontFamily: 'var(--font-heading)',
+                                                    whiteSpace: 'nowrap',
+                                                }}
+                                            >
+                                                {item.cost_xp === 0 ? 'Gratis' : `${item.cost_xp.toLocaleString()} XP`}
                                             </span>
 
                                             {isOwned ? (
                                                 <span
                                                     style={{
-                                                        fontSize: '11px',
+                                                        fontSize: '10.5px',
                                                         color: '#08c380',
                                                         backgroundColor: 'rgba(8, 195, 128, 0.1)',
                                                         border: '1px solid rgba(8, 195, 128, 0.25)',
-                                                        padding: '4px 10px',
+                                                        padding: '4px 8px',
                                                         borderRadius: '6px',
                                                         fontWeight: 600,
                                                         display: 'inline-flex',
                                                         alignItems: 'center',
                                                         gap: '4px',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     <Check size={12} /> Dimiliki
@@ -804,19 +784,20 @@ export default function ShopClient({
                                                     onClick={() => handleBuyItem(item)}
                                                     disabled={!canAfford || isLoading}
                                                     style={{
-                                                        padding: '6px 14px',
-                                                        borderRadius: '8px',
+                                                        padding: '5px 12px',
+                                                        borderRadius: '7px',
                                                         border: 'none',
-                                                        backgroundColor: canAfford ? '#38bdf8' : '#1e1e1e',
-                                                        color: canAfford ? '#050505' : 'var(--text-muted)',
+                                                        backgroundColor: canAfford ? '#F5C542' : '#1e1e1e',
+                                                        color: canAfford ? '#0a0a0a' : 'var(--text-muted)',
                                                         fontFamily: 'var(--font-heading)',
                                                         fontSize: '11.5px',
-                                                        fontWeight: 600,
+                                                        fontWeight: 700,
                                                         cursor: canAfford ? 'pointer' : 'not-allowed',
                                                         transition: 'all 0.15s ease',
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    {isLoading ? 'Membuka...' : canAfford ? 'Buka Item' : 'XP Kurang'}
+                                                    {isLoading ? '...' : canAfford ? 'Beli' : 'Kurang'}
                                                 </button>
                                             )}
                                         </div>

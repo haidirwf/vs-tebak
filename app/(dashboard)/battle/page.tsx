@@ -16,6 +16,7 @@ import {
     RefreshCw, 
     Plus,
     ArrowRight,
+    ArrowUpRight,
     Check
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -430,62 +431,54 @@ export default function BattlePage() {
         {
             key: 'create',
             label: 'Buat Room',
-            icon: <Swords size={20} />,
-            desc: 'Buat arena tandingmu sendiri dan tantang temanmu sekarang.',
-            mobileDesc: 'Bikin room & tantang teman',
-            cta: 'Atur Room',
-            mobileCta: 'Atur',
+            icon: Swords,
+            desc: 'Bikin arena tanding kuis sendiri dan undang temanmu.',
             action: () => { setError(null); setMode('create') },
-            color: '#F5C542',
-            bg: 'rgba(245, 197, 66, 0.1)',
-            border: 'rgba(245, 197, 66, 0.35)',
+            color: 'var(--accent-gold)',
+            bg: 'var(--accent-gold-bg)',
+            border: 'var(--accent-gold-border)',
+            glow: 'rgba(245, 197, 66, 0.16)',
         },
         {
             key: 'join',
             label: 'Join Room',
-            icon: <KeyRound size={20} />,
-            desc: 'Masuk ke arena yang sudah ada menggunakan kode akses rahasia.',
-            mobileDesc: 'Masuk pakai kode room',
-            cta: 'Input Kode',
-            mobileCta: 'Masuk',
+            icon: KeyRound,
+            desc: 'Masuk ke arena lawan memakai kode room yang dibagikan.',
             action: () => { setError(null); setMode('join') },
-            color: '#38bdf8',
-            bg: 'rgba(56, 189, 248, 0.1)',
-            border: 'rgba(56, 189, 248, 0.35)',
+            color: 'var(--accent-cyan)',
+            bg: 'var(--accent-cyan-bg)',
+            border: 'var(--accent-cyan-border)',
+            glow: 'rgba(56, 189, 248, 0.16)',
         },
         {
             key: 'matchmaking',
             label: 'Matchmaking',
-            icon: <Flame size={20} />,
-            desc: 'Sistem akan mencarikan lawan yang seimbang untukmu secara otomatis.',
-            mobileDesc: 'Cari lawan otomatis',
-            cta: 'Cari Lawan',
-            mobileCta: 'Cari',
+            icon: Flame,
+            desc: 'Sistem mencarikan lawan seimbang secara otomatis & cepat.',
             action: handleMatchmaking,
-            color: '#10b981',
-            bg: 'rgba(16, 185, 129, 0.1)',
-            border: 'rgba(16, 185, 129, 0.35)',
+            color: 'var(--accent-green)',
+            bg: 'var(--accent-green-bg)',
+            border: 'var(--accent-green-border)',
+            glow: 'rgba(34, 197, 94, 0.16)',
         },
         {
             key: 'practice',
             label: 'Vs Computer',
-            icon: <Bot size={20} />,
-            desc: 'Latihan cepat melawan AI bot tanpa harus menunggu lawan online.',
-            mobileDesc: 'Latihan lawan bot AI',
-            cta: 'Mulai Latihan',
-            mobileCta: 'Latihan',
+            icon: Bot,
+            desc: 'Latihan asah kecepatan kuis melawan bot AI tanpa antrean.',
             action: () => router.push('/battle/computer'),
-            color: '#a855f7',
-            bg: 'rgba(168, 85, 247, 0.1)',
-            border: 'rgba(168, 85, 247, 0.35)',
+            color: 'var(--accent-purple)',
+            bg: 'var(--accent-purple-bg)',
+            border: 'var(--accent-purple-border)',
+            glow: 'rgba(168, 85, 247, 0.16)',
         },
     ]
 
     return (
-        <div className="responsive-page battle-page" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+        <div className="responsive-page battle-page" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column' }}>
             {/* Header Title */}
-            <div style={{ marginBottom: '20px', textAlign: 'center', width: '100%', maxWidth: '640px' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '6px', color: '#ffffff' }}>
+            <div style={{ marginBottom: '24px', textAlign: 'left', width: '100%' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     ⚔️ Battle Arena
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
@@ -497,55 +490,64 @@ export default function BattlePage() {
             <div className="battle-select-layout">
                 {/* 4 Action Buttons Grid */}
                 <div className="battle-select-actions">
-                    {actionButtons.map((item) => (
-                        <motion.div
-                            key={item.key}
-                            whileHover={{ y: -3 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={item.action}
-                            style={{ cursor: 'pointer', height: '100%', minWidth: 0 }}
-                        >
-                            <div
-                                className="battle-action-card"
-                                style={{
-                                    borderBottom: `2px solid ${item.color}`,
-                                }}
+                    {actionButtons.map((item, i) => {
+                        const Icon = item.icon
+                        return (
+                            <motion.div
+                                key={item.key}
+                                initial={{ opacity: 0, y: 12 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.3, delay: i * 0.05 }}
+                                whileHover={{ y: -3, borderColor: 'rgba(255, 255, 255, 0.3)' }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={item.action}
+                                style={{ cursor: 'pointer', height: '100%', minWidth: 0 }}
                             >
-                                <div
-                                    className="battle-action-icon"
-                                    style={{
-                                        backgroundColor: item.bg,
-                                        border: `1px solid ${item.border}`,
-                                        color: item.color,
-                                    }}
-                                >
-                                    {item.icon}
-                                </div>
+                                <div className="card hover-lift battle-action-card">
+                                    {/* Subtle Corner Glow */}
+                                    <div
+                                        style={{
+                                            position: 'absolute',
+                                            top: '-20px',
+                                            right: '-20px',
+                                            width: '70px',
+                                            height: '70px',
+                                            background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
+                                            pointerEvents: 'none',
+                                        }}
+                                    />
 
-                                <div style={{ minWidth: 0 }}>
-                                    <h3 className="battle-action-title">
-                                        {item.label}
-                                    </h3>
-                                    <p className="battle-action-desc">
-                                        <span className="desktop-desc">{item.desc}</span>
-                                        <span className="mobile-desc">{item.mobileDesc}</span>
-                                    </p>
-                                </div>
+                                    {/* Top Row: Icon + Single Action Indicator */}
+                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                                        <div
+                                            className="battle-action-icon"
+                                            style={{
+                                                backgroundColor: item.bg,
+                                                border: `1px solid ${item.border}`,
+                                                color: item.color,
+                                            }}
+                                        >
+                                            <Icon size={18} />
+                                        </div>
 
-                                {/* Footer CTA with Arrow */}
-                                <div className="battle-action-footer">
-                                    <span
-                                        className="battle-action-cta"
-                                        style={{ color: item.color }}
-                                    >
-                                        <span className="desktop-cta">{item.cta}</span>
-                                        <span className="mobile-cta">{item.mobileCta}</span>
-                                    </span>
-                                    <ArrowRight size={13} style={{ color: item.color, flexShrink: 0 }} />
+                                        <div className="battle-action-arrow">
+                                            <ArrowUpRight size={15} />
+                                        </div>
+                                    </div>
+
+                                    {/* Content: Title & Clear Concise Description */}
+                                    <div style={{ minWidth: 0 }}>
+                                        <h3 className="battle-action-title">
+                                            {item.label}
+                                        </h3>
+                                        <p className="battle-action-desc">
+                                            {item.desc}
+                                        </p>
+                                    </div>
                                 </div>
-                            </div>
-                        </motion.div>
-                    ))}
+                            </motion.div>
+                        )
+                    })}
                 </div>
 
                 {/* Available Rooms List on BOTTOM */}
