@@ -354,97 +354,99 @@ export default function ProfileHeroStage({
                                 color: roleInfo.themeColor,
                                 backgroundColor: 'rgba(255, 255, 255, 0.04)',
                                 border: '1px solid rgba(255, 255, 255, 0.08)',
-                                padding: '3px 8px',
+                                padding: '4px 10px',
                                 borderRadius: '6px',
                                 fontWeight: 600,
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0,
                             }}
                         >
-                            Tier Level {profile.level}
+                            Tier Lv.{profile.level}
                         </div>
                     </div>
 
                     {/* 6 Stats Grid */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', marginBottom: '14px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))', gap: '8px', marginBottom: '14px' }}>
                         {/* HP */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Heart size={13} />
-                                <span>Health (HP)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#ef4444', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Heart size={13} style={{ flexShrink: 0 }} />
+                                <span>Health</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.hp}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 Daya tahan duel
                             </div>
                         </div>
 
                         {/* MP */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#38bdf8', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Droplets size={13} />
-                                <span>Mana (MP)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#38bdf8', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Droplets size={13} style={{ flexShrink: 0 }} />
+                                <span>Mana</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.mp}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 Kapasitas skill
                             </div>
                         </div>
 
                         {/* ATK */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#f59e0b', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Swords size={13} />
-                                <span>Attack (ATK)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#f59e0b', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Swords size={13} style={{ flexShrink: 0 }} />
+                                <span>Attack</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.atk}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                                {stats.battleBuffs.extraAtkPoints > 0 ? `+${stats.battleBuffs.extraAtkPoints} Poin Jawaban` : 'Serangan dasar'}
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {stats.battleBuffs.extraAtkPoints > 0 ? `+${stats.battleBuffs.extraAtkPoints} Poin Jwb` : 'Serangan dasar'}
                             </div>
                         </div>
 
                         {/* DEF */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#10b981', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Shield size={13} />
-                                <span>Defense (DEF)</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#10b981', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Shield size={13} style={{ flexShrink: 0 }} />
+                                <span>Defense</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.def}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                                {stats.battleBuffs.damageReductionPct > 0 ? `Reduksi -${stats.battleBuffs.damageReductionPct}%` : 'Pertahanan dasar'}
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {stats.battleBuffs.damageReductionPct > 0 ? `Reduksi -${stats.battleBuffs.damageReductionPct}%` : 'Pertahanan'}
                             </div>
                         </div>
 
                         {/* CRIT */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#a855f7', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Crosshair size={13} />
-                                <span>Critical Rate</span>
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#a855f7', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Crosshair size={13} style={{ flexShrink: 0 }} />
+                                <span>Critical</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.crit}%
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
-                                Peluang 1.5x skor
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                Peluang 1.5x
                             </div>
                         </div>
 
                         {/* SPEED */}
-                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '10px' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: '#06b6d4', fontSize: '11px', fontWeight: 600, marginBottom: '4px' }}>
-                                <Clock size={13} />
+                        <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.025)', border: '1px solid #242424', borderRadius: '10px', padding: '9px 10px', minWidth: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#06b6d4', fontSize: '11px', fontWeight: 600, marginBottom: '2px', whiteSpace: 'nowrap' }}>
+                                <Clock size={13} style={{ flexShrink: 0 }} />
                                 <span>Speed</span>
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: '#ffffff' }}>
                                 {stats.speed}
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px' }}>
+                            <div style={{ fontSize: '10px', color: 'var(--color-steel)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                 {stats.battleBuffs.extraTimerSec > 0 ? `+${stats.battleBuffs.extraTimerSec}s Ronde` : 'Waktu standar'}
                             </div>
                         </div>
