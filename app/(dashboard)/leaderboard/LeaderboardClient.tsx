@@ -50,7 +50,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
     ]
 
     return (
-        <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+        <div className="responsive-page" style={{ padding: '24px', maxWidth: '800px', margin: '0 auto', paddingBottom: currentUserId && (tab === 'all' || tab === 'weekly') ? '90px' : '24px' }}>
             <div style={{ marginBottom: '24px' }}>
                 <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
                     🏆 Leaderboard
@@ -316,24 +316,23 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 const me = list[myIndex]
                 return (
                     <div style={{
-                        position: 'sticky',
+                        position: 'fixed',
                         bottom: 0,
+                        left: 0,
+                        right: 0,
                         zIndex: 40,
-                        margin: '16px -12px -14px',
-                        padding: '12px 14px',
-                        backgroundColor: 'rgba(10, 10, 10, 0.92)',
-                        backdropFilter: 'blur(12px)',
-                        WebkitBackdropFilter: 'blur(12px)',
-                        borderTop: '1px solid rgba(245, 197, 66, 0.3)',
-                        boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.6)',
+                        padding: '10px 16px calc(10px + env(safe-area-inset-bottom, 0px))',
+                        backgroundColor: '#0a0a0a',
+                        borderTop: '1px solid rgba(245, 197, 66, 0.35)',
+                        boxShadow: '0 -8px 24px rgba(0, 0, 0, 0.8)',
                     }}>
                         <div style={{
                             maxWidth: '800px',
                             margin: '0 auto',
-                            backgroundColor: 'var(--bg-secondary)',
+                            backgroundColor: '#141414',
                             border: '1px solid var(--accent-gold)',
                             borderRadius: '10px',
-                            padding: '10px 16px',
+                            padding: '10px 14px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
