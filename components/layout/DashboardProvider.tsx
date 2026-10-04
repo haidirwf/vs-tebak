@@ -13,6 +13,10 @@ const CharacterCreationModal = dynamic(() => import('@/components/character/Char
     ssr: false,
 })
 
+const StreakOnboardingModal = dynamic(() => import('@/components/onboarding/StreakOnboardingModal'), {
+    ssr: false,
+})
+
 export function DashboardProvider({
     children,
     profile,
@@ -34,6 +38,7 @@ export function DashboardProvider({
     }
 
     const [hasCompletedCreation, setHasCompletedCreation] = useState(false)
+    const [hasCompletedStreakModal, setHasCompletedStreakModal] = useState(false)
 
     // Akun baru maupun akun lama yang belum menyelesaikan kustomisasi karakter wajib melalui CharacterCreationModal
     const activeProfile = useUserStore((s) => s.profile) || profile
@@ -41,6 +46,14 @@ export function DashboardProvider({
         activeProfile && !activeProfile.character_created && !hasCompletedCreation
     )
     const [showCharacterModal, setShowCharacterModal] = useState(needsCharacterCreation)
+
+    const showStreakModal = Boolean(
+        activeProfile &&
+        (activeProfile.character_created || hasCompletedCreation) &&
+        !activeProfile.has_completed_streak_onboarding &&
+        !hasCompletedStreakModal &&
+        !showCharacterModal
+    )
 
     useEffect(() => {
         setProfile(profile)
@@ -88,6 +101,15 @@ export function DashboardProvider({
                     onComplete={() => {
                         setHasCompletedCreation(true)
                         setShowCharacterModal(false)
+                    }}
+                />
+            )}
+            {activeProfile && showStreakModal && (
+                <StreakOnboardingModal
+                    isOpen={showStreakModal}
+                    profile={activeProfile}
+                    onComplete={() => {
+                        setHasCompletedStreakModal(true)
                     }}
                 />
             )}

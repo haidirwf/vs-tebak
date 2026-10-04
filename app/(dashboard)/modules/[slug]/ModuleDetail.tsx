@@ -3,9 +3,11 @@
 import { useMemo, useState, type CSSProperties } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Module, UserModule, Question, LessonStep } from '@/types'
-import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X } from 'lucide-react'
+import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X, HelpCircle } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
+import { useOnboardingStore } from '@/stores/onboardingStore'
+import LessonTourGuide from '@/components/onboarding/LessonTourGuide'
 
 interface ModuleDetailProps {
     module: Module
@@ -213,6 +215,8 @@ function ensureLessonDepth(module: Module, rawSteps: LessonStep[]): LessonStep[]
 
 export default function ModuleDetail({ module, userModule, completedFromLog = false, questions, avatarClass }: ModuleDetailProps) {
     const router = useRouter()
+    const { hasCompletedLessonTour } = useOnboardingStore()
+    const [isTourOpen, setIsTourOpen] = useState(!hasCompletedLessonTour)
     const [currentStep, setCurrentStep] = useState(0)
     const [phase, setPhase] = useState<'lesson' | 'quiz'>('lesson')
     const [quizAnswers, setQuizAnswers] = useState<Record<string, number>>({})
@@ -344,17 +348,41 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                 boxSizing: 'border-box',
             }}
         >
-            {/* Back */}
-            <button
-                onClick={() => {
-                    router.push(`/modules?refresh=${Date.now()}`)
-                }}
-                style={{
-                display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)',
-                fontSize: '13px', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '20px',
-            }}>
-                <ArrowLeft size={14} /> Kembali ke Modul
-            </button>
+            {/* Top Navigation Row */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+                <button
+                    onClick={() => {
+                        router.push(`/modules?refresh=${Date.now()}`)
+                    }}
+                    style={{
+                        display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)',
+                        fontSize: '13px', backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
+                    }}
+                >
+                    <ArrowLeft size={14} /> Kembali ke Modul
+                </button>
+
+                <button
+                    type="button"
+                    onClick={() => setIsTourOpen(true)}
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        padding: '6px 12px',
+                        borderRadius: '8px',
+                        backgroundColor: 'rgba(0, 212, 255, 0.1)',
+                        border: '1px solid rgba(0, 212, 255, 0.25)',
+                        color: 'var(--accent-cyan)',
+                        fontSize: '12px',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                    }}
+                >
+                    <HelpCircle size={14} />
+                    <span>Panduan Fitur</span>
+                </button>
+            </div>
 
             {/* Header */}
             <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
@@ -372,7 +400,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                         {module.description && (
                             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{module.description}</p>
                         )}
-                        <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
+                        <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }} data-tour="quiz-reward">
                             <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--text-muted)' }}>
                                 <Clock size={12} /> {module.duration_minutes} menit
                             </span>
@@ -395,7 +423,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                 </div>
 
                 {/* Progress */}
-                <div style={{ marginTop: '16px' }}>
+                <div style={{ marginTop: '16px' }} data-tour="progress-bar">
                     <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Progress Belajar</span>
                         <span style={{ fontSize: '11px', color: 'var(--accent-cyan)' }}>{displayedProgress}%</span>
@@ -527,6 +555,7 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                     {/* Navigation Buttons */}
                     <div
                         className="module-nav-floating"
+                        data-tour="nav-buttons"
                         style={{
                             marginTop: 'auto',
                             display: 'flex',
@@ -817,6 +846,13 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Interactive Lesson Tour Guide Component */}
+            <LessonTourGuide
+                isOpen={isTourOpen}
+                onClose={() => setIsTourOpen(false)}
+                onComplete={() => setIsTourOpen(false)}
+            />
         </div>
     )
 }
