@@ -14,7 +14,6 @@ import { createClient } from '@/lib/supabase/client'
 
 export default function DashboardPage() {
     const router = useRouter()
-    const [mounted, setMounted] = useState(false)
     const { profile } = useUserStore()
     const {
         quests,
@@ -27,10 +26,6 @@ export default function DashboardPage() {
 
     const [isFetching, setIsFetching] = useState(!dashboardFetchedAt)
     const today = format(new Date(), 'yyyy-MM-dd')
-
-    useEffect(() => {
-        setMounted(true)
-    }, [])
 
     useEffect(() => {
         const supabase = createClient()
@@ -109,31 +104,6 @@ export default function DashboardPage() {
             setIsFetching(false)
         }
     }, [today, dashboardFetchedAt, setDashboardData, router])
-
-    if (!mounted) {
-        return (
-            <div className="responsive-page" style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
-                <div
-                    className="card"
-                    style={{
-                        height: '140px',
-                        backgroundColor: 'var(--surface-card)',
-                        border: '1px solid var(--surface-border)',
-                        borderRadius: '8px',
-                    }}
-                />
-                <div
-                    className="card"
-                    style={{
-                        height: '240px',
-                        backgroundColor: 'var(--surface-card)',
-                        border: '1px solid var(--surface-border)',
-                        borderRadius: '8px',
-                    }}
-                />
-            </div>
-        )
-    }
 
     return (
         <div className="responsive-page" style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>

@@ -5,6 +5,10 @@ const nextConfig: NextConfig = {
   compress: true,
   experimental: {
     optimizePackageImports: ['lucide-react', 'date-fns', 'framer-motion'],
+    staleTimes: {
+      dynamic: 30,
+      static: 180,
+    },
   },
   onDemandEntries: {
     maxInactiveAge: 300 * 1000,
