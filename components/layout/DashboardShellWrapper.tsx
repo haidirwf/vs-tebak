@@ -2,6 +2,7 @@
 
 import React, { useRef, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
+import Sidebar from '@/components/layout/Sidebar'
 import Topbar from '@/components/layout/Topbar'
 import Navbar from '@/components/layout/Navbar'
 
@@ -26,49 +27,15 @@ export default function DashboardShellWrapper({ children }: DashboardShellWrappe
     }, [pathname])
 
     return (
-        <div
-            className={`dashboard-shell ${isLiveBattle ? 'in-live-battle' : ''}`}
-            style={{
-                display: 'flex',
-                flexDirection: 'column',
-                minHeight: '100dvh',
-                height: '100dvh',
-                width: '100%',
-                maxWidth: '100vw',
-                overflow: 'hidden',
-                position: 'relative',
-            }}
-        >
-            {!isLiveBattle && (
-                <div className="dashboard-topbar">
-                    <Topbar />
-                </div>
-            )}
-            <div
-                className="dashboard-main"
-                style={{
-                    flex: 1,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minWidth: 0,
-                    width: '100%',
-                    maxWidth: '100%',
-                    overflow: 'hidden',
-                }}
-            >
-                <main
-                    ref={contentRef}
-                    className="dashboard-content"
-                    style={{
-                        flex: 1,
-                        overflowY: 'auto',
-                        overflowX: 'hidden',
-                        minWidth: 0,
-                        width: '100%',
-                        maxWidth: '100%',
-                        backgroundColor: 'var(--bg-primary)',
-                    }}
-                >
+        <div className={`dashboard-shell ${isLiveBattle ? 'in-live-battle' : ''}`}>
+            {!isLiveBattle && <Sidebar />}
+            <div className="dashboard-main">
+                {!isLiveBattle && (
+                    <div className="dashboard-topbar">
+                        <Topbar />
+                    </div>
+                )}
+                <main ref={contentRef} className="dashboard-content">
                     {children}
                 </main>
             </div>
