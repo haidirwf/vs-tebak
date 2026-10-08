@@ -967,62 +967,6 @@ export default function ModuleDetail({
                                 <RichContentRenderer content={activeStep.content} />
                             </div>
                         )}
-
-                        {/* Pre-Quiz Exercise Invitation: Clean & borderless */}
-                        {hasQuiz && (
-                            <div
-                                style={{
-                                    marginTop: '56px',
-                                    paddingTop: '24px',
-                                    textAlign: 'center',
-                                }}
-                            >
-                                <h3
-                                    style={{
-                                        fontFamily: 'var(--font-heading)',
-                                        fontSize: '22px',
-                                        fontWeight: 700,
-                                        color: 'var(--text-primary)',
-                                        marginBottom: '8px',
-                                    }}
-                                >
-                                    Yuk uji pengetahuanmu dengan latihan!
-                                </h3>
-                                <p
-                                    style={{
-                                        fontSize: '14px',
-                                        color: 'var(--text-secondary)',
-                                        maxWidth: '560px',
-                                        margin: '0 auto 24px auto',
-                                        lineHeight: 1.6,
-                                    }}
-                                >
-                                    Setelah membaca materi, ini saatnya kamu mengukur pemahaman tentang konsep ini.
-                                    Materi ini tetap dapat kamu akses selama mengerjakan latihan.
-                                </p>
-                                <button
-                                    onClick={() => {
-                                        setPhase('quiz')
-                                        window.scrollTo({ top: 0, behavior: 'smooth' })
-                                    }}
-                                    style={{
-                                        backgroundColor: 'var(--color-gold, #F5C542)',
-                                        color: '#0a0a0a',
-                                        border: 'none',
-                                        borderRadius: '8px',
-                                        padding: '11px 28px',
-                                        fontSize: '14px',
-                                        fontWeight: 700,
-                                        fontFamily: 'var(--font-heading)',
-                                        cursor: 'pointer',
-                                        boxShadow: '0 2px 10px rgba(245, 197, 66, 0.35)',
-                                        transition: 'all 0.2s',
-                                    }}
-                                >
-                                    Mulai Latihan
-                                </button>
-                            </div>
-                        )}
                     </div>
                 ) : (
                     /* =========================================================
