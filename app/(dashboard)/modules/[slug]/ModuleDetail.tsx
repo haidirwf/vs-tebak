@@ -968,17 +968,13 @@ export default function ModuleDetail({
                             </div>
                         )}
 
-                        {/* Pre-Quiz Exercise Banner: Distinctively Skillungo with Gold CTA */}
+                        {/* Pre-Quiz Exercise Invitation: Clean & borderless */}
                         {hasQuiz && (
                             <div
                                 style={{
-                                    marginTop: '48px',
-                                    padding: '36px 24px',
-                                    borderRadius: '12px',
-                                    border: '1px solid var(--surface-border, #e4e4e7)',
-                                    backgroundColor: 'var(--surface-card, #ffffff)',
+                                    marginTop: '56px',
+                                    paddingTop: '24px',
                                     textAlign: 'center',
-                                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
                                 }}
                             >
                                 <h3
