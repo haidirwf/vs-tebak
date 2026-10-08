@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const CLASS_COLORS: Record<string, string> = {
     warrior: 'var(--accent-red)',
@@ -35,7 +36,7 @@ export default function Topbar() {
             className="dashboard-navbar-header"
             style={{
                 height: '56px',
-                backgroundColor: 'rgba(10, 10, 10, 0.9)',
+                backgroundColor: 'var(--bg-navbar)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
                 borderBottom: '1px solid var(--surface-border)',
@@ -132,8 +133,9 @@ export default function Topbar() {
                     )}
                 </div>
 
-                {/* Ujung Kanan: Nama User dan Level */}
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                {/* Ujung Kanan: Nama User, Level, dan ThemeToggle */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <ThemeToggle />
                     {profile ? (
                         <Link
                             href="/profile"
@@ -145,8 +147,8 @@ export default function Topbar() {
                                 textDecoration: 'none',
                                 padding: '4px 8px',
                                 borderRadius: '8px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                backgroundColor: 'var(--surface-frosted)',
+                                border: '1px solid var(--surface-border-subtle)',
                                 transition: 'background-color 0.15s ease, border-color 0.15s ease',
                             }}
                             className="topbar-user-link"
@@ -173,7 +175,7 @@ export default function Topbar() {
                                         fontFamily: 'var(--font-inter)',
                                         fontSize: '13px',
                                         fontWeight: 600,
-                                        color: '#ffffff',
+                                        color: 'var(--text-primary)',
                                         lineHeight: 1.2,
                                         whiteSpace: 'nowrap',
                                         overflow: 'hidden',

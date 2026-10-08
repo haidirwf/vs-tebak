@@ -37,7 +37,7 @@ export default function Navbar() {
                 right: 0,
                 height: 'calc(62px + env(safe-area-inset-bottom, 0px))',
                 paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-                backgroundColor: 'rgba(10, 10, 10, 0.92)',
+                backgroundColor: 'var(--bg-navbar)',
                 backdropFilter: 'blur(16px)',
                 WebkitBackdropFilter: 'blur(16px)',
                 borderTop: '1px solid var(--surface-border)',
@@ -96,7 +96,7 @@ export default function Navbar() {
                                     position: 'relative',
                                     backgroundColor: isActive ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
                                     border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
-                                    color: isActive ? 'var(--color-gold)' : 'rgba(255, 255, 255, 0.48)',
+                                    color: isActive ? 'var(--color-gold)' : 'var(--text-muted)',
                                     transition: 'color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease',
                                 }}
                             >

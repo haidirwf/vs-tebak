@@ -8,42 +8,47 @@
    ========================================================================== */
 
 :root {
-  /* --- ACHROMATIC SURFACE & COLOR TOKENS (RESTORED PREVIOUS DARK PALETTE) --- */
-  --color-void: #0a0a0a;              /* Canvas: restored from #000000 to previous carbon #0a0a0a */
-  --color-near-black: #141414;        /* Card: restored from #050505 to previous graphite #141414 */
-  --color-carbon: #0a0a0a;            /* Previous carbon #0a0a0a */
-  --color-graphite: #141414;          /* Previous graphite #141414 */
-  --color-iron: #1e1e1e;              /* Previous iron #1e1e1e */
-  --color-slate-edge: #313131;        /* Previous slate border #313131 */
-  --color-ash: #a7a7a7;               /* Low-emphasis metadata, tiny helper copy */
-  --color-steel: #808080;             /* Muted labels, inactive controls */
-  --color-fog: #999999;               /* Supporting body copy on black */
-  --color-silver: #bfbfbf;            /* Navigation text, higher-emphasis secondary copy */
-  --color-white: #ffffff;             /* Headlines, button labels, prominent UI text */
-  --color-signal-orange: #F5C542;     /* Reverted to original Gold brand accent */
-  --color-ember: #EAB308;             /* Gold hover treatment */
-  --color-burnt-orange: #d97706;      /* Warm amber */
-  --color-electric-yellow: #fde047;   /* Gold halo glow */
-  --color-vector-green: #22C55E;      /* Editorial line accents & gradient rail */
-  --gradient-vector-green: linear-gradient(to right, #22C55E 0%, #F5C542 50%, #38BDF8 100%);
-  --gradient-spectrum-rail: linear-gradient(to right, #F5C542 0%, #38BDF8 50%, #22C55E 100%);
+  color-scheme: light;
 
-  /* --- BRAND ACCENT TOKENS (ORIGINAL GOLD PALETTE) --- */
-  --color-gold: #F5C542;
+  /* --- SKILVUL DESIGN SYSTEM (LIGHT FIRST) + SKILLUNGO GOLD ACCENTS --- */
+  /* References: DESIGN_REF.md (Extracted from Skilvul) */
+  --color-void: #ffffff;              /* Page base canvas */
+  --color-near-black: #ffffff;        /* Pure white card */
+  --color-carbon: #f4f4f5;            /* Light gray surface (--skilvul-colors-gray-100) */
+  --color-graphite: #e4e4e7;          /* Border gray (--skilvul-colors-gray-200) */
+  --color-iron: #eff2f6;              /* Elevated surface / light callout (--skilvul-colors-skilvul-lightGray) */
+  --color-slate-edge: #e4e4e7;        /* Border stroke */
+  --color-ash: #a1a1aa;               /* Low-emphasis metadata / caption */
+  --color-steel: #828282;             /* Muted text (--skilvul-colors-skilvul-darkGray) */
+  --color-fog: #71717a;               /* Secondary text */
+  --color-silver: #4a4b4c;            /* Body text (--skilvul-colors-skilvul-blackText) */
+  --color-white: #1d1d1d;             /* Dark heading text (--skilvul-colors-skilvul-black) */
+
+  /* --- BRAND ACCENT TOKENS (SKILLUNGO GOLD PALETTE) --- */
+  --color-signal-orange: #F5C542;     /* Gold primary signal */
+  --color-gold: #F5C542;              /* Primary brand CTA & metrics */
+  --color-ember: #EAB308;             /* Gold hover */
   --color-gold-hover: #EAB308;
+  --color-burnt-orange: #D97706;      /* Warm amber */
+  --color-electric-yellow: #FDE047;   /* Bright gold halo */
+  --color-vector-green: #219653;      /* Skilvul green */
   --accent-gold: var(--color-gold);
-  --accent-gold-bg: rgba(245, 197, 66, 0.1);
-  --accent-gold-border: rgba(245, 197, 66, 0.35);
+  --accent-gold-bg: rgba(245, 197, 66, 0.12);
+  --accent-gold-border: rgba(245, 197, 66, 0.40);
   --color-spark: var(--color-gold);
 
-  /* --- SURFACES (RESTORED TO PREVIOUS DARK THEME) --- */
-  --surface-canvas: var(--color-carbon);       /* Level 0: #0a0a0a (Full-page canvas) */
-  --surface-card: var(--color-graphite);       /* Level 1: #141414 (Cards, content blocks) */
-  --surface-elevated: var(--color-iron);       /* Level 2: #1e1e1e (Hover states, controls, popovers) */
-  --surface-border: var(--color-slate-edge);   /* Level 3: #313131 (Dividers, borders) */
-  --surface-border-subtle: rgba(255, 255, 255, 0.08);
-  --surface-inverted: var(--color-white);      /* Level 4: Pure White */
-  --surface-frosted: rgba(255, 255, 255, 0.05);
+  --gradient-vector-green: linear-gradient(to right, #219653 0%, #F5C542 50%, #38BDF8 100%);
+  --gradient-spectrum-rail: linear-gradient(to right, #F5C542 0%, #38BDF8 50%, #219653 100%);
+
+  /* --- SURFACES (SKILVUL CLEAN LIGHT SPEC) --- */
+  --surface-canvas: #fafafa;                  /* Background kanvas off-white (--skilvul-colors-gray-50) */
+  --surface-card: #ffffff;                    /* Kartu putih bersih */
+  --surface-elevated: #f4f4f5;                /* Surface interaktif hover / dropdown */
+  --surface-border: #e4e4e7;                  /* Border 1px gray */
+  --surface-border-subtle: rgba(0, 0, 0, 0.06);
+  --surface-inverted: #1d1d1d;                /* Dark element on light */
+  --surface-frosted: rgba(0, 0, 0, 0.04);
+  --bg-navbar: rgba(255, 255, 255, 0.94);     /* Navbar glass white */
 
   /* Semantic aliases */
   --bg-primary: var(--surface-canvas);
@@ -51,24 +56,24 @@
   --bg-tertiary: var(--surface-elevated);
   --border: var(--surface-border);
 
-  /* --- FUNCTIONAL STATUS TOKENS --- */
+  /* --- FUNCTIONAL RPG STATUS TOKENS --- */
   --accent-red: #EF4444;
-  --accent-red-bg: rgba(239, 68, 68, 0.1);
-  --accent-red-border: rgba(239, 68, 68, 0.28);
+  --accent-red-bg: rgba(239, 68, 68, 0.08);
+  --accent-red-border: rgba(239, 68, 68, 0.25);
 
-  --accent-cyan: #38BDF8;
-  --accent-cyan-bg: rgba(56, 189, 248, 0.1);
-  --accent-cyan-border: rgba(56, 189, 248, 0.28);
+  --accent-cyan: #0284C7;
+  --accent-cyan-bg: rgba(2, 132, 199, 0.08);
+  --accent-cyan-border: rgba(2, 132, 199, 0.25);
 
-  --accent-green: #22C55E;
-  --accent-green-bg: rgba(34, 197, 94, 0.1);
-  --accent-green-border: rgba(34, 197, 94, 0.28);
+  --accent-green: #16A34A;
+  --accent-green-bg: rgba(22, 163, 74, 0.08);
+  --accent-green-border: rgba(22, 163, 74, 0.25);
 
-  --accent-purple: #A855F7;
-  --accent-purple-bg: rgba(168, 85, 247, 0.1);
-  --accent-purple-border: rgba(168, 85, 247, 0.28);
+  --accent-purple: #7C3AED;
+  --accent-purple-bg: rgba(124, 58, 237, 0.08);
+  --accent-purple-border: rgba(124, 58, 237, 0.25);
 
-  /* --- TYPOGRAPHY (LINEARITY SPEC) --- */
+  /* --- TYPOGRAPHY SPEC --- */
   --font-inter: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-acidgrotesk: var(--font-acidgrotesk), 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-jetbrains-mono: var(--font-jetbrains-mono), 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
@@ -78,12 +83,12 @@
   --font-mono: var(--font-jetbrains-mono);
 
   /* Text Contrast */
-  --text-primary: var(--color-white);         /* #ffffff */
-  --text-secondary: var(--color-fog);         /* #999999 Fog */
-  --text-muted: var(--color-steel);           /* #808080 Steel */
-  --text-silver: var(--color-silver);         /* #bfbfbf Silver */
+  --text-primary: #1d1d1d;                    /* Skilvul black */
+  --text-secondary: #4a4b4c;                  /* Skilvul body text */
+  --text-muted: #828282;                      /* Skilvul darkGray */
+  --text-silver: #64748b;
 
-  /* --- SPACING SCALE (4px Base Unit per Linearity) --- */
+  /* --- SPACING SCALE (4px Base Unit) --- */
   --spacing-unit: 4px;
   --spacing-4: 4px;
   --spacing-8: 8px;
@@ -93,61 +98,74 @@
   --spacing-56: 56px;
   --spacing-168: 168px;
 
-  /* --- SHAPES & RADII (MODERATE ROUNDED STANDARD) --- */
-  --radius: 12px;
-  --radius-cards: 12px;
-  --radius-buttons: 10px;
-  --radius-pills: 10px;
-  --radius-links: 10px;
-  --radius-inputs: 10px;
+  /* --- SHAPES & RADII (SKILVUL STANDARDS: 8px default cards, 12px panels) --- */
+  --radius: 8px;
+  --radius-cards: 10px;
+  --radius-buttons: 8px;
+  --radius-pills: 8px;
+  --radius-links: 8px;
+  --radius-inputs: 8px;
   --radius-product-panels: 12px;
   --radius-campaign-tiles: 12px;
   --radius-images: 8px;
-  --radius-navpills: 10px;
+  --radius-navpills: 8px;
 
-  --radius-sm: 8px;
-  --radius-md: 10px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
   --radius-lg: 12px;
   --radius-xl: 16px;
   --radius-full: 9999px;
 
-  /* --- ELEVATION & GLOW --- */
-  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.45), 0 0 10px rgba(245, 197, 66, 0.25);
-  --shadow-signal-orange: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
-  --shadow-gold: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
-  --shadow-subtle: rgba(245, 197, 66, 0.3) 0px 0px 0px 1px inset;
-  --shadow-panel: 0 1.71429px 1.71429px rgba(0, 0, 0, 0.2), inset 0 0 9.42857px rgba(255, 255, 255, 0.12);
-  --shadow-card: none;
-  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
+  /* --- ELEVATION & SHADOWS (SKILVUL DELICATE ELEVATION) --- */
+  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.45), 0 0 8px rgba(245, 197, 66, 0.25);
+  --shadow-signal-orange: 0 4px 14px rgba(245, 197, 66, 0.35);
+  --shadow-gold: 0 4px 14px rgba(245, 197, 66, 0.35);
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-panel: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
-/* Optional Light Inversion with Linearity Clean Restraint */
-[data-theme="light"] {
-  color-scheme: light;
-  --color-void: #f8fafc;
-  --color-near-black: #ffffff;
-  --color-carbon: #f1f5f9;
-  --color-graphite: #e2e8f0;
-  --color-ash: #94a3b8;
-  --color-steel: #64748b;
-  --color-fog: #475569;
-  --color-silver: #334155;
-  --color-white: #0f172a;
+/* Optional Dark Mode Inversion */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --color-void: #0a0a0a;
+  --color-near-black: #141414;
+  --color-carbon: #0a0a0a;
+  --color-graphite: #141414;
+  --color-iron: #1e1e1e;
+  --color-slate-edge: #313131;
+  --color-ash: #a7a7a7;
+  --color-steel: #808080;
+  --color-fog: #999999;
+  --color-silver: #bfbfbf;
+  --color-white: #ffffff;
 
-  --surface-canvas: #f8fafc;
-  --surface-card: #ffffff;
-  --surface-elevated: #f1f5f9;
-  --surface-border: #e2e8f0;
-  --surface-inverted: #0f172a;
+  --surface-canvas: #0a0a0a;
+  --surface-card: #141414;
+  --surface-elevated: #1e1e1e;
+  --surface-border: #313131;
+  --surface-border-subtle: rgba(255, 255, 255, 0.08);
+  --surface-inverted: #ffffff;
+  --surface-frosted: rgba(255, 255, 255, 0.05);
+  --bg-navbar: rgba(10, 10, 10, 0.92);
 
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #f1f5f9;
-  --border: #e2e8f0;
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #141414;
+  --bg-tertiary: #1e1e1e;
+  --border: #313131;
 
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-muted: #64748b;
+  --text-primary: #ffffff;
+  --text-secondary: #999999;
+  --text-muted: #808080;
+  --text-silver: #bfbfbf;
+
+  --accent-gold-bg: rgba(245, 197, 66, 0.1);
+  --accent-gold-border: rgba(245, 197, 66, 0.35);
+
+  --shadow-signal-orange: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
+  --shadow-gold: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
+  --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
 }
 
 /* ===================================================
@@ -161,7 +179,7 @@
 }
 
 html {
-  color-scheme: dark;
+  color-scheme: light;
   background-color: var(--surface-canvas);
   overflow-x: hidden;
   max-width: 100vw;
@@ -243,21 +261,21 @@ body {
   overscroll-behavior: none !important;
 }
 
-/* Linearity Studio Grid: Sparse 64px hairline matrix on Void */
+/* Blueprint Grid: Subtle dot/hairline on Canvas */
 .bg-blueprint-grid {
+  background-color: var(--surface-canvas);
+  background-image:
+    linear-gradient(to right, rgba(0, 0, 0, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.035) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+[data-theme="dark"] .bg-blueprint-grid {
   background-color: var(--surface-canvas);
   background-image:
     linear-gradient(to right, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-  background-size: 64px 64px;
-}
-
-[data-theme="light"] .bg-blueprint-grid {
-  background-color: var(--surface-canvas);
-  background-image:
-    linear-gradient(to right, rgba(15, 23, 42, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(15, 23, 42, 0.035) 1px, transparent 1px);
-  background-size: 64px 64px;
+  background-size: 48px 48px;
 }
 
 .judge-mode *,
@@ -315,7 +333,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 }
 
 .card:hover {
-  border-color: rgba(255, 255, 255, 0.22);
+  border-color: var(--color-ash);
 }
 
 /* Linearity Micro Eyebrow Label: 10px uppercase, tracking 1.5px-2px, Steel */
@@ -373,7 +391,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   box-shadow: 0 0 28px rgba(245, 197, 66, 0.55), 0 0 12px rgba(234, 179, 8, 0.4);
 }
 
-/* Linearity Dark Outline Pill Button (9999px pill + 5% white fill) */
+/* Linearity Secondary/Ghost Button */
 .btn-dark-outline,
 .btn-secondary,
 .btn-ghost {
@@ -381,14 +399,14 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: rgba(255, 255, 255, 0.05);
-  color: #ffffff !important;
+  background-color: var(--surface-elevated);
+  color: var(--text-primary) !important;
   font-family: var(--font-inter);
   font-size: 13px;
   font-weight: 500;
   border-radius: var(--radius-buttons);
   padding: 10px 20px;
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  border: 1px solid var(--surface-border);
   cursor: pointer;
   text-decoration: none;
   transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
@@ -397,8 +415,8 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 .btn-dark-outline:hover,
 .btn-secondary:hover,
 .btn-ghost:hover {
-  background-color: rgba(255, 255, 255, 0.09);
-  border-color: rgba(255, 255, 255, 0.28);
+  background-color: var(--color-iron);
+  border-color: var(--color-ash);
   transform: translateY(-1px);
 }
 
@@ -416,9 +434,9 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 
 .nav-pill:hover,
 .nav-pill.active {
-  color: #ffffff;
-  background-color: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.12);
+  color: var(--text-primary);
+  background-color: var(--surface-elevated);
+  border-color: var(--surface-border);
 }
 
 /* Hero Prompt Composer (Carbon #292929 shell, 12px radius) */
@@ -517,26 +535,26 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   }
 }
 
-/* Role Selector Chip (8px radius rounded rect on Near Black) */
+/* Role Selector Chip (8px radius rounded rect) */
 .role-selector-chip {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background-color: rgba(5, 5, 5, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   padding: 6px 14px;
   font-size: 12px;
   font-weight: 500;
-  color: #ffffff;
+  color: var(--text-primary);
   cursor: pointer;
   transition: border-color 0.15s ease, background-color 0.15s ease, transform 0.15s ease;
 }
 
 .role-selector-chip:hover,
 .role-selector-chip.active {
-  border-color: rgba(255, 255, 255, 0.35);
-  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-gold);
+  background-color: var(--accent-gold-bg);
   transform: translateY(-1px);
 }
 
@@ -577,14 +595,15 @@ input::placeholder, textarea::placeholder {
   color: var(--color-steel);
 }
 
-/* Subtle Hover Lift without blur artifacts */
+/* Subtle Hover Lift */
 .hover-lift {
-  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease, background-color 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .hover-lift:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 255, 255, 0.24) !important;
+  border-color: var(--color-ash) !important;
+  box-shadow: var(--shadow-card);
 }
 
 /* Skeleton shimmer */
@@ -592,9 +611,9 @@ input::placeholder, textarea::placeholder {
   border-radius: 8px;
   background: linear-gradient(
     90deg,
-    rgba(255, 255, 255, 0.02) 0%,
-    rgba(255, 255, 255, 0.06) 50%,
-    rgba(255, 255, 255, 0.02) 100%
+    var(--surface-elevated) 0%,
+    var(--surface-border) 50%,
+    var(--surface-elevated) 100%
   );
   background-size: 220% 100%;
   animation: sqShimmer 1.4s ease-in-out infinite;

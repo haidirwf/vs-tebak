@@ -20,6 +20,7 @@ import {
 import { useUserStore } from '@/stores/userStore'
 import { getXpProgress, calculateLevel } from '@/lib/game/xp'
 import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
+import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const navItems = [
     { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
@@ -115,7 +116,7 @@ export default function Sidebar() {
                             fontFamily: 'var(--font-heading)',
                             fontSize: '18px',
                             fontWeight: 500,
-                            color: '#ffffff',
+                            color: 'var(--text-primary)',
                             letterSpacing: '-0.02em',
                         }}
                     >
@@ -139,8 +140,8 @@ export default function Sidebar() {
                                 width: '36px',
                                 height: '36px',
                                 borderRadius: '8px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: `1px solid ${CLASS_COLORS[profile.avatar_class] || 'rgba(255, 255, 255, 0.15)'}`,
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: `1px solid ${CLASS_COLORS[profile.avatar_class] || 'var(--surface-border)'}`,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
@@ -156,7 +157,7 @@ export default function Sidebar() {
                                         fontFamily: 'var(--font-inter)',
                                         fontWeight: 500,
                                         fontSize: '13px',
-                                        color: '#ffffff',
+                                        color: 'var(--text-primary)',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                         whiteSpace: 'nowrap',
@@ -301,7 +302,7 @@ export default function Sidebar() {
                                         fontFamily: 'var(--font-inter)',
                                         fontSize: '13px',
                                         fontWeight: isActive ? 500 : 400,
-                                        color: isActive ? '#ffffff' : 'var(--color-silver)',
+                                        color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
                                     }}
                                 >
                                     {item.label}
@@ -323,17 +324,24 @@ export default function Sidebar() {
                 })}
             </nav>
 
-            {/* Logout */}
+            {/* Bottom Actions: ThemeToggle & Logout */}
             <div
                 className="dashboard-bottom-logout"
-                style={{ padding: '12px 10px', borderTop: '1px solid var(--surface-border)' }}
+                style={{
+                    padding: '12px 10px',
+                    borderTop: '1px solid var(--surface-border)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                }}
             >
+                <ThemeToggle />
                 <motion.button
                     className="dashboard-sidebar-logout"
                     onClick={() => setShowLogoutConfirm(true)}
                     whileHover={{ scale: 1.01 }}
                     style={{
-                        width: '100%',
+                        flex: 1,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -354,7 +362,7 @@ export default function Sidebar() {
                             fontWeight: 500,
                         }}
                     >
-                        Keluar Akun
+                        Keluar
                     </span>
                 </motion.button>
             </div>

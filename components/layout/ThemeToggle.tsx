@@ -11,7 +11,7 @@ export default function ThemeToggle() {
     useEffect(() => {
         setMounted(true)
         const savedTheme = localStorage.getItem('sq:theme') as 'dark' | 'light' | null
-        const initialTheme = savedTheme || 'dark'
+        const initialTheme = savedTheme || 'light'
         setTheme(initialTheme)
         document.documentElement.setAttribute('data-theme', initialTheme)
     }, [])

@@ -44,3 +44,6 @@ next-env.d.ts
 *.csv
 import_*.sql
 generate_*.js
+
+# firecrawl artifacts
+.firecrawl/

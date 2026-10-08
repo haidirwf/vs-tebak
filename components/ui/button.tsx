@@ -12,11 +12,11 @@ const buttonVariants = cva(
       variant: {
         default: "bg-[#F5C542] text-[#0a0a0a] font-semibold hover:bg-[#EAB308] shadow-[0_0_16px_rgba(245,197,66,0.35)] active:scale-[0.98]",
         outline:
-          "border-[#292929] bg-transparent text-white hover:bg-[#181818] hover:border-[#444444] aria-expanded:bg-[#181818] aria-expanded:text-white",
+          "border-[var(--surface-border)] bg-transparent text-[var(--text-primary)] hover:bg-[var(--surface-elevated)] hover:border-[var(--surface-border)] aria-expanded:bg-[var(--surface-elevated)] aria-expanded:text-[var(--text-primary)]",
         secondary:
-          "bg-[#141414] text-white border border-[#292929] hover:bg-[#1f1f1f] hover:border-[#383838]",
+          "bg-[var(--surface-card)] text-[var(--text-primary)] border border-[var(--surface-border)] hover:bg-[var(--surface-elevated)]",
         ghost:
-          "hover:bg-[#181818] hover:text-white aria-expanded:bg-[#181818]",
+          "hover:bg-[var(--surface-elevated)] hover:text-[var(--text-primary)] aria-expanded:bg-[var(--surface-elevated)]",
         destructive:
           "bg-destructive/15 text-destructive border border-destructive/30 hover:bg-destructive/25 focus-visible:border-destructive/40 focus-visible:ring-destructive/20",
         link: "text-[#F5C542] underline-offset-4 hover:underline",

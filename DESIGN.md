@@ -1,18 +1,18 @@
 # Design System & Styling Guidelines: Skillungo (VS-Tebak)
 
-Dokumen ini merupakan pedoman komprehensif sistem desain, arsitektur warna, tipografi, token sudut *border-radius*, spesifikasi komponen, tata letak responsif, serta aturan larangan (*design bans*) untuk seluruh antarmuka platform **Skillungo** (VS-Tebak).
+Dokumen ini merupakan pedoman komprehensif sistem desain, arsitektur warna, tipografi, token sudut *border-radius*, spesifikasi komponen, tata letak responsif, serta aturan larangan (*design bans*) untuk seluruh antarmuka platform **Skillungo** (VS-Tebak) yang diselaraskan dengan referensi [DESIGN_REF.md](DESIGN_REF.md).
 
 ---
 
 ## 1. Filosofi & Estetika Utama (Aesthetic Core)
 
-Skillungo mengusung estetika **Cyber-Dark Linearity Studio Console** — sebuah antarmuka presisi bertema gelap (*sparse black workspace*) yang menggabungkan kesederhanaan industrial, garis *hairline* yang bersih, serta aksen warna emas/gold (*Gold Brand Signal*) yang elegan untuk pengalaman belajar berbasis *RPG (Role-Playing Game)*.
+Skillungo mengadopsi estetika **Clean Modern Learning Console** (terinspirasi dari sistem desain Skilvul Course yang bersih, presisi, dan terstruktur) yang dipadukan dengan aksen warna emas/gold khas **Skillungo** (*Signal Gold `#F5C542`*) dan sistem kelas RPG.
 
 ### Prinsip Utama Desain
-1. **Presisi & Kejernihan Kontras**: Menggunakan latar belakang gelap (*Void Canvas `#0a0a0a`*) dengan permukaan kartu berpaut tinggi (*Near-Black Surface `#141414`*) serta tipografi putih kontras tinggi untuk kenyamanan membaca jangka panjang.
-2. **Keseimbangan Moderat (*Moderate Rounding*)**: Menghindari sudut kotak tajam (`0px`) yang kaku maupun sudut kapsul bulat ekstrim (`9999px`) yang kekanak-kanakan. Menggunakan sudut lembut terukur (`8px`–`12px`) untuk kesan modern, bersih, dan profesional.
-3. **Pemberian Sinyal Aksen Emas (*Gold Signal Accents*)**: Aksen warna emas (`#F5C542`) dialokasikan secara strategis untuk elemen aksi utama (CTA), skor, indikator pencapaian, dan item spesial.
-4. **Sentuhan RPG Tonal & Fungsional**: Setiap kelas RPG (*Warrior*, *Mage*, *Archer*, *Healer*) memiliki aksen warna semantik spesifik yang diterapkan secara halus melalui batas tonal (*tonal borders*) dan latar belakang transparan.
+1. **Kejernihan & Keterbacaan Optimal (Light-First Clarity)**: Menggunakan latar belakang kanvas netral (`#fafafa` / `#ffffff`) dengan permukaan kartu putih bersih (`#ffffff`), border 1px lembut (`#e4e4e7`), dan tipografi kontras tinggi (`#1d1d1d` untuk judul, `#4a4b4c` untuk isi) untuk kenyamanan belajar jangka panjang.
+2. **Keseimbangan Moderat (*Moderate Rounding*)**: Menggunakan sudut terstruktur Skilvul (`8px` untuk card silabus & tombol utama, `12px` untuk panel overview & dialog modal). Menghindari sudut lancip tajam maupun pil kapsul berlebihan pada label status.
+3. **Pemberian Sinyal Aksen Emas (*Skillungo Gold Signals*)**: Aksen warna emas (`#F5C542`) dialokasikan secara strategis untuk elemen aksi utama (CTA), skor, indikator pencapaian, koin, piala, dan badge aktif.
+4. **Sentuhan RPG Tonal & Fungsional**: Setiap kelas RPG (*Warrior*, *Mage*, *Archer*, *Healer*) memiliki aksen warna semantik spesifik yang diterapkan secara halus melalui batas tonal dan latar transparan terukur.
 
 ---
 
@@ -20,42 +20,41 @@ Skillungo mengusung estetika **Cyber-Dark Linearity Studio Console** — sebuah 
 
 Sistem warna diatur secara terstruktur melalui variabel CSS pada `app/globals.css` dan dikonfigurasi pada Tailwind CSS v4.
 
-### A. Latar Belakang & Permukaan Netral (Achromatic Base Colors)
+### A. Latar Belakang & Permukaan Netral (Neutral Surfaces)
 | Nama Token | Variabel CSS | Nilai Hex / RGBA | Peruntukan / Penggunaan |
 | :--- | :--- | :--- | :--- |
-| **Void Canvas** | `--color-void` / `--surface-canvas` | `#0a0a0a` | Latar belakang utama seluruh aplikasi / kanvas tingkat 0. |
-| **Card Surface** | `--color-near-black` / `--surface-card` | `#141414` | Permukaan kartu, panel konten, dan kontainer tingkat 1. |
-| **Elevated Surface** | `--color-iron` / `--surface-elevated` | `#1e1e1e` | Panel melayang, state *hover*, dropdown, dan kontrol tingkat 2. |
-| **Slate Border** | `--color-slate-edge` / `--surface-border` | `#313131` | Garis pembatas (divider), border kartu, dan bingkai input. |
-| **Subtle Border** | `--surface-border-subtle` | `rgba(255, 255, 255, 0.08)` | Garis pemisah internal yang lebih lembut. |
-| **Frosted Surface** | `--surface-frosted` | `rgba(255, 255, 255, 0.05)` | Latar belakang tombol netral (*ghost/secondary*). |
+| **Canvas Base** | `--surface-canvas` / `--color-void` | `#fafafa` | Latar belakang utama seluruh halaman / kanvas tingkat 0. |
+| **Pure White Card** | `--surface-card` / `--color-near-black` | `#ffffff` | Permukaan kartu konten, daftar modul, dan panel silabus. |
+| **Elevated Surface** | `--surface-elevated` / `--color-carbon` | `#f4f4f5` | Surface interaktif hover, dropdown kontrol, dan sub-box. |
+| **Border Stroke** | `--surface-border` / `--color-slate-edge`| `#e4e4e7` | Garis pembatas kartu, bingkai input, dan garis pemisah. |
+| **Subtle Border** | `--surface-border-subtle` | `rgba(0, 0, 0, 0.06)` | Garis pemisah internal yang lebih lembut. |
+| **Frosted Glass** | `--bg-navbar` | `rgba(255, 255, 255, 0.94)` | Topbar & Bottom bar navigasi mengambang. |
 
-### B. Aksen Utama Brand (Gold Accent Palette)
+### B. Aksen Utama Brand (Skillungo Gold Palette)
 | Nama Token | Variabel CSS | Nilai Hex / RGBA | Peruntukan / Penggunaan |
 | :--- | :--- | :--- | :--- |
-| **Gold Primary** | `--color-gold` / `--color-signal-orange` | `#F5C542` | Warna utama brand, tombol CTA utama, skor, & piala. |
+| **Signal Gold Primary** | `--color-gold` / `--color-signal-orange` | `#F5C542` | Warna utama brand, tombol CTA utama, skor, & piala. |
 | **Gold Hover / Ember** | `--color-ember` / `--color-gold-hover` | `#EAB308` | State *hover* dan *active* tombol utama emas. |
-| **Gold Soft BG** | `--accent-gold-bg` | `rgba(245, 197, 66, 0.10)` | Latar belakang badge status, chip, dan highlight. |
-| **Gold Subtle Border** | `--accent-gold-border` | `rgba(245, 197, 66, 0.35)` | Bingkai tipis kartu emas dan penanda aktif. |
+| **Gold Soft BG** | `--accent-gold-bg` | `rgba(245, 197, 66, 0.12)` | Latar belakang badge status, chip, dan highlight. |
+| **Gold Subtle Border** | `--accent-gold-border` | `rgba(245, 197, 66, 0.40)` | Bingkai tipis kartu emas dan penanda aktif. |
 | **Warm Amber** | `--color-burnt-orange` | `#D97706` | Aksen hangat dan pencapaian menengah. |
 | **Electric Yellow** | `--color-electric-yellow` | `#FDE047` | Halo glow dan kilau visual level-up. |
 
 ### C. Kontras Tipografi Teks (Text Contrast Tokens)
 | Nama Token | Variabel CSS | Nilai Hex | Peruntukan / Penggunaan |
 | :--- | :--- | :--- | :--- |
-| **Text Primary** | `--text-primary` / `--color-white` | `#FFFFFF` | Judul utama, teks tombol, dan informasi penting. |
-| **Text Silver** | `--text-silver` / `--color-silver` | `#BFBFBF` | Teks navigasi, subjudul, dan deskripsi sekunder. |
-| **Text Fog** | `--text-secondary` / `--color-fog` | `#999999` | Teks pendukung paragraf dan isi modul. |
-| **Text Steel** | `--text-muted` / `--color-steel` | `#808080` | Label tidak aktif, placeholder input, dan eyebrow text. |
-| **Text Ash** | `--color-ash` | `#A7A7A7` | Metadata ukuran kecil, info waktu, dan bantuan mikro. |
+| **Text Primary** | `--text-primary` / `--color-white` | `#1d1d1d` | Judul utama, teks tombol, dan informasi penting. |
+| **Text Secondary** | `--text-secondary` / `--color-silver` | `#4a4b4c` | Isi materi, paragraf pendukung modul, teks deskripsi. |
+| **Text Muted** | `--text-muted` / `--color-steel` | `#828282` | Metadata waktu, label tidak aktif, placeholder input. |
+| **Text Caption** | `--color-ash` | `#a1a1aa` | Metadata ukuran kecil dan bantuan mikro. |
 
 ### D. Warna Semantik & Kelas Karakter RPG (RPG Class & Status Colors)
 | Kelas / Status | Variabel CSS | Hex Utama | RGBA Background | RGBA Border | Role RPG / Makna |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Warrior / Error** | `--accent-red` | `#EF4444` | `rgba(239, 68, 68, 0.10)` | `rgba(239, 68, 68, 0.28)` | Kelas Warrior, Status Salah/Batal, Serangan. |
-| **Mage / Info** | `--accent-cyan` | `#38BDF8` | `rgba(56, 189, 248, 0.10)` | `rgba(56, 189, 248, 0.28)` | Kelas Mage, Info/Petunjuk, Mana (MP), Quiz. |
-| **Archer / Success** | `--accent-green` | `#22C55E` | `rgba(34, 197, 94, 0.10)` | `rgba(34, 197, 94, 0.28)` | Kelas Archer, Status Benar/Sukses, Speed. |
-| **Healer / Warning** | `--accent-gold` | `#F5C542` | `rgba(245, 197, 66, 0.10)` | `rgba(245, 197, 66, 0.35)` | Kelas Healer, Peringatan, Pemulihan, XP. |
+| **Warrior / Error** | `--accent-red` | `#EF4444` | `rgba(239, 68, 68, 0.08)` | `rgba(239, 68, 68, 0.25)` | Kelas Warrior, Status Salah/Batal, Serangan. |
+| **Mage / Info** | `--accent-cyan` | `#0284C7` | `rgba(2, 132, 199, 0.08)` | `rgba(2, 132, 199, 0.25)` | Kelas Mage, Info/Petunjuk, Mana (MP), Quiz. |
+| **Archer / Success** | `--accent-green` | `#16A34A` | `rgba(22, 163, 74, 0.08)` | `rgba(22, 163, 74, 0.25)` | Kelas Archer, Status Benar/Sukses, Speed. |
+| **Healer / Warning** | `--accent-gold` | `#F5C542` | `rgba(245, 197, 66, 0.12)` | `rgba(245, 197, 66, 0.40)` | Kelas Healer, Peringatan, Pemulihan, XP. |
 
 ---
 
