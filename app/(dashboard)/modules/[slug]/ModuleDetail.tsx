@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -20,11 +20,9 @@ import {
     CheckCheck,
     Sparkles,
     ArrowLeft,
-    BookOpen,
     Clock,
     Zap,
-    Flame,
-    Share2,
+    Swords,
 } from 'lucide-react'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 
@@ -166,39 +164,39 @@ function prioritizeModuleQuestions(questions: Question[], moduleId: string): Que
     return withPriority.map((item) => item.question)
 }
 
-// --- Rich Module Content Enhancements for Realistic Skilvul Style ---
+// --- Curated Module Lessons with Code Examples ---
 const CURATED_MODULE_STEPS: Record<string, LessonStep[]> = {
     'html-css-dasar': [
         {
             id: 'html-struktur',
             title: 'Struktur Dasar Dokumen HTML',
             type: 'text',
-            content: `HTML (*Hypertext Markup Language*) merupakan bahasa markah standar untuk menstrukturkan halaman web dan kontennya. Setiap halaman web modern dibangun di atas fondasi struktur elemen hierarkis.
+            content: `HTML (*Hypertext Markup Language*) merupakan bahasa markah standar untuk menstrukturkan halaman web dan kontennya. Setiap antarmuka web modern dibangun di atas susunan elemen hierarkis yang rapi.
 
 ## Hal yang Harus Diperhatikan dalam Menyusun Dokumen HTML
-Dokumen HTML standar selalu diawali dengan deklarasi \`<!DOCTYPE html>\` yang memberi tahu peramban bahwa dokumen ini menggunakan standar HTML5 terbaru.
+Dokumen HTML standar selalu diawali dengan deklarasi \`<!DOCTYPE html>\` yang memberi tahu peramban bahwa dokumen menggunakan standar HTML5 terbaru.
 
-Contoh struktur dasar HTML:
+Contoh struktur dokumen dasar:
 \`\`\`html
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Halaman Web Pertamaku</title>
+  <title>Halaman Web Pertama</title>
 </head>
 <body>
   <header>
-    <h1>Selamat Datang di Dunia Web</h1>
+    <h1>Selamat Datang di Skillungo</h1>
   </header>
   <main>
-    <p>HTML menyusun elemen seperti teks, gambar, dan formulir.</p>
+    <p>HTML mendefinisikan struktur informasi halaman web.</p>
   </main>
 </body>
 </html>
 \`\`\`
 
-Elemen \`<head>\` memuat metadata yang tidak ditampilkan langsung di layar, sedangkan seluruh konten yang terlihat oleh pengguna berada di dalam tag \`<body>\`.`,
+Elemen \`<head>\` memuat metadata yang penting untuk SEO dan peramban, sedangkan seluruh konten visual yang dilihat pengguna berada di dalam tag \`<body>\`.`,
         },
         {
             id: 'html-video',
@@ -210,12 +208,12 @@ Elemen \`<head>\` memuat metadata yang tidak ditampilkan langsung di layar, seda
             id: 'css-styling',
             title: 'Penerapan Styling & Selektor CSS',
             type: 'text',
-            content: `Pemberian styling dengan CSS (*Cascading Style Sheets*) digunakan untuk mengatur tata letak, warna, tipografi, dan estetika visual halaman.
+            content: `Pemberian styling dengan CSS (*Cascading Style Sheets*) digunakan untuk mengatur warna, tipografi, dan tata letak agar antarmuka tampak profesional.
 
 ## Penerapan Selektor & Properti CSS
-Terdapat beberapa cara menghubungkan CSS dengan dokumen HTML, salah satunya menggunakan stylesheet eksternal atau inline styling.
+Terdapat beberapa cara menghubungkan styling dengan elemen, mulai dari selektor class hingga pemisahan stylesheet eksternal.
 
-Contoh styling komponen:
+Contoh styling kartu komponen:
 \`\`\`css
 /* Selektor class untuk kartu konten */
 .card-container {
@@ -230,12 +228,12 @@ Contoh styling komponen:
 .card-title {
   font-size: 18px;
   font-weight: 700;
-  color: #dc2626;
+  color: #D97706;
   margin-bottom: 8px;
 }
 \`\`\`
 
-Gunakan selektor berbasis class daripada ID untuk memudahkan penggunaan kembali (*reusability*) gaya pada berbagai elemen.`,
+Gunakan selektor berbasis class daripada ID untuk menjaga kemudahan perawatan (*reusability*) gaya pada berbagai elemen antarmuka.`,
         },
     ],
     'react-dasar-komponen': [
@@ -243,10 +241,10 @@ Gunakan selektor berbasis class daripada ID untuk memudahkan penggunaan kembali 
             id: 'react-komponen',
             title: 'Komponen & Props di React',
             type: 'text',
-            content: `React membangun antarmuka pengguna berbasis komponen independen dan dapat digunakan kembali (*reusable components*).
+            content: `React membangun antarmuka pengguna berbasis komponen modular yang dapat digunakan kembali (*reusable components*).
 
 ## Membangun Komponen Fungsional
-Komponen React ditulis menggunakan sintaks JSX yang menggabungkan struktur markah dengan kapabilitas logika JavaScript murni.
+Komponen React ditulis menggunakan sintaks JSX yang menggabungkan kemampuan logika JavaScript dan struktur deklaratif.
 
 Contoh komponen kartu ucapan:
 \`\`\`jsx
@@ -260,7 +258,7 @@ function WelcomeCard({ name, role }) {
 }
 
 export default function App() {
-  return <WelcomeCard name="Siswa Bintang" role="Frontend Developer" />;
+  return <WelcomeCard name="Petualang" role="Frontend Developer" />;
 }
 \`\`\`
 
@@ -276,40 +274,40 @@ Props bersifat *read-only* (tidak dapat diubah langsung oleh komponen anak), men
             id: 'react-inline-style',
             title: 'Inline Style pada Komponen React',
             type: 'text',
-            content: `Pemberian *styling* dengan cara *Inline* merupakan salah satu yang cukup mudah dilakukan, ketika digunakan pada HTML.
+            content: `Pemberian *styling* dengan cara *Inline* merupakan salah satu teknik yang cepat digunakan ketika membangun purwarupa antarmuka di React.
 
 ## Hal yang Harus Diperhatikan dalam Menerapkan Inline Style
-*Inline Style* **dapat diterapkan** pada React, namun terdapat beberapa hal yang harus diperhatikan.
+*Inline Style* **dapat diterapkan** pada React, namun terdapat beberapa perbedaan dibanding HTML konvensional.
 
-Pertama, yang perlu disiapkan adalah *prop* \`style\`. *Prop* ini berisi objek JavaScript dengan *key* dan *value styling* yang akan kita berikan.
+Pertama, yang perlu disiapkan adalah *prop* \`style\`. *Prop* ini menerima objek JavaScript dengan *key* dan *value styling* yang akan diberikan.
 
 Contoh:
 \`\`\`jsx
 function App() {
   const styles = {
-    color: "blue",
+    color: "#F5C542",
     fontSize: "16px",
-    backgroundColor: "lightgray",
+    backgroundColor: "#18181b",
   };
 
   return (
     <div>
-      <p style={styles}>Ini adalah teks dengan inline style.</p>
+      <p style={styles}>Ini adalah teks dengan inline style bernuansa emas.</p>
     </div>
   );
 }
 \`\`\`
 
-Atau juga bisa seperti ini secara langsung (*double curly braces*):
+Atau juga bisa dituliskan secara langsung di dalam tag JSX (*double curly braces*):
 \`\`\`jsx
 function App() {
   return (
     <div>
       <p
         style={{
-          color: "blue",
+          color: "#F5C542",
           fontSize: "16px",
-          backgroundColor: "lightgray",
+          backgroundColor: "#18181b",
         }}
       >
         Ini adalah teks dengan inline style.
@@ -319,7 +317,7 @@ function App() {
 }
 \`\`\`
 
-Key pada objek style yang memiliki lebih dari satu kata, ditulis dengan gaya penulisan *camelCase*.`,
+Key pada objek style yang memiliki lebih dari satu kata, ditulis dengan gaya penulisan *camelCase* seperti \`fontSize\` dan \`backgroundColor\`.`,
         },
     ],
     'javascript-pemula': [
@@ -329,21 +327,21 @@ Key pada objek style yang memiliki lebih dari satu kata, ditulis dengan gaya pen
             type: 'text',
             content: `JavaScript modern (ES6+) memperkenalkan kata kunci \`let\` dan \`const\` untuk mendeklarasikan variabel dengan cakupan blok (*block scope*).
 
-## Menentukan Variabel Tepat
+## Menentukan Deklarasi yang Tepat
 Gunakan \`const\` secara bawaan untuk nilai yang tidak akan di-reassign, dan gunakan \`let\` jika nilai variabel perlu diperbarui di kemudian waktu.
 
-Contoh deklarasi:
+Contoh deklarasi variabel:
 \`\`\`javascript
 const kursus = "JavaScript Pemula";
 let skorLatihan = 85;
 
 // Memperbarui skor
-skorLatihan = skorLatihan + 10;
+skorLatihan = skorLatihan + 15;
 
 console.log(\`Selamat! Kursus \${kursus} meraih skor: \${skorLatihan}\`);
 \`\`\`
 
-Hindari penggunaan kata kunci \`var\` warisan lama untuk mencegah masalah pengangkatan (*hoisting*) variabel yang tidak disengaja.`,
+Hindari penggunaan kata kunci \`var\` warisan lama untuk mencegah ketidaksengajaan *variable hoisting*.`,
         },
         {
             id: 'js-video',
@@ -355,11 +353,11 @@ Hindari penggunaan kata kunci \`var\` warisan lama untuk mencegah masalah pengan
             id: 'js-fungsi',
             title: 'Fungsi & Arrow Function',
             type: 'text',
-            content: `Fungsi adalah blok kode yang dapat dipanggil berulang kali untuk menjalankan tugas tertentu.
+            content: `Fungsi adalah blok kode terstruktur yang dapat dipanggil berulang kali untuk mengeksekusi logika tertentu.
 
-Contoh sintaks fungsi konvensional dan arrow function:
+Contoh fungsi konvensional dan arrow function:
 \`\`\`javascript
-// Arrow function ringkas
+// Arrow function ringkas untuk kalkulasi XP
 const hitungBonusXP = (baseXP, persentase) => {
   return baseXP + (baseXP * persentase / 100);
 };
@@ -368,7 +366,7 @@ const totalXP = hitungBonusXP(50, 15);
 console.log("Total XP Didapat:", totalXP); // 57.5
 \`\`\`
 
-Arrow function memberikan sintaks yang lebih ringkas dan menjaga konteks \`this\` secara leksikal.`,
+Arrow function memberikan sintaks yang lebih padat dan menjaga konteks \`this\` secara leksikal.`,
         },
     ],
 }
@@ -413,7 +411,7 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
                 position: 'relative',
                 margin: '20px 0',
                 borderRadius: '8px',
-                border: '1px solid var(--border)',
+                border: '1px solid var(--surface-border, #e4e4e7)',
                 backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                 overflow: 'hidden',
             }}
@@ -424,7 +422,7 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '8px 14px',
-                    borderBottom: '1px solid var(--border)',
+                    borderBottom: '1px solid var(--surface-border, #e4e4e7)',
                     backgroundColor: 'rgba(0, 0, 0, 0.03)',
                     fontSize: '12px',
                     color: 'var(--text-muted)',
@@ -480,7 +478,6 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
 
 // --- Lightweight Safe Markdown Renderer ---
 function RichContentRenderer({ content }: { content: string }) {
-    // Split content by code blocks ```lang ... ```
     const parts = useMemo(() => {
         const regex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g
         const segments: Array<{ type: 'text' | 'code'; text: string; lang?: string }> = []
@@ -519,7 +516,6 @@ function RichContentRenderer({ content }: { content: string }) {
                     return <CodeBlock key={segIdx} code={segment.text} language={segment.lang} />
                 }
 
-                // Render paragraphs & headings
                 const lines = segment.text.split('\n\n')
                 return (
                     <div key={segIdx}>
@@ -527,7 +523,6 @@ function RichContentRenderer({ content }: { content: string }) {
                             const trimmed = block.trim()
                             if (!trimmed) return null
 
-                            // H2 Check: ## Heading
                             if (trimmed.startsWith('## ')) {
                                 return (
                                     <h2
@@ -547,7 +542,6 @@ function RichContentRenderer({ content }: { content: string }) {
                                 )
                             }
 
-                            // H3 Check: ### Subheading
                             if (trimmed.startsWith('### ')) {
                                 return (
                                     <h3
@@ -566,7 +560,6 @@ function RichContentRenderer({ content }: { content: string }) {
                                 )
                             }
 
-                            // Inline formatting: parse backticks `code`, **bold**, *italic*
                             const formatInline = (text: string) => {
                                 const tokens = text.split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g)
                                 return tokens.map((tok, tIdx) => {
@@ -579,7 +572,7 @@ function RichContentRenderer({ content }: { content: string }) {
                                                     margin: '0 2px',
                                                     borderRadius: '4px',
                                                     backgroundColor: 'var(--surface-elevated, #f4f4f5)',
-                                                    border: '1px solid var(--border)',
+                                                    border: '1px solid var(--surface-border, #e4e4e7)',
                                                     fontSize: '13px',
                                                     fontFamily: 'var(--font-mono)',
                                                     color: 'var(--text-primary)',
@@ -629,7 +622,7 @@ export default function ModuleDetail({
     const [loading, setLoading] = useState(false)
     const [completionFeedback, setCompletionFeedback] = useState<CompletionFeedback | null>(null)
 
-    // UI Interactive Modals / Drawers
+    // UI Interactive States
     const [isStepDropdownOpen, setIsStepDropdownOpen] = useState(false)
     const [isDrawerOpen, setIsDrawerOpen] = useState(false)
     const [isGuideOpen, setIsGuideOpen] = useState(false)
@@ -657,8 +650,7 @@ export default function ModuleDetail({
     const allQuizAnswered = hasQuiz && currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
     const canComplete = !hasQuiz || (quizSubmitted && allQuizAnswered)
 
-    // Skilvul Counter & Progress Calculation
-    // Format: X/Y Latihan sudah diselesaikan
+    // Progress Calculation
     const completedItemsCount = completed
         ? totalSteps + (hasQuiz ? 1 : 0)
         : currentStep + (phase === 'quiz' ? 1 : 0)
@@ -762,8 +754,8 @@ export default function ModuleDetail({
             }}
         >
             {/* =========================================================
-                1. TOPBAR: EXACT SKILVUL HEADER LAYOUT
-                Logo, Breadcrumb dropdown, Progress bar, Panduan button, Hamburger
+                1. TOPBAR: SKILLUNGO BRANDED PLAYER HEADER
+                Skillungo Swords Logo, Breadcrumbs, Step Dropdown, Gold Progress, Panduan, Drawer
                 ========================================================= */}
             <header
                 style={{
@@ -772,7 +764,7 @@ export default function ModuleDetail({
                     zIndex: 40,
                     height: '58px',
                     backgroundColor: 'var(--surface-card, #ffffff)',
-                    borderBottom: '1px solid var(--border, #e4e4e7)',
+                    borderBottom: '1px solid var(--surface-border, #e4e4e7)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -780,48 +772,51 @@ export default function ModuleDetail({
                     gap: '12px',
                 }}
             >
-                {/* Left: Logo & Breadcrumbs */}
+                {/* Left: Authentic Skillungo Logo & Breadcrumbs */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                    {/* Brand Logo / Return Button */}
                     <Link
                         href="/modules"
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '6px',
+                            gap: '8px',
                             textDecoration: 'none',
-                            color: 'var(--text-primary)',
-                            fontWeight: 700,
-                            fontFamily: 'var(--font-heading)',
-                            fontSize: '16px',
-                            marginRight: '6px',
+                            marginRight: '4px',
                         }}
                     >
-                        <span
+                        <div
                             style={{
-                                width: '26px',
-                                height: '26px',
-                                borderRadius: '6px',
-                                backgroundColor: '#dc2626',
+                                width: '28px',
+                                height: '28px',
+                                borderRadius: '8px',
+                                backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                                border: '1px solid rgba(245, 197, 66, 0.4)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                color: '#ffffff',
-                                fontSize: '13px',
-                                fontWeight: 800,
+                                flexShrink: 0,
                             }}
                         >
-                            S
-                        </span>
-                        <span className="hidden sm:inline" style={{ letterSpacing: '-0.02em' }}>
-                            Skillungo
+                            <Swords size={16} style={{ color: 'var(--color-gold, #F5C542)' }} />
+                        </div>
+                        <span
+                            className="hidden sm:inline"
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '18px',
+                                fontWeight: 600,
+                                color: 'var(--text-primary)',
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            Skill<span style={{ color: 'var(--color-gold, #F5C542)' }}>ungo</span>
                         </span>
                     </Link>
 
-                    {/* Chevron 1 */}
+                    {/* Chevron Separator */}
                     <ChevronRight size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
 
-                    {/* Breadcrumb Item 1: Module Title */}
+                    {/* Breadcrumb: Module Title */}
                     <Link
                         href="/modules"
                         style={{
@@ -832,17 +827,17 @@ export default function ModuleDetail({
                             whiteSpace: 'nowrap',
                             overflow: 'hidden',
                             textOverflow: 'ellipsis',
-                            maxWidth: '160px',
+                            maxWidth: '150px',
                         }}
                         title={module.title}
                     >
                         {module.title}
                     </Link>
 
-                    {/* Chevron 2 */}
+                    {/* Chevron Separator */}
                     <ChevronRight size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
 
-                    {/* Breadcrumb Item 2: Step Dropdown Selector */}
+                    {/* Breadcrumb: Step Dropdown Selector */}
                     <div ref={dropdownRef} style={{ position: 'relative' }}>
                         <button
                             onClick={() => setIsStepDropdownOpen((prev) => !prev)}
@@ -850,15 +845,15 @@ export default function ModuleDetail({
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                padding: '4px 10px',
-                                borderRadius: '6px',
-                                border: '1px solid var(--border)',
+                                padding: '5px 12px',
+                                borderRadius: '8px',
+                                border: '1px solid var(--surface-border, #e4e4e7)',
                                 backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                 color: 'var(--text-primary)',
                                 fontSize: '13px',
                                 fontWeight: 600,
                                 cursor: 'pointer',
-                                maxWidth: '200px',
+                                maxWidth: '210px',
                             }}
                         >
                             <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
@@ -883,7 +878,7 @@ export default function ModuleDetail({
                                         maxHeight: '340px',
                                         overflowY: 'auto',
                                         backgroundColor: 'var(--surface-card, #ffffff)',
-                                        border: '1px solid var(--border)',
+                                        border: '1px solid var(--surface-border, #e4e4e7)',
                                         borderRadius: '8px',
                                         boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
                                         padding: '6px',
@@ -911,12 +906,12 @@ export default function ModuleDetail({
                                                     padding: '8px 10px',
                                                     borderRadius: '6px',
                                                     border: 'none',
-                                                    backgroundColor: isCurrent ? 'rgba(220, 38, 38, 0.08)' : 'transparent',
-                                                    color: isCurrent ? '#dc2626' : 'var(--text-primary)',
+                                                    backgroundColor: isCurrent ? 'rgba(245, 197, 66, 0.14)' : 'transparent',
+                                                    color: isCurrent ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
                                                     cursor: 'pointer',
                                                     textAlign: 'left',
                                                     fontSize: '13px',
-                                                    fontWeight: isCurrent ? 600 : 400,
+                                                    fontWeight: isCurrent ? 700 : 400,
                                                     marginBottom: '2px',
                                                 }}
                                             >
@@ -946,14 +941,14 @@ export default function ModuleDetail({
                                                 padding: '8px 10px',
                                                 borderRadius: '6px',
                                                 border: 'none',
-                                                backgroundColor: phase === 'quiz' ? 'rgba(220, 38, 38, 0.08)' : 'transparent',
-                                                color: phase === 'quiz' ? '#dc2626' : 'var(--text-primary)',
+                                                backgroundColor: phase === 'quiz' ? 'rgba(245, 197, 66, 0.14)' : 'transparent',
+                                                color: phase === 'quiz' ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
                                                 cursor: 'pointer',
                                                 textAlign: 'left',
                                                 fontSize: '13px',
-                                                fontWeight: phase === 'quiz' ? 600 : 400,
+                                                fontWeight: phase === 'quiz' ? 700 : 400,
                                                 marginTop: '4px',
-                                                borderTop: '1px solid var(--border)',
+                                                borderTop: '1px solid var(--surface-border, #e4e4e7)',
                                             }}
                                         >
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -969,9 +964,9 @@ export default function ModuleDetail({
                     </div>
                 </div>
 
-                {/* Right: Progress Tracker, Guide Button, Hamburger */}
+                {/* Right: Gold Progress Tracker, Guide Button, Hamburger */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
-                    {/* Progress Bar & Label (Exact Skilvul style: 0/79 Latihan sudah diselesaikan) */}
+                    {/* Progress Bar & Label with Skillungo Gold */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <div
                             style={{
@@ -988,39 +983,39 @@ export default function ModuleDetail({
                                 transition={{ duration: 0.3 }}
                                 style={{
                                     height: '100%',
-                                    backgroundColor: '#ea580c', // Skilvul amber-orange
+                                    backgroundColor: 'var(--color-gold, #F5C542)',
                                     borderRadius: '4px',
                                 }}
                             />
                         </div>
                         <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
-                            <strong style={{ color: '#ea580c' }}>
+                            <strong style={{ color: 'var(--color-gold, #F5C542)' }}>
                                 {completedItemsCount}/{totalItemsCount}
                             </strong>{' '}
-                            <span className="hidden md:inline">Latihan sudah diselesaikan</span>
+                            <span className="hidden md:inline">Latihan diselesaikan</span>
                             <span className="inline md:hidden">Selesai</span>
                         </span>
                     </div>
 
-                    {/* Panduan Button (Royal blue pill button matching screenshot) */}
+                    {/* Panduan Button: Styled with Skillungo Gold accents */}
                     <button
                         onClick={() => setIsGuideOpen(true)}
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '5px',
-                            backgroundColor: '#2563eb', // Royal blue Skilvul action button
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '6px',
+                            gap: '6px',
+                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                            color: 'var(--text-primary)',
+                            border: '1px solid rgba(245, 197, 66, 0.4)',
+                            borderRadius: '8px',
                             padding: '6px 12px',
                             fontSize: '12px',
                             fontWeight: 600,
                             cursor: 'pointer',
-                            transition: 'opacity 0.2s',
+                            transition: 'all 0.2s',
                         }}
                     >
-                        <HelpCircle size={13} />
+                        <HelpCircle size={13} style={{ color: 'var(--color-gold, #F5C542)' }} />
                         <span className="hidden sm:inline">Panduan Belajar</span>
                     </button>
 
@@ -1030,16 +1025,16 @@ export default function ModuleDetail({
                         aria-label="Buka Silabus"
                         style={{
                             background: 'transparent',
-                            border: 'none',
+                            border: '1px solid var(--surface-border, #e4e4e7)',
                             color: 'var(--text-primary)',
                             cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             padding: '6px',
-                            borderRadius: '6px',
+                            borderRadius: '8px',
                         }}
                     >
-                        <Menu size={22} />
+                        <Menu size={18} />
                     </button>
                 </div>
             </header>
@@ -1074,22 +1069,22 @@ export default function ModuleDetail({
                             {activeStep.title}
                         </h1>
 
-                        {/* Catatan Box: Warm soft yellow alert banner (Exact match to screenshot) */}
+                        {/* Catatan Box: Warm soft yellow alert banner */}
                         <div
                             style={{
-                                backgroundColor: '#fffcf8',
-                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.08)',
+                                border: '1px solid rgba(245, 197, 66, 0.35)',
                                 borderRadius: '8px',
                                 padding: '16px 20px',
                                 marginBottom: '28px',
-                                color: '#1d1d1d',
+                                color: 'var(--text-primary)',
                             }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                                 <span style={{ fontSize: '15px' }}>📝</span>
                                 <strong style={{ fontSize: '14px', fontWeight: 700 }}>Catatan:</strong>
                             </div>
-                            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#4a4b4c' }}>
+                            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
                                 {activeStep.type === 'video'
                                     ? 'Mohon dipastikan kamu terhubung dengan koneksi Internet yang baik agar dapat mengakses video pembelajaran dengan minimum 720p hingga Full HD 1080p.'
                                     : 'Pelajari materi dan kode percontohan di bawah ini secara saksama. Kamu dapat mencatat poin-poin utama sebelum melanjutkan ke sesi latihan.'}
@@ -1105,7 +1100,7 @@ export default function ModuleDetail({
                                         aspectRatio: '16 / 9',
                                         borderRadius: '10px',
                                         overflow: 'hidden',
-                                        border: '1px solid var(--border)',
+                                        border: '1px solid var(--surface-border, #e4e4e7)',
                                         backgroundColor: '#000000',
                                         boxShadow: '0 4px 18px rgba(0, 0, 0, 0.1)',
                                         marginBottom: '14px',
@@ -1156,9 +1151,9 @@ export default function ModuleDetail({
                                                 alignItems: 'center',
                                                 gap: '6px',
                                                 fontSize: '13px',
-                                                color: '#2563eb',
+                                                color: 'var(--color-burnt-orange, #D97706)',
                                                 textDecoration: 'none',
-                                                fontWeight: 500,
+                                                fontWeight: 600,
                                             }}
                                         >
                                             <ExternalLink size={13} /> Tonton langsung di YouTube
@@ -1178,17 +1173,17 @@ export default function ModuleDetail({
                             </div>
                         )}
 
-                        {/* Pre-Quiz Exercise Banner: Exact match to Screenshot 13-53-57 */}
+                        {/* Pre-Quiz Exercise Banner: Distinctively Skillungo with Gold CTA */}
                         {hasQuiz && (
                             <div
                                 style={{
                                     marginTop: '48px',
-                                    padding: '36px 20px',
+                                    padding: '36px 24px',
                                     borderRadius: '12px',
-                                    border: '1px solid var(--border)',
+                                    border: '1px solid var(--surface-border, #e4e4e7)',
                                     backgroundColor: 'var(--surface-card, #ffffff)',
                                     textAlign: 'center',
-                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                                    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.04)',
                                 }}
                             >
                                 <h3
@@ -1211,8 +1206,8 @@ export default function ModuleDetail({
                                         lineHeight: 1.6,
                                     }}
                                 >
-                                    Setelah membaca materi, ini saatnya kamu mengukur pengetahuanmu tentang materi ini.
-                                    Materi ini tetap bisa kamu akses saat mengerjakan latihan.
+                                    Setelah membaca materi, ini saatnya kamu mengukur pemahaman tentang konsep ini.
+                                    Materi ini tetap dapat kamu akses selama mengerjakan latihan.
                                 </p>
                                 <button
                                     onClick={() => {
@@ -1220,17 +1215,17 @@ export default function ModuleDetail({
                                         window.scrollTo({ top: 0, behavior: 'smooth' })
                                     }}
                                     style={{
-                                        backgroundColor: '#dc2626', // Skilvul Red CTA
-                                        color: '#ffffff',
+                                        backgroundColor: 'var(--color-gold, #F5C542)',
+                                        color: '#0a0a0a',
                                         border: 'none',
-                                        borderRadius: '6px',
+                                        borderRadius: '8px',
                                         padding: '11px 28px',
                                         fontSize: '14px',
                                         fontWeight: 700,
                                         fontFamily: 'var(--font-heading)',
                                         cursor: 'pointer',
-                                        boxShadow: '0 2px 6px rgba(220, 38, 38, 0.3)',
-                                        transition: 'opacity 0.2s',
+                                        boxShadow: '0 2px 10px rgba(245, 197, 66, 0.35)',
+                                        transition: 'all 0.2s',
                                     }}
                                 >
                                     Mulai Latihan
@@ -1276,8 +1271,8 @@ export default function ModuleDetail({
                                     alignItems: 'center',
                                     gap: '6px',
                                     padding: '7px 14px',
-                                    borderRadius: '6px',
-                                    border: '1px solid var(--border)',
+                                    borderRadius: '8px',
+                                    border: '1px solid var(--surface-border, #e4e4e7)',
                                     backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                     color: 'var(--text-primary)',
                                     fontSize: '13px',
@@ -1291,19 +1286,19 @@ export default function ModuleDetail({
                         {/* Catatan Box for Quiz */}
                         <div
                             style={{
-                                backgroundColor: '#fffcf8',
-                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                backgroundColor: 'rgba(245, 197, 66, 0.08)',
+                                border: '1px solid rgba(245, 197, 66, 0.35)',
                                 borderRadius: '8px',
                                 padding: '14px 18px',
                                 marginBottom: '24px',
-                                color: '#1d1d1d',
+                                color: 'var(--text-primary)',
                             }}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
                                 <span style={{ fontSize: '14px' }}>💡</span>
                                 <strong style={{ fontSize: '13px', fontWeight: 700 }}>Tips Mengerjakan:</strong>
                             </div>
-                            <p style={{ margin: 0, fontSize: '13px', color: '#4a4b4c' }}>
+                            <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-secondary)' }}>
                                 Kamu dapat kembali ke halaman materi kapan saja menggunakan tombol &quot;Kembali ke Materi&quot;.
                                 Jawaban yang sudah kamu pilih akan tetap tersimpan.
                             </p>
@@ -1321,7 +1316,7 @@ export default function ModuleDetail({
                                         style={{
                                             padding: '20px',
                                             borderRadius: '10px',
-                                            border: '1px solid var(--border)',
+                                            border: '1px solid var(--surface-border, #e4e4e7)',
                                             backgroundColor: 'var(--surface-card, #ffffff)',
                                         }}
                                     >
@@ -1333,23 +1328,31 @@ export default function ModuleDetail({
                                             {q.options.map((opt, optIdx) => {
                                                 const isThisSelected = selected === optIdx
                                                 let optBg = 'var(--surface-canvas, #fafafa)'
-                                                let optBorder = 'var(--border)'
+                                                let optBorder = 'var(--surface-border, #e4e4e7)'
                                                 let optColor = 'var(--text-primary)'
+                                                let badgeBg = 'var(--surface-elevated, #f4f4f5)'
+                                                let badgeColor = 'var(--text-muted)'
 
                                                 if (quizSubmitted) {
                                                     if (optIdx === q.correct_option) {
                                                         optBg = 'rgba(22, 163, 74, 0.1)'
                                                         optBorder = 'var(--accent-green, #16a34a)'
                                                         optColor = 'var(--accent-green, #16a34a)'
+                                                        badgeBg = 'var(--accent-green, #16a34a)'
+                                                        badgeColor = '#ffffff'
                                                     } else if (isThisSelected && !isCorrect) {
-                                                        optBg = 'rgba(220, 38, 38, 0.1)'
-                                                        optBorder = '#dc2626'
-                                                        optColor = '#dc2626'
+                                                        optBg = 'rgba(239, 68, 68, 0.1)'
+                                                        optBorder = 'var(--accent-red, #EF4444)'
+                                                        optColor = 'var(--accent-red, #EF4444)'
+                                                        badgeBg = 'var(--accent-red, #EF4444)'
+                                                        badgeColor = '#ffffff'
                                                     }
                                                 } else if (isThisSelected) {
-                                                    optBg = 'rgba(220, 38, 38, 0.08)'
-                                                    optBorder = '#dc2626'
-                                                    optColor = '#dc2626'
+                                                    optBg = 'rgba(245, 197, 66, 0.12)'
+                                                    optBorder = 'var(--color-gold, #F5C542)'
+                                                    optColor = 'var(--text-primary)'
+                                                    badgeBg = 'var(--color-gold, #F5C542)'
+                                                    badgeColor = '#0a0a0a'
                                                 }
 
                                                 return (
@@ -1360,7 +1363,7 @@ export default function ModuleDetail({
                                                         style={{
                                                             textAlign: 'left',
                                                             padding: '10px 14px',
-                                                            borderRadius: '6px',
+                                                            borderRadius: '8px',
                                                             backgroundColor: optBg,
                                                             border: `1px solid ${optBorder}`,
                                                             color: optColor,
@@ -1376,14 +1379,14 @@ export default function ModuleDetail({
                                                             style={{
                                                                 width: '24px',
                                                                 height: '24px',
-                                                                borderRadius: '4px',
+                                                                borderRadius: '6px',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 justifyContent: 'center',
                                                                 fontSize: '12px',
                                                                 fontWeight: 700,
-                                                                backgroundColor: isThisSelected ? '#dc2626' : 'var(--surface-elevated, #f4f4f5)',
-                                                                color: isThisSelected ? '#ffffff' : 'var(--text-muted)',
+                                                                backgroundColor: badgeBg,
+                                                                color: badgeColor,
                                                             }}
                                                         >
                                                             {String.fromCharCode(65 + optIdx)}
@@ -1400,8 +1403,8 @@ export default function ModuleDetail({
                                                     marginTop: '12px',
                                                     padding: '10px 14px',
                                                     borderRadius: '6px',
-                                                    backgroundColor: 'rgba(37, 99, 235, 0.06)',
-                                                    border: '1px solid rgba(37, 99, 235, 0.2)',
+                                                    backgroundColor: 'rgba(245, 197, 66, 0.08)',
+                                                    border: '1px solid rgba(245, 197, 66, 0.25)',
                                                     fontSize: '13px',
                                                     color: 'var(--text-secondary)',
                                                 }}
@@ -1421,10 +1424,10 @@ export default function ModuleDetail({
                                     onClick={handleSubmitQuiz}
                                     disabled={!allQuizAnswered}
                                     style={{
-                                        backgroundColor: '#dc2626',
-                                        color: '#ffffff',
+                                        backgroundColor: 'var(--color-gold, #F5C542)',
+                                        color: '#0a0a0a',
                                         border: 'none',
-                                        borderRadius: '6px',
+                                        borderRadius: '8px',
                                         padding: '12px 28px',
                                         fontSize: '14px',
                                         fontWeight: 700,
@@ -1443,7 +1446,7 @@ export default function ModuleDetail({
                                         backgroundColor: 'var(--accent-green, #16a34a)',
                                         color: '#ffffff',
                                         border: 'none',
-                                        borderRadius: '6px',
+                                        borderRadius: '8px',
                                         padding: '12px 28px',
                                         fontSize: '14px',
                                         fontWeight: 700,
@@ -1475,8 +1478,8 @@ export default function ModuleDetail({
             </main>
 
             {/* =========================================================
-                3. STICKY BOTTOM NAVIGATION BAR: EXACT SKILVUL BAR
-                Full-width Crimson Red Bar (#dc2626)
+                3. STICKY BOTTOM NAVIGATION BAR: CLEAN ELEVATED CONSOLE DOCK
+                Clean surface (no aggressive red), Skillungo Gold actions
                 Left: Prev Step | Center: Mulai Latihan | Right: Next Step
                 ========================================================= */}
             <footer
@@ -1485,15 +1488,16 @@ export default function ModuleDetail({
                     bottom: 0,
                     left: 0,
                     right: 0,
-                    height: '56px',
-                    backgroundColor: '#dc2626', // Crimson Red Skilvul Bottom Navigation
-                    color: '#ffffff',
+                    height: '60px',
+                    backgroundColor: 'var(--surface-card, #ffffff)',
+                    borderTop: '1px solid var(--surface-border, #e4e4e7)',
+                    color: 'var(--text-primary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
                     padding: '0 20px',
                     zIndex: 50,
-                    boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.15)',
+                    boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)',
                 }}
             >
                 {/* Left: Previous step */}
@@ -1503,15 +1507,17 @@ export default function ModuleDetail({
                             <button
                                 onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
                                 style={{
-                                    background: 'transparent',
-                                    border: 'none',
-                                    color: '#ffffff',
+                                    backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                    border: '1px solid var(--surface-border, #e4e4e7)',
+                                    borderRadius: '8px',
+                                    padding: '7px 16px',
+                                    color: 'var(--text-primary)',
                                     cursor: 'pointer',
                                     fontSize: '13px',
                                     fontWeight: 600,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '4px',
+                                    gap: '6px',
                                     maxWidth: '220px',
                                 }}
                                 title={steps[currentStep - 1]?.title}
@@ -1526,13 +1532,17 @@ export default function ModuleDetail({
                             <Link
                                 href="/modules"
                                 style={{
-                                    color: '#ffffff',
+                                    backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                    border: '1px solid var(--surface-border, #e4e4e7)',
+                                    borderRadius: '8px',
+                                    padding: '7px 16px',
+                                    color: 'var(--text-primary)',
                                     textDecoration: 'none',
                                     fontSize: '13px',
                                     fontWeight: 600,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '4px',
+                                    gap: '6px',
                                 }}
                             >
                                 <span>&lt;</span> Modul
@@ -1542,15 +1552,17 @@ export default function ModuleDetail({
                         <button
                             onClick={() => setPhase('lesson')}
                             style={{
-                                background: 'transparent',
-                                border: 'none',
-                                color: '#ffffff',
+                                backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                border: '1px solid var(--surface-border, #e4e4e7)',
+                                borderRadius: '8px',
+                                padding: '7px 16px',
+                                color: 'var(--text-primary)',
                                 cursor: 'pointer',
                                 fontSize: '13px',
                                 fontWeight: 600,
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '4px',
+                                gap: '6px',
                             }}
                         >
                             <span>&lt;</span> Kembali ke Materi
@@ -1558,7 +1570,7 @@ export default function ModuleDetail({
                     )}
                 </div>
 
-                {/* Center: Mulai Latihan Button (Exact match to Screenshot 13-52-10) */}
+                {/* Center: Mulai Latihan Button (Skillungo Gold) */}
                 <div>
                     {phase === 'lesson' && hasQuiz && (
                         <button
@@ -1567,11 +1579,11 @@ export default function ModuleDetail({
                                 window.scrollTo({ top: 0, behavior: 'smooth' })
                             }}
                             style={{
-                                backgroundColor: '#ffffff',
-                                color: '#dc2626',
+                                backgroundColor: 'var(--color-gold, #F5C542)',
+                                color: '#0a0a0a',
                                 border: 'none',
-                                borderRadius: '6px',
-                                padding: '6px 18px',
+                                borderRadius: '8px',
+                                padding: '7px 20px',
                                 fontSize: '13px',
                                 fontWeight: 700,
                                 fontFamily: 'var(--font-heading)',
@@ -1579,19 +1591,19 @@ export default function ModuleDetail({
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
-                                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+                                boxShadow: '0 2px 8px rgba(245, 197, 66, 0.3)',
                             }}
                         >
                             <FileText size={14} /> Mulai Latihan
                         </button>
                     )}
                     {phase === 'quiz' && (
-                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.9)' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
                             {answeredCount}/{currentQuestions.length} Soal Dijawab
                         </span>
                     )}
                     {completed && phase === 'lesson' && !hasQuiz && (
-                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.9)' }}>
+                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent-green, #16a34a)' }}>
                             ✓ Modul Selesai
                         </span>
                     )}
@@ -1604,15 +1616,17 @@ export default function ModuleDetail({
                             <button
                                 onClick={() => setCurrentStep((s) => s + 1)}
                                 style={{
-                                    background: 'transparent',
+                                    backgroundColor: 'var(--color-gold, #F5C542)',
+                                    color: '#0a0a0a',
                                     border: 'none',
-                                    color: '#ffffff',
+                                    borderRadius: '8px',
+                                    padding: '7px 18px',
                                     cursor: 'pointer',
                                     fontSize: '13px',
-                                    fontWeight: 600,
+                                    fontWeight: 700,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '4px',
+                                    gap: '6px',
                                     maxWidth: '220px',
                                 }}
                                 title={steps[currentStep + 1]?.title}
@@ -1630,33 +1644,37 @@ export default function ModuleDetail({
                                     window.scrollTo({ top: 0, behavior: 'smooth' })
                                 }}
                                 style={{
-                                    background: 'transparent',
+                                    backgroundColor: 'var(--color-gold, #F5C542)',
+                                    color: '#0a0a0a',
                                     border: 'none',
-                                    color: '#ffffff',
+                                    borderRadius: '8px',
+                                    padding: '7px 18px',
                                     cursor: 'pointer',
                                     fontSize: '13px',
                                     fontWeight: 700,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '4px',
+                                    gap: '6px',
                                 }}
                             >
-                                Latihan &gt;
+                                Lanjut ke Latihan &gt;
                             </button>
                         ) : !completed ? (
                             <button
                                 onClick={handleComplete}
                                 disabled={loading}
                                 style={{
-                                    background: 'transparent',
-                                    border: 'none',
+                                    backgroundColor: 'var(--accent-green, #16a34a)',
                                     color: '#ffffff',
+                                    border: 'none',
+                                    borderRadius: '8px',
+                                    padding: '7px 18px',
                                     cursor: loading ? 'not-allowed' : 'pointer',
                                     fontSize: '13px',
                                     fontWeight: 700,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '4px',
+                                    gap: '6px',
                                 }}
                             >
                                 Selesaikan &gt;
@@ -1665,13 +1683,17 @@ export default function ModuleDetail({
                             <Link
                                 href="/modules"
                                 style={{
-                                    color: '#ffffff',
+                                    backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                    border: '1px solid var(--surface-border, #e4e4e7)',
+                                    borderRadius: '8px',
+                                    padding: '7px 16px',
+                                    color: 'var(--text-primary)',
                                     textDecoration: 'none',
                                     fontSize: '13px',
                                     fontWeight: 600,
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '4px',
+                                    gap: '6px',
                                 }}
                             >
                                 Daftar Modul &gt;
@@ -1682,15 +1704,17 @@ export default function ModuleDetail({
                             onClick={handleComplete}
                             disabled={loading || !canComplete}
                             style={{
-                                background: 'transparent',
-                                border: 'none',
+                                backgroundColor: 'var(--accent-green, #16a34a)',
                                 color: '#ffffff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                padding: '7px 18px',
                                 cursor: loading ? 'not-allowed' : 'pointer',
                                 fontSize: '13px',
                                 fontWeight: 700,
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '4px',
+                                gap: '6px',
                             }}
                         >
                             Klaim XP &gt;
@@ -1699,13 +1723,17 @@ export default function ModuleDetail({
                         <Link
                             href="/modules"
                             style={{
-                                color: '#ffffff',
+                                backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                border: '1px solid var(--surface-border, #e4e4e7)',
+                                borderRadius: '8px',
+                                padding: '7px 16px',
+                                color: 'var(--text-primary)',
                                 textDecoration: 'none',
                                 fontSize: '13px',
                                 fontWeight: 600,
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '4px',
+                                gap: '6px',
                             }}
                         >
                             Selesai &gt;
@@ -1743,7 +1771,7 @@ export default function ModuleDetail({
                                 maxWidth: '90vw',
                                 height: '100%',
                                 backgroundColor: 'var(--surface-card, #ffffff)',
-                                borderLeft: '1px solid var(--border)',
+                                borderLeft: '1px solid var(--surface-border, #e4e4e7)',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 overflow: 'hidden',
@@ -1754,7 +1782,7 @@ export default function ModuleDetail({
                             <div
                                 style={{
                                     padding: '16px 20px',
-                                    borderBottom: '1px solid var(--border)',
+                                    borderBottom: '1px solid var(--surface-border, #e4e4e7)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',
@@ -1787,7 +1815,7 @@ export default function ModuleDetail({
                             </div>
 
                             {/* Module Summary Card */}
-                            <div style={{ padding: '20px', borderBottom: '1px solid var(--border)' }}>
+                            <div style={{ padding: '20px', borderBottom: '1px solid var(--surface-border, #e4e4e7)' }}>
                                 <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700 }}>
                                     {module.title}
                                 </h4>
@@ -1795,15 +1823,15 @@ export default function ModuleDetail({
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                         <Clock size={12} /> {module.duration_minutes || 45} menit
                                     </span>
-                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ea580c' }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-burnt-orange, #D97706)' }}>
                                         <Zap size={12} /> +{module.xp_reward} XP
                                     </span>
                                 </div>
                                 <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated, #f4f4f5)', borderRadius: '3px', overflow: 'hidden' }}>
-                                    <div style={{ height: '100%', width: `${progressPercent}%`, backgroundColor: '#ea580c' }} />
+                                    <div style={{ height: '100%', width: `${progressPercent}%`, backgroundColor: 'var(--color-gold, #F5C542)' }} />
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                                    <span>{progressPercent}% Terselesaikan</span>
+                                    <span>{progressPercent}% Selesai</span>
                                     <span>{completedItemsCount}/{totalItemsCount} Unit</span>
                                 </div>
                             </div>
@@ -1827,9 +1855,9 @@ export default function ModuleDetail({
                                                 justifyContent: 'space-between',
                                                 padding: '12px',
                                                 borderRadius: '8px',
-                                                border: `1px solid ${isCurrent ? '#dc2626' : 'var(--border)'}`,
-                                                backgroundColor: isCurrent ? 'rgba(220, 38, 38, 0.05)' : 'var(--surface-card, #ffffff)',
-                                                color: isCurrent ? '#dc2626' : 'var(--text-primary)',
+                                                border: `1px solid ${isCurrent ? 'var(--color-gold, #F5C542)' : 'var(--surface-border, #e4e4e7)'}`,
+                                                backgroundColor: isCurrent ? 'rgba(245, 197, 66, 0.12)' : 'var(--surface-card, #ffffff)',
+                                                color: isCurrent ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
                                                 cursor: 'pointer',
                                                 textAlign: 'left',
                                                 marginBottom: '8px',
@@ -1842,8 +1870,8 @@ export default function ModuleDetail({
                                                         width: '28px',
                                                         height: '28px',
                                                         borderRadius: '6px',
-                                                        backgroundColor: isCurrent ? '#dc2626' : 'var(--surface-elevated, #f4f4f5)',
-                                                        color: isCurrent ? '#ffffff' : 'var(--text-secondary)',
+                                                        backgroundColor: isCurrent ? 'var(--color-gold, #F5C542)' : 'var(--surface-elevated, #f4f4f5)',
+                                                        color: isCurrent ? '#0a0a0a' : 'var(--text-secondary)',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -1881,9 +1909,9 @@ export default function ModuleDetail({
                                             justifyContent: 'space-between',
                                             padding: '12px',
                                             borderRadius: '8px',
-                                            border: `1px solid ${phase === 'quiz' ? '#dc2626' : 'var(--border)'}`,
-                                            backgroundColor: phase === 'quiz' ? 'rgba(220, 38, 38, 0.05)' : 'var(--surface-card, #ffffff)',
-                                            color: phase === 'quiz' ? '#dc2626' : 'var(--text-primary)',
+                                            border: `1px solid ${phase === 'quiz' ? 'var(--color-gold, #F5C542)' : 'var(--surface-border, #e4e4e7)'}`,
+                                            backgroundColor: phase === 'quiz' ? 'rgba(245, 197, 66, 0.12)' : 'var(--surface-card, #ffffff)',
+                                            color: phase === 'quiz' ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
                                             cursor: 'pointer',
                                             textAlign: 'left',
                                             marginTop: '12px',
@@ -1895,8 +1923,8 @@ export default function ModuleDetail({
                                                     width: '28px',
                                                     height: '28px',
                                                     borderRadius: '6px',
-                                                    backgroundColor: phase === 'quiz' ? '#dc2626' : 'var(--surface-elevated, #f4f4f5)',
-                                                    color: phase === 'quiz' ? '#ffffff' : 'var(--text-secondary)',
+                                                    backgroundColor: phase === 'quiz' ? 'var(--color-gold, #F5C542)' : 'var(--surface-elevated, #f4f4f5)',
+                                                    color: phase === 'quiz' ? '#0a0a0a' : 'var(--text-secondary)',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -1950,7 +1978,7 @@ export default function ModuleDetail({
                                 width: '100%',
                                 maxWidth: '480px',
                                 backgroundColor: 'var(--surface-card, #ffffff)',
-                                border: '1px solid var(--border)',
+                                border: '1px solid var(--surface-border, #e4e4e7)',
                                 borderRadius: '12px',
                                 padding: '24px',
                                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
@@ -1979,20 +2007,20 @@ export default function ModuleDetail({
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <span style={{ fontSize: '18px' }}>📑</span>
                                     <div>
-                                        <strong style={{ color: 'var(--text-primary)' }}>Navigasi Materi:</strong> Gunakan menu dropdown di bagian atas atau tombol bar navigasi merah di bagian bawah untuk berpindah antar langkah.
+                                        <strong style={{ color: 'var(--text-primary)' }}>Navigasi Materi:</strong> Gunakan menu dropdown di bagian atas atau tombol navigasi di bagian bawah untuk berpindah antar langkah.
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <span style={{ fontSize: '18px' }}>📝</span>
                                     <div>
-                                        <strong style={{ color: 'var(--text-primary)' }}>Latihan Pemahaman:</strong> Setiap modul dilengkapi sesi latihan. Jawab seluruh soal latihan untuk membuka penyelesaian modul dan mengklaim XP.
+                                        <strong style={{ color: 'var(--text-primary)' }}>Latihan Pemahaman:</strong> Setiap modul dilengkapi sesi latihan. Jawab seluruh pertanyaan latihan untuk membuka penyelesaian modul dan mengklaim XP.
                                     </div>
                                 </div>
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <span style={{ fontSize: '18px' }}>⚔️</span>
                                     <div>
                                         <strong style={{ color: 'var(--text-primary)' }}>Bonus Kelas RPG:</strong> {hasClassBonus ? (
-                                            <span style={{ color: 'var(--accent-green, #16a34a)', fontWeight: 600 }}>
+                                            <span style={{ color: 'var(--color-burnt-orange, #D97706)', fontWeight: 600 }}>
                                                 Kelasmu ({avatarClass}) mendapatkan BONUS +{bonusXp} XP ({CLASS_BONUS_PERCENT}%) untuk kategori modul ini!
                                             </span>
                                         ) : (
@@ -2007,13 +2035,13 @@ export default function ModuleDetail({
                                 style={{
                                     width: '100%',
                                     marginTop: '22px',
-                                    padding: '10px',
-                                    borderRadius: '6px',
-                                    backgroundColor: '#2563eb',
-                                    color: '#ffffff',
+                                    padding: '11px',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'var(--color-gold, #F5C542)',
+                                    color: '#0a0a0a',
                                     border: 'none',
                                     fontSize: '13px',
-                                    fontWeight: 600,
+                                    fontWeight: 700,
                                     cursor: 'pointer',
                                 }}
                             >
@@ -2056,7 +2084,7 @@ export default function ModuleDetail({
                                 padding: '24px',
                                 backgroundColor: 'var(--surface-card, #ffffff)',
                                 borderRadius: '12px',
-                                border: '1px solid var(--border)',
+                                border: '1px solid var(--surface-border, #e4e4e7)',
                                 boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
                             }}
                             onClick={(e) => e.stopPropagation()}
@@ -2080,14 +2108,14 @@ export default function ModuleDetail({
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                                     <span style={{ color: 'var(--text-secondary)' }}>Bonus Kelas</span>
-                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? '#ea580c' : 'var(--text-muted)' }}>
+                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-muted)' }}>
                                         +{completionFeedback.bonusAmount}
                                     </span>
                                 </div>
-                                <div style={{ height: '1px', backgroundColor: 'var(--border)' }} />
+                                <div style={{ height: '1px', backgroundColor: 'var(--surface-border, #e4e4e7)' }} />
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px' }}>
                                     <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Total Reward</span>
-                                    <span style={{ fontWeight: 800, color: '#dc2626' }}>+{completionFeedback.totalAwarded} XP</span>
+                                    <span style={{ fontWeight: 800, color: 'var(--color-burnt-orange, #D97706)' }}>+{completionFeedback.totalAwarded} XP</span>
                                 </div>
                             </div>
 
@@ -2097,10 +2125,10 @@ export default function ModuleDetail({
                                         marginBottom: '16px',
                                         padding: '12px',
                                         borderRadius: '8px',
-                                        border: '1px solid rgba(234, 88, 12, 0.4)',
-                                        backgroundColor: 'rgba(234, 88, 12, 0.1)',
+                                        border: '1px solid rgba(245, 197, 66, 0.4)',
+                                        backgroundColor: 'rgba(245, 197, 66, 0.12)',
                                         fontSize: '13px',
-                                        color: '#ea580c',
+                                        color: 'var(--color-burnt-orange, #D97706)',
                                         fontWeight: 700,
                                         display: 'flex',
                                         alignItems: 'center',
@@ -2117,8 +2145,8 @@ export default function ModuleDetail({
                                     style={{
                                         flex: 1,
                                         padding: '10px 14px',
-                                        borderRadius: '6px',
-                                        border: '1px solid var(--border)',
+                                        borderRadius: '8px',
+                                        border: '1px solid var(--surface-border, #e4e4e7)',
                                         backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                         color: 'var(--text-primary)',
                                         fontWeight: 600,
@@ -2133,10 +2161,10 @@ export default function ModuleDetail({
                                     style={{
                                         flex: 1,
                                         padding: '10px 14px',
-                                        borderRadius: '6px',
+                                        borderRadius: '8px',
                                         border: 'none',
-                                        backgroundColor: '#dc2626',
-                                        color: '#ffffff',
+                                        backgroundColor: 'var(--color-gold, #F5C542)',
+                                        color: '#0a0a0a',
                                         fontWeight: 700,
                                         fontSize: '13px',
                                         cursor: 'pointer',
