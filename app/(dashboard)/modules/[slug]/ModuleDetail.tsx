@@ -1,10 +1,31 @@
 'use client'
 
-import { useMemo, useState, type CSSProperties } from 'react'
+import React, { useState, useMemo, useEffect, useRef, type CSSProperties } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Module, UserModule, Question, LessonStep } from '@/types'
-import { ArrowLeft, CheckCircle, ChevronRight, Zap, BookOpen, Clock, Flame, X } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import { Module, UserModule, Question, LessonStep } from '@/types'
+import {
+    ChevronRight,
+    ChevronDown,
+    Check,
+    CheckCircle,
+    Menu,
+    X,
+    Play,
+    FileText,
+    HelpCircle,
+    ExternalLink,
+    Copy,
+    CheckCheck,
+    Sparkles,
+    ArrowLeft,
+    BookOpen,
+    Clock,
+    Zap,
+    Flame,
+    Share2,
+} from 'lucide-react'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 
 interface ModuleDetailProps {
@@ -26,31 +47,39 @@ interface CompletionFeedback {
 
 const MAX_QUIZ_QUESTIONS = 5
 
-const CATEGORY_COLORS: Record<string, string> = {
-    coding: 'var(--accent-cyan)',
-    design: 'var(--accent-gold)',
-    productivity: 'var(--accent-green)',
-    business: 'var(--accent-red)',
+// --- Video URL Extraction ---
+function extractYouTubeVideoId(raw: string | null | undefined): string | null {
+    if (!raw) return null
+    const value = raw.trim()
+    if (!value) return null
+
+    try {
+        const url = new URL(value)
+        const host = url.hostname.replace(/^www\./, '')
+        if (host === 'youtube.com' || host === 'm.youtube.com') {
+            const videoId = url.searchParams.get('v')
+            if (videoId) return videoId
+            if (url.pathname.startsWith('/embed/')) {
+                const id = url.pathname.split('/embed/')[1]?.split('/')[0]
+                if (id) return id
+            }
+        }
+        if (host === 'youtu.be') {
+            const id = url.pathname.slice(1).split('/')[0]
+            if (id) return id
+        }
+    } catch {
+        if (/^[a-zA-Z0-9_-]{11}$/.test(value)) {
+            return value
+        }
+    }
+    return null
 }
 
-const COMPLETE_CTA_STYLE: CSSProperties = {
-    padding: '10px 24px',
-    borderRadius: '4px',
-    border: 'none',
-    color: 'var(--bg-primary)',
-    fontSize: '13px',
-    fontWeight: 700,
-    fontFamily: 'var(--font-heading)',
-}
-
-const QUIZ_PRIMARY_CTA_STYLE: CSSProperties = {
-    padding: '10px 24px',
-    borderRadius: '4px',
-    border: 'none',
-    color: 'var(--bg-primary)',
-    fontFamily: 'var(--font-heading)',
-    fontSize: '14px',
-    fontWeight: 700,
+function getYouTubeEmbedUrl(raw: string | null | undefined): string | null {
+    const id = extractYouTubeVideoId(raw)
+    if (!id) return null
+    return `https://www.youtube-nocookie.com/embed/${id}`
 }
 
 function isLikelyUrl(value: string): boolean {
@@ -62,45 +91,7 @@ function isLikelyUrl(value: string): boolean {
     }
 }
 
-function extractYouTubeVideoId(raw: string | null | undefined): string | null {
-    if (!raw) return null
-
-    const value = raw.trim()
-    if (!value) return null
-
-    try {
-        const url = new URL(value)
-        const host = url.hostname.replace(/^www\./, '')
-
-        if (host === 'youtube.com' || host === 'm.youtube.com') {
-            const videoId = url.searchParams.get('v')
-            if (videoId) return videoId
-            if (url.pathname.startsWith('/embed/')) {
-                const id = url.pathname.split('/embed/')[1]?.split('/')[0]
-                if (id) return id
-            }
-        }
-
-        if (host === 'youtu.be') {
-            const id = url.pathname.slice(1).split('/')[0]
-            if (id) return id
-        }
-    } catch {
-        // Allow plain video id as shorthand.
-        if (/^[a-zA-Z0-9_-]{11}$/.test(value)) {
-            return value
-        }
-    }
-
-    return null
-}
-
-function getYouTubeEmbedUrl(raw: string | null | undefined): string | null {
-    const id = extractYouTubeVideoId(raw)
-    if (!id) return null
-    return `https://www.youtube-nocookie.com/embed/${id}`
-}
-
+// --- Deterministic Question Shuffling ---
 function stableHash(input: string): number {
     let hash = 2166136261
     for (let i = 0; i < input.length; i++) {
@@ -175,43 +166,460 @@ function prioritizeModuleQuestions(questions: Question[], moduleId: string): Que
     return withPriority.map((item) => item.question)
 }
 
-function buildAutoLessonSteps(module: Module): LessonStep[] {
-    const categoryGuide: Record<string, string> = {
-        coding: 'Materi ini membahas konsep teknis inti, pola implementasi, dan best practice agar kamu bisa langsung praktik.',
-        design: 'Materi ini membahas prinsip desain, proses berpikir desain, dan cara membangun keputusan visual yang kuat.',
-        productivity: 'Materi ini fokus ke pola kerja efektif, manajemen energi, dan sistem kebiasaan untuk hasil yang konsisten.',
-        business: 'Materi ini membahas mindset bisnis, strategi eksekusi, dan cara mengukur dampak dari keputusanmu.',
-    }
+// --- Rich Module Content Enhancements for Realistic Skilvul Style ---
+const CURATED_MODULE_STEPS: Record<string, LessonStep[]> = {
+    'html-css-dasar': [
+        {
+            id: 'html-struktur',
+            title: 'Struktur Dasar Dokumen HTML',
+            type: 'text',
+            content: `HTML (*Hypertext Markup Language*) merupakan bahasa markah standar untuk menstrukturkan halaman web dan kontennya. Setiap halaman web modern dibangun di atas fondasi struktur elemen hierarkis.
 
+## Hal yang Harus Diperhatikan dalam Menyusun Dokumen HTML
+Dokumen HTML standar selalu diawali dengan deklarasi \`<!DOCTYPE html>\` yang memberi tahu peramban bahwa dokumen ini menggunakan standar HTML5 terbaru.
+
+Contoh struktur dasar HTML:
+\`\`\`html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halaman Web Pertamaku</title>
+</head>
+<body>
+  <header>
+    <h1>Selamat Datang di Dunia Web</h1>
+  </header>
+  <main>
+    <p>HTML menyusun elemen seperti teks, gambar, dan formulir.</p>
+  </main>
+</body>
+</html>
+\`\`\`
+
+Elemen \`<head>\` memuat metadata yang tidak ditampilkan langsung di layar, sedangkan seluruh konten yang terlihat oleh pengguna berada di dalam tag \`<body>\`.`,
+        },
+        {
+            id: 'html-video',
+            title: 'Video Pembelajaran: Dasar HTML & CSS',
+            type: 'video',
+            content: 'https://www.youtube.com/watch?v=3U1AhjEf7DM',
+        },
+        {
+            id: 'css-styling',
+            title: 'Penerapan Styling & Selektor CSS',
+            type: 'text',
+            content: `Pemberian styling dengan CSS (*Cascading Style Sheets*) digunakan untuk mengatur tata letak, warna, tipografi, dan estetika visual halaman.
+
+## Penerapan Selektor & Properti CSS
+Terdapat beberapa cara menghubungkan CSS dengan dokumen HTML, salah satunya menggunakan stylesheet eksternal atau inline styling.
+
+Contoh styling komponen:
+\`\`\`css
+/* Selektor class untuk kartu konten */
+.card-container {
+  background-color: #ffffff;
+  border: 1px solid #e4e4e7;
+  border-radius: 8px;
+  padding: 20px;
+  color: #1d1d1d;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #dc2626;
+  margin-bottom: 8px;
+}
+\`\`\`
+
+Gunakan selektor berbasis class daripada ID untuk memudahkan penggunaan kembali (*reusability*) gaya pada berbagai elemen.`,
+        },
+    ],
+    'react-dasar-komponen': [
+        {
+            id: 'react-komponen',
+            title: 'Komponen & Props di React',
+            type: 'text',
+            content: `React membangun antarmuka pengguna berbasis komponen independen dan dapat digunakan kembali (*reusable components*).
+
+## Membangun Komponen Fungsional
+Komponen React ditulis menggunakan sintaks JSX yang menggabungkan struktur markah dengan kapabilitas logika JavaScript murni.
+
+Contoh komponen kartu ucapan:
+\`\`\`jsx
+function WelcomeCard({ name, role }) {
+  return (
+    <div className="welcome-card">
+      <h2>Halo, {name}!</h2>
+      <p>Peran aktif: {role}</p>
+    </div>
+  );
+}
+
+export default function App() {
+  return <WelcomeCard name="Siswa Bintang" role="Frontend Developer" />;
+}
+\`\`\`
+
+Props bersifat *read-only* (tidak dapat diubah langsung oleh komponen anak), menjaga aliran data satu arah yang dapat diprediksi.`,
+        },
+        {
+            id: 'react-video',
+            title: 'Video: React Komponen & State',
+            type: 'video',
+            content: 'https://www.youtube.com/watch?v=kcnwI_5nKyA',
+        },
+        {
+            id: 'react-inline-style',
+            title: 'Inline Style pada Komponen React',
+            type: 'text',
+            content: `Pemberian *styling* dengan cara *Inline* merupakan salah satu yang cukup mudah dilakukan, ketika digunakan pada HTML.
+
+## Hal yang Harus Diperhatikan dalam Menerapkan Inline Style
+*Inline Style* **dapat diterapkan** pada React, namun terdapat beberapa hal yang harus diperhatikan.
+
+Pertama, yang perlu disiapkan adalah *prop* \`style\`. *Prop* ini berisi objek JavaScript dengan *key* dan *value styling* yang akan kita berikan.
+
+Contoh:
+\`\`\`jsx
+function App() {
+  const styles = {
+    color: "blue",
+    fontSize: "16px",
+    backgroundColor: "lightgray",
+  };
+
+  return (
+    <div>
+      <p style={styles}>Ini adalah teks dengan inline style.</p>
+    </div>
+  );
+}
+\`\`\`
+
+Atau juga bisa seperti ini secara langsung (*double curly braces*):
+\`\`\`jsx
+function App() {
+  return (
+    <div>
+      <p
+        style={{
+          color: "blue",
+          fontSize: "16px",
+          backgroundColor: "lightgray",
+        }}
+      >
+        Ini adalah teks dengan inline style.
+      </p>
+    </div>
+  );
+}
+\`\`\`
+
+Key pada objek style yang memiliki lebih dari satu kata, ditulis dengan gaya penulisan *camelCase*.`,
+        },
+    ],
+    'javascript-pemula': [
+        {
+            id: 'js-variabel',
+            title: 'Variabel Modern (let & const)',
+            type: 'text',
+            content: `JavaScript modern (ES6+) memperkenalkan kata kunci \`let\` dan \`const\` untuk mendeklarasikan variabel dengan cakupan blok (*block scope*).
+
+## Menentukan Variabel Tepat
+Gunakan \`const\` secara bawaan untuk nilai yang tidak akan di-reassign, dan gunakan \`let\` jika nilai variabel perlu diperbarui di kemudian waktu.
+
+Contoh deklarasi:
+\`\`\`javascript
+const kursus = "JavaScript Pemula";
+let skorLatihan = 85;
+
+// Memperbarui skor
+skorLatihan = skorLatihan + 10;
+
+console.log(\`Selamat! Kursus \${kursus} meraih skor: \${skorLatihan}\`);
+\`\`\`
+
+Hindari penggunaan kata kunci \`var\` warisan lama untuk mencegah masalah pengangkatan (*hoisting*) variabel yang tidak disengaja.`,
+        },
+        {
+            id: 'js-video',
+            title: 'Video Pembelajaran: JavaScript Pemula',
+            type: 'video',
+            content: 'https://www.youtube.com/watch?v=mD6uSGSjgr4',
+        },
+        {
+            id: 'js-fungsi',
+            title: 'Fungsi & Arrow Function',
+            type: 'text',
+            content: `Fungsi adalah blok kode yang dapat dipanggil berulang kali untuk menjalankan tugas tertentu.
+
+Contoh sintaks fungsi konvensional dan arrow function:
+\`\`\`javascript
+// Arrow function ringkas
+const hitungBonusXP = (baseXP, persentase) => {
+  return baseXP + (baseXP * persentase / 100);
+};
+
+const totalXP = hitungBonusXP(50, 15);
+console.log("Total XP Didapat:", totalXP); // 57.5
+\`\`\`
+
+Arrow function memberikan sintaks yang lebih ringkas dan menjaga konteks \`this\` secara leksikal.`,
+        },
+    ],
+}
+
+function resolveModuleSteps(module: Module): LessonStep[] {
+    if (CURATED_MODULE_STEPS[module.slug]) {
+        return CURATED_MODULE_STEPS[module.slug]
+    }
+    const rawContent = module.content as LessonStep[] | null
+    if (rawContent && rawContent.length > 0) {
+        return rawContent
+    }
     return [
         {
-            id: 'auto-intro',
-            title: `Pengantar: ${module.title}`,
+            id: 'intro',
+            title: `Pengenalan: ${module.title}`,
             type: 'text',
-            content: module.description || `Di modul ini kamu akan memahami dasar-dasar ${module.title} secara terstruktur.`,
+            content: module.description || `Materi modul ${module.title}. Pelajari penjelasan di bawah ini sebelum melanjutkan ke latihan.`,
         },
         {
-            id: 'auto-konsep',
-            title: 'Konsep Inti Materi',
+            id: 'konsep',
+            title: 'Konsep Inti & Implementasi',
             type: 'text',
-            content: categoryGuide[module.category] || 'Pelajari konsep inti materi, lalu pahami alur logika sebelum lanjut ke praktik.',
-        },
-        {
-            id: 'auto-praktik',
-            title: 'Penerapan Praktis',
-            type: 'text',
-            content: 'Setelah memahami konsep, coba terapkan pada studi kasus sederhana. Fokus ke alasan di balik setiap langkah yang kamu ambil.',
+            content: `Materi ini membahas konsep inti dari ${module.title}. Pahami alur berpikir dan kaidah penerapannya secara bertahap.`,
         },
     ]
 }
 
-function ensureLessonDepth(module: Module, rawSteps: LessonStep[]): LessonStep[] {
-    const textCount = rawSteps.filter((step) => step.type === 'text').length
-    if (textCount >= 2) return rawSteps
-    return [...buildAutoLessonSteps(module), ...rawSteps]
+// --- Code Block Component with Copy Action ---
+function CodeBlock({ code, language }: { code: string; language?: string }) {
+    const [copied, setCopied] = useState(false)
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(code)
+        setCopied(true)
+        setTimeout(() => setCopied(false), 2000)
+    }
+
+    return (
+        <div
+            style={{
+                position: 'relative',
+                margin: '20px 0',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                overflow: 'hidden',
+            }}
+        >
+            <div
+                style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '8px 14px',
+                    borderBottom: '1px solid var(--border)',
+                    backgroundColor: 'rgba(0, 0, 0, 0.03)',
+                    fontSize: '12px',
+                    color: 'var(--text-muted)',
+                    fontFamily: 'var(--font-mono)',
+                }}
+            >
+                <span style={{ textTransform: 'uppercase', fontWeight: 600 }}>{language || 'code'}</span>
+                <button
+                    onClick={handleCopy}
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        background: 'transparent',
+                        border: 'none',
+                        cursor: 'pointer',
+                        color: copied ? 'var(--accent-green, #16a34a)' : 'var(--text-muted)',
+                        fontSize: '11px',
+                        fontWeight: 500,
+                        padding: '3px 8px',
+                        borderRadius: '4px',
+                        transition: 'all 0.2s',
+                    }}
+                >
+                    {copied ? (
+                        <>
+                            <CheckCheck size={13} /> Tersalin
+                        </>
+                    ) : (
+                        <>
+                            <Copy size={13} /> Salin
+                        </>
+                    )}
+                </button>
+            </div>
+            <pre
+                style={{
+                    margin: 0,
+                    padding: '16px',
+                    overflowX: 'auto',
+                    fontSize: '13px',
+                    lineHeight: '1.65',
+                    fontFamily: 'var(--font-mono)',
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'transparent',
+                }}
+            >
+                <code>{code}</code>
+            </pre>
+        </div>
+    )
 }
 
-export default function ModuleDetail({ module, userModule, completedFromLog = false, questions, avatarClass }: ModuleDetailProps) {
+// --- Lightweight Safe Markdown Renderer ---
+function RichContentRenderer({ content }: { content: string }) {
+    // Split content by code blocks ```lang ... ```
+    const parts = useMemo(() => {
+        const regex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g
+        const segments: Array<{ type: 'text' | 'code'; text: string; lang?: string }> = []
+        let lastIndex = 0
+        let match: RegExpExecArray | null
+
+        while ((match = regex.exec(content)) !== null) {
+            if (match.index > lastIndex) {
+                segments.push({
+                    type: 'text',
+                    text: content.slice(lastIndex, match.index),
+                })
+            }
+            segments.push({
+                type: 'code',
+                lang: match[1] || 'javascript',
+                text: match[2].trimEnd(),
+            })
+            lastIndex = regex.lastIndex
+        }
+
+        if (lastIndex < content.length) {
+            segments.push({
+                type: 'text',
+                text: content.slice(lastIndex),
+            })
+        }
+
+        return segments
+    }, [content])
+
+    return (
+        <div style={{ color: 'var(--text-secondary)', fontSize: '15px', lineHeight: 1.75 }}>
+            {parts.map((segment, segIdx) => {
+                if (segment.type === 'code') {
+                    return <CodeBlock key={segIdx} code={segment.text} language={segment.lang} />
+                }
+
+                // Render paragraphs & headings
+                const lines = segment.text.split('\n\n')
+                return (
+                    <div key={segIdx}>
+                        {lines.map((block, bIdx) => {
+                            const trimmed = block.trim()
+                            if (!trimmed) return null
+
+                            // H2 Check: ## Heading
+                            if (trimmed.startsWith('## ')) {
+                                return (
+                                    <h2
+                                        key={bIdx}
+                                        style={{
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '20px',
+                                            fontWeight: 700,
+                                            color: 'var(--text-primary)',
+                                            marginTop: '28px',
+                                            marginBottom: '12px',
+                                            letterSpacing: '-0.01em',
+                                        }}
+                                    >
+                                        {trimmed.slice(3)}
+                                    </h2>
+                                )
+                            }
+
+                            // H3 Check: ### Subheading
+                            if (trimmed.startsWith('### ')) {
+                                return (
+                                    <h3
+                                        key={bIdx}
+                                        style={{
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '17px',
+                                            fontWeight: 600,
+                                            color: 'var(--text-primary)',
+                                            marginTop: '20px',
+                                            marginBottom: '10px',
+                                        }}
+                                    >
+                                        {trimmed.slice(4)}
+                                    </h3>
+                                )
+                            }
+
+                            // Inline formatting: parse backticks `code`, **bold**, *italic*
+                            const formatInline = (text: string) => {
+                                const tokens = text.split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g)
+                                return tokens.map((tok, tIdx) => {
+                                    if (tok.startsWith('`') && tok.endsWith('`')) {
+                                        return (
+                                            <code
+                                                key={tIdx}
+                                                style={{
+                                                    padding: '2px 6px',
+                                                    margin: '0 2px',
+                                                    borderRadius: '4px',
+                                                    backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                                    border: '1px solid var(--border)',
+                                                    fontSize: '13px',
+                                                    fontFamily: 'var(--font-mono)',
+                                                    color: 'var(--text-primary)',
+                                                }}
+                                            >
+                                                {tok.slice(1, -1)}
+                                            </code>
+                                        )
+                                    }
+                                    if (tok.startsWith('**') && tok.endsWith('**')) {
+                                        return <strong key={tIdx} style={{ color: 'var(--text-primary)' }}>{tok.slice(2, -2)}</strong>
+                                    }
+                                    if (tok.startsWith('*') && tok.endsWith('*')) {
+                                        return <em key={tIdx}>{tok.slice(1, -1)}</em>
+                                    }
+                                    return tok
+                                })
+                            }
+
+                            return (
+                                <p key={bIdx} style={{ marginBottom: '16px' }}>
+                                    {formatInline(trimmed)}
+                                </p>
+                            )
+                        })}
+                    </div>
+                )
+            })}
+        </div>
+    )
+}
+
+// --- Main ModuleDetail Component ---
+export default function ModuleDetail({
+    module,
+    userModule,
+    completedFromLog = false,
+    questions,
+    avatarClass,
+}: ModuleDetailProps) {
     const router = useRouter()
     const [currentStep, setCurrentStep] = useState(0)
     const [phase, setPhase] = useState<'lesson' | 'quiz'>('lesson')
@@ -220,279 +628,525 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
     const [completed, setCompleted] = useState(Boolean(userModule?.status === 'completed' || completedFromLog))
     const [loading, setLoading] = useState(false)
     const [completionFeedback, setCompletionFeedback] = useState<CompletionFeedback | null>(null)
-    const hasClassBonus = classHasBonusForCategory(avatarClass, module.category)
-    const bonusXp = hasClassBonus ? Math.floor(module.xp_reward * CLASS_BONUS_PERCENT / 100) : 0
 
-    const content = module.content as LessonStep[] | null
-    const fallbackSteps: LessonStep[] = [
-        {
-            id: 'intro',
-            title: 'Pengantar Materi',
-            type: 'text',
-            content: module.description || 'Materi belum tersedia detailnya. Baca pengantar ini lalu lanjut ke quiz.',
-        },
-    ]
-    const baseSteps = content && content.length > 0 ? content : fallbackSteps
-    const steps = ensureLessonDepth(module, baseSteps)
+    // UI Interactive Modals / Drawers
+    const [isStepDropdownOpen, setIsStepDropdownOpen] = useState(false)
+    const [isDrawerOpen, setIsDrawerOpen] = useState(false)
+    const [isGuideOpen, setIsGuideOpen] = useState(false)
+    const dropdownRef = useRef<HTMLDivElement>(null)
+
+    // RPG XP calculations
+    const hasClassBonus = classHasBonusForCategory(avatarClass, module.category)
+    const bonusXp = hasClassBonus ? Math.floor((module.xp_reward * CLASS_BONUS_PERCENT) / 100) : 0
+
+    // Steps Resolution
+    const steps = useMemo(() => resolveModuleSteps(module), [module])
     const totalSteps = steps.length
+    const activeStep = steps[currentStep] || steps[0]
+
+    // Questions Resolution
     const currentQuestions = useMemo(() => {
         const prioritized = prioritizeModuleQuestions(questions, module.id)
         return prioritized
             .slice(0, MAX_QUIZ_QUESTIONS)
-            .map((question) => shuffleModuleQuestionOptions(question, `${module.id}:${question.id}`))
+            .map((q) => shuffleModuleQuestionOptions(q, `${module.id}:${q.id}`))
     }, [questions, module.id])
+
     const hasQuiz = currentQuestions.length > 0
-    const allQuizAnswered = currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
+    const answeredCount = Object.keys(quizAnswers).length
+    const allQuizAnswered = hasQuiz && currentQuestions.every((q) => typeof quizAnswers[q.id] === 'number')
     const canComplete = !hasQuiz || (quizSubmitted && allQuizAnswered)
-    const lessonProgress = Math.round(((currentStep + 1) / totalSteps) * 100)
-    const progress = completed
-        ? 100
-        : phase === 'lesson'
-            ? lessonProgress
-            : (quizSubmitted ? 95 : 85)
 
-    async function handleComplete() {
-        if (loading || completed || !canComplete) return
-        setLoading(true)
+    // Skilvul Counter & Progress Calculation
+    // Format: X/Y Latihan sudah diselesaikan
+    const completedItemsCount = completed
+        ? totalSteps + (hasQuiz ? 1 : 0)
+        : currentStep + (phase === 'quiz' ? 1 : 0)
+    const totalItemsCount = totalSteps + (hasQuiz ? 1 : 0)
+    const progressPercent = Math.min(100, Math.round((completedItemsCount / totalItemsCount) * 100))
 
-        // Server-authoritative completion + XP claim (idempotent)
-        const xpRes = await fetch('/api/xp', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ action: 'complete_module', moduleId: module.id }),
-        })
-        const xpData = await xpRes.json()
-        if (!xpRes.ok || !xpData?.success) {
-            setLoading(false)
-            return
-        }
-
-        setCompletionFeedback({
-            alreadyClaimed: Boolean(xpData.alreadyClaimed),
-            baseAward: Number(xpData.baseAward ?? 0),
-            bonusAmount: Number(xpData.bonusAmount ?? 0),
-            totalAwarded: Number(xpData.totalAwarded ?? 0),
-            leveledUp: Boolean(xpData.leveledUp),
-            newLevel: xpData.newLevel ? Number(xpData.newLevel) : null,
-        })
-
-        if (typeof xpData.newXp === 'number') {
-            const { useUserStore } = await import('@/stores/userStore')
-            useUserStore.getState().updateXP(xpData.newXp, {
-                newStreak: typeof xpData.streak === 'number' ? xpData.streak : undefined,
-                newLastActive: typeof xpData.lastActive === 'string' || xpData.lastActive === null ? xpData.lastActive : undefined,
-                streakUpdated: xpData.streakUpdated === true,
-                earnedBadges: Array.isArray(xpData.earnedBadges) ? xpData.earnedBadges : undefined,
-            })
-        }
-
-        setCompleted(true)
-        setLoading(false)
-    }
-
-    function handleAnswer(questionId: string, idx: number) {
-        if (quizSubmitted) return
-        setQuizAnswers(prev => ({ ...prev, [questionId]: idx }))
-    }
-
-    function handleSubmitQuiz() {
-        if (!allQuizAnswered) return
-        setQuizSubmitted(true)
-    }
-
-    const catColor = CATEGORY_COLORS[module.category] || 'var(--accent-cyan)'
-    const displayedProgress = completed ? 100 : progress
-    const completionRewardText = `${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} BONUS` : ''}`
-    const completionCtaText = loading ? 'Menyimpan...' : `✓ SELESAIKAN & DAPAT ${completionRewardText} XP`
-    const activeStep = steps[currentStep]
+    // Video Resolution
     const videoEmbedUrl = activeStep?.type === 'video' ? getYouTubeEmbedUrl(activeStep.content) : null
     const videoId = activeStep?.type === 'video' ? extractYouTubeVideoId(activeStep.content) : null
     const videoRawContent = activeStep?.type === 'video' ? (activeStep.content || '').trim() : ''
     const youtubeWatchUrl = videoId ? `https://www.youtube.com/watch?v=${videoId}` : videoRawContent
     const showVideoText = activeStep?.type === 'video' && videoRawContent.length > 0 && !isLikelyUrl(videoRawContent)
 
-    function getQuizOptionVisual(idx: number, selected: number | undefined, isCorrect: boolean, correctOption: number) {
-        let backgroundColor = 'var(--bg-tertiary)'
-        let borderColor = 'var(--border)'
-
-        if (quizSubmitted) {
-            if (idx === correctOption) {
-                backgroundColor = 'rgba(34,197,94,0.1)'
-                borderColor = 'var(--accent-green)'
-            } else if (idx === selected && !isCorrect) {
-                backgroundColor = 'rgba(232,64,64,0.1)'
-                borderColor = 'var(--accent-red)'
+    // Close step dropdown on outside click
+    useEffect(() => {
+        function handleClickOutside(e: MouseEvent) {
+            if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+                setIsStepDropdownOpen(false)
             }
-        } else if (idx === selected) {
-            backgroundColor = 'rgba(0,212,255,0.1)'
-            borderColor = 'var(--accent-cyan)'
         }
+        if (isStepDropdownOpen) {
+            document.addEventListener('mousedown', handleClickOutside)
+            return () => document.removeEventListener('mousedown', handleClickOutside)
+        }
+    }, [isStepDropdownOpen])
 
-        return { backgroundColor, borderColor }
+    // Scroll to top when step or phase changes
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        }
+    }, [currentStep, phase])
+
+    // Handle Quiz Answer Selection
+    const handleAnswer = (questionId: string, optionIdx: number) => {
+        if (quizSubmitted) return
+        setQuizAnswers((prev) => ({ ...prev, [questionId]: optionIdx }))
+    }
+
+    const handleSubmitQuiz = () => {
+        if (!allQuizAnswered) return
+        setQuizSubmitted(true)
+    }
+
+    // Server-Authoritative Completion & XP Claim
+    const handleComplete = async () => {
+        if (loading || completed || !canComplete) return
+        setLoading(true)
+
+        try {
+            const res = await fetch('/api/xp', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'complete_module', moduleId: module.id }),
+            })
+            const xpData = await res.json()
+            if (!res.ok || !xpData?.success) {
+                setLoading(false)
+                return
+            }
+
+            setCompletionFeedback({
+                alreadyClaimed: Boolean(xpData.alreadyClaimed),
+                baseAward: Number(xpData.baseAward ?? 0),
+                bonusAmount: Number(xpData.bonusAmount ?? 0),
+                totalAwarded: Number(xpData.totalAwarded ?? 0),
+                leveledUp: Boolean(xpData.leveledUp),
+                newLevel: xpData.newLevel ? Number(xpData.newLevel) : null,
+            })
+
+            if (typeof xpData.newXp === 'number') {
+                const { useUserStore } = await import('@/stores/userStore')
+                useUserStore.getState().updateXP(xpData.newXp, {
+                    newStreak: typeof xpData.streak === 'number' ? xpData.streak : undefined,
+                    newLastActive:
+                        typeof xpData.lastActive === 'string' || xpData.lastActive === null
+                            ? xpData.lastActive
+                            : undefined,
+                    streakUpdated: xpData.streakUpdated === true,
+                    earnedBadges: Array.isArray(xpData.earnedBadges) ? xpData.earnedBadges : undefined,
+                })
+            }
+
+            setCompleted(true)
+        } catch (err) {
+            console.error('Failed to complete module:', err)
+        } finally {
+            setLoading(false)
+        }
     }
 
     return (
         <div
             style={{
-                maxWidth: '800px',
-                margin: '0 auto',
-                padding: '24px',
-                paddingBottom: '32px',
-                minHeight: 'calc(100vh - 56px)',
+                minHeight: '100vh',
+                backgroundColor: 'var(--surface-canvas, #fafafa)',
+                color: 'var(--text-primary, #1d1d1d)',
                 display: 'flex',
                 flexDirection: 'column',
-                boxSizing: 'border-box',
+                position: 'relative',
             }}
         >
-            {/* Back */}
-            <button
-                onClick={() => {
-                    router.push(`/modules?refresh=${Date.now()}`)
-                }}
+            {/* =========================================================
+                1. TOPBAR: EXACT SKILVUL HEADER LAYOUT
+                Logo, Breadcrumb dropdown, Progress bar, Panduan button, Hamburger
+                ========================================================= */}
+            <header
                 style={{
-                display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-secondary)',
-                fontSize: '13px', backgroundColor: 'transparent', border: 'none', cursor: 'pointer', marginBottom: '20px',
-            }}>
-                <ArrowLeft size={14} /> Kembali ke Modul
-            </button>
-
-            {/* Header */}
-            <div className="card" style={{ padding: '20px', marginBottom: '20px' }}>
-                <div style={{ display: 'flex', alignItems: 'start', gap: '12px' }}>
-                    <div style={{ flex: 1 }}>
-                        <span style={{
-                            fontSize: '11px', fontWeight: 600, color: catColor, fontFamily: 'var(--font-heading)',
-                            textTransform: 'uppercase', marginBottom: '6px', display: 'block',
-                        }}>
-                            {module.category}
-                        </span>
-                        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, marginBottom: '6px' }}>
-                            {module.title}
-                        </h1>
-                        {module.description && (
-                            <p style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{module.description}</p>
-                        )}
-                        <div style={{ display: 'flex', gap: '16px', marginTop: '12px' }}>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--text-muted)' }}>
-                                <Clock size={12} /> {module.duration_minutes} menit
-                            </span>
-                            <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: 'var(--accent-gold)' }}>
-                                <Zap size={12} /> +{module.xp_reward} XP
-                            </span>
-                            {hasClassBonus && (
-                                <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600 }}>
-                                    <Flame size={11} /> +{bonusXp} bonus
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                    {completed && (
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-green)' }}>
-                            <CheckCircle size={20} />
-                            <span style={{ fontSize: '13px', fontWeight: 600 }}>Selesai</span>
-                        </div>
-                    )}
-                </div>
-
-                {/* Progress */}
-                <div style={{ marginTop: '16px' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Progress Belajar</span>
-                        <span style={{ fontSize: '11px', color: 'var(--accent-cyan)' }}>{displayedProgress}%</span>
-                    </div>
-                    <div style={{ height: '6px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '3px', overflow: 'hidden' }}>
-                        <motion.div
-                            animate={{ width: `${displayedProgress}%` }}
-                            style={{ height: '100%', backgroundColor: 'var(--accent-cyan)' }}
-                            transition={{ duration: 0.5 }}
-                        />
-                    </div>
-                </div>
-            </div>
-
-            {/* Content / Steps */}
-            {phase === 'lesson' ? (
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-                    {/* Step Navigation */}
-                    <div style={{ display: 'flex', gap: '4px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                        {steps.map((step, i) => (
-                            <button key={i} onClick={() => setCurrentStep(i)} style={{
-                                width: '32px', height: '32px', borderRadius: '4px', cursor: 'pointer',
-                                backgroundColor: i === currentStep ? 'var(--accent-cyan)' : 'var(--bg-secondary)',
-                                border: `1px solid ${i <= currentStep ? 'var(--accent-cyan)' : 'var(--border)'}`,
-                                color: i === currentStep ? 'var(--bg-primary)' : i < currentStep ? 'var(--accent-cyan)' : 'var(--text-muted)',
-                                fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 700,
-                            }}>
-                                {i < currentStep ? '✓' : i + 1}
-                            </button>
-                        ))}
-                    </div>
-
-                    {/* Current Step Content */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={currentStep}
-                            initial={{ opacity: 0, x: 20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: -20 }}
-                            className="card"
-                            style={{ padding: '24px', marginBottom: '20px' }}
+                    position: 'sticky',
+                    top: 0,
+                    zIndex: 40,
+                    height: '58px',
+                    backgroundColor: 'var(--surface-card, #ffffff)',
+                    borderBottom: '1px solid var(--border, #e4e4e7)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0 20px',
+                    gap: '12px',
+                }}
+            >
+                {/* Left: Logo & Breadcrumbs */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                    {/* Brand Logo / Return Button */}
+                    <Link
+                        href="/modules"
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            textDecoration: 'none',
+                            color: 'var(--text-primary)',
+                            fontWeight: 700,
+                            fontFamily: 'var(--font-heading)',
+                            fontSize: '16px',
+                            marginRight: '6px',
+                        }}
+                    >
+                        <span
+                            style={{
+                                width: '26px',
+                                height: '26px',
+                                borderRadius: '6px',
+                                backgroundColor: '#dc2626',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#ffffff',
+                                fontSize: '13px',
+                                fontWeight: 800,
+                            }}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-                                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '11px', color: 'var(--accent-cyan)', fontWeight: 600 }}>
-                                    LANGKAH {currentStep + 1}/{steps.length}
-                                </span>
-                            </div>
-                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, marginBottom: '12px' }}>
-                                {activeStep.title}
-                            </h2>
-                            {activeStep.type === 'video' ? (
-                                <div>
-                                    <div
-                                        style={{
-                                            width: '100%',
-                                            aspectRatio: '16 / 9',
-                                            borderRadius: '10px',
-                                            overflow: 'hidden',
-                                            border: '1px solid var(--border)',
-                                            backgroundColor: 'var(--bg-tertiary)',
-                                            marginBottom: '12px',
-                                        }}
-                                    >
-                                        {videoEmbedUrl ? (
-                                            <iframe
-                                                src={`${videoEmbedUrl}?rel=0&modestbranding=1&playsinline=0&fs=1`}
-                                                title={activeStep.title}
-                                                allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                                allowFullScreen
-                                                referrerPolicy="strict-origin-when-cross-origin"
-                                                loading="lazy"
+                            S
+                        </span>
+                        <span className="hidden sm:inline" style={{ letterSpacing: '-0.02em' }}>
+                            Skillungo
+                        </span>
+                    </Link>
+
+                    {/* Chevron 1 */}
+                    <ChevronRight size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+
+                    {/* Breadcrumb Item 1: Module Title */}
+                    <Link
+                        href="/modules"
+                        style={{
+                            textDecoration: 'none',
+                            color: 'var(--text-secondary)',
+                            fontSize: '13px',
+                            fontWeight: 500,
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis',
+                            maxWidth: '160px',
+                        }}
+                        title={module.title}
+                    >
+                        {module.title}
+                    </Link>
+
+                    {/* Chevron 2 */}
+                    <ChevronRight size={14} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
+
+                    {/* Breadcrumb Item 2: Step Dropdown Selector */}
+                    <div ref={dropdownRef} style={{ position: 'relative' }}>
+                        <button
+                            onClick={() => setIsStepDropdownOpen((prev) => !prev)}
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '4px 10px',
+                                borderRadius: '6px',
+                                border: '1px solid var(--border)',
+                                backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                color: 'var(--text-primary)',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                maxWidth: '200px',
+                            }}
+                        >
+                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                {phase === 'quiz' ? 'Latihan / Quiz' : `${currentStep + 1}. ${activeStep.title}`}
+                            </span>
+                            <ChevronDown size={13} style={{ flexShrink: 0, color: 'var(--text-muted)' }} />
+                        </button>
+
+                        {/* Step Switcher Dropdown Menu */}
+                        <AnimatePresence>
+                            {isStepDropdownOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: 4 }}
+                                    transition={{ duration: 0.15 }}
+                                    style={{
+                                        position: 'absolute',
+                                        top: 'calc(100% + 6px)',
+                                        left: 0,
+                                        width: '280px',
+                                        maxHeight: '340px',
+                                        overflowY: 'auto',
+                                        backgroundColor: 'var(--surface-card, #ffffff)',
+                                        border: '1px solid var(--border)',
+                                        borderRadius: '8px',
+                                        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+                                        padding: '6px',
+                                        zIndex: 100,
+                                    }}
+                                >
+                                    <div style={{ padding: '6px 8px', fontSize: '11px', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                                        Daftar Langkah Materi
+                                    </div>
+                                    {steps.map((st, i) => {
+                                        const isCurrent = phase === 'lesson' && currentStep === i
+                                        return (
+                                            <button
+                                                key={st.id}
+                                                onClick={() => {
+                                                    setCurrentStep(i)
+                                                    setPhase('lesson')
+                                                    setIsStepDropdownOpen(false)
+                                                }}
                                                 style={{
                                                     width: '100%',
-                                                    height: '100%',
-                                                    border: 'none',
-                                                    display: 'block',
-                                                }}
-                                            />
-                                        ) : (
-                                            <div
-                                                style={{
                                                     display: 'flex',
                                                     alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    width: '100%',
-                                                    height: '100%',
-                                                    color: 'var(--text-muted)',
+                                                    justifyContent: 'space-between',
+                                                    padding: '8px 10px',
+                                                    borderRadius: '6px',
+                                                    border: 'none',
+                                                    backgroundColor: isCurrent ? 'rgba(220, 38, 38, 0.08)' : 'transparent',
+                                                    color: isCurrent ? '#dc2626' : 'var(--text-primary)',
+                                                    cursor: 'pointer',
+                                                    textAlign: 'left',
                                                     fontSize: '13px',
-                                                    textAlign: 'center',
-                                                    padding: '16px',
+                                                    fontWeight: isCurrent ? 600 : 400,
+                                                    marginBottom: '2px',
                                                 }}
                                             >
-                                                Tempel URL YouTube pada konten step video untuk menampilkan embed.
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                                                    {st.type === 'video' ? <Play size={14} /> : <FileText size={14} />}
+                                                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                        {i + 1}. {st.title}
+                                                    </span>
+                                                </div>
+                                                {completed && <Check size={14} style={{ color: 'var(--accent-green, #16a34a)' }} />}
+                                            </button>
+                                        )
+                                    })}
+
+                                    {/* Quiz Entry */}
+                                    {hasQuiz && (
+                                        <button
+                                            onClick={() => {
+                                                setPhase('quiz')
+                                                setIsStepDropdownOpen(false)
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                padding: '8px 10px',
+                                                borderRadius: '6px',
+                                                border: 'none',
+                                                backgroundColor: phase === 'quiz' ? 'rgba(220, 38, 38, 0.08)' : 'transparent',
+                                                color: phase === 'quiz' ? '#dc2626' : 'var(--text-primary)',
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                                fontSize: '13px',
+                                                fontWeight: phase === 'quiz' ? 600 : 400,
+                                                marginTop: '4px',
+                                                borderTop: '1px solid var(--border)',
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                <HelpCircle size={14} />
+                                                <span>Latihan / Quiz</span>
                                             </div>
-                                        )}
-                                    </div>
-                                    {videoEmbedUrl && (
+                                            {completed && <Check size={14} style={{ color: 'var(--accent-green, #16a34a)' }} />}
+                                        </button>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+                </div>
+
+                {/* Right: Progress Tracker, Guide Button, Hamburger */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px', flexShrink: 0 }}>
+                    {/* Progress Bar & Label (Exact Skilvul style: 0/79 Latihan sudah diselesaikan) */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <div
+                            style={{
+                                width: '100px',
+                                height: '7px',
+                                backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                borderRadius: '4px',
+                                overflow: 'hidden',
+                            }}
+                            className="hidden sm:block"
+                        >
+                            <motion.div
+                                animate={{ width: `${progressPercent}%` }}
+                                transition={{ duration: 0.3 }}
+                                style={{
+                                    height: '100%',
+                                    backgroundColor: '#ea580c', // Skilvul amber-orange
+                                    borderRadius: '4px',
+                                }}
+                            />
+                        </div>
+                        <span style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>
+                            <strong style={{ color: '#ea580c' }}>
+                                {completedItemsCount}/{totalItemsCount}
+                            </strong>{' '}
+                            <span className="hidden md:inline">Latihan sudah diselesaikan</span>
+                            <span className="inline md:hidden">Selesai</span>
+                        </span>
+                    </div>
+
+                    {/* Panduan Button (Royal blue pill button matching screenshot) */}
+                    <button
+                        onClick={() => setIsGuideOpen(true)}
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '5px',
+                            backgroundColor: '#2563eb', // Royal blue Skilvul action button
+                            color: '#ffffff',
+                            border: 'none',
+                            borderRadius: '6px',
+                            padding: '6px 12px',
+                            fontSize: '12px',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            transition: 'opacity 0.2s',
+                        }}
+                    >
+                        <HelpCircle size={13} />
+                        <span className="hidden sm:inline">Panduan Belajar</span>
+                    </button>
+
+                    {/* Hamburger Menu: opens syllabus drawer */}
+                    <button
+                        onClick={() => setIsDrawerOpen(true)}
+                        aria-label="Buka Silabus"
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'var(--text-primary)',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            padding: '6px',
+                            borderRadius: '6px',
+                        }}
+                    >
+                        <Menu size={22} />
+                    </button>
+                </div>
+            </header>
+
+            {/* =========================================================
+                2. MAIN CONTENT AREA: CENTERED LEARNER VIEW
+                H1 Title, Catatan callout box, Video/Text content, Quiz invitation
+                ========================================================= */}
+            <main
+                style={{
+                    flex: 1,
+                    width: '100%',
+                    maxWidth: '860px',
+                    margin: '0 auto',
+                    padding: '36px 20px 120px 20px',
+                    boxSizing: 'border-box',
+                }}
+            >
+                {phase === 'lesson' ? (
+                    <div>
+                        {/* Title: Clean Sentence case H1 */}
+                        <h1
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '28px',
+                                fontWeight: 700,
+                                color: 'var(--text-primary)',
+                                marginBottom: '20px',
+                                letterSpacing: '-0.02em',
+                            }}
+                        >
+                            {activeStep.title}
+                        </h1>
+
+                        {/* Catatan Box: Warm soft yellow alert banner (Exact match to screenshot) */}
+                        <div
+                            style={{
+                                backgroundColor: '#fffcf8',
+                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                borderRadius: '8px',
+                                padding: '16px 20px',
+                                marginBottom: '28px',
+                                color: '#1d1d1d',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                                <span style={{ fontSize: '15px' }}>📝</span>
+                                <strong style={{ fontSize: '14px', fontWeight: 700 }}>Catatan:</strong>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '13px', lineHeight: 1.6, color: '#4a4b4c' }}>
+                                {activeStep.type === 'video'
+                                    ? 'Mohon dipastikan kamu terhubung dengan koneksi Internet yang baik agar dapat mengakses video pembelajaran dengan minimum 720p hingga Full HD 1080p.'
+                                    : 'Pelajari materi dan kode percontohan di bawah ini secara saksama. Kamu dapat mencatat poin-poin utama sebelum melanjutkan ke sesi latihan.'}
+                            </p>
+                        </div>
+
+                        {/* Content Body: Video Player or Text Reading Material */}
+                        {activeStep.type === 'video' ? (
+                            <div>
+                                <div
+                                    style={{
+                                        width: '100%',
+                                        aspectRatio: '16 / 9',
+                                        borderRadius: '10px',
+                                        overflow: 'hidden',
+                                        border: '1px solid var(--border)',
+                                        backgroundColor: '#000000',
+                                        boxShadow: '0 4px 18px rgba(0, 0, 0, 0.1)',
+                                        marginBottom: '14px',
+                                    }}
+                                >
+                                    {videoEmbedUrl ? (
+                                        <iframe
+                                            src={`${videoEmbedUrl}?rel=0&modestbranding=1&playsinline=0&fs=1`}
+                                            title={activeStep.title}
+                                            allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            allowFullScreen
+                                            referrerPolicy="strict-origin-when-cross-origin"
+                                            loading="lazy"
+                                            style={{
+                                                width: '100%',
+                                                height: '100%',
+                                                border: 'none',
+                                                display: 'block',
+                                            }}
+                                        />
+                                    ) : (
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                width: '100%',
+                                                height: '100%',
+                                                color: '#ffffff',
+                                                fontSize: '13px',
+                                                textAlign: 'center',
+                                                padding: '20px',
+                                            }}
+                                        >
+                                            Video pembelajaran sedang disiapkan.
+                                        </div>
+                                    )}
+                                </div>
+
+                                {videoEmbedUrl && (
+                                    <div style={{ marginBottom: '20px' }}>
                                         <a
                                             href={youtubeWatchUrl}
                                             target="_blank"
@@ -501,222 +1155,884 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                                                 display: 'inline-flex',
                                                 alignItems: 'center',
                                                 gap: '6px',
-                                                marginBottom: '10px',
-                                                fontSize: '12px',
-                                                color: 'var(--accent-cyan)',
+                                                fontSize: '13px',
+                                                color: '#2563eb',
                                                 textDecoration: 'none',
+                                                fontWeight: 500,
                                             }}
                                         >
-                                            Buka di YouTube
+                                            <ExternalLink size={13} /> Tonton langsung di YouTube
                                         </a>
-                                    )}
-                                    {showVideoText && (
-                                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
-                                            {videoRawContent}
-                                        </p>
-                                    )}
-                                </div>
-                            ) : (
-                                <div style={{ color: 'var(--text-secondary)', fontSize: '14px', lineHeight: 1.8, whiteSpace: 'pre-wrap' }}>
-                                    {activeStep.content}
-                                </div>
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
+                                    </div>
+                                )}
 
-                    {/* Navigation Buttons */}
-                    <div
-                        className="module-nav-floating"
-                        style={{
-                            marginTop: 'auto',
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            gap: '12px',
-                            padding: '12px 16px',
-                            borderRadius: '10px',
-                            border: '1px solid var(--border)',
-                            backgroundColor: 'color-mix(in srgb, var(--bg-primary) 92%, transparent)',
-                            backdropFilter: 'blur(8px)',
-                            WebkitBackdropFilter: 'blur(8px)',
-                        }}
-                    >
-                        <button
-                            onClick={() => setCurrentStep(s => Math.max(0, s - 1))}
-                            disabled={currentStep === 0}
-                            style={{
-                                padding: '10px 20px', borderRadius: '4px', cursor: currentStep === 0 ? 'not-allowed' : 'pointer',
-                                backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border)',
-                                color: currentStep === 0 ? 'var(--text-muted)' : 'var(--text-primary)', fontSize: '13px',
-                            }}
-                        >
-                            ← Sebelumnya
-                        </button>
-                        {currentStep < steps.length - 1 ? (
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                onClick={() => setCurrentStep(s => s + 1)}
-                                style={{
-                                    padding: '10px 20px', borderRadius: '4px', cursor: 'pointer',
-                                    backgroundColor: 'var(--accent-cyan)', border: 'none',
-                                    color: 'var(--bg-primary)', fontSize: '13px', fontWeight: 600,
-                                    display: 'flex', alignItems: 'center', gap: '6px',
-                                }}
-                            >
-                                Selanjutnya <ChevronRight size={14} />
-                            </motion.button>
-                        ) : hasQuiz ? (
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                onClick={() => setPhase('quiz')}
-                                style={{
-                                    padding: '10px 24px', borderRadius: '4px', cursor: 'pointer',
-                                    backgroundColor: 'var(--accent-gold)', border: 'none',
-                                    color: 'var(--bg-primary)', fontSize: '13px', fontWeight: 700,
-                                    fontFamily: 'var(--font-heading)',
-                                }}
-                            >
-                                Lanjut ke Quiz
-                            </motion.button>
-                        ) : !completed ? (
-                            <motion.button
-                                whileHover={{ scale: 1.02 }}
-                                onClick={handleComplete}
-                                disabled={loading}
-                                style={{
-                                    ...COMPLETE_CTA_STYLE,
-                                    cursor: loading ? 'not-allowed' : 'pointer',
-                                    backgroundColor: 'var(--accent-green)', border: 'none',
-                                }}
-                            >
-                                {completionCtaText}
-                            </motion.button>
+                                {showVideoText && (
+                                    <div style={{ marginTop: '16px' }}>
+                                        <RichContentRenderer content={videoRawContent} />
+                                    </div>
+                                )}
+                            </div>
                         ) : (
-                            <div style={{ color: 'var(--accent-green)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <CheckCircle size={16} /> Modul Selesai!
+                            <div>
+                                <RichContentRenderer content={activeStep.content} />
+                            </div>
+                        )}
+
+                        {/* Pre-Quiz Exercise Banner: Exact match to Screenshot 13-53-57 */}
+                        {hasQuiz && (
+                            <div
+                                style={{
+                                    marginTop: '48px',
+                                    padding: '36px 20px',
+                                    borderRadius: '12px',
+                                    border: '1px solid var(--border)',
+                                    backgroundColor: 'var(--surface-card, #ffffff)',
+                                    textAlign: 'center',
+                                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)',
+                                }}
+                            >
+                                <h3
+                                    style={{
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '22px',
+                                        fontWeight: 700,
+                                        color: 'var(--text-primary)',
+                                        marginBottom: '8px',
+                                    }}
+                                >
+                                    Yuk uji pengetahuanmu dengan latihan!
+                                </h3>
+                                <p
+                                    style={{
+                                        fontSize: '14px',
+                                        color: 'var(--text-secondary)',
+                                        maxWidth: '560px',
+                                        margin: '0 auto 24px auto',
+                                        lineHeight: 1.6,
+                                    }}
+                                >
+                                    Setelah membaca materi, ini saatnya kamu mengukur pengetahuanmu tentang materi ini.
+                                    Materi ini tetap bisa kamu akses saat mengerjakan latihan.
+                                </p>
+                                <button
+                                    onClick={() => {
+                                        setPhase('quiz')
+                                        window.scrollTo({ top: 0, behavior: 'smooth' })
+                                    }}
+                                    style={{
+                                        backgroundColor: '#dc2626', // Skilvul Red CTA
+                                        color: '#ffffff',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        padding: '11px 28px',
+                                        fontSize: '14px',
+                                        fontWeight: 700,
+                                        fontFamily: 'var(--font-heading)',
+                                        cursor: 'pointer',
+                                        boxShadow: '0 2px 6px rgba(220, 38, 38, 0.3)',
+                                        transition: 'opacity 0.2s',
+                                    }}
+                                >
+                                    Mulai Latihan
+                                </button>
                             </div>
                         )}
                     </div>
-                </div>
-            ) : (
-                <div>
-                    {hasQuiz ? (
-                        <div className="card" style={{ padding: '24px' }}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700 }}>
-                                    Quiz — {module.title}
-                                </h2>
-                                <button
-                                    onClick={() => setPhase('lesson')}
+                ) : (
+                    /* =========================================================
+                       QUIZ / EXERCISE INTERACTION VIEW
+                       ========================================================= */
+                    <div>
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                marginBottom: '20px',
+                                flexWrap: 'wrap',
+                                gap: '12px',
+                            }}
+                        >
+                            <div>
+                                <h1
                                     style={{
-                                        backgroundColor: 'transparent',
-                                        border: '1px solid var(--border)',
-                                        borderRadius: '6px',
-                                        color: 'var(--text-secondary)',
-                                        padding: '6px 10px',
-                                        cursor: 'pointer',
-                                        fontSize: '12px',
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '26px',
+                                        fontWeight: 700,
+                                        color: 'var(--text-primary)',
+                                        marginBottom: '4px',
                                     }}
                                 >
-                                    Kembali ke Materi
-                                </button>
+                                    Latihan Pemahaman: {module.title}
+                                </h1>
+                                <p style={{ fontSize: '13px', color: 'var(--text-secondary)', margin: 0 }}>
+                                    Jawab semua soal di bawah ini untuk menguji pemahaman dan membuka reward modul.
+                                </p>
                             </div>
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '20px' }}>
-                                Jawab semua soal dulu sebelum modul bisa diselesaikan.
+                            <button
+                                onClick={() => setPhase('lesson')}
+                                style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                    padding: '7px 14px',
+                                    borderRadius: '6px',
+                                    border: '1px solid var(--border)',
+                                    backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '13px',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                <ArrowLeft size={14} /> Kembali ke Materi
+                            </button>
+                        </div>
+
+                        {/* Catatan Box for Quiz */}
+                        <div
+                            style={{
+                                backgroundColor: '#fffcf8',
+                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                borderRadius: '8px',
+                                padding: '14px 18px',
+                                marginBottom: '24px',
+                                color: '#1d1d1d',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                                <span style={{ fontSize: '14px' }}>💡</span>
+                                <strong style={{ fontSize: '13px', fontWeight: 700 }}>Tips Mengerjakan:</strong>
+                            </div>
+                            <p style={{ margin: 0, fontSize: '13px', color: '#4a4b4c' }}>
+                                Kamu dapat kembali ke halaman materi kapan saja menggunakan tombol &quot;Kembali ke Materi&quot;.
+                                Jawaban yang sudah kamu pilih akan tetap tersimpan.
                             </p>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                                {currentQuestions.map((q, qi) => {
-                                    const selected = quizAnswers[q.id]
-                                    const isCorrect = selected === q.correct_option
-                                    return (
-                                        <div key={q.id}>
-                                            <p style={{ fontWeight: 600, marginBottom: '10px', fontSize: '14px' }}>
-                                                {qi + 1}. {q.question_text}
-                                            </p>
-                                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                                {q.options.map((opt, idx) => {
-                                                    const { backgroundColor, borderColor } = getQuizOptionVisual(idx, selected, isCorrect, q.correct_option)
-                                                    return (
-                                                        <button key={idx} onClick={() => handleAnswer(q.id, idx)} style={{
-                                                            textAlign: 'left', padding: '10px 12px', borderRadius: '4px',
-                                                            backgroundColor, border: `1px solid ${borderColor}`,
-                                                            color: 'var(--text-primary)', fontSize: '13px', cursor: quizSubmitted ? 'default' : 'pointer',
-                                                        }}>
-                                                            {String.fromCharCode(65 + idx)}. {opt}
-                                                        </button>
-                                                    )
-                                                })}
-                                            </div>
-                                            {quizSubmitted && q.explanation && (
-                                                <div style={{ marginTop: '8px', padding: '8px', borderRadius: '4px', backgroundColor: 'rgba(0,212,255,0.05)', border: '1px solid rgba(0,212,255,0.2)', fontSize: '12px', color: 'var(--text-secondary)' }}>
-                                                    💡 {q.explanation}
-                                                </div>
-                                            )}
+                        </div>
+
+                        {/* Questions List */}
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                            {currentQuestions.map((q, qIdx) => {
+                                const selected = quizAnswers[q.id]
+                                const isCorrect = selected === q.correct_option
+
+                                return (
+                                    <div
+                                        key={q.id}
+                                        style={{
+                                            padding: '20px',
+                                            borderRadius: '10px',
+                                            border: '1px solid var(--border)',
+                                            backgroundColor: 'var(--surface-card, #ffffff)',
+                                        }}
+                                    >
+                                        <p style={{ fontSize: '15px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '14px' }}>
+                                            {qIdx + 1}. {q.question_text}
+                                        </p>
+
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            {q.options.map((opt, optIdx) => {
+                                                const isThisSelected = selected === optIdx
+                                                let optBg = 'var(--surface-canvas, #fafafa)'
+                                                let optBorder = 'var(--border)'
+                                                let optColor = 'var(--text-primary)'
+
+                                                if (quizSubmitted) {
+                                                    if (optIdx === q.correct_option) {
+                                                        optBg = 'rgba(22, 163, 74, 0.1)'
+                                                        optBorder = 'var(--accent-green, #16a34a)'
+                                                        optColor = 'var(--accent-green, #16a34a)'
+                                                    } else if (isThisSelected && !isCorrect) {
+                                                        optBg = 'rgba(220, 38, 38, 0.1)'
+                                                        optBorder = '#dc2626'
+                                                        optColor = '#dc2626'
+                                                    }
+                                                } else if (isThisSelected) {
+                                                    optBg = 'rgba(220, 38, 38, 0.08)'
+                                                    optBorder = '#dc2626'
+                                                    optColor = '#dc2626'
+                                                }
+
+                                                return (
+                                                    <button
+                                                        key={optIdx}
+                                                        onClick={() => handleAnswer(q.id, optIdx)}
+                                                        disabled={quizSubmitted}
+                                                        style={{
+                                                            textAlign: 'left',
+                                                            padding: '10px 14px',
+                                                            borderRadius: '6px',
+                                                            backgroundColor: optBg,
+                                                            border: `1px solid ${optBorder}`,
+                                                            color: optColor,
+                                                            fontSize: '14px',
+                                                            cursor: quizSubmitted ? 'default' : 'pointer',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            gap: '10px',
+                                                            transition: 'all 0.15s ease',
+                                                        }}
+                                                    >
+                                                        <span
+                                                            style={{
+                                                                width: '24px',
+                                                                height: '24px',
+                                                                borderRadius: '4px',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                justifyContent: 'center',
+                                                                fontSize: '12px',
+                                                                fontWeight: 700,
+                                                                backgroundColor: isThisSelected ? '#dc2626' : 'var(--surface-elevated, #f4f4f5)',
+                                                                color: isThisSelected ? '#ffffff' : 'var(--text-muted)',
+                                                            }}
+                                                        >
+                                                            {String.fromCharCode(65 + optIdx)}
+                                                        </span>
+                                                        <span>{opt}</span>
+                                                    </button>
+                                                )
+                                            })}
                                         </div>
-                                    )
-                                })}
-                            </div>
+
+                                        {quizSubmitted && q.explanation && (
+                                            <div
+                                                style={{
+                                                    marginTop: '12px',
+                                                    padding: '10px 14px',
+                                                    borderRadius: '6px',
+                                                    backgroundColor: 'rgba(37, 99, 235, 0.06)',
+                                                    border: '1px solid rgba(37, 99, 235, 0.2)',
+                                                    fontSize: '13px',
+                                                    color: 'var(--text-secondary)',
+                                                }}
+                                            >
+                                                💡 <strong>Penjelasan:</strong> {q.explanation}
+                                            </div>
+                                        )}
+                                    </div>
+                                )
+                            })}
+                        </div>
+
+                        {/* Quiz CTA Buttons */}
+                        <div style={{ marginTop: '28px', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
                             {!quizSubmitted ? (
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
+                                <button
                                     onClick={handleSubmitQuiz}
                                     disabled={!allQuizAnswered}
                                     style={{
-                                        ...QUIZ_PRIMARY_CTA_STYLE,
-                                        marginTop: '20px',
-                                        backgroundColor: 'var(--accent-gold)',
+                                        backgroundColor: '#dc2626',
+                                        color: '#ffffff',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        padding: '12px 28px',
+                                        fontSize: '14px',
+                                        fontWeight: 700,
+                                        fontFamily: 'var(--font-heading)',
                                         cursor: allQuizAnswered ? 'pointer' : 'not-allowed',
                                         opacity: allQuizAnswered ? 1 : 0.6,
                                     }}
                                 >
-                                    SUBMIT JAWABAN
-                                </motion.button>
-                            ) : !completed && (
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
+                                    Periksa Jawaban
+                                </button>
+                            ) : !completed ? (
+                                <button
                                     onClick={handleComplete}
                                     disabled={loading || !canComplete}
                                     style={{
-                                        ...QUIZ_PRIMARY_CTA_STYLE,
-                                        marginTop: '16px',
-                                        backgroundColor: 'var(--accent-green)',
+                                        backgroundColor: 'var(--accent-green, #16a34a)',
+                                        color: '#ffffff',
+                                        border: 'none',
+                                        borderRadius: '6px',
+                                        padding: '12px 28px',
+                                        fontSize: '14px',
+                                        fontWeight: 700,
+                                        fontFamily: 'var(--font-heading)',
                                         cursor: loading ? 'not-allowed' : 'pointer',
                                     }}
                                 >
-                                    {completionCtaText}
-                                </motion.button>
-                            )}
-                        </div>
-                    ) : (
-                        <div className="card" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
-                            <BookOpen size={32} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-                            <p>Konten modul sedang dipersiapkan</p>
-                            {!completed && (
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    onClick={handleComplete}
-                                    disabled={loading}
+                                    {loading
+                                        ? 'Menyimpan...'
+                                        : `✓ Selesaikan & Klaim ${module.xp_reward}${hasClassBonus ? ` + ${bonusXp}` : ''} XP`}
+                                </button>
+                            ) : (
+                                <div
                                     style={{
-                                        ...QUIZ_PRIMARY_CTA_STYLE,
-                                        marginTop: '16px',
-                                        backgroundColor: 'var(--accent-gold)',
-                                        cursor: loading ? 'not-allowed' : 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '6px',
+                                        color: 'var(--accent-green, #16a34a)',
+                                        fontWeight: 700,
+                                        fontSize: '15px',
                                     }}
                                 >
-                                    {loading ? 'Menyimpan...' : `Tandai Selesai (+${module.xp_reward}${hasClassBonus ? ` + ${bonusXp} bonus` : ''} XP)`}
-                                </motion.button>
+                                    <CheckCircle size={18} /> Modul Telah Selesai
+                                </div>
                             )}
                         </div>
+                    </div>
+                )}
+            </main>
+
+            {/* =========================================================
+                3. STICKY BOTTOM NAVIGATION BAR: EXACT SKILVUL BAR
+                Full-width Crimson Red Bar (#dc2626)
+                Left: Prev Step | Center: Mulai Latihan | Right: Next Step
+                ========================================================= */}
+            <footer
+                style={{
+                    position: 'fixed',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: '56px',
+                    backgroundColor: '#dc2626', // Crimson Red Skilvul Bottom Navigation
+                    color: '#ffffff',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '0 20px',
+                    zIndex: 50,
+                    boxShadow: '0 -2px 10px rgba(0, 0, 0, 0.15)',
+                }}
+            >
+                {/* Left: Previous step */}
+                <div>
+                    {phase === 'lesson' ? (
+                        currentStep > 0 ? (
+                            <button
+                                onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#ffffff',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    maxWidth: '220px',
+                                }}
+                                title={steps[currentStep - 1]?.title}
+                            >
+                                <span>&lt;</span>
+                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} className="hidden sm:inline">
+                                    {steps[currentStep - 1]?.title}
+                                </span>
+                                <span className="inline sm:hidden">Sebelumnya</span>
+                            </button>
+                        ) : (
+                            <Link
+                                href="/modules"
+                                style={{
+                                    color: '#ffffff',
+                                    textDecoration: 'none',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                <span>&lt;</span> Modul
+                            </Link>
+                        )
+                    ) : (
+                        <button
+                            onClick={() => setPhase('lesson')}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#ffffff',
+                                cursor: 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                            }}
+                        >
+                            <span>&lt;</span> Kembali ke Materi
+                        </button>
                     )}
                 </div>
-            )}
 
+                {/* Center: Mulai Latihan Button (Exact match to Screenshot 13-52-10) */}
+                <div>
+                    {phase === 'lesson' && hasQuiz && (
+                        <button
+                            onClick={() => {
+                                setPhase('quiz')
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                            }}
+                            style={{
+                                backgroundColor: '#ffffff',
+                                color: '#dc2626',
+                                border: 'none',
+                                borderRadius: '6px',
+                                padding: '6px 18px',
+                                fontSize: '13px',
+                                fontWeight: 700,
+                                fontFamily: 'var(--font-heading)',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                boxShadow: '0 2px 6px rgba(0, 0, 0, 0.2)',
+                            }}
+                        >
+                            <FileText size={14} /> Mulai Latihan
+                        </button>
+                    )}
+                    {phase === 'quiz' && (
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.9)' }}>
+                            {answeredCount}/{currentQuestions.length} Soal Dijawab
+                        </span>
+                    )}
+                    {completed && phase === 'lesson' && !hasQuiz && (
+                        <span style={{ fontSize: '12px', fontWeight: 600, color: 'rgba(255, 255, 255, 0.9)' }}>
+                            ✓ Modul Selesai
+                        </span>
+                    )}
+                </div>
+
+                {/* Right: Next step or Complete action */}
+                <div>
+                    {phase === 'lesson' ? (
+                        currentStep < totalSteps - 1 ? (
+                            <button
+                                onClick={() => setCurrentStep((s) => s + 1)}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#ffffff',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    maxWidth: '220px',
+                                }}
+                                title={steps[currentStep + 1]?.title}
+                            >
+                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} className="hidden sm:inline">
+                                    {steps[currentStep + 1]?.title}
+                                </span>
+                                <span className="inline sm:hidden">Selanjutnya</span>
+                                <span>&gt;</span>
+                            </button>
+                        ) : hasQuiz ? (
+                            <button
+                                onClick={() => {
+                                    setPhase('quiz')
+                                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                                }}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#ffffff',
+                                    cursor: 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: 700,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                Latihan &gt;
+                            </button>
+                        ) : !completed ? (
+                            <button
+                                onClick={handleComplete}
+                                disabled={loading}
+                                style={{
+                                    background: 'transparent',
+                                    border: 'none',
+                                    color: '#ffffff',
+                                    cursor: loading ? 'not-allowed' : 'pointer',
+                                    fontSize: '13px',
+                                    fontWeight: 700,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                Selesaikan &gt;
+                            </button>
+                        ) : (
+                            <Link
+                                href="/modules"
+                                style={{
+                                    color: '#ffffff',
+                                    textDecoration: 'none',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                Daftar Modul &gt;
+                            </Link>
+                        )
+                    ) : quizSubmitted && !completed ? (
+                        <button
+                            onClick={handleComplete}
+                            disabled={loading || !canComplete}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: '#ffffff',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                fontSize: '13px',
+                                fontWeight: 700,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                            }}
+                        >
+                            Klaim XP &gt;
+                        </button>
+                    ) : (
+                        <Link
+                            href="/modules"
+                            style={{
+                                color: '#ffffff',
+                                textDecoration: 'none',
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                            }}
+                        >
+                            Selesai &gt;
+                        </Link>
+                    )}
+                </div>
+            </footer>
+
+            {/* =========================================================
+                4. SLIDE-OVER SYLLABUS DRAWER: Toggled by ☰
+                ========================================================= */}
+            <AnimatePresence>
+                {isDrawerOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.45)',
+                            zIndex: 100,
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                        }}
+                        onClick={() => setIsDrawerOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', damping: 25, stiffness: 250 }}
+                            style={{
+                                width: '380px',
+                                maxWidth: '90vw',
+                                height: '100%',
+                                backgroundColor: 'var(--surface-card, #ffffff)',
+                                borderLeft: '1px solid var(--border)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                overflow: 'hidden',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            {/* Drawer Header */}
+                            <div
+                                style={{
+                                    padding: '16px 20px',
+                                    borderBottom: '1px solid var(--border)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                }}
+                            >
+                                <h3
+                                    style={{
+                                        margin: 0,
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '17px',
+                                        fontWeight: 700,
+                                        color: 'var(--text-primary)',
+                                    }}
+                                >
+                                    Silabus & Kurikulum Modul
+                                </h3>
+                                <button
+                                    onClick={() => setIsDrawerOpen(false)}
+                                    style={{
+                                        background: 'transparent',
+                                        border: 'none',
+                                        color: 'var(--text-muted)',
+                                        cursor: 'pointer',
+                                        padding: '4px',
+                                        display: 'flex',
+                                    }}
+                                >
+                                    <X size={20} />
+                                </button>
+                            </div>
+
+                            {/* Module Summary Card */}
+                            <div style={{ padding: '20px', borderBottom: '1px solid var(--border)' }}>
+                                <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', fontWeight: 700 }}>
+                                    {module.title}
+                                </h4>
+                                <div style={{ display: 'flex', gap: '12px', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                        <Clock size={12} /> {module.duration_minutes || 45} menit
+                                    </span>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#ea580c' }}>
+                                        <Zap size={12} /> +{module.xp_reward} XP
+                                    </span>
+                                </div>
+                                <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated, #f4f4f5)', borderRadius: '3px', overflow: 'hidden' }}>
+                                    <div style={{ height: '100%', width: `${progressPercent}%`, backgroundColor: '#ea580c' }} />
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                                    <span>{progressPercent}% Terselesaikan</span>
+                                    <span>{completedItemsCount}/{totalItemsCount} Unit</span>
+                                </div>
+                            </div>
+
+                            {/* Steps List */}
+                            <div style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+                                {steps.map((st, i) => {
+                                    const isCurrent = phase === 'lesson' && currentStep === i
+                                    return (
+                                        <button
+                                            key={st.id}
+                                            onClick={() => {
+                                                setCurrentStep(i)
+                                                setPhase('lesson')
+                                                setIsDrawerOpen(false)
+                                            }}
+                                            style={{
+                                                width: '100%',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'space-between',
+                                                padding: '12px',
+                                                borderRadius: '8px',
+                                                border: `1px solid ${isCurrent ? '#dc2626' : 'var(--border)'}`,
+                                                backgroundColor: isCurrent ? 'rgba(220, 38, 38, 0.05)' : 'var(--surface-card, #ffffff)',
+                                                color: isCurrent ? '#dc2626' : 'var(--text-primary)',
+                                                cursor: 'pointer',
+                                                textAlign: 'left',
+                                                marginBottom: '8px',
+                                                transition: 'all 0.15s ease',
+                                            }}
+                                        >
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                                                <div
+                                                    style={{
+                                                        width: '28px',
+                                                        height: '28px',
+                                                        borderRadius: '6px',
+                                                        backgroundColor: isCurrent ? '#dc2626' : 'var(--surface-elevated, #f4f4f5)',
+                                                        color: isCurrent ? '#ffffff' : 'var(--text-secondary)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        fontSize: '12px',
+                                                        fontWeight: 700,
+                                                        flexShrink: 0,
+                                                    }}
+                                                >
+                                                    {st.type === 'video' ? <Play size={13} /> : <FileText size={13} />}
+                                                </div>
+                                                <div style={{ minWidth: 0 }}>
+                                                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px' }}>
+                                                        Langkah {i + 1}
+                                                    </div>
+                                                    <div style={{ fontSize: '13px', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                        {st.title}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {completed && <CheckCircle size={16} style={{ color: 'var(--accent-green, #16a34a)' }} />}
+                                        </button>
+                                    )
+                                })}
+
+                                {hasQuiz && (
+                                    <button
+                                        onClick={() => {
+                                            setPhase('quiz')
+                                            setIsDrawerOpen(false)
+                                        }}
+                                        style={{
+                                            width: '100%',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            justifyContent: 'space-between',
+                                            padding: '12px',
+                                            borderRadius: '8px',
+                                            border: `1px solid ${phase === 'quiz' ? '#dc2626' : 'var(--border)'}`,
+                                            backgroundColor: phase === 'quiz' ? 'rgba(220, 38, 38, 0.05)' : 'var(--surface-card, #ffffff)',
+                                            color: phase === 'quiz' ? '#dc2626' : 'var(--text-primary)',
+                                            cursor: 'pointer',
+                                            textAlign: 'left',
+                                            marginTop: '12px',
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <div
+                                                style={{
+                                                    width: '28px',
+                                                    height: '28px',
+                                                    borderRadius: '6px',
+                                                    backgroundColor: phase === 'quiz' ? '#dc2626' : 'var(--surface-elevated, #f4f4f5)',
+                                                    color: phase === 'quiz' ? '#ffffff' : 'var(--text-secondary)',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    justifyContent: 'center',
+                                                    fontSize: '12px',
+                                                    fontWeight: 700,
+                                                    flexShrink: 0,
+                                                }}
+                                            >
+                                                <HelpCircle size={14} />
+                                            </div>
+                                            <div>
+                                                <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Evaluasi</div>
+                                                <div style={{ fontSize: '13px', fontWeight: 600 }}>Latihan & Kuis ({currentQuestions.length} Soal)</div>
+                                            </div>
+                                        </div>
+                                        {completed && <CheckCircle size={16} style={{ color: 'var(--accent-green, #16a34a)' }} />}
+                                    </button>
+                                )}
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* =========================================================
+                5. LEARNING GUIDE MODAL: Toggled by Panduan Button
+                ========================================================= */}
+            <AnimatePresence>
+                {isGuideOpen && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: '20px',
+                            zIndex: 100,
+                        }}
+                        onClick={() => setIsGuideOpen(false)}
+                    >
+                        <motion.div
+                            initial={{ y: 20, opacity: 0, scale: 0.98 }}
+                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                            exit={{ y: 15, opacity: 0, scale: 0.98 }}
+                            style={{
+                                width: '100%',
+                                maxWidth: '480px',
+                                backgroundColor: 'var(--surface-card, #ffffff)',
+                                border: '1px solid var(--border)',
+                                borderRadius: '12px',
+                                padding: '24px',
+                                boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: '19px', fontWeight: 700 }}>
+                                    Panduan Belajar Modul
+                                </h3>
+                                <button
+                                    onClick={() => setIsGuideOpen(false)}
+                                    style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', fontSize: '13px', lineHeight: 1.6, color: 'var(--text-secondary)' }}>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <span style={{ fontSize: '18px' }}>📶</span>
+                                    <div>
+                                        <strong style={{ color: 'var(--text-primary)' }}>Koneksi & Video:</strong> Pastikan internetmu stabil dengan kecepatan minimum 5 Mbps untuk streaming 720p - 1080p tanpa kendala.
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <span style={{ fontSize: '18px' }}>📑</span>
+                                    <div>
+                                        <strong style={{ color: 'var(--text-primary)' }}>Navigasi Materi:</strong> Gunakan menu dropdown di bagian atas atau tombol bar navigasi merah di bagian bawah untuk berpindah antar langkah.
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <span style={{ fontSize: '18px' }}>📝</span>
+                                    <div>
+                                        <strong style={{ color: 'var(--text-primary)' }}>Latihan Pemahaman:</strong> Setiap modul dilengkapi sesi latihan. Jawab seluruh soal latihan untuk membuka penyelesaian modul dan mengklaim XP.
+                                    </div>
+                                </div>
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <span style={{ fontSize: '18px' }}>⚔️</span>
+                                    <div>
+                                        <strong style={{ color: 'var(--text-primary)' }}>Bonus Kelas RPG:</strong> {hasClassBonus ? (
+                                            <span style={{ color: 'var(--accent-green, #16a34a)', fontWeight: 600 }}>
+                                                Kelasmu ({avatarClass}) mendapatkan BONUS +{bonusXp} XP ({CLASS_BONUS_PERCENT}%) untuk kategori modul ini!
+                                            </span>
+                                        ) : (
+                                            <span>Raih +{module.xp_reward} XP setelah menyelesaikan modul ini.</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button
+                                onClick={() => setIsGuideOpen(false)}
+                                style={{
+                                    width: '100%',
+                                    marginTop: '22px',
+                                    padding: '10px',
+                                    borderRadius: '6px',
+                                    backgroundColor: '#2563eb',
+                                    color: '#ffffff',
+                                    border: 'none',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Mengerti, Lanjutkan Belajar
+                            </button>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* =========================================================
+                6. COMPLETION FEEDBACK MODAL: Level up & XP Claim
+                ========================================================= */}
             <AnimatePresence>
                 {completionFeedback && (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="modal-overlay"
                         style={{
                             position: 'fixed',
                             inset: 0,
@@ -726,9 +2042,6 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                             justifyContent: 'center',
                             padding: '16px',
                             zIndex: 1000,
-                            overflow: 'hidden',
-                            touchAction: 'none',
-                            overscrollBehavior: 'none',
                         }}
                         onClick={() => setCompletionFeedback(null)}
                     >
@@ -737,82 +2050,101 @@ export default function ModuleDetail({ module, userModule, completedFromLog = fa
                             animate={{ y: 0, opacity: 1, scale: 1 }}
                             exit={{ y: 10, opacity: 0, scale: 0.98 }}
                             transition={{ duration: 0.2 }}
-                            className="card"
                             style={{
                                 width: '100%',
                                 maxWidth: '420px',
-                                padding: '20px',
-                                border: '1px solid rgba(34, 197, 94, 0.35)',
+                                padding: '24px',
+                                backgroundColor: 'var(--surface-card, #ffffff)',
+                                borderRadius: '12px',
+                                border: '1px solid var(--border)',
+                                boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-                                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, color: 'var(--accent-green)' }}>
-                                    {completionFeedback.alreadyClaimed ? 'Modul Sudah Pernah Selesai' : 'Modul Berhasil Diselesaikan'}
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                                <h3 style={{ margin: 0, fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 800, color: 'var(--accent-green, #16a34a)' }}>
+                                    {completionFeedback.alreadyClaimed ? 'Modul Sudah Selesai' : '🎉 Modul Berhasil Diselesaikan!'}
                                 </h3>
                                 <button
                                     onClick={() => setCompletionFeedback(null)}
-                                    style={{
-                                        border: 'none',
-                                        background: 'transparent',
-                                        color: 'var(--text-muted)',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                    }}
+                                    style={{ border: 'none', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer' }}
                                 >
                                     <X size={16} />
                                 </button>
                             </div>
 
-                            <div style={{ display: 'grid', gap: '8px', marginBottom: '14px' }}>
+                            <div style={{ display: 'grid', gap: '8px', marginBottom: '16px' }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                                     <span style={{ color: 'var(--text-secondary)' }}>Base XP</span>
                                     <span style={{ fontWeight: 700 }}>+{completionFeedback.baseAward}</span>
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                                    <span style={{ color: 'var(--text-secondary)' }}>Bonus Class</span>
-                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? 'var(--accent-gold)' : 'var(--text-muted)' }}>
+                                    <span style={{ color: 'var(--text-secondary)' }}>Bonus Kelas</span>
+                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? '#ea580c' : 'var(--text-muted)' }}>
                                         +{completionFeedback.bonusAmount}
                                     </span>
                                 </div>
                                 <div style={{ height: '1px', backgroundColor: 'var(--border)' }} />
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
-                                    <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Total XP</span>
-                                    <span style={{ fontWeight: 800, color: 'var(--accent-cyan)' }}>+{completionFeedback.totalAwarded}</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px' }}>
+                                    <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Total Reward</span>
+                                    <span style={{ fontWeight: 800, color: '#dc2626' }}>+{completionFeedback.totalAwarded} XP</span>
                                 </div>
                             </div>
 
                             {completionFeedback.leveledUp && completionFeedback.newLevel && (
-                                <div style={{
-                                    marginBottom: '14px',
-                                    padding: '10px 12px',
-                                    borderRadius: '8px',
-                                    border: '1px solid rgba(245,197,66,0.4)',
-                                    backgroundColor: 'rgba(245,197,66,0.1)',
-                                    fontSize: '13px',
-                                    color: 'var(--accent-gold)',
-                                    fontWeight: 700,
-                                }}>
-                                    Level up! Kamu sekarang Level {completionFeedback.newLevel}
+                                <div
+                                    style={{
+                                        marginBottom: '16px',
+                                        padding: '12px',
+                                        borderRadius: '8px',
+                                        border: '1px solid rgba(234, 88, 12, 0.4)',
+                                        backgroundColor: 'rgba(234, 88, 12, 0.1)',
+                                        fontSize: '13px',
+                                        color: '#ea580c',
+                                        fontWeight: 700,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '8px',
+                                    }}
+                                >
+                                    <Sparkles size={16} /> Level Up! Kamu sekarang Level {completionFeedback.newLevel}
                                 </div>
                             )}
 
-                            <button
-                                onClick={() => setCompletionFeedback(null)}
-                                style={{
-                                    width: '100%',
-                                    padding: '10px 14px',
-                                    borderRadius: '8px',
-                                    border: 'none',
-                                    backgroundColor: 'var(--accent-cyan)',
-                                    color: 'var(--bg-primary)',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
-                                }}
-                            >
-                                Oke, lanjut
-                            </button>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                    onClick={() => setCompletionFeedback(null)}
+                                    style={{
+                                        flex: 1,
+                                        padding: '10px 14px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--border)',
+                                        backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                        color: 'var(--text-primary)',
+                                        fontWeight: 600,
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Tetap di Sini
+                                </button>
+                                <button
+                                    onClick={() => router.push('/modules')}
+                                    style={{
+                                        flex: 1,
+                                        padding: '10px 14px',
+                                        borderRadius: '6px',
+                                        border: 'none',
+                                        backgroundColor: '#dc2626',
+                                        color: '#ffffff',
+                                        fontWeight: 700,
+                                        fontSize: '13px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    Kembali ke Modul
+                                </button>
+                            </div>
                         </motion.div>
                     </motion.div>
                 )}

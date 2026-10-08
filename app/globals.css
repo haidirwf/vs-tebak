@@ -2187,6 +2187,41 @@ input::placeholder, textarea::placeholder {
 }
 
 /* ===================================================
+   SKILVUL LEARNING PLAYER FULL-FOCUS STYLES
+   =================================================== */
+.dashboard-shell.in-learning-mode {
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow: hidden !important;
+  background-color: var(--surface-canvas) !important;
+}
+
+.dashboard-shell.in-learning-mode .dashboard-topbar,
+.dashboard-shell.in-learning-mode .dashboard-bottom-navbar,
+.dashboard-shell.in-learning-mode .dashboard-sidebar {
+  display: none !important;
+}
+
+.dashboard-shell.in-learning-mode .dashboard-main {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  overflow: hidden !important;
+}
+
+.dashboard-shell.in-learning-mode .dashboard-content {
+  padding: 0 !important;
+  padding-bottom: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100vh !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ===================================================
    TAILWIND V4 THEME EXTENSIONS (LINEARITY SPEC)
    =================================================== */
 

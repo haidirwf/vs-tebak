@@ -13,8 +13,10 @@ interface DashboardShellWrapperProps {
 export default function DashboardShellWrapper({ children }: DashboardShellWrapperProps) {
     const pathname = usePathname()
     const contentRef = useRef<HTMLElement>(null)
-    // Deteksi apakah sedang berada di layar aktif pertarungan (1v1 duel room atau vs computer)
+    // Deteksi apakah sedang berada di layar aktif pertarungan atau mode player modul
     const isLiveBattle = pathname?.startsWith('/battle/') && pathname !== '/battle'
+    const isModuleLearning = pathname?.startsWith('/modules/') && pathname !== '/modules'
+    const isFocusedMode = isLiveBattle || isModuleLearning
 
     // Reset scroll saat rute berganti agar tidak ada glitch "fullscreen" / navbar hilang
     useEffect(() => {
@@ -27,10 +29,10 @@ export default function DashboardShellWrapper({ children }: DashboardShellWrappe
     }, [pathname])
 
     return (
-        <div className={`dashboard-shell ${isLiveBattle ? 'in-live-battle' : ''}`}>
-            {!isLiveBattle && <Sidebar />}
+        <div className={`dashboard-shell ${isLiveBattle ? 'in-live-battle' : ''} ${isModuleLearning ? 'in-learning-mode' : ''}`}>
+            {!isFocusedMode && <Sidebar />}
             <div className="dashboard-main">
-                {!isLiveBattle && (
+                {!isFocusedMode && (
                     <div className="dashboard-topbar">
                         <Topbar />
                     </div>
@@ -39,7 +41,7 @@ export default function DashboardShellWrapper({ children }: DashboardShellWrappe
                     {children}
                 </main>
             </div>
-            {!isLiveBattle && <Navbar />}
+            {!isFocusedMode && <Navbar />}
         </div>
     )
 }
