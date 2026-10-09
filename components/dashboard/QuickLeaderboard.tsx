@@ -90,7 +90,7 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
     }, [])
 
     return (
-        <div className="card" style={{ padding: '22px', position: 'relative', overflow: 'hidden', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)' }}>
+        <div className="card" style={{ padding: '22px', position: 'relative', overflow: 'hidden', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: 'var(--shadow-card)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
                     <div
@@ -98,22 +98,22 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
                             width: '32px',
                             height: '32px',
                             borderRadius: '8px',
-                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                            border: '1px solid rgba(245, 197, 66, 0.35)',
+                            backgroundColor: 'var(--accent-gold-bg)',
+                            border: '1px solid var(--accent-gold-border)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            color: 'var(--color-gold)',
+                            color: 'var(--accent-gold-text)',
                             flexShrink: 0,
                         }}
                     >
                         <Trophy size={16} />
                     </div>
                     <div style={{ minWidth: 0 }}>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 500, margin: 0, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, margin: 0, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             Top Hero Pelajar
                         </h3>
-                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>Peringkat mingguan tertinggi</span>
+                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>Peringkat mingguan tertinggi</span>
                     </div>
                 </div>
 
@@ -124,8 +124,8 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
                         alignItems: 'center',
                         gap: '4px',
                         fontSize: '12px',
-                        fontWeight: 500,
-                        color: 'var(--color-signal-orange)',
+                        fontWeight: 600,
+                        color: 'var(--color-gold-text)',
                         textDecoration: 'none',
                         fontFamily: 'var(--font-inter)',
                         whiteSpace: 'nowrap',
@@ -144,18 +144,18 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
                         style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}
                     >
                         <motion.div
-                            whileHover={{ x: 3, backgroundColor: 'rgba(255, 255, 255, 0.04)' }}
+                            whileHover={{ x: 2 }}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '10px',
-                                padding: '8px 10px',
+                                padding: '9px 12px',
                                 borderRadius: '10px',
-                                backgroundColor: '#121212',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
                                 minWidth: 0,
                                 cursor: 'pointer',
-                                transition: 'background-color 0.15s ease',
+                                transition: 'background-color 0.15s ease, border-color 0.15s ease',
                             }}
                         >
                             <span
@@ -163,8 +163,9 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
                                     width: '22px',
                                     height: '22px',
                                     borderRadius: '6px',
-                                    backgroundColor: player.rank === 1 ? 'var(--color-signal-orange)' : player.rank === 2 ? '#bfbfbf' : '#808080',
-                                    color: '#ffffff',
+                                    backgroundColor: player.rank === 1 ? 'var(--brand-primary)' : player.rank === 2 ? '#d4d4d8' : '#e4e4e7',
+                                    border: player.rank === 1 ? '1px solid var(--brand-primary-border)' : '1px solid transparent',
+                                    color: player.rank === 1 ? 'var(--brand-primary-text)' : '#4a4b4c',
                                     fontSize: '11px',
                                     fontWeight: 700,
                                     display: 'flex',
@@ -180,10 +181,10 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
                             <span style={{ fontSize: '16px', flexShrink: 0 }}>{player.class}</span>
 
                             <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ fontFamily: 'var(--font-inter)', fontSize: '12.5px', fontWeight: 500, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <div style={{ fontFamily: 'var(--font-inter)', fontSize: '12.5px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {player.name}
                                 </div>
-                                <div style={{ fontSize: '10px', color: 'var(--color-steel)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <div style={{ fontSize: '11px', color: 'var(--text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     {player.school}
                                 </div>
                             </div>
@@ -193,10 +194,10 @@ function QuickLeaderboard({ userStreak = 0 }: QuickLeaderboardProps) {
                                     style={{
                                         fontFamily: 'var(--font-inter)',
                                         fontSize: '11px',
-                                        fontWeight: 600,
-                                        color: 'var(--color-gold)',
-                                        backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                        border: '1px solid rgba(245, 197, 66, 0.3)',
+                                        fontWeight: 700,
+                                        color: 'var(--color-gold-text)',
+                                        backgroundColor: 'var(--accent-gold-bg)',
+                                        border: '1px solid var(--accent-gold-border)',
                                         padding: '2px 8px',
                                         borderRadius: '6px',
                                         whiteSpace: 'nowrap',

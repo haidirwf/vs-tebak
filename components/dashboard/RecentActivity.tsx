@@ -80,7 +80,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                 borderRadius: '12px',
                 backgroundColor: 'var(--surface-card)',
                 border: '1px solid var(--surface-border)',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-card)',
             }}
         >
             {/* Header */}
@@ -103,7 +103,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                         <History size={17} />
                     </div>
                     <div style={{ minWidth: 0 }}>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 500, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 600, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             Aktivitas Terbaru
                         </h3>
                         <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
@@ -124,7 +124,7 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+                    <span style={{ fontSize: '11px', color: 'var(--color-gold-text)', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
                         {xpLogs.length} Log
                     </span>
                 </div>
@@ -145,16 +145,16 @@ export default function RecentActivity({ modules, xpLogs }: RecentActivityProps)
                                 initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: i * 0.04 }}
-                                whileHover={{ x: 3, borderColor: meta.color }}
+                                whileHover={{ x: 2 }}
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '12px',
-                                    padding: '10px 14px',
-                                    borderRadius: '12px',
-                                    backgroundColor: '#0d0d0d',
-                                    border: '1px solid #222222',
-                                    transition: 'border-color 0.2s ease',
+                                    padding: '11px 14px',
+                                    borderRadius: '10px',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
+                                    transition: 'border-color 0.2s ease, background-color 0.2s ease',
                                 }}
                             >
                                 <div

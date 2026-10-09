@@ -48,12 +48,18 @@ export default function ProfilePage() {
                 const badges = badgesRes.data || []
                 const completedModules = completedRes.data || []
                 const battles = battlesRes.data || []
-                const battlesWon = battles.filter((b) => b.winner_id === user.id).length
-
-                const normalizedBadges = badges.map((ub: any) => ({
+                const battlesWon = battles.filter((b: any) => b.winner_id === user.id).length
+                const rawBadges = (badgesRes.data || []).map((ub: any) => ({
                     id: ub.id,
                     badge: Array.isArray(ub.badges) ? ub.badges[0] : ub.badges,
                 }))
+                const seenBadgeNames = new Set<string>()
+                const normalizedBadges = rawBadges.filter((ub: any) => {
+                    if (!ub.badge?.name) return false
+                    if (seenBadgeNames.has(ub.badge.name)) return false
+                    seenBadgeNames.add(ub.badge.name)
+                    return true
+                })
                 const normalizedCompletedModules = completedModules.map((um: any) => ({
                     id: um.id,
                     module: Array.isArray(um.modules) ? um.modules[0] : um.modules,
@@ -93,7 +99,7 @@ export default function ProfilePage() {
         <div className="responsive-page" style={{ padding: '24px', maxWidth: '1100px', margin: '0 auto' }}>
             {/* Header Title */}
             <div style={{ marginBottom: '24px', textAlign: 'left' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: 'var(--text-primary)' }}>
                     👤 Profil Pahlawan
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
@@ -115,8 +121,9 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.2 }}
                 style={{
-                    backgroundColor: '#141414',
-                    border: '1px solid #282828',
+                    backgroundColor: 'var(--surface-card)',
+                    border: '1px solid var(--surface-border)',
+                    boxShadow: 'var(--shadow-card)',
                     borderRadius: '16px',
                     padding: '22px',
                     marginBottom: '20px',
@@ -124,10 +131,10 @@ export default function ProfilePage() {
             >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
                             🏅 Lencana & Prestasi
                         </h3>
-                        <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
                             Pencapaian dari modul belajar, streak harian, dan duel arena
                         </p>
                     </div>
@@ -136,8 +143,8 @@ export default function ProfilePage() {
                             fontSize: '11px',
                             fontWeight: 600,
                             color: 'var(--accent-gold)',
-                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                            border: '1px solid rgba(245, 158, 11, 0.25)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                            border: '1px solid rgba(245, 197, 66, 0.25)',
                             padding: '4px 10px',
                             borderRadius: '8px',
                         }}
@@ -151,12 +158,12 @@ export default function ProfilePage() {
                         style={{
                             textAlign: 'center',
                             padding: '32px 20px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                            backgroundColor: 'var(--surface-elevated)',
                             borderRadius: '12px',
-                            border: '1px dashed #282828',
+                            border: '1px dashed var(--surface-border)',
                         }}
                     >
-                        <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: 0 }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                             Belum ada lencana yang terbuka. Selesaikan modul dan menangkan battle untuk meraih lencana pertamamu!
                         </p>
                     </div>
@@ -170,8 +177,8 @@ export default function ProfilePage() {
                                 transition={{ delay: 0.1 + idx * 0.03 }}
                                 whileHover={{ scale: 1.03, y: -2 }}
                                 style={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.025)',
-                                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                     borderRadius: '10px',
                                     padding: '14px 12px',
                                     textAlign: 'center',
@@ -181,7 +188,7 @@ export default function ProfilePage() {
                                 <div style={{ fontSize: '26px', marginBottom: '6px', lineHeight: 1 }}>
                                     <BadgeIcon icon={ub.badge?.icon_url} size={28} />
                                 </div>
-                                <div style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', lineHeight: 1.3 }}>
+                                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.3 }}>
                                     {ub.badge?.name}
                                 </div>
                             </motion.div>
@@ -196,18 +203,19 @@ export default function ProfilePage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.28 }}
                 style={{
-                    backgroundColor: '#141414',
-                    border: '1px solid #282828',
+                    backgroundColor: 'var(--surface-card)',
+                    border: '1px solid var(--surface-border)',
+                    boxShadow: 'var(--shadow-card)',
                     borderRadius: '16px',
                     padding: '22px',
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
                             📚 Modul Pembelajaran Selesai
                         </h3>
-                        <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
                             Daftar materi pembelajaran yang telah berhasil dituntaskan
                         </p>
                     </div>
@@ -231,12 +239,12 @@ export default function ProfilePage() {
                         style={{
                             textAlign: 'center',
                             padding: '32px 20px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                            backgroundColor: 'var(--surface-elevated)',
                             borderRadius: '12px',
-                            border: '1px dashed #282828',
+                            border: '1px dashed var(--surface-border)',
                         }}
                     >
-                        <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: '0 0 10px 0' }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: '0 0 10px 0' }}>
                             Belum ada modul yang diselesaikan. Asah kemampuanmu dan raih XP belajar sekarang!
                         </p>
                         <Link
@@ -247,7 +255,7 @@ export default function ProfilePage() {
                                 gap: '6px',
                                 fontSize: '12px',
                                 fontWeight: 600,
-                                color: 'var(--color-primary-light)',
+                                color: 'var(--brand-primary)',
                                 textDecoration: 'none',
                             }}
                         >
@@ -267,15 +275,15 @@ export default function ProfilePage() {
                                 style={{
                                     padding: '12px 14px',
                                     borderRadius: '10px',
-                                    backgroundColor: 'rgba(34, 197, 94, 0.04)',
-                                    border: '1px solid rgba(34, 197, 94, 0.18)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '10px',
                                 }}
                             >
                                 <span style={{ color: 'var(--accent-green)', fontWeight: 700, fontSize: '14px' }}>✓</span>
-                                <span style={{ fontSize: '12px', color: '#ffffff', fontWeight: 500, lineHeight: 1.35 }}>
+                                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 500, lineHeight: 1.35 }}>
                                     {um.module?.title || 'Modul'}
                                 </span>
                             </motion.div>

@@ -78,11 +78,11 @@ export default function Topbar() {
                                 gap: '5px',
                                 padding: '4px 8px',
                                 borderRadius: '8px',
-                                backgroundColor: effectiveStreak > 0 ? 'var(--accent-red-bg)' : 'rgba(255, 255, 255, 0.04)',
+                                backgroundColor: effectiveStreak > 0 ? 'var(--accent-red-bg)' : 'var(--surface-elevated)',
                                 border: effectiveStreak > 0
                                     ? (isPendingStreak ? '1px dashed var(--accent-red-border)' : '1px solid var(--accent-red-border)')
-                                    : '1px solid rgba(255, 255, 255, 0.08)',
-                                color: effectiveStreak > 0 ? 'var(--accent-red)' : 'rgba(255, 255, 255, 0.4)',
+                                    : '1px solid var(--surface-border)',
+                                color: effectiveStreak > 0 ? 'var(--accent-red)' : 'var(--text-muted)',
                                 fontFamily: 'var(--font-inter)',
                                 fontSize: '12px',
                                 fontWeight: 600,
@@ -101,7 +101,7 @@ export default function Topbar() {
                                 }}
                                 style={{ display: 'flex', alignItems: 'center' }}
                             >
-                                <Flame size={14} style={{ color: effectiveStreak > 0 ? 'var(--accent-red)' : 'rgba(255, 255, 255, 0.4)' }} />
+                                <Flame size={14} style={{ color: effectiveStreak > 0 ? 'var(--accent-red)' : 'var(--text-muted)' }} />
                             </motion.div>
                             <span>{effectiveStreak}</span>
                         </div>
@@ -112,14 +112,14 @@ export default function Topbar() {
                         <div
                             title={`${profile.xp.toLocaleString()} Total XP`}
                             style={{
-                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                border: '1px solid rgba(245, 197, 66, 0.3)',
+                                backgroundColor: 'var(--accent-gold-bg)',
+                                border: '1px solid var(--accent-gold-border)',
                                 borderRadius: '8px',
                                 padding: '4px 8px',
                                 fontSize: '12px',
                                 fontFamily: 'var(--font-inter)',
                                 fontWeight: 600,
-                                color: 'var(--color-gold)',
+                                color: 'var(--accent-gold-text)',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '5px',
@@ -127,7 +127,7 @@ export default function Topbar() {
                                 cursor: 'default',
                             }}
                         >
-                            <Zap size={14} style={{ color: 'var(--color-gold)' }} />
+                            <Zap size={14} style={{ color: 'var(--accent-gold-text)' }} />
                             <span>{profile.xp.toLocaleString()} XP</span>
                         </div>
                     )}
@@ -147,8 +147,8 @@ export default function Topbar() {
                                 textDecoration: 'none',
                                 padding: '4px 8px',
                                 borderRadius: '8px',
-                                backgroundColor: 'var(--surface-frosted)',
-                                border: '1px solid var(--surface-border-subtle)',
+                                backgroundColor: 'var(--surface-canvas)',
+                                border: '1px solid var(--surface-border)',
                                 transition: 'background-color 0.15s ease, border-color 0.15s ease',
                             }}
                             className="topbar-user-link"
@@ -158,12 +158,13 @@ export default function Topbar() {
                                     width: '32px',
                                     height: '32px',
                                     borderRadius: '8px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                    border: `1px solid ${CLASS_COLORS[profile.avatar_class] || 'rgba(255, 255, 255, 0.2)'}`,
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: `1.5px solid ${CLASS_COLORS[profile.avatar_class] || 'var(--surface-border)'}`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     fontSize: '16px',
+                                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
                                     flexShrink: 0,
                                 }}
                             >
@@ -190,9 +191,9 @@ export default function Topbar() {
                                         fontFamily: 'var(--font-inter)',
                                         fontSize: '11px',
                                         fontWeight: 600,
-                                        color: 'var(--color-gold)',
-                                        backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                        border: '1px solid rgba(245, 197, 66, 0.3)',
+                                        color: 'var(--accent-gold-text)',
+                                        backgroundColor: 'var(--accent-gold-bg)',
+                                        border: '1px solid var(--accent-gold-border)',
                                         borderRadius: '6px',
                                         padding: '2px 6px',
                                         lineHeight: 1,
@@ -211,8 +212,8 @@ export default function Topbar() {
                                     width: '32px',
                                     height: '32px',
                                     borderRadius: '8px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                 }}
                             />
                             <div
@@ -220,7 +221,7 @@ export default function Topbar() {
                                     width: '80px',
                                     height: '16px',
                                     borderRadius: '4px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                    backgroundColor: 'var(--surface-elevated)',
                                 }}
                             />
                         </div>

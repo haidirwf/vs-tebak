@@ -94,9 +94,9 @@ export default function Navbar() {
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     position: 'relative',
-                                    backgroundColor: isActive ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
-                                    border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
-                                    color: isActive ? 'var(--color-gold)' : 'var(--text-muted)',
+                                    backgroundColor: isActive ? 'var(--accent-gold-bg)' : 'transparent',
+                                    border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
+                                    color: isActive ? 'var(--accent-gold-text)' : 'var(--text-muted)',
                                     transition: 'color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease',
                                 }}
                             >
@@ -113,7 +113,7 @@ export default function Navbar() {
                                             right: '8px',
                                             height: '2px',
                                             borderRadius: '2px',
-                                            backgroundColor: 'var(--color-gold)',
+                                            backgroundColor: 'var(--brand-primary)',
                                         }}
                                         transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                                     />

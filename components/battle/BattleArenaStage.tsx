@@ -160,7 +160,7 @@ function BattleArenaStage({
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
                                 fontWeight: 700,
-                                color: '#ffffff',
+                                color: 'var(--text-primary)',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
@@ -243,7 +243,6 @@ function BattleArenaStage({
                                         player.mp >= 100
                                             ? 'linear-gradient(90deg, #f59e0b, #ef4444)'
                                             : 'linear-gradient(90deg, #3b82f6, #a855f7)',
-                                    boxShadow: player.mp >= 100 ? '0 0 8px #f59e0b' : undefined,
                                 }}
                             />
                         </div>
@@ -322,7 +321,7 @@ function BattleArenaStage({
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
                                 fontWeight: 700,
-                                color: '#ffffff',
+                                color: 'var(--text-primary)',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',

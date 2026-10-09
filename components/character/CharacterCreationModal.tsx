@@ -103,9 +103,9 @@ export default function CharacterCreationModal({
                         overflowY: 'auto',
                         padding: '24px 22px',
                         borderRadius: '16px',
-                        backgroundColor: '#141414',
-                        border: '1px solid #313131',
-                        boxShadow: '0 24px 60px rgba(0, 0, 0, 0.85)',
+                        backgroundColor: 'var(--surface-card)',
+                        border: '1px solid var(--surface-border)',
+                        boxShadow: 'var(--shadow-modal)',
                         position: 'relative',
                         touchAction: 'pan-y',
                     }}
@@ -119,9 +119,9 @@ export default function CharacterCreationModal({
                                 gap: '6px',
                                 padding: '4px 12px',
                                 borderRadius: '8px',
-                                backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                border: '1px solid rgba(245, 197, 66, 0.3)',
-                                color: 'var(--color-gold)',
+                                backgroundColor: 'var(--accent-gold-bg)',
+                                border: '1px solid var(--accent-gold-border)',
+                                color: 'var(--accent-gold-text)',
                                 fontSize: '12px',
                                 fontWeight: 600,
                                 fontFamily: 'var(--font-heading)',
@@ -136,7 +136,7 @@ export default function CharacterCreationModal({
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '22px',
                                 fontWeight: 700,
-                                color: '#ffffff',
+                                color: 'var(--text-primary)',
                                 margin: '0 0 6px 0',
                                 letterSpacing: '-0.01em',
                             }}
@@ -185,7 +185,7 @@ export default function CharacterCreationModal({
                                             fontFamily: 'var(--font-heading)',
                                             fontWeight: 700,
                                             fontSize: '13px',
-                                            color: isSelected ? r.themeColor : '#ffffff',
+                                            color: isSelected ? r.themeColor : 'var(--text-primary)',
                                         }}
                                     >
                                         {r.name}
@@ -218,9 +218,9 @@ export default function CharacterCreationModal({
                             gridTemplateColumns: 'minmax(180px, 210px) 1fr',
                             gap: '16px',
                             alignItems: 'center',
-                            backgroundColor: '#181818',
+                            backgroundColor: 'var(--surface-elevated)',
                             borderRadius: '14px',
-                            border: '1px solid #2a2a2a',
+                            border: '1px solid var(--surface-border)',
                             padding: '16px',
                             marginBottom: '20px',
                         }}
@@ -232,9 +232,9 @@ export default function CharacterCreationModal({
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                backgroundColor: '#141414',
+                                backgroundColor: 'var(--surface-card)',
                                 borderRadius: '12px',
-                                border: '1px solid #313131',
+                                border: '1px solid var(--surface-border)',
                                 padding: '14px 10px',
                             }}
                         >
@@ -266,7 +266,7 @@ export default function CharacterCreationModal({
                                         fontFamily: 'var(--font-heading)',
                                         fontSize: '18px',
                                         fontWeight: 700,
-                                        color: '#ffffff',
+                                        color: 'var(--text-primary)',
                                         margin: '0 0 4px 0',
                                     }}
                                 >
@@ -280,8 +280,8 @@ export default function CharacterCreationModal({
                             {/* Inherent Perk Box */}
                             <div
                                 style={{
-                                    backgroundColor: '#141414',
-                                    border: '1px solid #313131',
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: '1px solid var(--surface-border)',
                                     borderRadius: '10px',
                                     padding: '10px 14px',
                                     marginBottom: '14px',
@@ -315,10 +315,10 @@ export default function CharacterCreationModal({
                                         <div
                                             key={st.label}
                                             style={{
-                                                backgroundColor: '#141414',
+                                                backgroundColor: 'var(--surface-card)',
                                                 borderRadius: '8px',
                                                 padding: '6px 10px',
-                                                border: '1px solid #2e2e2e',
+                                                border: '1px solid var(--surface-border)',
                                             }}
                                         >
                                             <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>{st.label}</div>
@@ -345,8 +345,8 @@ export default function CharacterCreationModal({
                                                 gap: '5px',
                                                 padding: '4px 8px',
                                                 borderRadius: '6px',
-                                                backgroundColor: '#141414',
-                                                border: '1px solid #313131',
+                                                backgroundColor: 'var(--surface-card)',
+                                                border: '1px solid var(--surface-border)',
                                                 fontSize: '11px',
                                                 color: 'var(--color-silver)',
                                             }}

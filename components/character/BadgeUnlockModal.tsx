@@ -53,7 +53,7 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                     onClick={(e) => e.stopPropagation()}
                     className="card"
                     style={{
-                        backgroundColor: '#141414',
+                        backgroundColor: 'var(--surface-card)',
                         border: '1px solid rgba(56, 189, 248, 0.35)',
                         borderRadius: '16px',
                         padding: '24px 20px',
@@ -61,7 +61,7 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                         maxWidth: '360px',
                         width: '100%',
                         position: 'relative',
-                        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.95)',
+                        boxShadow: 'var(--shadow-modal)',
                         boxSizing: 'border-box',
                     }}
                 >
@@ -120,7 +120,7 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                             fontFamily: 'var(--font-heading)',
                             fontSize: '18px',
                             fontWeight: 600,
-                            color: '#ffffff',
+                            color: 'var(--text-primary)',
                             margin: '0 0 6px',
                         }}
                     >

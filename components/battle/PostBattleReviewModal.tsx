@@ -58,13 +58,13 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                     onClick={(e) => e.stopPropagation()}
                     className="card quiz-review-modal-card"
                     style={{
-                        backgroundColor: '#141414',
-                        border: '1px solid rgba(255, 255, 255, 0.14)',
+                        backgroundColor: 'var(--surface-card)',
+                        border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
                         padding: '20px',
                         display: 'flex',
                         flexDirection: 'column',
-                        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.95)',
+                        boxShadow: 'var(--shadow-modal)',
                         boxSizing: 'border-box',
                     }}
                 >
@@ -77,7 +77,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                             gap: '12px',
                             marginBottom: '14px',
                             paddingBottom: '12px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                            borderBottom: '1px solid var(--surface-border)',
                             flexShrink: 0,
                         }}
                     >
@@ -87,7 +87,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                     fontFamily: 'var(--font-heading)',
                                     fontSize: '17px',
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'var(--text-primary)',
                                     margin: '0 0 3px',
                                 }}
                             >
@@ -95,7 +95,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                             </h3>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--text-secondary)' }}>
                                 <span>{correctCount} dari {totalCount} benar</span>
-                                <span style={{ color: 'rgba(255, 255, 255, 0.2)' }}>•</span>
+                                <span style={{ color: 'var(--text-muted)' }}>•</span>
                                 <span style={{ color: correctCount === totalCount ? 'var(--color-vector-green)' : '#F5C542', fontWeight: 600 }}>
                                     Akurasi {totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0}%
                                 </span>
@@ -107,8 +107,8 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                             onClick={onClose}
                             aria-label="Tutup"
                             style={{
-                                background: 'rgba(255, 255, 255, 0.06)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                background: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
                                 borderRadius: '8px',
                                 color: 'var(--text-secondary)',
                                 cursor: 'pointer',
@@ -149,7 +149,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                     <div
                                         key={idx}
                                         style={{
-                                            backgroundColor: '#181818',
+                                            backgroundColor: 'var(--surface-elevated)',
                                             borderRadius: '12px',
                                             border: `1px solid ${item.isCorrect ? 'rgba(34, 197, 94, 0.25)' : 'rgba(239, 68, 68, 0.25)'}`,
                                             padding: '12px 14px',
@@ -187,7 +187,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                             style={{
                                                 fontSize: '13px',
                                                 fontWeight: 600,
-                                                color: '#ffffff',
+                                                color: 'var(--text-primary)',
                                                 lineHeight: 1.4,
                                             }}
                                         >
@@ -257,7 +257,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                                     backgroundColor: 'rgba(56, 189, 248, 0.06)',
                                                     border: '1px solid rgba(56, 189, 248, 0.18)',
                                                     fontSize: '11.5px',
-                                                    color: '#bae6fd',
+                                                    color: 'var(--text-secondary)',
                                                     lineHeight: 1.4,
                                                     display: 'flex',
                                                     alignItems: 'flex-start',
@@ -266,7 +266,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                             >
                                                 <BookOpen size={13} style={{ flexShrink: 0, marginTop: '2px', color: '#38bdf8' }} />
                                                 <div>
-                                                    <strong style={{ color: '#e0f2fe' }}>Pembahasan: </strong>
+                                                    <strong style={{ color: 'var(--text-primary)' }}>Pembahasan: </strong>
                                                     {item.explanation}
                                                 </div>
                                             </div>
@@ -278,7 +278,7 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                     </div>
 
                     {/* Footer */}
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '10px', borderTop: '1px solid rgba(255, 255, 255, 0.08)', flexShrink: 0 }}>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '10px', borderTop: '1px solid var(--surface-border)', flexShrink: 0 }}>
                         <button
                             type="button"
                             onClick={onClose}
@@ -286,9 +286,9 @@ export default function PostBattleReviewModal({ isOpen, onClose, reviews }: Post
                                 width: '100%',
                                 padding: '9px 16px',
                                 borderRadius: '8px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                border: '1px solid rgba(255, 255, 255, 0.15)',
-                                color: '#ffffff',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
+                                color: 'var(--text-primary)',
                                 fontSize: '12px',
                                 fontWeight: 600,
                                 cursor: 'pointer',

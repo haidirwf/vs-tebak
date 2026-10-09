@@ -50,7 +50,7 @@ const CLASSES_DATA = [
     perk: 'Clean Code Slash',
     perkDesc: '+25% bonus XP saat menyelesaikan modul pemrograman dan basis data.',
     suitable: 'Pelajar SMK RPL/SIJA yang menyukai backend, database SQL, dan API engineering.',
-    tileBg: '#1c1212',
+    tileBg: 'rgba(239, 68, 68, 0.08)',
   },
   {
     id: 'mage',
@@ -69,7 +69,7 @@ const CLASSES_DATA = [
     perk: 'Pixel Perfection',
     perkDesc: '+25% bonus XP untuk materi wireframing, design system, dan prototipe.',
     suitable: 'Pelajar SMK DKV/Multimedia & UI designer yang fokus pada user experience.',
-    tileBg: '#101722',
+    tileBg: 'rgba(56, 189, 248, 0.08)',
   },
   {
     id: 'archer',
@@ -88,7 +88,7 @@ const CLASSES_DATA = [
     perk: 'Rapid Arrow Shot',
     perkDesc: 'Double multiplier bonus combo pada mode duel kuis 1v1 real-time.',
     suitable: 'Pelajar kompetitif yang menyukai adu kecepatan kuis dan time-attack.',
-    tileBg: '#101c14',
+    tileBg: 'rgba(34, 197, 94, 0.08)',
   },
   {
     id: 'healer',
@@ -107,7 +107,7 @@ const CLASSES_DATA = [
     perk: 'Continuous Flow',
     perkDesc: 'Perlindungan streak otomatis (+1 Streak Freeze gratis tiap minggu).',
     suitable: 'Pelajar yang mengutamakan rutinitas belajar teratur dan disiplin konsisten.',
-    tileBg: '#221b10',
+    tileBg: 'rgba(245, 197, 66, 0.08)',
   },
 ]
 
@@ -193,7 +193,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
 
   return (
     <div style={{ backgroundColor: 'var(--color-void)', minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}>
-      {/* ── Fixed Header Navbar (Floating on Void per Linearity spec) ── */}
+      {/* Fixed Header Navbar */}
       <header
         style={{
           position: 'fixed',
@@ -206,82 +206,96 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           alignItems: 'center',
           justifyContent: 'space-between',
           padding: '0 clamp(12px, 3vw, 32px)',
-          backgroundColor: 'rgba(10, 10, 10, 0.85)',
+          backgroundColor: 'var(--bg-navbar)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderBottom: '1px solid var(--surface-border)',
         }}
       >
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none', flexShrink: 0 }}>
+        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '9px', textDecoration: 'none', flexShrink: 0 }}>
           <div
             style={{
               width: '32px',
               height: '32px',
-              borderRadius: '8px',
-              backgroundColor: 'rgba(245, 197, 66, 0.12)',
-              border: '1px solid rgba(245, 197, 66, 0.4)',
+              borderRadius: '9px',
+              background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+              border: '1px solid #F59E0B',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              boxShadow: '0 2px 6px rgba(245, 158, 11, 0.25)',
               flexShrink: 0,
             }}
           >
-            <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
-          </div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: '6px' }}>
-            <span
+            <Swords
+              size={16}
               style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: '17px',
-                fontWeight: 500,
                 color: '#ffffff',
-                letterSpacing: '-0.02em',
+                filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
+              }}
+            />
+          </div>
+          <span
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: '18px',
+              fontWeight: 700,
+              color: 'var(--text-primary)',
+              letterSpacing: '-0.02em',
+            }}
+          >
+            Skill<span
+              style={{
+                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontWeight: 700,
               }}
             >
-              Skillungo
+              ungo
             </span>
-          </div>
+          </span>
         </Link>
 
-        {/* Desktop Navigation Links (Linearity floating text on Void) */}
+        {/* Desktop Navigation Links */}
         <nav className="desktop-only" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
           <a
             href="#hero"
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
             Studio
           </a>
           <a
             href="#preview"
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
             Arena Console
           </a>
           <a
             href="#kelas"
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
             Roles & Classes
           </a>
           <a
             href="#fitur"
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
             Features
           </a>
           <a
             href="#faq"
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = '#ffffff')}
-            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--color-silver)')}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
             FAQ
           </a>
@@ -341,10 +355,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             className="mobile-only-btn"
             style={{
               backgroundColor: 'transparent',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
+              border: '1px solid var(--surface-border)',
               borderRadius: '8px',
               padding: '6px',
-              color: '#ffffff',
+              color: 'var(--text-primary)',
               cursor: 'pointer',
               display: 'none',
               flexShrink: 0,
@@ -375,38 +389,39 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           <a
             href="#hero"
             onClick={() => setMobileMenuOpen(false)}
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
             Studio
           </a>
           <a
             href="#preview"
             onClick={() => setMobileMenuOpen(false)}
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
             Arena Console
           </a>
           <a
             href="#kelas"
             onClick={() => setMobileMenuOpen(false)}
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
             Roles & Classes
           </a>
           <a
             href="#fitur"
             onClick={() => setMobileMenuOpen(false)}
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
             Features
           </a>
           <a
             href="#faq"
             onClick={() => setMobileMenuOpen(false)}
-            style={{ color: 'var(--color-silver)', textDecoration: 'none', fontSize: '14px' }}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
             FAQ
           </a>
+
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
             <Link
               href="/login"
@@ -441,7 +456,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         }}
       >
         <div style={{ position: 'relative', zIndex: 1, maxWidth: '1040px', margin: '0 auto' }}>
-          {/* Main Display Headline (AcidGrotesk / Space Grotesk at weight 400 with -0.01em tracking) */}
+          {/* Main Display Headline */}
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -449,11 +464,11 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             style={{
               fontFamily: 'var(--font-heading)',
               fontSize: 'clamp(32px, 5.2vw, 56px)',
-              fontWeight: 400,
+              fontWeight: 500,
               lineHeight: 1.15,
               marginBottom: '20px',
               letterSpacing: '-0.02em',
-              color: '#ffffff',
+              color: 'var(--text-primary)',
             }}
           >
             Level Up Skill Digitalmu.
@@ -560,7 +575,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               justifyContent: 'space-between',
               paddingBottom: '16px',
               marginBottom: '20px',
-              borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+              borderBottom: '1px solid var(--surface-border)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
@@ -569,7 +584,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   fontFamily: 'var(--font-inter)',
                   fontSize: '12px',
                   fontWeight: 500,
-                  color: '#ffffff',
+                  color: 'var(--text-primary)',
                   letterSpacing: '0.02em',
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
@@ -649,7 +664,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               </div>
               <div style={{ minWidth: 0, flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     Kamu (Hero)
                   </span>
                   <span
@@ -721,7 +736,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   >
                     LV.14
                   </span>
-                  <span style={{ fontSize: '13px', fontWeight: 500, color: '#ffffff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     Dina Alchemist
                   </span>
                 </div>
@@ -776,7 +791,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               padding: '20px',
               backgroundColor: 'var(--color-carbon)',
               borderRadius: '12px',
-              border: '1px solid rgba(255, 255, 255, 0.1)',
+              border: '1px solid var(--surface-border)',
             }}
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
@@ -793,7 +808,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 fontSize: '16px',
                 fontWeight: 500,
                 marginBottom: '18px',
-                color: '#ffffff',
+                color: 'var(--text-primary)',
                 lineHeight: 1.5,
               }}
             >
@@ -809,9 +824,9 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 { id: 3, text: "'5' === 5", correct: false },
               ].map((opt) => {
                 const isSelected = quizAnswered === opt.id
-                let bg = 'rgba(255, 255, 255, 0.04)'
-                let border = 'rgba(255, 255, 255, 0.1)'
-                let textColor = '#ffffff'
+                let bg = 'var(--surface-elevated)'
+                let border = 'var(--surface-border)'
+                let textColor = 'var(--text-primary)'
 
                 if (isSelected) {
                   if (opt.correct) {
@@ -890,8 +905,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         id="kelas"
         style={{
           padding: '80px 24px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderTop: '1px solid var(--surface-border)',
+          borderBottom: '1px solid var(--surface-border)',
           backgroundColor: 'var(--color-void)',
         }}
       >
@@ -918,7 +933,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   lineHeight: 1.15,
                   marginBottom: '16px',
                   letterSpacing: '-0.02em',
-                  color: '#ffffff',
+                  color: 'var(--text-primary)',
                 }}
               >
                 Pilih Role.
@@ -959,7 +974,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <span style={{ fontSize: '18px' }}>{cls.emoji}</span>
                         <div style={{ textAlign: 'left' }}>
-                          <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#ffffff' }}>
+                          <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
                             {cls.name}
                           </span>
                           <span style={{ display: 'block', fontSize: '11px', color: 'var(--color-steel)' }}>
@@ -1027,7 +1042,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                             fontSize: '20px',
                             fontWeight: 400,
                             margin: 0,
-                            color: '#ffffff',
+                            color: 'var(--text-primary)',
                           }}
                         >
                           {selectedClass.name} — {selectedClass.title}
@@ -1043,7 +1058,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                         padding: '10px 14px',
                         borderRadius: '8.57143px',
                         backgroundColor: 'rgba(0, 0, 0, 0.35)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        border: '1px solid var(--surface-border)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'space-between',
@@ -1058,7 +1073,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       <span
                         style={{
                           fontSize: '11px',
-                          color: '#ffffff',
+                          color: 'var(--text-primary)',
                           backgroundColor: 'rgba(245, 197, 66, 0.2)',
                           padding: '3px 8px',
                           borderRadius: '6px',
@@ -1076,7 +1091,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       <div key={st.label}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
                           <span style={{ color: 'var(--color-silver)' }}>{st.label}</span>
-                          <span style={{ color: '#ffffff', fontFamily: 'var(--font-mono)' }}>{st.value}%</span>
+                          <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{st.value}%</span>
                         </div>
                         <div
                           style={{
@@ -1093,7 +1108,6 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                             style={{
                               height: '100%',
                               backgroundColor: 'var(--color-signal-orange)',
-                              boxShadow: '0 0 8px rgba(245, 197, 66, 0.4)',
                             }}
                           />
                         </div>
@@ -1111,7 +1125,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       color: 'var(--color-fog)',
                     }}
                   >
-                    <strong style={{ color: '#ffffff' }}>Target Profil: </strong>
+                    <strong style={{ color: 'var(--text-primary)' }}>Target Profil: </strong>
                     {selectedClass.suitable}
                   </div>
                 </motion.div>
@@ -1127,7 +1141,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           padding: '90px 24px',
           textAlign: 'center',
           backgroundColor: 'var(--color-void)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+          borderBottom: '1px solid var(--surface-border)',
         }}
       >
         <div style={{ maxWidth: '860px', margin: '0 auto' }}>
@@ -1140,7 +1154,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               fontSize: 'clamp(28px, 4.5vw, 45px)',
               fontWeight: 400,
               lineHeight: 1.25,
-              color: '#ffffff',
+              color: 'var(--text-primary)',
               letterSpacing: '-0.02em',
               marginBottom: '24px',
             }}
@@ -1231,8 +1245,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                         width: '38px',
                         height: '38px',
                         borderRadius: '10px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                        border: '1px solid rgba(255, 255, 255, 0.1)',
+                        backgroundColor: 'var(--surface-elevated)',
+                        border: '1px solid var(--surface-border)',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
@@ -1260,7 +1274,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       fontSize: '18px',
                       fontWeight: 400,
                       marginBottom: '8px',
-                      color: '#ffffff',
+                      color: 'var(--text-primary)',
                     }}
                   >
                     {feat.title}
@@ -1327,7 +1341,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                     justifyContent: 'space-between',
                     backgroundColor: 'transparent',
                     border: 'none',
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                     fontFamily: 'var(--font-inter)',
                     fontSize: '14px',
                     fontWeight: 500,
@@ -1354,7 +1368,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       fontSize: '13px',
                       color: 'var(--color-fog)',
                       lineHeight: 1.65,
-                      borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                      borderTop: '1px solid var(--surface-border)',
                       paddingTop: '12px',
                     }}
                   >
@@ -1371,7 +1385,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
       <section
         style={{
           padding: '80px 24px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          borderTop: '1px solid var(--surface-border)',
           backgroundColor: 'var(--color-void)',
           textAlign: 'center',
         }}
@@ -1400,7 +1414,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               fontWeight: 400,
               marginBottom: '12px',
               letterSpacing: '-0.02em',
-              color: '#ffffff',
+              color: 'var(--text-primary)',
             }}
           >
             {isLoggedIn ? 'Karaktermu Siap Masuk Arena.' : 'Mulai Petualangan Skill Digitalmu.'}
@@ -1445,7 +1459,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
       <footer
         style={{
           padding: '36px 32px',
-          borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+          borderTop: '1px solid var(--surface-border)',
           backgroundColor: 'var(--color-void)',
         }}
       >
@@ -1461,16 +1475,47 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           }}
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Swords size={16} style={{ color: 'var(--color-signal-orange)' }} />
+            <div
+              style={{
+                width: '28px',
+                height: '28px',
+                borderRadius: '8px',
+                background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+                border: '1px solid #F59E0B',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.25)',
+                flexShrink: 0,
+              }}
+            >
+              <Swords
+                size={14}
+                style={{
+                  color: '#ffffff',
+                  filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
+                }}
+              />
+            </div>
             <span
               style={{
                 fontFamily: 'var(--font-heading)',
-                fontSize: '16px',
-                fontWeight: 500,
-                color: '#ffffff',
+                fontSize: '17px',
+                fontWeight: 700,
+                color: 'var(--text-primary)',
+                letterSpacing: '-0.02em',
               }}
             >
-              Skill<span style={{ color: 'var(--color-signal-orange)' }}>ungo</span>
+              Skill<span
+                style={{
+                  background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  fontWeight: 700,
+                }}
+              >
+                ungo
+              </span>
             </span>
           </div>
 

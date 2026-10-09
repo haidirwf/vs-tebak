@@ -89,9 +89,9 @@ export default function ModuleDetailLoading() {
                 className="card"
                 style={{
                     padding: '28px 24px',
-                    borderRadius: '16px',
-                    backgroundColor: 'var(--surface-card, #141414)',
-                    border: '1px solid var(--surface-border, rgba(255, 255, 255, 0.08))',
+                    borderRadius: '12px',
+                    backgroundColor: 'var(--surface-card)',
+                    border: '1px solid var(--surface-border)',
                     flex: 1,
                     display: 'flex',
                     flexDirection: 'column',
@@ -133,8 +133,8 @@ export default function ModuleDetailLoading() {
                     style={{
                         padding: '20px',
                         borderRadius: '12px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.02)',
-                        border: '1px solid rgba(255, 255, 255, 0.05)',
+                        backgroundColor: 'var(--surface-elevated)',
+                        border: '1px solid var(--surface-border)',
                         marginBottom: '28px',
                         display: 'flex',
                         flexDirection: 'column',
@@ -155,7 +155,7 @@ export default function ModuleDetailLoading() {
                         display: 'flex',
                         justifyContent: 'flex-end',
                         paddingTop: '20px',
-                        borderTop: '1px solid rgba(255, 255, 255, 0.06)',
+                        borderTop: '1px solid var(--surface-border)',
                     }}
                 >
                     <div

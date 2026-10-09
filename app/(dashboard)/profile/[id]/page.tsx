@@ -123,10 +123,10 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
         return (
             <div className="responsive-page" style={{ padding: '48px 24px', maxWidth: '600px', margin: '0 auto', textAlign: 'center' }}>
                 <div style={{ fontSize: '48px', marginBottom: '14px' }}>🔍</div>
-                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
+                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
                     Pahlawan Tidak Ditemukan
                 </h2>
-                <p style={{ color: 'var(--color-steel)', fontSize: '13px', lineHeight: 1.5, marginBottom: '24px' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '13px', lineHeight: 1.5, marginBottom: '24px' }}>
                     Profil pelajar atau pahlawan yang kamu cari tidak tersedia atau belum terdaftar di Skillungo.
                 </p>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -139,9 +139,9 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                             gap: '6px',
                             padding: '10px 20px',
                             borderRadius: '8px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                            color: '#ffffff',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            color: 'var(--text-primary)',
                             fontWeight: 600,
                             fontSize: '13px',
                             cursor: 'pointer',
@@ -171,18 +171,10 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                         fontWeight: 500,
                         padding: '6px 14px',
                         borderRadius: '8px',
-                        backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                        backgroundColor: 'var(--surface-elevated)',
+                        border: '1px solid var(--surface-border)',
                         cursor: 'pointer',
                         transition: 'background-color 0.15s ease, color 0.15s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                        e.currentTarget.style.color = '#ffffff'
-                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.08)'
-                    }}
-                    onMouseLeave={(e) => {
-                        e.currentTarget.style.color = 'var(--text-secondary)'
-                        e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.03)'
                     }}
                 >
                     <ArrowLeft size={14} />
@@ -193,7 +185,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
             {/* Header Title */}
             <div style={{ marginBottom: '24px', textAlign: 'left', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
                 <div>
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: 'var(--text-primary)' }}>
                         👤 Profil {targetProfile.username}
                     </h1>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
@@ -216,7 +208,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                             borderRadius: '8px',
                             backgroundColor: 'rgba(245, 197, 66, 0.12)',
                             border: '1px solid rgba(245, 197, 66, 0.35)',
-                            color: 'var(--color-gold)',
+                            color: 'var(--accent-gold)',
                             textDecoration: 'none',
                         }}
                     >
@@ -241,8 +233,9 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.2 }}
                 style={{
-                    backgroundColor: '#141414',
-                    border: '1px solid #282828',
+                    backgroundColor: 'var(--surface-card)',
+                    border: '1px solid var(--surface-border)',
+                    boxShadow: 'var(--shadow-card)',
                     borderRadius: '16px',
                     padding: '22px',
                     marginBottom: '20px',
@@ -250,10 +243,10 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
             >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
                             🏅 Lencana & Prestasi
                         </h3>
-                        <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
                             Pencapaian dari modul belajar, streak harian, dan duel arena
                         </p>
                     </div>
@@ -262,8 +255,8 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                             fontSize: '11px',
                             fontWeight: 600,
                             color: 'var(--accent-gold)',
-                            backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                            border: '1px solid rgba(245, 158, 11, 0.25)',
+                            backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                            border: '1px solid rgba(245, 197, 66, 0.25)',
                             padding: '4px 10px',
                             borderRadius: '8px',
                         }}
@@ -277,12 +270,12 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                         style={{
                             textAlign: 'center',
                             padding: '32px 20px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                            backgroundColor: 'var(--surface-elevated)',
                             borderRadius: '12px',
-                            border: '1px dashed #282828',
+                            border: '1px dashed var(--surface-border)',
                         }}
                     >
-                        <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: 0 }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                             Belum ada lencana yang terbuka untuk pahlawan ini.
                         </p>
                     </div>
@@ -296,8 +289,8 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                                 transition={{ delay: 0.1 + idx * 0.03 }}
                                 whileHover={{ scale: 1.03, y: -2 }}
                                 style={{
-                                    backgroundColor: 'rgba(255, 255, 255, 0.025)',
-                                    border: '1px solid rgba(245, 158, 11, 0.2)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                     borderRadius: '10px',
                                     padding: '14px 12px',
                                     textAlign: 'center',
@@ -306,7 +299,7 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                                 <div style={{ fontSize: '26px', marginBottom: '6px', lineHeight: 1 }}>
                                     <BadgeIcon icon={ub.badge?.icon_url} size={28} />
                                 </div>
-                                <div style={{ fontSize: '12px', fontWeight: 600, color: '#ffffff', lineHeight: 1.3 }}>
+                                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)', lineHeight: 1.3 }}>
                                     {ub.badge?.name}
                                 </div>
                             </motion.div>
@@ -321,18 +314,19 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.35, delay: 0.28 }}
                 style={{
-                    backgroundColor: '#141414',
-                    border: '1px solid #282828',
+                    backgroundColor: 'var(--surface-card)',
+                    border: '1px solid var(--surface-border)',
+                    boxShadow: 'var(--shadow-card)',
                     borderRadius: '16px',
                     padding: '22px',
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
                     <div>
-                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: '#ffffff' }}>
+                        <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>
                             📚 Modul Pembelajaran Selesai
                         </h3>
-                        <p style={{ fontSize: '12px', color: 'var(--color-steel)', margin: '2px 0 0' }}>
+                        <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '2px 0 0' }}>
                             Daftar materi pembelajaran yang telah berhasil dituntaskan
                         </p>
                     </div>
@@ -356,12 +350,12 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                         style={{
                             textAlign: 'center',
                             padding: '32px 20px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.015)',
+                            backgroundColor: 'var(--surface-elevated)',
                             borderRadius: '12px',
-                            border: '1px dashed #282828',
+                            border: '1px dashed var(--surface-border)',
                         }}
                     >
-                        <p style={{ color: 'var(--color-steel)', fontSize: '13px', margin: 0 }}>
+                        <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
                             Belum ada modul yang diselesaikan.
                         </p>
                     </div>
@@ -377,15 +371,15 @@ export default function PublicProfilePage({ params }: PublicProfilePageProps) {
                                 style={{
                                     padding: '12px 14px',
                                     borderRadius: '10px',
-                                    backgroundColor: 'rgba(34, 197, 94, 0.04)',
-                                    border: '1px solid rgba(34, 197, 94, 0.18)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '10px',
                                 }}
                             >
                                 <span style={{ color: 'var(--accent-green)', fontWeight: 700, fontSize: '14px' }}>✓</span>
-                                <span style={{ fontSize: '12px', color: '#ffffff', fontWeight: 500, lineHeight: 1.35 }}>
+                                <span style={{ fontSize: '12px', color: 'var(--text-primary)', fontWeight: 500, lineHeight: 1.35 }}>
                                     {um.module?.title || 'Modul'}
                                 </span>
                             </motion.div>

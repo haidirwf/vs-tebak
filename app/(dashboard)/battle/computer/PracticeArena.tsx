@@ -501,7 +501,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                 padding: '10px 22px', borderRadius: '8px',
                                 cursor: availableQuestions.length > 0 ? 'pointer' : 'not-allowed',
                                 backgroundColor: 'var(--accent-gold)', border: 'none',
-                                color: 'var(--bg-primary)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+                                color: '#18181b', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
                                 opacity: availableQuestions.length > 0 ? 1 : 0.5,
                             }}
                         >
@@ -527,10 +527,10 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     style={{
                         width: '100%',
                         maxWidth: '440px',
-                        backgroundColor: '#141414',
+                        backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
-                        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
+                        boxShadow: 'var(--shadow-modal)',
                         textAlign: 'center',
                         padding: 'clamp(14px, 2.2vh, 20px) 18px',
                         boxSizing: 'border-box',
@@ -708,8 +708,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                             width: '28px',
                                             height: '28px',
                                             borderRadius: '8px',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            backgroundColor: bgmMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(245, 197, 66, 0.12)',
+                                            border: '1px solid var(--surface-border)',
+                                            backgroundColor: bgmMuted ? 'var(--surface-elevated)' : 'rgba(245, 197, 66, 0.12)',
                                             color: bgmMuted ? 'var(--color-steel)' : 'var(--color-gold)',
                                             cursor: 'pointer',
                                             transition: 'all 0.15s ease',
@@ -729,8 +729,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                             width: '28px',
                                             height: '28px',
                                             borderRadius: '8px',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            backgroundColor: audioMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(34, 197, 94, 0.12)',
+                                            border: '1px solid var(--surface-border)',
+                                            backgroundColor: audioMuted ? 'var(--surface-elevated)' : 'rgba(34, 197, 94, 0.12)',
                                             color: audioMuted ? 'var(--color-steel)' : 'var(--accent-green)',
                                             cursor: 'pointer',
                                             transition: 'all 0.15s ease',
@@ -762,10 +762,10 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                     color: timerColor,
                                     fontFamily: 'var(--font-mono)',
                                     fontWeight: 600,
-                                    backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'rgba(255, 255, 255, 0.06)',
+                                    backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'var(--surface-elevated)',
                                     padding: '3px 10px',
                                     borderRadius: '8px',
-                                    border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'rgba(255, 255, 255, 0.12)'}`,
+                                    border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'var(--surface-border)'}`,
                                 }}
                             >
                                 00:{timeLeft < 10 ? '0' : ''}{timeLeft}s
@@ -824,9 +824,9 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             transition={{ duration: 0.2 }}
                             className="battle-question-card"
                             style={{
-                                backgroundColor: 'var(--color-carbon)',
+                                backgroundColor: 'var(--surface-elevated)',
                                 borderRadius: '14px',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                border: '1px solid var(--surface-border)',
                                 marginBottom: '14px',
                             }}
                         >
@@ -850,11 +850,11 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             const isSelected = selectedAnswer === idx
                             const isCorrect = idx === currentQuestion.correct_option
 
-                            let bg = 'rgba(255, 255, 255, 0.04)'
-                            let border = 'rgba(255, 255, 255, 0.1)'
-                            let textColor = '#ffffff'
-                            let badgeBg = 'rgba(255, 255, 255, 0.08)'
-                            let badgeColor = 'var(--color-silver)'
+                            let bg = 'var(--surface-elevated)'
+                            let border = 'var(--surface-border)'
+                            let textColor = 'var(--text-primary)'
+                            let badgeBg = 'var(--surface-card)'
+                            let badgeColor = 'var(--text-secondary)'
 
                             if (showAnswer) {
                                 if (isCorrect) {
@@ -862,7 +862,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                     border = 'var(--color-vector-green)'
                                     textColor = 'var(--color-vector-green)'
                                     badgeBg = 'var(--color-vector-green)'
-                                    badgeColor = '#050505'
+                                    badgeColor = '#ffffff'
                                 } else if (isSelected) {
                                     bg = 'rgba(239, 68, 68, 0.16)'
                                     border = 'var(--accent-red)'
@@ -873,16 +873,16 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             } else if (isSelected) {
                                 bg = 'rgba(245, 197, 66, 0.15)'
                                 border = 'var(--color-signal-orange)'
-                                textColor = '#ffffff'
+                                textColor = 'var(--text-primary)'
                                 badgeBg = 'var(--color-signal-orange)'
-                                badgeColor = '#050505'
+                                badgeColor = '#1d1d1d'
                             }
 
                             return (
                                 <motion.button
                                     key={idx}
                                     type="button"
-                                    whileHover={selectedAnswer === null ? { y: -2, borderColor: 'rgba(255, 255, 255, 0.25)' } : {}}
+                                    whileHover={selectedAnswer === null ? { y: -2, borderColor: 'var(--color-ash)' } : {}}
                                     whileTap={selectedAnswer === null ? { scale: 0.99 } : {}}
                                     onClick={() => handleAnswer(idx)}
                                     className="battle-option-btn"
@@ -921,7 +921,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     </div>
 
                     {/* Bottom toolbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid var(--surface-border)' }}>
                         <button
                             type="button"
                             onClick={() => {

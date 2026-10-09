@@ -106,10 +106,10 @@ export default function RegisterPage() {
         paddingRight: '12px',
         paddingTop: '10px',
         paddingBottom: '10px',
-        backgroundColor: 'var(--surface-canvas)',
+        backgroundColor: 'var(--surface-elevated)',
         border: `1px solid ${hasError ? '#ff3355' : 'var(--surface-border)'}`,
         borderRadius: '12px',
-        color: '#ffffff',
+        color: 'var(--text-primary)',
         fontSize: '13px',
         outline: 'none',
         transition: 'border-color 0.2s',
@@ -148,24 +148,39 @@ export default function RegisterPage() {
             >
                 {/* Logo */}
                 <div style={{ textAlign: 'center', marginBottom: 'clamp(14px, 2.5vh, 22px)' }}>
-                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '6px', textDecoration: 'none' }}>
+                    <Link href="/" style={{ display: 'inline-flex', alignItems: 'center', gap: '9px', marginBottom: '6px', textDecoration: 'none' }}>
                         <div
                             style={{
-                                width: '34px',
-                                height: '34px',
+                                width: '36px',
+                                height: '36px',
                                 borderRadius: '10px',
-                                backgroundColor: 'rgba(245, 197, 66, 0.15)',
-                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+                                border: '1px solid #F59E0B',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
-                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.25)',
+                                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.25)',
                             }}
                         >
-                            <Swords size={18} style={{ color: 'var(--color-gold)' }} />
+                            <Swords
+                                size={18}
+                                style={{
+                                    color: '#ffffff',
+                                    filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
+                                }}
+                            />
                         </div>
-                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 500, letterSpacing: '-0.02em', color: '#ffffff' }}>
-                            Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
+                        <span style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--text-primary)' }}>
+                            Skill<span
+                                style={{
+                                    background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    fontWeight: 700,
+                                }}
+                            >
+                                ungo
+                            </span>
                         </span>
                     </Link>
                     <p style={{ color: 'var(--text-secondary)', fontSize: '12.5px', margin: 0 }}>Mulai petualangan belajarmu hari ini</p>
@@ -178,10 +193,10 @@ export default function RegisterPage() {
                         borderRadius: '16px',
                         backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
-                        boxShadow: '0 16px 40px rgba(0,0,0,0.6)',
+                        boxShadow: 'var(--shadow-card)',
                     }}
                 >
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 500, letterSpacing: '-0.01em', marginBottom: '18px', color: '#ffffff' }}>
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: '18px', color: 'var(--text-primary)' }}>
                         Buat Akun
                     </h1>
 
@@ -262,21 +277,21 @@ export default function RegisterPage() {
                                 width: '100%',
                                 padding: '13px',
                                 marginTop: '10px',
-                                backgroundColor: '#F5C542',
-                                color: '#0a0a0a',
+                                backgroundColor: 'var(--brand-primary)',
+                                color: 'var(--brand-primary-text)',
                                 border: 'none',
                                 borderRadius: '10px',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '14px',
                                 fontWeight: 600,
-                                letterSpacing: '0.02em',
+                                letterSpacing: '0.01em',
                                 cursor: isLoading ? 'not-allowed' : 'pointer',
                                 opacity: isLoading ? 0.7 : 1,
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '8px',
-                                boxShadow: '0 0 18px rgba(245, 197, 66, 0.4)',
+                                boxShadow: 'var(--shadow-card)',
                             }}
                         >
                             {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</> : 'Mulai Petualangan'}
@@ -285,7 +300,7 @@ export default function RegisterPage() {
 
                     <p style={{ textAlign: 'center', marginTop: '22px', fontSize: '13px', color: 'var(--text-secondary)' }}>
                         Sudah punya akun?{' '}
-                        <Link href="/login" style={{ color: '#F5C542', textDecoration: 'none', fontWeight: 500 }}>
+                        <Link href="/login" style={{ color: 'var(--brand-primary)', textDecoration: 'none', fontWeight: 600 }}>
                             Masuk sekarang
                         </Link>
                     </p>

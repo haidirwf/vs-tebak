@@ -45,7 +45,7 @@ export default function CharacterCard({ profile, showStats = true }: CharacterCa
                     {/* Level badge */}
                     <div style={{
                         position: 'absolute', bottom: '-8px', right: '-8px',
-                        backgroundColor: accentColor, color: 'var(--bg-primary)',
+                        backgroundColor: accentColor, color: profile.avatar_class === 'healer' ? '#18181b' : '#ffffff',
                         borderRadius: '3px', padding: '1px 5px',
                         fontFamily: 'var(--font-heading)', fontSize: '11px', fontWeight: 700,
                     }}>

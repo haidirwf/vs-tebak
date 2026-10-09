@@ -20,7 +20,7 @@ const QUEST_COLORS = {
     complete_module: { color: 'var(--accent-cyan)', bg: 'rgba(56, 189, 248, 0.08)', border: 'rgba(56, 189, 248, 0.25)' },
     win_battle: { color: 'var(--accent-red)', bg: 'rgba(239, 68, 68, 0.08)', border: 'rgba(239, 68, 68, 0.25)' },
     maintain_streak: { color: 'var(--accent-green)', bg: 'rgba(34, 197, 94, 0.08)', border: 'rgba(34, 197, 94, 0.25)' },
-    earn_xp: { color: 'var(--color-gold)', bg: 'rgba(245, 197, 66, 0.08)', border: 'rgba(245, 197, 66, 0.25)' },
+    earn_xp: { color: 'var(--color-gold-text)', bg: 'var(--accent-gold-bg)', border: 'var(--accent-gold-border)' },
 }
 
 export default function DailyQuestList({ quests, userQuests }: DailyQuestListProps) {
@@ -41,7 +41,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                 borderRadius: '12px',
                 backgroundColor: 'var(--surface-card)',
                 border: '1px solid var(--surface-border)',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-card)',
             }}
         >
             {/* Header */}
@@ -106,8 +106,10 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
             </div>
 
             {quests.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '36px 20px', color: 'var(--text-muted)', fontSize: '13px', backgroundColor: 'var(--surface-elevated)', borderRadius: '12px', border: '1px dashed var(--surface-border)' }}>
-                    Belum ada quest hari ini. Istirahat sejenak, Hero! ☕
+                <div style={{ textAlign: 'center', padding: '28px 20px', backgroundColor: 'var(--surface-elevated)', borderRadius: '10px', border: '1px solid var(--surface-border)' }}>
+                    <div style={{ fontSize: '24px', marginBottom: '6px' }}>☕</div>
+                    <div style={{ fontWeight: 600, fontSize: '13px', color: 'var(--text-primary)', marginBottom: '2px' }}>Belum ada misi baru hari ini</div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>Misi harian akan diperbarui otomatis saat tengah malam.</div>
                 </div>
             ) : (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
@@ -131,8 +133,8 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                     gap: '10px',
                                     padding: '10px 12px',
                                     borderRadius: '10px',
-                                    backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.04)' : '#0d0d0d',
-                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : '#222222'}`,
+                                    backgroundColor: isCompleted ? 'rgba(34, 197, 94, 0.06)' : 'var(--surface-elevated)',
+                                    border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'var(--surface-border)'}`,
                                     position: 'relative',
                                     transition: 'border-color 0.2s ease, background-color 0.2s ease',
                                     minWidth: 0,
@@ -176,7 +178,7 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                     </div>
 
                                     {quest.target_value > 1 && !isCompleted && (
-                                        <div style={{ height: '4px', backgroundColor: '#181818', borderRadius: '4px', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                        <div style={{ height: '4px', backgroundColor: 'var(--surface-canvas)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
                                             <motion.div
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${Math.min((currentVal / quest.target_value) * 100, 100)}%` }}
@@ -189,14 +191,14 @@ export default function DailyQuestList({ quests, userQuests }: DailyQuestListPro
                                 <div style={{ textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '3px', flexShrink: 0 }}>
                                     <span
                                         style={{
-                                            backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'rgba(245, 197, 66, 0.1)',
-                                            border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'rgba(245, 197, 66, 0.25)'}`,
+                                            backgroundColor: isCompleted ? 'rgba(34,197,94,0.1)' : 'var(--accent-gold-bg)',
+                                            border: `1px solid ${isCompleted ? 'rgba(34,197,94,0.25)' : 'var(--accent-gold-border)'}`,
                                             borderRadius: '6px',
                                             padding: '2px 8px',
                                             fontFamily: 'var(--font-heading)',
                                             fontSize: '11px',
-                                            color: isCompleted ? 'var(--accent-green)' : 'var(--color-gold)',
-                                            fontWeight: 600,
+                                            color: isCompleted ? 'var(--accent-green)' : 'var(--color-gold-text)',
+                                            fontWeight: 700,
                                             whiteSpace: 'nowrap',
                                         }}
                                     >

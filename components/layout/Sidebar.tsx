@@ -70,7 +70,7 @@ export default function Sidebar() {
             style={{
                 width: '240px',
                 flexShrink: 0,
-                backgroundColor: 'var(--surface-canvas)',
+                backgroundColor: 'var(--surface-card)',
                 borderRight: '1px solid var(--surface-border)',
                 height: '100vh',
                 position: 'sticky',
@@ -81,7 +81,7 @@ export default function Sidebar() {
             <div
                 className="dashboard-logo-row"
                 style={{
-                    padding: '20px 16px 16px',
+                    padding: '18px 16px 14px',
                     borderBottom: '1px solid var(--surface-border)',
                     display: 'flex',
                     alignItems: 'center',
@@ -93,34 +93,52 @@ export default function Sidebar() {
                     style={{
                         display: 'flex',
                         alignItems: 'center',
-                        gap: '8px',
+                        gap: '9px',
                         textDecoration: 'none',
+                        flexShrink: 0,
                     }}
                 >
                     <div
                         style={{
-                            width: '28px',
-                            height: '28px',
-                            borderRadius: '8px',
-                            backgroundColor: 'rgba(245, 197, 66, 0.15)',
-                            border: '1px solid rgba(245, 197, 66, 0.4)',
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '9px',
+                            background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+                            border: '1px solid #F59E0B',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            boxShadow: '0 2px 6px rgba(245, 158, 11, 0.25)',
+                            flexShrink: 0,
                         }}
                     >
-                        <Swords size={16} style={{ color: 'var(--color-gold)' }} />
+                        <Swords
+                            size={16}
+                            style={{
+                                color: '#ffffff',
+                                filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
+                            }}
+                        />
                     </div>
                     <span
                         style={{
                             fontFamily: 'var(--font-heading)',
                             fontSize: '18px',
-                            fontWeight: 500,
+                            fontWeight: 700,
                             color: 'var(--text-primary)',
                             letterSpacing: '-0.02em',
                         }}
                     >
-                        Skill<span style={{ color: 'var(--color-gold)' }}>ungo</span>
+                        Skill<span
+                            style={{
+                                background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                                WebkitBackgroundClip: 'text',
+                                WebkitTextFillColor: 'transparent',
+                                fontWeight: 700,
+                            }}
+                        >
+                            ungo
+                        </span>
                     </span>
                 </Link>
             </div>
@@ -130,100 +148,127 @@ export default function Sidebar() {
                 <div
                     className="dashboard-character-preview"
                     style={{
-                        padding: '12px 16px',
+                        padding: '12px 14px',
                         borderBottom: '1px solid var(--surface-border)',
                     }}
                 >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
-                        <div
-                            style={{
-                                width: '36px',
-                                height: '36px',
-                                borderRadius: '8px',
-                                backgroundColor: 'var(--surface-elevated)',
-                                border: `1px solid ${CLASS_COLORS[profile.avatar_class] || 'var(--surface-border)'}`,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                fontSize: '18px',
-                            }}
-                        >
-                            {CLASS_EMOJI[profile.avatar_class] || '🎮'}
-                        </div>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <div
-                                    style={{
-                                        fontFamily: 'var(--font-inter)',
-                                        fontWeight: 500,
-                                        fontSize: '13px',
-                                        color: 'var(--text-primary)',
-                                        overflow: 'hidden',
-                                        textOverflow: 'ellipsis',
-                                        whiteSpace: 'nowrap',
-                                    }}
-                                >
-                                    {profile.username}
-                                </div>
-                                {effectiveStreak > 0 && (
-                                    <span
-                                        title={
-                                            isPendingStreak
-                                                ? `Streak ${effectiveStreak} hari (belum aktif hari ini)`
-                                                : `Streak ${effectiveStreak} hari`
-                                        }
+                    <div
+                        style={{
+                            backgroundColor: 'var(--surface-canvas)',
+                            border: '1px solid var(--surface-border)',
+                            borderRadius: '10px',
+                            padding: '10px 11px',
+                        }}
+                    >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '9px', marginBottom: '8px' }}>
+                            <div
+                                style={{
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: `1.5px solid ${CLASS_COLORS[profile.avatar_class] || 'var(--surface-border)'}`,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    fontSize: '18px',
+                                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.04)',
+                                    flexShrink: 0,
+                                }}
+                            >
+                                {CLASS_EMOJI[profile.avatar_class] || '🎮'}
+                            </div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                    <div
                                         style={{
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '2px',
-                                            borderRadius: '6px',
-                                            padding: '1px 5px',
-                                            border: isPendingStreak
-                                                ? '1px dashed var(--accent-red-border)'
-                                                : '1px solid var(--accent-red-border)',
-                                            backgroundColor: 'var(--accent-red-bg)',
-                                            color: 'var(--accent-red)',
-                                            fontFamily: 'var(--font-inter)',
-                                            fontSize: '10px',
-                                            fontWeight: 600,
-                                            lineHeight: 1,
+                                            fontFamily: 'var(--font-heading)',
+                                            fontWeight: 700,
+                                            fontSize: '13px',
+                                            color: 'var(--text-primary)',
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
                                             whiteSpace: 'nowrap',
                                         }}
                                     >
-                                        <Flame size={10} />
-                                        {effectiveStreak}
+                                        {profile.username}
+                                    </div>
+                                    {effectiveStreak > 0 && (
+                                        <span
+                                            title={
+                                                isPendingStreak
+                                                    ? `Streak ${effectiveStreak} hari (belum aktif hari ini)`
+                                                    : `Streak ${effectiveStreak} hari`
+                                            }
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '2px',
+                                                borderRadius: '6px',
+                                                padding: '1px 5px',
+                                                border: isPendingStreak
+                                                    ? '1px dashed var(--accent-red-border)'
+                                                    : '1px solid var(--accent-red-border)',
+                                                backgroundColor: 'var(--accent-red-bg)',
+                                                color: 'var(--accent-red)',
+                                                fontFamily: 'var(--font-inter)',
+                                                fontSize: '10px',
+                                                fontWeight: 700,
+                                                lineHeight: 1,
+                                                whiteSpace: 'nowrap',
+                                            }}
+                                        >
+                                            <Flame size={10} />
+                                            {effectiveStreak}
+                                        </span>
+                                    )}
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '2px' }}>
+                                    <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 500 }}>
+                                        Level {profile.level}
                                     </span>
-                                )}
-                            </div>
-                            <div style={{ fontSize: '11px', color: 'var(--color-gold)' }}>
-                                Level {profile.level}{' '}
-                                {profile.avatar_class.charAt(0).toUpperCase() + profile.avatar_class.slice(1)}
+                                    <span style={{ fontSize: '8px', color: 'var(--text-muted)' }}>•</span>
+                                    <span
+                                        style={{
+                                            fontSize: '11px',
+                                            color: CLASS_COLORS[profile.avatar_class] || 'var(--text-primary)',
+                                            fontWeight: 700,
+                                        }}
+                                    >
+                                        {profile.avatar_class.charAt(0).toUpperCase() + profile.avatar_class.slice(1)}
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    {/* XP Bar */}
-                    <div
-                        style={{
-                            height: '4px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                            borderRadius: '4px',
-                            overflow: 'hidden',
-                        }}
-                    >
-                        <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${xpProgress}%` }}
-                            transition={{ duration: 0.6, ease: 'easeOut' }}
-                            style={{ height: '100%', backgroundColor: 'var(--color-gold)' }}
-                        />
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '3px' }}>
-                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
-                            {profile.xp.toLocaleString()} XP
-                        </span>
-                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
-                            Lv.{profile.level + 1}
-                        </span>
+                        {/* XP Bar */}
+                        <div
+                            style={{
+                                height: '5px',
+                                backgroundColor: 'var(--surface-elevated)',
+                                borderRadius: '9999px',
+                                overflow: 'hidden',
+                                border: '1px solid var(--surface-border)',
+                            }}
+                        >
+                            <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: `${xpProgress}%` }}
+                                transition={{ duration: 0.6, ease: 'easeOut' }}
+                                style={{
+                                    height: '100%',
+                                    background: 'linear-gradient(90deg, #FBBF24 0%, #F59E0B 100%)',
+                                    borderRadius: '9999px',
+                                }}
+                            />
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                            <span style={{ fontSize: '10.5px', color: 'var(--text-secondary)', fontWeight: 600, fontFamily: 'var(--font-mono)' }}>
+                                {profile.xp.toLocaleString()} XP
+                            </span>
+                            <span style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontWeight: 500, fontFamily: 'var(--font-mono)' }}>
+                                Lv.{profile.level + 1}
+                            </span>
+                        </div>
                     </div>
                 </div>
             )}
@@ -258,9 +303,9 @@ export default function Sidebar() {
                                     borderRadius: '8px',
                                     marginBottom: '4px',
                                     backgroundColor: isActive
-                                        ? 'rgba(245, 197, 66, 0.12)'
+                                        ? 'var(--accent-gold-bg)'
                                         : 'transparent',
-                                    border: `1px solid ${isActive ? 'rgba(245, 197, 66, 0.35)' : 'transparent'}`,
+                                    border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
                                     position: 'relative',
                                     overflow: 'hidden',
                                     cursor: 'pointer',
@@ -275,7 +320,7 @@ export default function Sidebar() {
                                             width: '3px',
                                             height: '14px',
                                             borderRadius: '4px',
-                                            backgroundColor: 'var(--color-gold)',
+                                            backgroundColor: 'var(--brand-primary)',
                                         }}
                                         transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                     />
@@ -291,7 +336,7 @@ export default function Sidebar() {
                                     <Icon
                                         size={16}
                                         style={{
-                                            color: isActive ? 'var(--color-gold)' : 'var(--color-silver)',
+                                            color: isActive ? 'var(--accent-gold-text)' : 'var(--color-silver)',
                                             flexShrink: 0,
                                         }}
                                     />
@@ -301,8 +346,8 @@ export default function Sidebar() {
                                     style={{
                                         fontFamily: 'var(--font-inter)',
                                         fontSize: '13px',
-                                        fontWeight: isActive ? 500 : 400,
-                                        color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                                        fontWeight: isActive ? 600 : 400,
+                                        color: isActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                                     }}
                                 >
                                     {item.label}
@@ -315,7 +360,7 @@ export default function Sidebar() {
                                             alignItems: 'center',
                                         }}
                                     >
-                                        <ChevronRight size={13} style={{ color: 'var(--color-gold)' }} />
+                                        <ChevronRight size={13} style={{ color: 'var(--accent-gold-text)' }} />
                                     </div>
                                 )}
                             </motion.div>
@@ -349,9 +394,10 @@ export default function Sidebar() {
                         padding: '8px 14px',
                         borderRadius: '8px',
                         cursor: 'pointer',
-                        backgroundColor: 'rgba(255, 51, 68, 0.08)',
-                        border: '1px solid rgba(255, 51, 68, 0.25)',
-                        color: 'var(--accent-red)',
+                        backgroundColor: 'var(--surface-elevated)',
+                        border: '1px solid var(--surface-border)',
+                        color: 'var(--text-secondary)',
+                        transition: 'all 0.15s ease',
                     }}
                 >
                     <LogOut size={14} />
@@ -393,9 +439,10 @@ export default function Sidebar() {
                             width: '100%',
                             maxWidth: '360px',
                             padding: '24px',
-                            backgroundColor: '#0c0c0c',
-                            border: '1px solid rgba(255, 255, 255, 0.15)',
+                            backgroundColor: 'var(--surface-card)',
+                            border: '1px solid var(--surface-border)',
                             borderRadius: '12px',
+                            boxShadow: 'var(--shadow-modal)',
                         }}
                         onClick={(e) => e.stopPropagation()}
                     >
@@ -403,9 +450,9 @@ export default function Sidebar() {
                             style={{
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '18px',
-                                fontWeight: 400,
+                                fontWeight: 600,
                                 marginBottom: '8px',
-                                color: '#ffffff',
+                                color: 'var(--text-primary)',
                             }}
                         >
                             Konfirmasi Keluar

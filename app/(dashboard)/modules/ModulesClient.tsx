@@ -95,7 +95,7 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
             )}
             {/* Header with glass effect background */}
             <div style={{ marginBottom: '24px', textAlign: 'left' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: 'var(--text-primary)' }}>
                     📚 Modul Belajar
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
@@ -119,7 +119,7 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                             borderRadius: '10px', color: 'var(--text-primary)', fontSize: '14px',
                             outline: 'none', transition: 'border-color 0.2s',
                         }}
-                        onFocus={(e) => e.target.style.borderColor = '#F5C542'}
+                        onFocus={(e) => e.target.style.borderColor = 'var(--brand-primary-border)'}
                         onBlur={(e) => e.target.style.borderColor = 'var(--surface-border)'}
                     />
                 </div>
@@ -133,13 +133,13 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                             onClick={() => setActiveCategory(cat.value)}
                             style={{
                                 padding: '7px 14px', borderRadius: '8px', cursor: 'pointer',
-                                backgroundColor: activeCategory === cat.value ? '#F5C542' : 'var(--surface-elevated)',
-                                border: `1px solid ${activeCategory === cat.value ? '#EAB308' : 'var(--surface-border)'}`,
-                                color: activeCategory === cat.value ? '#0a0a0a' : 'var(--text-secondary)',
-                                fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: activeCategory === cat.value ? 600 : 400,
+                                backgroundColor: activeCategory === cat.value ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                border: `1px solid ${activeCategory === cat.value ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                color: activeCategory === cat.value ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: activeCategory === cat.value ? 700 : 500,
                                 display: 'flex', alignItems: 'center', gap: '8px',
                                 transition: 'all 0.2s ease',
-                                boxShadow: activeCategory === cat.value ? '0 0 16px rgba(245, 197, 66, 0.35)' : 'none',
+                                boxShadow: 'none',
                             }}
                         >
                             <span style={{ fontSize: '15px' }}>{cat.emoji}</span> {cat.label}
@@ -188,7 +188,7 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                         border: `1px solid ${isCompleted ? 'rgba(8, 195, 128, 0.4)' : 'var(--surface-border)'}`,
                                         overflow: 'hidden',
                                         transition: 'all 0.3s ease',
-                                        boxShadow: '0 12px 30px rgba(0,0,0,0.5)'
+                                        boxShadow: 'var(--shadow-card)'
                                     }}>
                                         {/* Loading Overlay */}
                                         {navigatingSlug === module.slug && (
@@ -266,8 +266,8 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                                 )}
                                                 {!isCompleted && classHasBonusForCategory(avatarClass, module.category) && (
                                                     <div style={{
-                                                        fontSize: '10px', fontWeight: 600, color: '#F5C542',
-                                                        backgroundColor: 'rgba(245, 197, 66, 0.1)', border: '1px solid rgba(245, 197, 66, 0.25)',
+                                                        fontSize: '10px', fontWeight: 700, color: 'var(--accent-gold-text)',
+                                                        backgroundColor: 'var(--accent-gold-bg)', border: '1px solid var(--accent-gold-border)',
                                                         padding: '4px 10px', borderRadius: '6px', fontFamily: 'var(--font-heading)',
                                                         display: 'flex', alignItems: 'center', gap: '4px'
                                                     }}>
@@ -306,11 +306,11 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                                          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--accent-cyan)', textTransform: 'uppercase' }}>PROGRES</span>
                                                          <span style={{ fontSize: '10px', fontWeight: 600, color: 'var(--text-secondary)' }}>{progress}%</span>
                                                      </div>
-                                                     <div style={{ height: '4px', backgroundColor: '#141414', borderRadius: '4px', overflow: 'hidden' }}>
+                                                     <div style={{ height: '4px', backgroundColor: 'var(--surface-elevated)', borderRadius: '4px', overflow: 'hidden' }}>
                                                          <motion.div
                                                              initial={{ width: 0 }}
                                                              animate={{ width: `${progress}%` }}
-                                                             style={{ height: '100%', borderRadius: '4px', backgroundColor: '#F5C542' }}
+                                                             style={{ height: '100%', borderRadius: '4px', background: 'linear-gradient(90deg, #FDE047 0%, #F5C542 50%, #EAB308 100%)' }}
                                                          />
                                                      </div>
                                                  </div>
@@ -320,13 +320,13 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                          {/* Meta Footer */}
                                          <div className="modules-card-meta-row" style={{
                                              display: 'flex', gap: '16px', marginTop: 'auto',
-                                             paddingTop: '16px', borderTop: '1px solid #222222',
+                                             paddingTop: '16px', borderTop: '1px solid var(--surface-border)',
                                              position: 'relative', zIndex: 1
                                          }}>
                                              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--text-secondary)', fontWeight: 500 }}>
                                                  <Clock size={14} className="text-muted" /> {module.duration_minutes}m
                                              </div>
-                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
+                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', color: 'var(--color-gold-text)', fontWeight: 700 }}>
                                                  <Zap size={14} fill="currentColor" /> {module.xp_reward} XP
                                              </div>
 
@@ -343,7 +343,7 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                          {/* Bottom Highlight Line */}
                                          <div style={{
                                              position: 'absolute', bottom: 0, left: 0, right: 0,
-                                             height: '2px', backgroundColor: isCompleted ? '#22C55E' : '#F5C542',
+                                             height: '2px', backgroundColor: isCompleted ? '#22C55E' : 'var(--brand-primary)',
                                              opacity: isCompleted ? 1 : 0.4
                                          }} />
                                     </div>

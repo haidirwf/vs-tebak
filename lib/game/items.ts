@@ -34,27 +34,27 @@ export interface GameItem {
 export const RARITY_CONFIG: Record<ItemRarity, { label: string; color: string; border: string; bg: string }> = {
     common: {
         label: 'Common',
-        color: 'var(--color-silver)',
-        border: 'rgba(255, 255, 255, 0.18)',
-        bg: 'rgba(255, 255, 255, 0.04)',
+        color: 'var(--text-secondary)',
+        border: 'var(--surface-border)',
+        bg: 'var(--surface-elevated)',
     },
     rare: {
         label: 'Rare',
-        color: '#38bdf8',
-        border: 'rgba(56, 189, 248, 0.35)',
-        bg: 'rgba(56, 189, 248, 0.08)',
+        color: 'var(--accent-cyan)',
+        border: 'var(--accent-cyan-border)',
+        bg: 'var(--accent-cyan-bg)',
     },
     epic: {
         label: 'Epic',
-        color: '#a855f7',
-        border: 'rgba(168, 85, 247, 0.4)',
-        bg: 'rgba(168, 85, 247, 0.1)',
+        color: 'var(--accent-purple)',
+        border: 'var(--accent-purple-border)',
+        bg: 'var(--accent-purple-bg)',
     },
     legendary: {
         label: 'Legendary',
-        color: '#f59e0b',
-        border: 'rgba(245, 158, 11, 0.45)',
-        bg: 'rgba(245, 158, 11, 0.12)',
+        color: 'var(--color-gold-text)',
+        border: 'var(--accent-gold-border)',
+        bg: 'var(--accent-gold-bg)',
     },
 }
 

@@ -1078,14 +1078,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 fontSize: '24px',
-                                boxShadow: '0 0 20px rgba(245, 197, 66, 0.25)',
+                                boxShadow: 'var(--shadow-card)',
                             }}
                         >
                             {myClassInfo.emoji}
                         </div>
                     </div>
 
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: '#ffffff', marginBottom: '6px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '6px' }}>
                         Menunggu Lawan Masuk...
                     </h2>
                     <p style={{ color: 'var(--color-fog)', fontSize: '12.5px', maxWidth: '420px', margin: '0 auto 16px', lineHeight: 1.45 }}>
@@ -1109,9 +1109,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     gap: '6px',
                                     padding: '8px 14px',
                                     borderRadius: '8px',
-                                    backgroundColor: copiedRoomCode ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255, 255, 255, 0.08)',
-                                    border: `1px solid ${copiedRoomCode ? 'var(--color-vector-green)' : 'rgba(255, 255, 255, 0.15)'}`,
-                                    color: copiedRoomCode ? 'var(--color-vector-green)' : '#ffffff',
+                                    backgroundColor: copiedRoomCode ? 'rgba(34, 197, 94, 0.2)' : 'var(--surface-elevated)',
+                                    border: `1px solid ${copiedRoomCode ? 'var(--color-vector-green)' : 'var(--surface-border)'}`,
+                                    color: copiedRoomCode ? 'var(--color-vector-green)' : 'var(--text-primary)',
                                     fontSize: '12px',
                                     fontWeight: 600,
                                     cursor: 'pointer',
@@ -1183,10 +1183,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         width: '100%',
                         maxWidth: '440px',
                         padding: 'clamp(14px, 2.2vh, 20px) 18px',
-                        backgroundColor: '#141414',
+                        backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
-                        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
+                        boxShadow: 'var(--shadow-modal)',
                         boxSizing: 'border-box',
                         overflow: 'hidden',
                         touchAction: 'none',
@@ -1204,7 +1204,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <Swords size={15} style={{ color: 'var(--color-signal-orange)' }} />
-                            <span style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
+                            <span style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                                 Arena Persiapan Duel
                             </span>
                         </div>
@@ -1213,8 +1213,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                 fontSize: '11px',
                                 color: 'var(--color-silver)',
                                 fontFamily: 'var(--font-mono)',
-                                backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
                                 padding: '2px 8px',
                                 borderRadius: '6px',
                             }}
@@ -1418,13 +1418,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="product-demo-panel" style={{ width: '100%', maxWidth: '480px', textAlign: 'center' }}>
                     <div style={{ fontSize: '48px', marginBottom: '14px' }}>⏳</div>
-                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: '#ffffff', marginBottom: '8px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '22px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '8px' }}>
                         Semua Pertanyaan Selesai!
                     </h2>
                     <p style={{ color: 'var(--color-fog)', fontSize: '13px', marginBottom: '20px' }}>
                         Menunggu {opponent?.username || 'Lawan'} menyelesaikan pertanyaan terakhirnya...
                     </p>
-                    <div style={{ height: '4px', width: '140px', backgroundColor: 'rgba(255, 255, 255, 0.08)', borderRadius: '4px', overflow: 'hidden', margin: '0 auto 24px' }}>
+                    <div style={{ height: '4px', width: '140px', backgroundColor: 'var(--surface-border)', borderRadius: '4px', overflow: 'hidden', margin: '0 auto 24px' }}>
                         <motion.div animate={{ x: [-140, 140] }} transition={{ repeat: Infinity, duration: 1.2, ease: 'linear' }} style={{ height: '100%', width: '60px', backgroundColor: 'var(--color-signal-orange)' }} />
                     </div>
                     <div style={{ display: 'flex', justifyContent: 'center', gap: '28px', color: 'var(--color-steel)', fontSize: '13px' }}>
@@ -1455,10 +1455,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     style={{
                         width: '100%',
                         maxWidth: '440px',
-                        backgroundColor: '#141414',
+                        backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
-                        boxShadow: '0 20px 48px rgba(0, 0, 0, 0.9)',
+                        boxShadow: 'var(--shadow-modal)',
                         textAlign: 'center',
                         padding: 'clamp(14px, 2.2vh, 20px) 18px',
                         boxSizing: 'border-box',
@@ -1615,7 +1615,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             justifyContent: 'space-between',
                             paddingBottom: '16px',
                             marginBottom: '20px',
-                            borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+                            borderBottom: '1px solid var(--surface-border)',
                         }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
@@ -1644,8 +1644,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             width: '28px',
                                             height: '28px',
                                             borderRadius: '8px',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            backgroundColor: bgmMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(245, 197, 66, 0.12)',
+                                            border: '1px solid var(--surface-border)',
+                                            backgroundColor: bgmMuted ? 'var(--surface-elevated)' : 'rgba(245, 197, 66, 0.12)',
                                             color: bgmMuted ? 'var(--color-steel)' : 'var(--color-gold)',
                                             cursor: 'pointer',
                                             transition: 'all 0.15s ease',
@@ -1665,8 +1665,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                             width: '28px',
                                             height: '28px',
                                             borderRadius: '8px',
-                                            border: '1px solid rgba(255, 255, 255, 0.12)',
-                                            backgroundColor: audioMuted ? 'rgba(255, 255, 255, 0.04)' : 'rgba(34, 197, 94, 0.12)',
+                                            border: '1px solid var(--surface-border)',
+                                            backgroundColor: audioMuted ? 'var(--surface-elevated)' : 'rgba(34, 197, 94, 0.12)',
                                             color: audioMuted ? 'var(--color-steel)' : 'var(--accent-green)',
                                             cursor: 'pointer',
                                             transition: 'all 0.15s ease',
@@ -1698,10 +1698,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     color: timerColor,
                                     fontFamily: 'var(--font-mono)',
                                     fontWeight: 600,
-                                    backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'rgba(255, 255, 255, 0.06)',
+                                    backgroundColor: timeLeft <= 4 ? 'rgba(255, 51, 68, 0.15)' : 'var(--surface-elevated)',
                                     padding: '3px 10px',
                                     borderRadius: '8px',
-                                    border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'rgba(255, 255, 255, 0.12)'}`,
+                                    border: `1px solid ${timeLeft <= 4 ? 'rgba(255, 51, 68, 0.4)' : 'var(--surface-border)'}`,
                                 }}
                             >
                                 00:{timeLeft < 10 ? '0' : ''}{timeLeft}s
@@ -1759,9 +1759,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             transition={{ duration: 0.2 }}
                             className="battle-question-card"
                             style={{
-                                backgroundColor: 'var(--color-carbon)',
+                                backgroundColor: 'var(--surface-elevated)',
                                 borderRadius: '14px',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                border: '1px solid var(--surface-border)',
                                 marginBottom: '14px',
                             }}
                         >
@@ -1785,11 +1785,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             const isSelected = selectedAnswer === idx
                             const isCorrect = idx === q.correct_option
 
-                            let bg = 'rgba(255, 255, 255, 0.04)'
-                            let border = 'rgba(255, 255, 255, 0.1)'
-                            let textColor = '#ffffff'
-                            let badgeBg = 'rgba(255, 255, 255, 0.08)'
-                            let badgeColor = 'var(--color-silver)'
+                            let bg = 'var(--surface-elevated)'
+                            let border = 'var(--surface-border)'
+                            let textColor = 'var(--text-primary)'
+                            let badgeBg = 'var(--surface-card)'
+                            let badgeColor = 'var(--text-secondary)'
 
                             if (showAnswer) {
                                 if (isCorrect) {
@@ -1797,7 +1797,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     border = 'var(--color-vector-green)'
                                     textColor = 'var(--color-vector-green)'
                                     badgeBg = 'var(--color-vector-green)'
-                                    badgeColor = '#050505'
+                                    badgeColor = '#ffffff'
                                 } else if (isSelected) {
                                     bg = 'rgba(239, 68, 68, 0.16)'
                                     border = 'var(--accent-red)'
@@ -1808,16 +1808,16 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             } else if (isSelected) {
                                 bg = 'rgba(245, 197, 66, 0.15)'
                                 border = 'var(--color-signal-orange)'
-                                textColor = '#ffffff'
+                                textColor = 'var(--text-primary)'
                                 badgeBg = 'var(--color-signal-orange)'
-                                badgeColor = '#050505'
+                                badgeColor = '#1d1d1d'
                             }
 
                             return (
                                 <motion.button
                                     key={idx}
                                     type="button"
-                                    whileHover={selectedAnswer === null ? { y: -2, borderColor: 'rgba(255, 255, 255, 0.25)' } : {}}
+                                    whileHover={selectedAnswer === null ? { y: -2, borderColor: 'var(--color-ash)' } : {}}
                                     whileTap={selectedAnswer === null ? { scale: 0.99 } : {}}
                                     onClick={() => handleAnswer(idx)}
                                     className="battle-option-btn"
@@ -1856,7 +1856,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     </div>
 
                     {/* Bottom Toolbar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', paddingTop: '12px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px', paddingTop: '12px', borderTop: '1px solid var(--surface-border)' }}>
                         <span style={{ fontSize: '11px', color: 'var(--color-signal-orange)', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '6px', minWidth: 0, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                             🔥 {classBenefitText}
                         </span>
@@ -1910,10 +1910,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         <div
                             className="product-demo-panel battle-surrender-card"
                             style={{
-                                backgroundColor: '#141414',
-                                border: '1px solid rgba(255, 255, 255, 0.15)',
+                                backgroundColor: 'var(--surface-card)',
+                                border: '1px solid var(--surface-border)',
                                 borderRadius: '14px',
-                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxShadow: 'var(--shadow-modal)',
                                 textAlign: 'center',
                             }}
                             onClick={(e) => e.stopPropagation()}
@@ -1924,7 +1924,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     fontFamily: 'var(--font-heading)',
                                     fontSize: '16px',
                                     fontWeight: 700,
-                                    color: '#ffffff',
+                                    color: 'var(--text-primary)',
                                     marginBottom: '6px',
                                 }}
                             >

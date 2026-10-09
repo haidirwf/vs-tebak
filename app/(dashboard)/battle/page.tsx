@@ -491,7 +491,7 @@ export default function BattlePage() {
         <div className="responsive-page battle-page" style={{ maxWidth: '1200px', margin: '0 auto', display: 'flex', flexDirection: 'column' }}>
             {/* Header Title */}
             <div style={{ marginBottom: '24px', textAlign: 'left', width: '100%' }}>
-                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: '#ffffff' }}>
+                <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', marginBottom: '4px', color: 'var(--text-primary)' }}>
                     ⚔️ Battle Arena
                 </h1>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
@@ -511,7 +511,7 @@ export default function BattlePage() {
                                 initial={{ opacity: 0, y: 12 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ duration: 0.3, delay: i * 0.05 }}
-                                whileHover={{ y: -3, borderColor: 'rgba(255, 255, 255, 0.3)' }}
+                                whileHover={{ y: -3 }}
                                 whileTap={{ scale: 0.98 }}
                                 onClick={item.action}
                                 style={{ cursor: 'pointer', height: '100%', minWidth: 0 }}
@@ -550,7 +550,7 @@ export default function BattlePage() {
 
                                     {/* Content: Title & Clear Concise Description */}
                                     <div style={{ minWidth: 0 }}>
-                                        <h3 className="battle-action-title">
+                                        <h3 className="battle-action-title" style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '15px' }}>
                                             {item.label}
                                         </h3>
                                         <p className="battle-action-desc">
@@ -569,12 +569,13 @@ export default function BattlePage() {
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
+                        boxShadow: 'var(--shadow-card)',
                     }}
                 >
                     {/* Header */}
                     <div className="battle-room-header">
                         <div>
-                            <h2 className="battle-room-title">
+                            <h2 className="battle-room-title" style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: '17px' }}>
                                 🔥 Daftar Room Tersedia
                             </h2>
                             <p className="battle-room-subtitle">
@@ -588,8 +589,8 @@ export default function BattlePage() {
                                     fontSize: '11px',
                                     fontWeight: 600,
                                     color: availableRooms.length > 0 ? 'var(--color-vector-green)' : 'var(--color-steel)',
-                                    backgroundColor: availableRooms.length > 0 ? 'rgba(34, 197, 94, 0.12)' : 'rgba(255, 255, 255, 0.05)',
-                                    border: `1px solid ${availableRooms.length > 0 ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
+                                    backgroundColor: availableRooms.length > 0 ? 'rgba(34, 197, 94, 0.12)' : 'var(--surface-elevated)',
+                                    border: `1px solid ${availableRooms.length > 0 ? 'rgba(34, 197, 94, 0.3)' : 'var(--surface-border)'}`,
                                     padding: '4px 8px',
                                     borderRadius: '8px',
                                     fontFamily: 'var(--font-mono)',
@@ -608,9 +609,9 @@ export default function BattlePage() {
                                     gap: '6px',
                                     padding: '5px 10px',
                                     borderRadius: '8px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.06)',
-                                    border: '1px solid rgba(255, 255, 255, 0.12)',
-                                    color: 'var(--color-silver)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
+                                    color: 'var(--text-primary)',
                                     fontSize: '11px',
                                     fontWeight: 600,
                                     cursor: 'pointer',
@@ -630,10 +631,10 @@ export default function BattlePage() {
                             style={{
                                 textAlign: 'center',
                                 padding: '40px 20px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                                backgroundColor: 'var(--surface-elevated)',
                                 borderRadius: '14px',
-                                border: '1px dashed rgba(255, 255, 255, 0.1)',
-                                color: 'var(--color-fog)',
+                                border: '1px dashed var(--surface-border)',
+                                color: 'var(--text-secondary)',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
@@ -646,8 +647,8 @@ export default function BattlePage() {
                                     width: '52px',
                                     height: '52px',
                                     borderRadius: '14px',
-                                    backgroundColor: 'rgba(245, 197, 66, 0.08)',
-                                    border: '1px solid rgba(245, 197, 66, 0.25)',
+                                    backgroundColor: 'var(--accent-gold-bg)',
+                                    border: '1px solid var(--accent-gold-border)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -657,7 +658,7 @@ export default function BattlePage() {
                             >
                                 🛡️
                             </div>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
                                 Belum Ada Room Publik Terbuka
                             </div>
                             <p style={{ fontSize: '12px', color: 'var(--color-steel)', maxWidth: '420px', margin: 0, lineHeight: 1.5 }}>
@@ -701,9 +702,9 @@ export default function BattlePage() {
                                                 style={{
                                                     width: '40px',
                                                     height: '40px',
-                                                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                                                    backgroundColor: 'var(--accent-gold-bg)',
                                                     borderRadius: '10px',
-                                                    border: '1px solid rgba(245, 197, 66, 0.3)',
+                                                    border: '1px solid var(--accent-gold-border)',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -714,7 +715,7 @@ export default function BattlePage() {
                                                 {catEmoji}
                                             </div>
                                             <div style={{ minWidth: 0, flex: 1 }}>
-                                                <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '14px', color: '#ffffff', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                                <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '14px', color: 'var(--text-primary)', marginBottom: '2px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                     Room {room.host_name}
                                                 </div>
                                                 <div style={{ fontSize: '11px', color: 'var(--color-fog)', display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
@@ -726,13 +727,13 @@ export default function BattlePage() {
                                                     </span>
                                                     <span
                                                         style={{
-                                                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                                            border: '1px solid rgba(245, 197, 66, 0.3)',
+                                                            backgroundColor: 'var(--accent-gold-bg)',
+                                                            border: '1px solid var(--accent-gold-border)',
+                                                            color: 'var(--accent-gold-text)',
                                                             padding: '1px 6px',
                                                             borderRadius: '5px',
                                                             fontFamily: 'var(--font-mono)',
                                                             fontWeight: 700,
-                                                            color: 'var(--color-signal-orange)',
                                                             fontSize: '11px',
                                                         }}
                                                     >
@@ -801,16 +802,16 @@ export default function BattlePage() {
                                 overflow: 'hidden',
                                 touchAction: 'none',
                                 padding: '20px 18px',
-                                backgroundColor: '#141414',
+                                backgroundColor: 'var(--surface-card)',
                                 borderRadius: '12px',
                                 border: '1px solid var(--surface-border)',
-                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxShadow: 'var(--shadow-modal)',
                                 boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
                                     Buat Room Battle
                                 </h2>
                                 <button
@@ -849,7 +850,7 @@ export default function BattlePage() {
                                                 padding: '9px 6px',
                                                 borderRadius: '8px',
                                                 cursor: 'pointer',
-                                                backgroundColor: category === cat.value ? 'rgba(245, 197, 66, 0.15)' : '#0d0d0d',
+                                                backgroundColor: category === cat.value ? 'rgba(245, 197, 66, 0.15)' : 'var(--surface-elevated)',
                                                 border: `1px solid ${category === cat.value ? 'var(--color-signal-orange)' : 'var(--surface-border)'}`,
                                                 color: category === cat.value ? 'var(--color-signal-orange)' : 'var(--color-silver)',
                                                 fontFamily: 'var(--font-heading)',
@@ -937,16 +938,16 @@ export default function BattlePage() {
                                 overflow: 'hidden',
                                 touchAction: 'none',
                                 padding: '20px 18px',
-                                backgroundColor: '#141414',
+                                backgroundColor: 'var(--surface-card)',
                                 borderRadius: '12px',
                                 border: '1px solid var(--surface-border)',
-                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxShadow: 'var(--shadow-modal)',
                                 boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: '#ffffff', margin: 0 }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
                                     Join Room Duel
                                 </h2>
                                 <button
@@ -982,7 +983,7 @@ export default function BattlePage() {
                                     style={{
                                         width: '100%',
                                         padding: '12px 14px',
-                                        backgroundColor: '#0a0a0a',
+                                        backgroundColor: 'var(--surface-canvas)',
                                         border: '1px solid var(--surface-border)',
                                         borderRadius: '8px',
                                         color: '#38bdf8',
@@ -1064,10 +1065,10 @@ export default function BattlePage() {
                                 maxWidth: '350px',
                                 padding: '24px 20px',
                                 textAlign: 'center',
-                                backgroundColor: '#141414',
+                                backgroundColor: 'var(--surface-card)',
                                 borderRadius: '14px',
                                 border: '1px solid var(--surface-border)',
-                                boxShadow: '0 20px 48px rgba(0, 0, 0, 0.95)',
+                                boxShadow: 'var(--shadow-modal)',
                                 boxSizing: 'border-box',
                             }}
                         >
@@ -1113,8 +1114,8 @@ export default function BattlePage() {
                                                 width: '46px',
                                                 height: '46px',
                                                 borderRadius: '10px',
-                                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                                border: '1px solid rgba(245, 197, 66, 0.3)',
+                                                backgroundColor: 'var(--accent-gold-bg)',
+                                                border: '1px solid var(--accent-gold-border)',
                                                 display: 'flex',
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
@@ -1127,7 +1128,7 @@ export default function BattlePage() {
                                 )}
                             </div>
 
-                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: '#ffffff', marginBottom: '8px' }}>
+                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '8px' }}>
                                 {matchStatus === 'found'
                                     ? 'Lawan Ditemukan!'
                                     : matchmakingTimedOut || matchStatus === 'timeout'
@@ -1150,7 +1151,7 @@ export default function BattlePage() {
                                         gap: '6px',
                                         padding: '5px 12px',
                                         borderRadius: '6px',
-                                        backgroundColor: '#0a0a0a',
+                                        backgroundColor: 'var(--surface-elevated)',
                                         border: '1px solid var(--surface-border)',
                                         fontSize: '12px',
                                         fontFamily: 'var(--font-mono)',

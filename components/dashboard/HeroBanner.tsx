@@ -139,8 +139,8 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                     width: '64px',
                                     height: '64px',
                                     borderRadius: '12px',
-                                    backgroundColor: '#161616',
-                                    border: '1px solid rgba(255, 255, 255, 0.14)',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -156,15 +156,15 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                     position: 'absolute',
                                     bottom: '-4px',
                                     right: '-4px',
-                                    backgroundColor: 'var(--color-gold)',
-                                    color: '#0a0a0a',
+                                    backgroundColor: 'var(--brand-primary)',
+                                    color: 'var(--brand-primary-text)',
                                     fontWeight: 700,
                                     fontSize: '10px',
                                     padding: '1px 6px',
                                     borderRadius: '6px',
                                     fontFamily: 'var(--font-inter)',
                                     letterSpacing: '0.02em',
-                                    boxShadow: 'var(--shadow-gold)',
+                                    boxShadow: 'var(--shadow-card)',
                                     border: '1px solid rgba(245, 197, 66, 0.4)',
                                 }}
                             >
@@ -181,7 +181,7 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                         fontSize: '22px',
                                         fontWeight: 600,
                                         margin: 0,
-                                        color: '#ffffff',
+                                        color: 'var(--text-primary)',
                                         letterSpacing: '-0.02em',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
@@ -212,7 +212,7 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '11.5px', color: 'var(--color-steel)', flexWrap: 'wrap', minWidth: 0, marginTop: '6px' }}>
                                 {profile.school_name && (
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        <School size={12} style={{ color: 'var(--color-gold)', flexShrink: 0 }} />
+                                        <School size={12} style={{ color: 'var(--color-gold-text)', flexShrink: 0 }} />
                                         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{profile.school_name}</span>
                                     </div>
                                 )}
@@ -236,8 +236,8 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                 justifyContent: 'space-between',
                                 gap: '4px',
                                 padding: '6px 10px',
-                                backgroundColor: '#141414',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
                                 borderRadius: '12px',
                                 width: '100%',
                                 maxWidth: '320px',
@@ -284,31 +284,31 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                                                 alignItems: 'center',
                                                 justifyContent: 'center',
                                                 backgroundColor: isLit
-                                                    ? 'rgba(245, 197, 66, 0.15)'
+                                                    ? 'var(--accent-gold-bg)'
                                                     : isTodayPending
-                                                    ? 'rgba(245, 197, 66, 0.06)'
-                                                    : 'rgba(255, 255, 255, 0.03)',
+                                                    ? 'var(--surface-elevated)'
+                                                    : 'var(--surface-card)',
                                                 border: isLit
-                                                    ? '1px solid rgba(245, 197, 66, 0.5)'
+                                                    ? '1px solid var(--accent-gold-border)'
                                                     : isTodayPending
-                                                    ? '1.5px dashed var(--color-gold)'
-                                                    : '1px solid rgba(255, 255, 255, 0.08)',
+                                                    ? '1.5px dashed var(--color-gold-text)'
+                                                    : '1px solid var(--surface-border)',
                                             }}
                                         >
                                             {isLit ? (
-                                                <Flame size={14} fill="var(--color-gold)" style={{ color: 'var(--color-gold)' }} />
+                                                <Flame size={14} fill="var(--color-gold-text)" style={{ color: 'var(--color-gold-text)' }} />
                                             ) : isTodayPending ? (
                                                 <motion.div
                                                     animate={{ opacity: [0.35, 0.9, 0.35] }}
                                                     transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}
                                                     style={{ display: 'flex' }}
                                                 >
-                                                    <Flame size={13} style={{ color: 'var(--color-gold)' }} />
+                                                    <Flame size={13} style={{ color: 'var(--color-gold-text)' }} />
                                                 </motion.div>
                                             ) : day.isPast ? (
                                                 <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--color-steel)' }} />
                                             ) : (
-                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'rgba(255, 255, 255, 0.1)' }} />
+                                                <span style={{ width: '4px', height: '4px', borderRadius: '50%', backgroundColor: 'var(--surface-border)' }} />
                                             )}
                                         </div>
                                     </div>
@@ -319,30 +319,29 @@ function HeroBanner({ profile, modulesCompletedCount, xpLogs = [] }: HeroBannerP
                 </div>
 
                 {/* Progress Bar & Quick Stats Strip */}
-                <div style={{ backgroundColor: '#141414', borderRadius: '12px', padding: '14px 16px', border: '1px solid rgba(255, 255, 255, 0.08)', boxSizing: 'border-box' }}>
+                <div style={{ backgroundColor: 'var(--surface-elevated)', borderRadius: '12px', padding: '14px 16px', border: '1px solid var(--surface-border)', boxSizing: 'border-box' }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', flexWrap: 'wrap', gap: '6px' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
-                            <span style={{ fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-inter)', color: '#ffffff' }}>
+                            <span style={{ fontSize: '11px', fontWeight: 600, fontFamily: 'var(--font-inter)', color: 'var(--text-primary)' }}>
                                 Perkembangan Level
                             </span>
                             <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
                                 ({currentXpProgress.toLocaleString()} / {profile.xp_to_next_level.toLocaleString()} XP)
                             </span>
                         </div>
-                        <span style={{ fontSize: '11px', fontWeight: 600, color: roleCfg.color, fontFamily: 'var(--font-inter)' }}>
+                        <span style={{ fontSize: '11px', fontWeight: 700, color: 'var(--color-gold-text)', fontFamily: 'var(--font-inter)' }}>
                             {progressPercent}% Menuju Level {profile.level + 1}
                         </span>
                     </div>
 
-                    <div style={{ height: '6px', backgroundColor: 'rgba(255, 255, 255, 0.06)', borderRadius: '6px', overflow: 'hidden', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+                    <div style={{ height: '6px', backgroundColor: 'var(--surface-border)', borderRadius: '6px', overflow: 'hidden' }}>
                         <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${progressPercent}%` }}
                             transition={{ duration: 0.9, ease: 'easeOut' }}
                             style={{
                                 height: '100%',
-                                background: `linear-gradient(90deg, ${roleCfg.color} 0%, var(--color-gold) 100%)`,
-                                boxShadow: `0 0 12px ${roleCfg.color}60`,
+                                background: 'linear-gradient(90deg, #FDE047 0%, #F5C542 50%, #EAB308 100%)',
                             }}
                         />
                     </div>

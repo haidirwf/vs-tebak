@@ -250,7 +250,7 @@ export default function ShopClient({
             <div style={{ marginBottom: '24px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '4px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', margin: 0, color: '#ffffff' }}>
+                        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '26px', fontWeight: 700, letterSpacing: '-0.01em', margin: 0, color: 'var(--text-primary)' }}>
                             🛍️ Toko Petualang
                         </h1>
                         <div
@@ -260,9 +260,9 @@ export default function ShopClient({
                                 gap: '6px',
                                 padding: '4px 10px',
                                 borderRadius: '8px',
-                                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                                border: '1px solid rgba(245, 197, 66, 0.25)',
-                                color: '#F5C542',
+                                backgroundColor: 'var(--accent-gold-bg)',
+                                border: '1px solid var(--accent-gold-border)',
+                                color: 'var(--accent-gold-text)',
                                 fontSize: '12px',
                                 fontWeight: 600,
                             }}
@@ -296,9 +296,9 @@ export default function ShopClient({
                         gap: '8px',
                         padding: '10px 18px',
                         borderRadius: '10px',
-                        border: activeTab === 'voucher' ? '1px solid rgba(245, 197, 66, 0.35)' : '1px solid transparent',
-                        backgroundColor: activeTab === 'voucher' ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
-                        color: activeTab === 'voucher' ? '#F5C542' : 'var(--text-secondary)',
+                        border: activeTab === 'voucher' ? '1px solid var(--accent-gold-border)' : '1px solid transparent',
+                        backgroundColor: activeTab === 'voucher' ? 'var(--accent-gold-bg)' : 'transparent',
+                        color: activeTab === 'voucher' ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-heading)',
                         fontSize: '13px',
                         fontWeight: 600,
@@ -320,9 +320,9 @@ export default function ShopClient({
                         gap: '8px',
                         padding: '10px 18px',
                         borderRadius: '10px',
-                        border: activeTab === 'items' ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid transparent',
-                        backgroundColor: activeTab === 'items' ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-                        color: activeTab === 'items' ? '#38bdf8' : 'var(--text-secondary)',
+                        border: activeTab === 'items' ? '1px solid var(--accent-gold-border)' : '1px solid transparent',
+                        backgroundColor: activeTab === 'items' ? 'var(--accent-gold-bg)' : 'transparent',
+                        color: activeTab === 'items' ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-heading)',
                         fontSize: '13px',
                         fontWeight: 600,
@@ -382,8 +382,8 @@ export default function ShopClient({
 
                     <div className="two-col-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', alignItems: 'start' }}>
                         {/* Voucher Catalog */}
-                        <div className="card" style={{ padding: '24px', borderRadius: '14px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: '16px', color: '#ffffff' }}>
+                        <div className="card" style={{ padding: '24px', borderRadius: '14px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: 'var(--shadow-card)' }}>
+                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: '16px', color: 'var(--text-primary)' }}>
                                 Pilih Voucher Kantin
                             </h3>
                             <div style={{ display: 'grid', gap: '12px' }}>
@@ -399,15 +399,15 @@ export default function ShopClient({
                                             style={{
                                                 border: '1px solid var(--surface-border)',
                                                 borderRadius: '12px',
-                                                backgroundColor: '#0d0d0d',
+                                                backgroundColor: 'var(--surface-elevated)',
                                                 padding: '16px 18px',
                                                 transition: 'border-color 0.2s',
                                             }}
                                         >
                                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                                    <Ticket size={16} style={{ color: '#F5C542' }} />
-                                                    <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: '#ffffff' }}>
+                                                    <Ticket size={16} style={{ color: 'var(--color-gold-text)' }} />
+                                                    <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)' }}>
                                                         {cleanVoucherName}
                                                     </strong>
                                                 </div>
@@ -429,7 +429,7 @@ export default function ShopClient({
                                                 {voucher.description || 'Voucher kantin untuk penukaran makanan/minuman.'}
                                             </p>
                                             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                                <span style={{ fontSize: '12px', color: '#F5C542', fontWeight: 600 }}>
+                                                <span style={{ fontSize: '12px', color: 'var(--color-gold-text)', fontWeight: 700 }}>
                                                     Syarat: {voucher.xp_cost} XP
                                                 </span>
                                                 <button
@@ -437,15 +437,16 @@ export default function ShopClient({
                                                     onClick={() => handleRedeem(voucher)}
                                                     disabled={!canRedeem || voucherLoadingId === voucher.id}
                                                     style={{
-                                                        border: 'none',
+                                                        border: canRedeem ? '1px solid var(--brand-primary-border)' : '1px solid var(--surface-border)',
                                                         borderRadius: '8px',
                                                         padding: '8px 16px',
                                                         cursor: canRedeem ? 'pointer' : 'not-allowed',
                                                         fontFamily: 'var(--font-heading)',
-                                                        fontWeight: 600,
+                                                        fontWeight: 700,
                                                         fontSize: '12px',
-                                                        backgroundColor: canRedeem ? '#F5C542' : '#141414',
-                                                        color: canRedeem ? '#0a0a0a' : 'var(--text-muted)',
+                                                        backgroundColor: canRedeem ? 'var(--brand-primary)' : 'var(--surface-elevated)',
+                                                        color: canRedeem ? 'var(--brand-primary-text)' : 'var(--text-muted)',
+                                                        boxShadow: canRedeem ? 'var(--shadow-signal-orange)' : 'none',
                                                         opacity: voucherLoadingId === voucher.id ? 0.75 : 1,
                                                         transition: 'all 0.15s ease',
                                                     }}
@@ -460,8 +461,8 @@ export default function ShopClient({
                         </div>
 
                         {/* Claimed History */}
-                        <div className="card" style={{ padding: '24px', borderRadius: '14px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: '0 8px 24px rgba(0,0,0,0.3)' }}>
-                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: '16px', color: '#ffffff' }}>
+                        <div className="card" style={{ padding: '24px', borderRadius: '14px', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: 'var(--shadow-card)' }}>
+                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 600, letterSpacing: '-0.01em', marginBottom: '16px', color: 'var(--text-primary)' }}>
                                 Riwayat Kode Voucher
                             </h3>
                             {history.length === 0 ? (
@@ -489,7 +490,7 @@ export default function ShopClient({
                                             style={{
                                                 border: '1px solid var(--surface-border)',
                                                 borderRadius: '12px',
-                                                backgroundColor: '#0d0d0d',
+                                                backgroundColor: 'var(--surface-elevated)',
                                                 padding: '12px 14px',
                                                 textAlign: 'left',
                                                 cursor: 'pointer',
@@ -498,10 +499,10 @@ export default function ShopClient({
                                             }}
                                         >
                                             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
-                                                <strong style={{ fontSize: '13px', fontFamily: 'var(--font-heading)', fontWeight: 600, color: '#ffffff' }}>
+                                                <strong style={{ fontSize: '13px', fontFamily: 'var(--font-heading)', fontWeight: 600, color: 'var(--text-primary)' }}>
                                                     {item.voucherName}
                                                 </strong>
-                                                <span style={{ fontSize: '11px', color: '#F5C542', fontWeight: 600 }}>
+                                                <span style={{ fontSize: '11px', color: 'var(--color-gold-text)', fontWeight: 700 }}>
                                                     Syarat {item.xp_spent} XP
                                                 </span>
                                             </div>
@@ -544,9 +545,9 @@ export default function ShopClient({
                                     style={{
                                         padding: '6px 12px',
                                         borderRadius: '8px',
-                                        border: `1px solid ${selectedSlotFilter === slotKey ? 'rgba(56, 189, 248, 0.4)' : 'var(--surface-border)'}`,
-                                        backgroundColor: selectedSlotFilter === slotKey ? 'rgba(56, 189, 248, 0.12)' : 'transparent',
-                                        color: selectedSlotFilter === slotKey ? '#38bdf8' : 'var(--text-secondary)',
+                                        border: `1px solid ${selectedSlotFilter === slotKey ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                        backgroundColor: selectedSlotFilter === slotKey ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                        color: selectedSlotFilter === slotKey ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                                         fontSize: '12px',
                                         fontWeight: 600,
                                         cursor: 'pointer',
@@ -581,8 +582,8 @@ export default function ShopClient({
                                 style={{
                                     padding: '8px 16px',
                                     borderRadius: '8px',
-                                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                    color: '#ffffff',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    color: 'var(--text-primary)',
                                     border: '1px solid var(--surface-border)',
                                     fontSize: '12px',
                                     fontWeight: 600,
@@ -607,30 +608,18 @@ export default function ShopClient({
                                         style={{
                                             padding: '14px 12px',
                                             borderRadius: '12px',
-                                            backgroundColor: '#141414',
+                                            backgroundColor: 'var(--surface-card)',
                                             border: `1px solid ${rarity.border}`,
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'space-between',
                                             gap: '8px',
                                             opacity: isOwned ? 0.82 : 1,
-                                            boxShadow: '0 4px 14px rgba(0,0,0,0.3)',
+                                            boxShadow: 'var(--shadow-card)',
                                             position: 'relative',
                                             overflow: 'hidden',
                                         }}
                                     >
-                                        {/* Corner Ambient Glow for Rarity recognition */}
-                                        <div
-                                            style={{
-                                                position: 'absolute',
-                                                top: '-25px',
-                                                right: '-25px',
-                                                width: '85px',
-                                                height: '85px',
-                                                background: `radial-gradient(circle, ${rarity.bg} 0%, transparent 70%)`,
-                                                pointerEvents: 'none',
-                                            }}
-                                        />
 
                                         <div>
                                             {/* Top badges */}
@@ -639,10 +628,10 @@ export default function ShopClient({
                                                     style={{
                                                         fontSize: '10.5px',
                                                         color: 'var(--text-secondary)',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                                        backgroundColor: 'var(--surface-elevated)',
                                                         padding: '2px 7px',
                                                         borderRadius: '6px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                        border: '1px solid var(--surface-border)',
                                                         whiteSpace: 'nowrap',
                                                     }}
                                                 >
@@ -688,7 +677,7 @@ export default function ShopClient({
                                                             fontFamily: 'var(--font-heading)',
                                                             fontSize: '13.5px',
                                                             fontWeight: 600,
-                                                            color: '#ffffff',
+                                                            color: 'var(--text-primary)',
                                                             lineHeight: 1.3,
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
@@ -745,13 +734,13 @@ export default function ShopClient({
                                                 justifyContent: 'space-between',
                                                 gap: '6px',
                                                 paddingTop: '10px',
-                                                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                                borderTop: '1px solid var(--surface-border)',
                                             }}
                                         >
                                             <span
                                                 style={{
                                                     fontSize: '12.5px',
-                                                    color: '#F5C542',
+                                                    color: 'var(--color-gold-text)',
                                                     fontWeight: 700,
                                                     fontFamily: 'var(--font-heading)',
                                                     whiteSpace: 'nowrap',
@@ -786,9 +775,10 @@ export default function ShopClient({
                                                     style={{
                                                         padding: '5px 12px',
                                                         borderRadius: '7px',
-                                                        border: 'none',
-                                                        backgroundColor: canAfford ? '#F5C542' : '#1e1e1e',
-                                                        color: canAfford ? '#0a0a0a' : 'var(--text-muted)',
+                                                        border: canAfford ? '1px solid var(--brand-primary-border)' : '1px solid var(--surface-border)',
+                                                        backgroundColor: canAfford ? 'var(--brand-primary)' : 'var(--surface-elevated)',
+                                                        color: canAfford ? 'var(--brand-primary-text)' : 'var(--text-muted)',
+                                                        boxShadow: canAfford ? 'var(--shadow-signal-orange)' : 'none',
                                                         fontFamily: 'var(--font-heading)',
                                                         fontSize: '11.5px',
                                                         fontWeight: 700,
@@ -797,7 +787,7 @@ export default function ShopClient({
                                                         whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    {isLoading ? '...' : canAfford ? 'Beli' : 'Kurang'}
+                                                    {isLoading ? '...' : canAfford ? 'Beli' : 'XP Kurang'}
                                                 </button>
                                             )}
                                         </div>
@@ -832,12 +822,12 @@ export default function ShopClient({
                             style={{
                                 width: '100%',
                                 maxWidth: '420px',
-                                backgroundColor: '#141414',
+                                backgroundColor: 'var(--surface-card)',
                                 border: '1px solid var(--surface-border)',
                                 borderRadius: '16px',
                                 padding: '24px',
                                 textAlign: 'center',
-                                boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
+                                boxShadow: 'var(--shadow-modal)',
                             }}
                         >
                             <div
@@ -857,7 +847,7 @@ export default function ShopClient({
                                 <Ticket size={24} />
                             </div>
 
-                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: '#ffffff', marginBottom: '6px' }}>
+                            <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '6px' }}>
                                 {redeemModalSource === 'claim' ? 'Voucher Berhasil Diklaim!' : 'Detail Voucher'}
                             </h3>
                             <p style={{ fontSize: '13px', color: 'var(--text-secondary)', marginBottom: '16px' }}>
@@ -866,7 +856,7 @@ export default function ShopClient({
 
                             <div
                                 style={{
-                                    backgroundColor: '#0a0a0a',
+                                    backgroundColor: 'var(--surface-elevated)',
                                     border: '1px solid var(--surface-border)',
                                     borderRadius: '12px',
                                     padding: '16px',
@@ -889,8 +879,8 @@ export default function ShopClient({
                                         padding: '6px 14px',
                                         borderRadius: '6px',
                                         border: '1px solid var(--surface-border)',
-                                        backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                        color: '#ffffff',
+                                        backgroundColor: 'var(--surface-elevated)',
+                                        color: 'var(--text-primary)',
                                         fontSize: '12px',
                                         cursor: 'pointer',
                                     }}
@@ -911,9 +901,10 @@ export default function ShopClient({
                                     width: '100%',
                                     padding: '10px 16px',
                                     borderRadius: '10px',
-                                    border: 'none',
-                                    backgroundColor: '#F5C542',
-                                    color: '#050505',
+                                    border: '1px solid var(--brand-primary-border)',
+                                    backgroundColor: 'var(--brand-primary)',
+                                    color: 'var(--brand-primary-text)',
+                                    boxShadow: 'var(--shadow-signal-orange)',
                                     fontFamily: 'var(--font-heading)',
                                     fontWeight: 600,
                                     fontSize: '13px',

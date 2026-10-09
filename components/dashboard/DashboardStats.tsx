@@ -51,9 +51,9 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
     ]
 
     return (
-        <div className="card" style={{ padding: '22px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--surface-card)' }}>
+        <div className="card" style={{ padding: '22px', height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', backgroundColor: 'var(--surface-card)', border: '1px solid var(--surface-border)', boxShadow: 'var(--shadow-card)' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 400, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: '#ffffff' }}>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
                     <TrendingUp size={16} style={{ color: 'var(--color-gold)' }} />
                     Statistik Hero
                 </h3>
@@ -66,11 +66,11 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
                         key={stat.label}
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
-                        whileHover={{ y: -2, borderColor: 'rgba(255, 255, 255, 0.22)' }}
+                        whileHover={{ y: -2, borderColor: 'var(--color-ash)' }}
                         transition={{ type: 'spring', stiffness: 350, damping: 20, delay: i * 0.04 }}
                         style={{
-                            backgroundColor: '#121212',
-                            border: '1px solid rgba(255, 255, 255, 0.08)',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
                             borderRadius: '12px',
                             padding: '14px',
                             position: 'relative',
@@ -103,7 +103,7 @@ export default function DashboardStats({ modulesCompleted, totalXp, streak, leve
                         <div style={{ fontSize: '12px', color: 'var(--color-fog)', fontWeight: 400, marginBottom: '2px' }}>
                             {stat.label}
                         </div>
-                        <div style={{ fontSize: '20px', fontWeight: 600, color: '#ffffff', letterSpacing: '-0.02em', fontFamily: 'var(--font-inter)' }}>
+                        <div style={{ fontSize: '20px', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '-0.02em', fontFamily: 'var(--font-heading)' }}>
                             {stat.value}
                         </div>
                     </motion.div>

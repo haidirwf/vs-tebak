@@ -581,30 +581,46 @@ export default function ModuleDetail({
                     >
                         <div
                             style={{
-                                width: '28px',
-                                height: '28px',
-                                borderRadius: '8px',
-                                backgroundColor: 'rgba(245, 197, 66, 0.15)',
-                                border: '1px solid rgba(245, 197, 66, 0.4)',
+                                width: '32px',
+                                height: '32px',
+                                borderRadius: '9px',
+                                background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+                                border: '1px solid #F59E0B',
                                 display: 'flex',
                                 alignItems: 'center',
                                 justifyContent: 'center',
+                                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.25)',
                                 flexShrink: 0,
                             }}
                         >
-                            <Swords size={16} style={{ color: 'var(--color-gold, #F5C542)' }} />
+                            <Swords
+                                size={16}
+                                style={{
+                                    color: '#ffffff',
+                                    filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
+                                }}
+                            />
                         </div>
                         <span
                             className="hidden sm:inline"
                             style={{
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '18px',
-                                fontWeight: 600,
+                                fontWeight: 700,
                                 color: 'var(--text-primary)',
                                 letterSpacing: '-0.02em',
                             }}
                         >
-                            Skill<span style={{ color: 'var(--color-gold, #F5C542)' }}>ungo</span>
+                            Skill<span
+                                style={{
+                                    background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    fontWeight: 700,
+                                }}
+                            >
+                                ungo
+                            </span>
                         </span>
                     </Link>
 
@@ -896,8 +912,8 @@ export default function ModuleDetail({
                                         borderRadius: '10px',
                                         overflow: 'hidden',
                                         border: '1px solid var(--surface-border, #e4e4e7)',
-                                        backgroundColor: '#000000',
-                                        boxShadow: '0 4px 18px rgba(0, 0, 0, 0.1)',
+                                        backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                                        boxShadow: '0 4px 18px rgba(0, 0, 0, 0.06)',
                                         marginBottom: '14px',
                                     }}
                                 >
@@ -924,7 +940,7 @@ export default function ModuleDetail({
                                                 justifyContent: 'center',
                                                 width: '100%',
                                                 height: '100%',
-                                                color: '#ffffff',
+                                                color: 'var(--text-secondary)',
                                                 fontSize: '13px',
                                                 textAlign: 'center',
                                                 padding: '20px',

@@ -443,7 +443,7 @@ export default function CharacterPage() {
                             fontWeight: 700,
                             letterSpacing: '-0.01em',
                             marginBottom: '4px',
-                            color: '#ffffff',
+                            color: 'var(--text-primary)',
                         }}
                     >
                         🛡️ Karakter & Kostum
@@ -472,9 +472,9 @@ export default function CharacterPage() {
                                 gap: '12px',
                                 padding: '12px 18px',
                                 borderRadius: '12px',
-                                backgroundColor: '#141414',
+                                backgroundColor: 'var(--surface-card)',
                                 border: `1px solid ${notification.type === 'success' ? 'rgba(34, 197, 94, 0.45)' : 'rgba(239, 68, 68, 0.45)'}`,
-                                boxShadow: '0 16px 40px rgba(0, 0, 0, 0.85), 0 0 1px rgba(255, 255, 255, 0.15)',
+                                boxShadow: 'var(--shadow-modal)',
                                 pointerEvents: 'auto',
                             }}
                         >
@@ -483,7 +483,7 @@ export default function CharacterPage() {
                             ) : (
                                 <AlertCircle size={18} style={{ color: 'var(--accent-red)', flexShrink: 0 }} />
                             )}
-                            <span style={{ fontSize: '13px', color: '#ffffff', fontWeight: 500, lineHeight: 1.4 }}>
+                            <span style={{ fontSize: '13px', color: 'var(--text-primary)', fontWeight: 500, lineHeight: 1.4 }}>
                                 {notification.message}
                             </span>
                             <button
@@ -519,8 +519,8 @@ export default function CharacterPage() {
                         style={{
                             padding: '22px 20px',
                             borderRadius: '16px',
-                            border: '1px solid #313131',
-                            backgroundColor: '#141414',
+                            border: '1px solid var(--surface-border)',
+                            backgroundColor: 'var(--surface-card)',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
@@ -548,7 +548,7 @@ export default function CharacterPage() {
                             <span>{roleInfo.avatarEmoji}</span>
                             <span>{roleInfo.name} · Lv.{profile?.level || 1}</span>
                             <span style={{ opacity: 0.5 }}>•</span>
-                            <span style={{ color: '#F5C542', fontFamily: 'var(--font-mono)' }}>{profile?.xp || 0} XP</span>
+                            <span style={{ color: 'var(--color-gold-text)', fontFamily: 'var(--font-mono)' }}>{profile?.xp || 0} XP</span>
                         </div>
 
                         {/* Visual Stage */}
@@ -563,7 +563,7 @@ export default function CharacterPage() {
 
                         {/* Hero Name & Lore */}
                         <div style={{ textAlign: 'center', marginTop: '12px' }}>
-                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: '#ffffff' }}>
+                            <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)' }}>
                                 {profile?.username || 'Hero'}
                             </div>
                             <div style={{ fontSize: '12px', color: 'var(--color-fog)', marginTop: '2px' }}>
@@ -578,8 +578,8 @@ export default function CharacterPage() {
                                 marginTop: '16px',
                                 padding: '10px 12px',
                                 borderRadius: '8px',
-                                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
                                 fontSize: '11px',
                             }}
                         >
@@ -598,11 +598,11 @@ export default function CharacterPage() {
                         style={{
                             padding: '18px',
                             borderRadius: '16px',
-                            border: '1px solid #313131',
-                            backgroundColor: '#141414',
+                            border: '1px solid var(--surface-border)',
+                            backgroundColor: 'var(--surface-card)',
                         }}
                     >
-                        <div style={{ fontSize: '13px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)', marginBottom: '14px' }}>
+                        <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)', marginBottom: '14px' }}>
                             Perlengkapan Terpasang
                         </div>
 
@@ -621,8 +621,8 @@ export default function CharacterPage() {
                                             justifyContent: 'space-between',
                                             padding: '8px 10px',
                                             borderRadius: '8px',
-                                            backgroundColor: item ? 'rgba(255, 255, 255, 0.04)' : 'rgba(255, 255, 255, 0.02)',
-                                            border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'rgba(255, 255, 255, 0.05)'}`,
+                                            backgroundColor: item ? 'var(--surface-elevated)' : 'transparent',
+                                            border: `1px solid ${item ? RARITY_CONFIG[item.rarity].border : 'var(--surface-border)'}`,
                                             minWidth: 0,
                                             gap: '6px',
                                         }}
@@ -633,8 +633,8 @@ export default function CharacterPage() {
                                                     width: '30px',
                                                     height: '30px',
                                                     borderRadius: '6px',
-                                                    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-                                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                                    backgroundColor: 'var(--surface-elevated)',
+                                                    border: '1px solid var(--surface-border)',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -652,7 +652,7 @@ export default function CharacterPage() {
                                                     style={{
                                                         fontSize: '11.5px',
                                                         fontWeight: 600,
-                                                        color: item ? '#ffffff' : 'var(--color-fog)',
+                                                        color: item ? 'var(--text-primary)' : 'var(--color-fog)',
                                                         overflow: 'hidden',
                                                         textOverflow: 'ellipsis',
                                                         whiteSpace: 'nowrap',
@@ -699,49 +699,49 @@ export default function CharacterPage() {
                         style={{
                             padding: '16px',
                             borderRadius: '16px',
-                            backgroundColor: '#141414',
-                            border: '1px solid #313131',
+                            backgroundColor: 'var(--surface-card)',
+                            border: '1px solid var(--surface-border)',
                         }}
                     >
                         <div style={{ marginBottom: '10px' }}>
-                            <div style={{ fontSize: '12px', fontWeight: 700, color: '#ffffff', fontFamily: 'var(--font-heading)' }}>
+                            <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                                 Total Atribut & Buff Tempur:
                             </div>
                         </div>
                         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '8px' }}>
-                            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
+                            <div style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--surface-border)', padding: '6px 8px', borderRadius: '6px' }}>
                                 <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>HP Darah</div>
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#ef4444', fontFamily: 'var(--font-mono)' }}>
                                     {characterStats.hp}
                                 </div>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
+                            <div style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--surface-border)', padding: '6px 8px', borderRadius: '6px' }}>
                                 <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>ATK Serang</div>
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#f59e0b', fontFamily: 'var(--font-mono)' }}>
                                     +{characterStats.atk}
                                 </div>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
+                            <div style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--surface-border)', padding: '6px 8px', borderRadius: '6px' }}>
                                 <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>DEF Bertahan</div>
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#10b981', fontFamily: 'var(--font-mono)' }}>
                                     {characterStats.def}
                                 </div>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
+                            <div style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--surface-border)', padding: '6px 8px', borderRadius: '6px' }}>
                                 <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>CRIT Kritis</div>
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#a855f7', fontFamily: 'var(--font-mono)' }}>
                                     {characterStats.crit}%
                                 </div>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
+                            <div style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--surface-border)', padding: '6px 8px', borderRadius: '6px' }}>
                                 <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>Waktu Timer</div>
                                 <div style={{ fontSize: '13px', fontWeight: 700, color: '#38bdf8', fontFamily: 'var(--font-mono)' }}>
                                     +{characterStats.battleBuffs.extraTimerSec}s
                                 </div>
                             </div>
-                            <div style={{ backgroundColor: 'rgba(255, 255, 255, 0.03)', padding: '6px 8px', borderRadius: '6px' }}>
+                            <div style={{ backgroundColor: 'var(--surface-elevated)', border: '1px solid var(--surface-border)', padding: '6px 8px', borderRadius: '6px' }}>
                                 <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>Bonus XP</div>
-                                <div style={{ fontSize: '13px', fontWeight: 700, color: '#F5C542', fontFamily: 'var(--font-mono)' }}>
+                                <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-gold-text)', fontFamily: 'var(--font-mono)' }}>
                                     +{characterStats.battleBuffs.extraXpPct}%
                                 </div>
                             </div>
@@ -754,8 +754,8 @@ export default function CharacterPage() {
                     className="card character-right-column"
                     style={{
                         padding: '20px',
-                        backgroundColor: '#141414',
-                        border: '1px solid #313131',
+                        backgroundColor: 'var(--surface-card)',
+                        border: '1px solid var(--surface-border)',
                         borderRadius: '16px',
                         display: 'flex',
                         flexDirection: 'column',
@@ -777,9 +777,9 @@ export default function CharacterPage() {
                                 gap: '6px',
                                 padding: '8px 14px',
                                 borderRadius: '8px',
-                                border: activeTab === 'inventory' ? '1px solid rgba(245, 197, 66, 0.35)' : '1px solid transparent',
-                                backgroundColor: activeTab === 'inventory' ? 'rgba(245, 197, 66, 0.12)' : 'transparent',
-                                color: activeTab === 'inventory' ? '#F5C542' : 'var(--color-fog)',
+                                border: activeTab === 'inventory' ? '1px solid var(--accent-gold-border)' : '1px solid transparent',
+                                backgroundColor: activeTab === 'inventory' ? 'var(--accent-gold-bg)' : 'transparent',
+                                color: activeTab === 'inventory' ? 'var(--accent-gold-text)' : 'var(--color-fog)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
                                 fontWeight: 700,
@@ -798,9 +798,9 @@ export default function CharacterPage() {
                                 gap: '6px',
                                 padding: '8px 14px',
                                 borderRadius: '8px',
-                                border: '1px solid rgba(255, 255, 255, 0.08)',
-                                backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                                color: 'var(--color-fog)',
+                                border: '1px solid var(--surface-border)',
+                                backgroundColor: 'var(--surface-elevated)',
+                                color: 'var(--text-secondary)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
                                 fontWeight: 700,
@@ -824,7 +824,7 @@ export default function CharacterPage() {
                                 borderRadius: '8px',
                                 border: activeTab === 'perks' ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid transparent',
                                 backgroundColor: activeTab === 'perks' ? 'rgba(16, 185, 129, 0.12)' : 'transparent',
-                                color: activeTab === 'perks' ? '#10b981' : 'var(--color-fog)',
+                                color: activeTab === 'perks' ? '#10b981' : 'var(--text-secondary)',
                                 fontFamily: 'var(--font-heading)',
                                 fontSize: '13px',
                                 fontWeight: 700,
@@ -847,9 +847,9 @@ export default function CharacterPage() {
                                     style={{
                                         padding: '5px 12px',
                                         borderRadius: '6px',
-                                        border: `1px solid ${selectedSlotFilter === flt ? 'rgba(245, 197, 66, 0.35)' : 'rgba(255, 255, 255, 0.08)'}`,
-                                        backgroundColor: selectedSlotFilter === flt ? 'rgba(245, 197, 66, 0.12)' : 'rgba(255, 255, 255, 0.02)',
-                                        color: selectedSlotFilter === flt ? '#F5C542' : 'var(--color-steel)',
+                                        border: `1px solid ${selectedSlotFilter === flt ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                        backgroundColor: selectedSlotFilter === flt ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                        color: selectedSlotFilter === flt ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                                         fontSize: '11px',
                                         fontWeight: 600,
                                         cursor: 'pointer',
@@ -874,10 +874,10 @@ export default function CharacterPage() {
                                     style={{
                                         padding: '36px',
                                         textAlign: 'center',
-                                        backgroundColor: 'rgba(255, 255, 255, 0.02)',
+                                        backgroundColor: 'var(--surface-elevated)',
                                         borderRadius: '12px',
-                                        border: '1px dashed rgba(255, 255, 255, 0.1)',
-                                        color: 'var(--color-fog)',
+                                        border: '1px dashed var(--surface-border)',
+                                        color: 'var(--text-secondary)',
                                     }}
                                 >
                                     <Package size={28} style={{ margin: '0 auto 10px', opacity: 0.6 }} />
@@ -890,9 +890,10 @@ export default function CharacterPage() {
                                             display: 'inline-block',
                                             padding: '8px 18px',
                                             borderRadius: '8px',
-                                            backgroundColor: '#F5C542',
-                                            color: '#050505',
-                                            border: 'none',
+                                            backgroundColor: 'var(--brand-primary)',
+                                            color: 'var(--brand-primary-text)',
+                                            border: '1px solid var(--brand-primary-border)',
+                                            boxShadow: 'var(--shadow-signal-orange)',
                                             fontSize: '12px',
                                             fontWeight: 700,
                                             fontFamily: 'var(--font-heading)',
@@ -916,8 +917,8 @@ export default function CharacterPage() {
                                                 style={{
                                                     padding: '14px 12px',
                                                     borderRadius: '12px',
-                                                    backgroundColor: '#141414',
-                                                    border: `1px solid ${isEquipped ? 'rgba(245, 197, 66, 0.45)' : rarity.border}`,
+                                                    backgroundColor: 'var(--surface-card)',
+                                                    border: `1px solid ${isEquipped ? 'var(--accent-gold-border)' : rarity.border}`,
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     justifyContent: 'space-between',
@@ -926,18 +927,6 @@ export default function CharacterPage() {
                                                     overflow: 'hidden',
                                                 }}
                                             >
-                                                {/* Corner Ambient Glow for Rarity */}
-                                                <div
-                                                    style={{
-                                                        position: 'absolute',
-                                                        top: '-25px',
-                                                        right: '-25px',
-                                                        width: '85px',
-                                                        height: '85px',
-                                                        background: `radial-gradient(circle, ${rarity.bg} 0%, transparent 70%)`,
-                                                        pointerEvents: 'none',
-                                                    }}
-                                                />
 
                                                 <div>
                                                     {/* Header: Slot Badge & Rarity / Equipped status */}
@@ -946,10 +935,10 @@ export default function CharacterPage() {
                                                             style={{
                                                                 fontSize: '10.5px',
                                                                 color: 'var(--text-secondary)',
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                                                                backgroundColor: 'var(--surface-elevated)',
                                                                 padding: '2px 7px',
                                                                 borderRadius: '6px',
-                                                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                                border: '1px solid var(--surface-border)',
                                                                 whiteSpace: 'nowrap',
                                                             }}
                                                         >
@@ -963,9 +952,9 @@ export default function CharacterPage() {
                                                                         fontWeight: 700,
                                                                         padding: '2px 6px',
                                                                         borderRadius: '5px',
-                                                                        color: '#F5C542',
-                                                                        backgroundColor: 'rgba(245, 197, 66, 0.15)',
-                                                                        border: '1px solid rgba(245, 197, 66, 0.35)',
+                                                                        color: 'var(--accent-gold-text)',
+                                                                        backgroundColor: 'var(--accent-gold-bg)',
+                                                                        border: '1px solid var(--accent-gold-border)',
                                                                         whiteSpace: 'nowrap',
                                                                     }}
                                                                 >
@@ -1013,7 +1002,7 @@ export default function CharacterPage() {
                                                                     fontFamily: 'var(--font-heading)',
                                                                     fontSize: '13.5px',
                                                                     fontWeight: 600,
-                                                                    color: '#ffffff',
+                                                                    color: 'var(--text-primary)',
                                                                     lineHeight: 1.3,
                                                                     display: '-webkit-box',
                                                                     WebkitLineClamp: 2,
@@ -1063,7 +1052,7 @@ export default function CharacterPage() {
                                                 </div>
 
                                                 {/* Action Button */}
-                                                <div style={{ paddingTop: '8px', borderTop: '1px solid rgba(255, 255, 255, 0.08)' }}>
+                                                <div style={{ paddingTop: '8px', borderTop: '1px solid var(--surface-border)' }}>
                                                     {isEquipped ? (
                                                         <button
                                                             type="button"
@@ -1073,8 +1062,8 @@ export default function CharacterPage() {
                                                                 width: '100%',
                                                                 padding: '6px 10px',
                                                                 borderRadius: '7px',
-                                                                border: '1px solid rgba(239, 68, 68, 0.35)',
-                                                                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                                                                border: '1px solid var(--accent-red-border)',
+                                                                backgroundColor: 'var(--accent-red-bg)',
                                                                 color: 'var(--accent-red)',
                                                                 fontSize: '11.5px',
                                                                 fontWeight: 600,
@@ -1093,9 +1082,10 @@ export default function CharacterPage() {
                                                                 width: '100%',
                                                                 padding: '6px 10px',
                                                                 borderRadius: '7px',
-                                                                border: 'none',
-                                                                backgroundColor: '#F5C542',
-                                                                color: '#050505',
+                                                                border: '1px solid var(--brand-primary-border)',
+                                                                background: 'linear-gradient(180deg, #FDE047 0%, #F5C542 100%)',
+                                                                color: '#18181b',
+                                                                boxShadow: 'var(--shadow-signal-orange)',
                                                                 fontSize: '11.5px',
                                                                 fontWeight: 700,
                                                                 fontFamily: 'var(--font-heading)',
@@ -1128,15 +1118,15 @@ export default function CharacterPage() {
                                         style={{
                                             padding: '16px',
                                             borderRadius: '12px',
-                                            backgroundColor: '#161616',
-                                            border: `1px solid ${isCurrent ? 'rgba(245, 197, 66, 0.4)' : 'rgba(255, 255, 255, 0.08)'}`,
+                                            backgroundColor: 'var(--surface-elevated)',
+                                            border: `1px solid ${isCurrent ? 'rgba(245, 197, 66, 0.4)' : 'var(--surface-border)'}`,
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                                                 <span style={{ fontSize: '22px' }}>{r.avatarEmoji}</span>
                                                 <div>
-                                                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
+                                                    <span style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)' }}>
                                                         {r.name} — {r.title}
                                                     </span>
                                                     <span style={{ fontSize: '11px', color: 'var(--color-steel)', marginLeft: '8px' }}>
@@ -1149,9 +1139,9 @@ export default function CharacterPage() {
                                                     style={{
                                                         padding: '2px 8px',
                                                         borderRadius: '6px',
-                                                        backgroundColor: 'rgba(245, 197, 66, 0.15)',
-                                                        color: '#F5C542',
-                                                        border: '1px solid rgba(245, 197, 66, 0.35)',
+                                                        backgroundColor: 'var(--accent-gold-bg)',
+                                                        color: 'var(--accent-gold-text)',
+                                                        border: '1px solid var(--accent-gold-border)',
                                                         fontSize: '11px',
                                                         fontWeight: 700,
                                                     }}

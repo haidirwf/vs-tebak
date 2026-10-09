@@ -48,7 +48,7 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                     onClick={(e) => e.stopPropagation()}
                     className="card"
                     style={{
-                        backgroundColor: '#141414',
+                        backgroundColor: 'var(--surface-card)',
                         border: '1px solid rgba(239, 68, 68, 0.35)',
                         borderRadius: '16px',
                         padding: '24px 20px',
@@ -56,7 +56,7 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                         maxWidth: '360px',
                         width: '100%',
                         position: 'relative',
-                        boxShadow: '0 24px 48px rgba(0, 0, 0, 0.95)',
+                        boxShadow: 'var(--shadow-modal)',
                         boxSizing: 'border-box',
                     }}
                 >
@@ -207,8 +207,8 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                                 fontSize: '26px',
                                 fontWeight: 700,
                                 color: 'var(--color-silver)',
-                                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                                border: '1px solid rgba(255, 255, 255, 0.1)',
+                                backgroundColor: 'var(--surface-elevated)',
+                                border: '1px solid var(--surface-border)',
                                 borderRadius: '10px',
                                 padding: '6px 14px',
                                 minWidth: '55px',
@@ -231,7 +231,7 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                                 fontFamily: 'var(--font-mono)',
                                 fontSize: '32px',
                                 fontWeight: 700,
-                                color: '#ffffff',
+                                color: 'var(--text-primary)',
                                 backgroundColor: 'rgba(239, 68, 68, 0.16)',
                                 border: '1px solid rgba(239, 68, 68, 0.5)',
                                 borderRadius: '10px',
@@ -241,7 +241,7 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                                 alignItems: 'center',
                                 justifyContent: 'center',
                                 gap: '6px',
-                                boxShadow: '0 0 20px rgba(239, 68, 68, 0.3)',
+                                boxShadow: '0 2px 8px rgba(239, 68, 68, 0.2)',
                             }}
                         >
                             <Flame size={18} style={{ color: 'var(--accent-red)' }} />
@@ -254,7 +254,7 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                             fontFamily: 'var(--font-heading)',
                             fontSize: '16px',
                             fontWeight: 600,
-                            color: '#ffffff',
+                            color: 'var(--text-primary)',
                             margin: '0 0 6px',
                         }}
                     >
@@ -268,7 +268,7 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                             margin: '0 0 20px',
                         }}
                     >
-                        Kamu telah aktif belajar selama <strong style={{ color: '#ffffff' }}>{newStreak} hari</strong> berturut-turut. Jaga api semangat belajarmu tetap menyala!
+                        Kamu telah aktif belajar selama <strong style={{ color: 'var(--text-primary)' }}>{newStreak} hari</strong> berturut-turut. Jaga api semangat belajarmu tetap menyala!
                     </p>
 
                     <button

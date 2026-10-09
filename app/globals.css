@@ -7,48 +7,58 @@
           Carbon controls, hairline borders, and isolated bursts of Molten Signal Orange.
    ========================================================================== */
 
-:root {
+:root,
+[data-theme="light"] {
   color-scheme: light;
 
   /* --- SKILVUL DESIGN SYSTEM (LIGHT FIRST) + SKILLUNGO GOLD ACCENTS --- */
   /* References: DESIGN_REF.md (Extracted from Skilvul) */
   --color-void: #ffffff;              /* Page base canvas */
   --color-near-black: #ffffff;        /* Pure white card */
-  --color-carbon: #f4f4f5;            /* Light gray surface (--skilvul-colors-gray-100) */
-  --color-graphite: #e4e4e7;          /* Border gray (--skilvul-colors-gray-200) */
-  --color-iron: #eff2f6;              /* Elevated surface / light callout (--skilvul-colors-skilvul-lightGray) */
-  --color-slate-edge: #e4e4e7;        /* Border stroke */
-  --color-ash: #a1a1aa;               /* Low-emphasis metadata / caption */
-  --color-steel: #828282;             /* Muted text (--skilvul-colors-skilvul-darkGray) */
-  --color-fog: #71717a;               /* Secondary text */
-  --color-silver: #4a4b4c;            /* Body text (--skilvul-colors-skilvul-blackText) */
-  --color-white: #1d1d1d;             /* Dark heading text (--skilvul-colors-skilvul-black) */
+  --color-carbon: #f8f9fa;            /* Clean light surface */
+  --color-graphite: #e2e8f0;          /* Border gray */
+  --color-iron: #f1f3f5;              /* Elevated surface / light callout */
+  --color-slate-edge: #e2e8f0;        /* Border stroke */
+  --color-ash: #94a3b8;               /* Low-emphasis metadata / caption */
+  --color-steel: #64748b;             /* Crisp muted text (Slate-500) */
+  --color-fog: #64748b;               /* Secondary text */
+  --color-silver: #475569;            /* Body text (Slate-600) */
+  --color-white: #0f172a;             /* Dark heading text (Slate-900) */
 
-  /* --- BRAND ACCENT TOKENS (SKILLUNGO GOLD PALETTE) --- */
-  --color-signal-orange: #F5C542;     /* Gold primary signal */
-  --color-gold: #F5C542;              /* Primary brand CTA & metrics */
+  /* --- BRAND ACCENT TOKENS (SKILLUNGO SUNNY RADIANT GOLD PALETTE) --- */
+  /* Di Light Mode: Emas untuk teks & aksen menggunakan Radiant Amber Gold (#D97706 / #B45309) agar hangat, cerah, tidak pernah butek/mustard kehijauan */
+  /* Untuk solid button & bar fill menggunakan Radiant Gold (#F5C542 / #FBBF24) dengan border emas alami (#EAB308) */
+  --brand-primary: #F5C542;           /* Primary brand gold for CTAs, bars, and active tabs */
+  --brand-primary-hover: #FBBF24;     /* Brand hover bright gold */
+  --brand-primary-text: #18181b;      /* Crisp dark charcoal on brand gold */
+  --brand-primary-border: #EAB308;    /* Natural golden edge stroke */
+  --color-signal-orange: #F59E0B;     /* Radiant amber gold signal on light */
+  --color-gold: #D97706;              /* Radiant Amber Gold for typography, icons & strokes */
+  --color-gold-text: #D97706;         /* Clear sunny amber typography (clean, zero murky tint) */
+  --color-gold-fill: #F5C542;         /* Solid metric / bar fill */
   --color-ember: #EAB308;             /* Gold hover */
-  --color-gold-hover: #EAB308;
-  --color-burnt-orange: #D97706;      /* Warm amber */
-  --color-electric-yellow: #FDE047;   /* Bright gold halo */
+  --color-gold-hover: #B45309;        /* Rich amber gold hover */
+  --color-burnt-orange: #D97706;      /* Warm amber secondary */
+  --color-electric-yellow: #FACC15;   /* Bright sunny yellow */
   --color-vector-green: #219653;      /* Skilvul green */
   --accent-gold: var(--color-gold);
-  --accent-gold-bg: rgba(245, 197, 66, 0.12);
-  --accent-gold-border: rgba(245, 197, 66, 0.40);
+  --accent-gold-bg: #FFFBEB;          /* Fresh warm honey tint (Amber-50) */
+  --accent-gold-border: #FDE68A;      /* Clean golden stroke (Amber-200) */
+  --accent-gold-text: #B45309;        /* Deep readable golden amber (Amber-700, 5.8:1 contrast) */
   --color-spark: var(--color-gold);
 
   --gradient-vector-green: linear-gradient(to right, #219653 0%, #F5C542 50%, #38BDF8 100%);
   --gradient-spectrum-rail: linear-gradient(to right, #F5C542 0%, #38BDF8 50%, #219653 100%);
 
-  /* --- SURFACES (SKILVUL CLEAN LIGHT SPEC) --- */
-  --surface-canvas: #fafafa;                  /* Background kanvas off-white (--skilvul-colors-gray-50) */
-  --surface-card: #ffffff;                    /* Kartu putih bersih */
-  --surface-elevated: #f4f4f5;                /* Surface interaktif hover / dropdown */
-  --surface-border: #e4e4e7;                  /* Border 1px gray */
-  --surface-border-subtle: rgba(0, 0, 0, 0.06);
-  --surface-inverted: #1d1d1d;                /* Dark element on light */
-  --surface-frosted: rgba(0, 0, 0, 0.04);
-  --bg-navbar: rgba(255, 255, 255, 0.94);     /* Navbar glass white */
+  /* --- SURFACES (SKILVUL CLEAN LIGHT SPEC WITH TONAL ELEVATION) --- */
+  --surface-canvas: #f8f9fa;                  /* Clean crisp neutral canvas (Google / Stripe style) */
+  --surface-card: #ffffff;                    /* Pure white card */
+  --surface-elevated: #f1f3f5;                /* Clean elevated surface */
+  --surface-border: #e2e8f0;                  /* Border 1px crisp hairline */
+  --surface-border-subtle: rgba(0, 0, 0, 0.05);
+  --surface-inverted: #0f172a;                /* Dark element on light */
+  --surface-frosted: rgba(0, 0, 0, 0.03);
+  --bg-navbar: rgba(255, 255, 255, 0.98);     /* Navbar crisp glass white */
 
   /* Semantic aliases */
   --bg-primary: var(--surface-canvas);
@@ -58,20 +68,20 @@
 
   /* --- FUNCTIONAL RPG STATUS TOKENS --- */
   --accent-red: #EF4444;
-  --accent-red-bg: rgba(239, 68, 68, 0.08);
-  --accent-red-border: rgba(239, 68, 68, 0.25);
+  --accent-red-bg: #FEF2F2;
+  --accent-red-border: #FECACA;
 
   --accent-cyan: #0284C7;
-  --accent-cyan-bg: rgba(2, 132, 199, 0.08);
-  --accent-cyan-border: rgba(2, 132, 199, 0.25);
+  --accent-cyan-bg: #F0F9FF;
+  --accent-cyan-border: #BAE6FD;
 
   --accent-green: #16A34A;
-  --accent-green-bg: rgba(22, 163, 74, 0.08);
-  --accent-green-border: rgba(22, 163, 74, 0.25);
+  --accent-green-bg: #F0FDF4;
+  --accent-green-border: #BBF7D0;
 
   --accent-purple: #7C3AED;
-  --accent-purple-bg: rgba(124, 58, 237, 0.08);
-  --accent-purple-border: rgba(124, 58, 237, 0.25);
+  --accent-purple-bg: #F5F3FF;
+  --accent-purple-border: #DDD6FE;
 
   /* --- TYPOGRAPHY SPEC --- */
   --font-inter: var(--font-inter), 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -83,9 +93,9 @@
   --font-mono: var(--font-jetbrains-mono);
 
   /* Text Contrast */
-  --text-primary: #1d1d1d;                    /* Skilvul black */
-  --text-secondary: #4a4b4c;                  /* Skilvul body text */
-  --text-muted: #828282;                      /* Skilvul darkGray */
+  --text-primary: #0f172a;                    /* Crisp deep slate (Slate-900, 16:1 contrast) */
+  --text-secondary: #475569;                  /* Clear body slate (Slate-600, 7:1 contrast) */
+  --text-muted: #64748b;                      /* Crisp metadata slate (Slate-500, 4.8:1 contrast) */
   --text-silver: #64748b;
 
   /* --- SPACING SCALE (4px Base Unit) --- */
@@ -117,12 +127,12 @@
   --radius-full: 9999px;
 
   /* --- ELEVATION & SHADOWS (SKILVUL DELICATE ELEVATION) --- */
-  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.45), 0 0 8px rgba(245, 197, 66, 0.25);
-  --shadow-signal-orange: 0 4px 14px rgba(245, 197, 66, 0.35);
-  --shadow-gold: 0 4px 14px rgba(245, 197, 66, 0.35);
-  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-panel: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-  --shadow-card: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --focus-ring: 0 0 0 2px rgba(234, 179, 8, 0.4), 0 0 6px rgba(245, 197, 66, 0.25);
+  --shadow-signal-orange: 0 1px 3px rgba(202, 138, 4, 0.18), 0 2px 5px rgba(245, 197, 66, 0.28);
+  --shadow-gold: 0 1px 3px rgba(202, 138, 4, 0.18), 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+  --shadow-panel: 0 2px 5px -1px rgba(0, 0, 0, 0.06), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
+  --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
   --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.15);
 }
 
@@ -160,11 +170,40 @@
   --text-muted: #808080;
   --text-silver: #bfbfbf;
 
-  --accent-gold-bg: rgba(245, 197, 66, 0.1);
-  --accent-gold-border: rgba(245, 197, 66, 0.35);
+  --color-gold: #F5C542;
+  --color-gold-text: #F5C542;
+  --color-gold-fill: #F5C542;
+  --color-gold-hover: #EAB308;
+  --accent-gold: #F5C542;
+  --accent-gold-bg: rgba(245, 197, 66, 0.12);
+  --accent-gold-border: rgba(245, 197, 66, 0.40);
+  --accent-gold-text: #F5C542;
+  --color-signal-orange: #F5C542;
+  --brand-primary: #F5C542;
+  --brand-primary-hover: #EAB308;
+  --brand-primary-text: #1d1d1d;
+  --brand-primary-border: transparent;
 
-  --shadow-signal-orange: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
-  --shadow-gold: 0 0 22px rgba(245, 197, 66, 0.42), 0 0 8px rgba(245, 197, 66, 0.28);
+  /* --- FUNCTIONAL RPG STATUS TOKENS (DARK MODE) --- */
+  --accent-red: #EF4444;
+  --accent-red-bg: rgba(239, 68, 68, 0.14);
+  --accent-red-border: rgba(239, 68, 68, 0.35);
+
+  --accent-cyan: #38BDF8;
+  --accent-cyan-bg: rgba(56, 189, 248, 0.14);
+  --accent-cyan-border: rgba(56, 189, 248, 0.35);
+
+  --accent-green: #22C55E;
+  --accent-green-bg: rgba(34, 197, 94, 0.14);
+  --accent-green-border: rgba(34, 197, 94, 0.35);
+
+  --accent-purple: #C084FC;
+  --accent-purple-bg: rgba(168, 85, 247, 0.14);
+  --accent-purple-border: rgba(168, 85, 247, 0.35);
+
+  --shadow-signal-orange: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(245, 197, 66, 0.2);
+  --shadow-gold: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(245, 197, 66, 0.2);
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.6);
   --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
 }
 
@@ -317,7 +356,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 /* Selection with Linearity Gold Accent */
 ::selection {
   background-color: rgba(245, 197, 66, 0.35);
-  color: #ffffff;
+  color: var(--text-primary);
 }
 
 /* ===================================================
@@ -368,27 +407,36 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: var(--color-gold);
-  color: #0a0a0a !important;
+  background: linear-gradient(180deg, #FDE047 0%, #F5C542 100%);
+  color: #18181b !important;
   font-family: var(--font-inter);
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: var(--radius-buttons);
   padding: 10px 22px;
-  border: 1px solid rgba(245, 197, 66, 0.4);
-  box-shadow: var(--shadow-gold);
+  border: 1px solid #EAB308;
+  box-shadow: 0 1px 2px rgba(202, 138, 4, 0.15), 0 2px 5px rgba(245, 197, 66, 0.3);
   cursor: pointer;
   text-decoration: none;
-  transition: background-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+  transition: all 0.15s ease;
 }
 
 .btn-signal-orange:hover,
 .btn-primary:hover,
 .btn-gold:hover {
-  background-color: var(--color-gold-hover);
-  color: #0a0a0a !important;
+  background: linear-gradient(180deg, #FEF08A 0%, #FBBF24 100%);
+  color: #18181b !important;
+  border-color: #D97706;
   transform: translateY(-1px);
-  box-shadow: 0 0 28px rgba(245, 197, 66, 0.55), 0 0 12px rgba(234, 179, 8, 0.4);
+  box-shadow: 0 2px 6px rgba(202, 138, 4, 0.2), 0 4px 10px rgba(245, 197, 66, 0.35);
+}
+
+[data-theme="dark"] .btn-signal-orange,
+[data-theme="dark"] .btn-primary,
+[data-theme="dark"] .btn-gold {
+  background: #F5C542;
+  border: 1px solid #EAB308;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
 /* Linearity Secondary/Ghost Button */
@@ -476,7 +524,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 .prompt-submit-orb:hover {
   background-color: var(--color-gold-hover);
   transform: scale(1.05);
-  box-shadow: 0 0 26px rgba(245, 197, 66, 0.6), 0 0 10px rgba(234, 179, 8, 0.4);
+  box-shadow: 0 2px 8px rgba(245, 197, 66, 0.35);
 }
 
 /* Linearity Product Demonstration Panel (Solid High-Contrast Surface) */
@@ -484,7 +532,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   background-color: var(--surface-card);
   border: 1px solid var(--surface-border);
   border-radius: 14px;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7);
+  box-shadow: var(--shadow-card);
   padding: 24px;
   box-sizing: border-box !important;
 }
@@ -1165,13 +1213,13 @@ input::placeholder, textarea::placeholder {
   overflow: hidden !important;
   box-sizing: border-box !important;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  box-shadow: var(--shadow-card);
 }
 
 @media (min-width: 768px) {
   .battle-action-card {
     padding: 18px !important;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    box-shadow: var(--shadow-card);
   }
 }
 
@@ -1197,8 +1245,8 @@ input::placeholder, textarea::placeholder {
   width: 28px;
   height: 28px;
   border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--surface-elevated);
+  border: 1px solid var(--surface-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1208,16 +1256,15 @@ input::placeholder, textarea::placeholder {
 }
 
 .battle-action-card:hover .battle-action-arrow {
-  color: #ffffff !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--color-ash) !important;
   transform: translate(1px, -1px);
 }
 
 .battle-action-title {
   font-family: var(--font-heading);
-  font-size: 15px !important;
-  font-weight: 600;
-  color: #ffffff;
+  font-weight: 700 !important;
+  color: var(--text-primary) !important;
   margin: 0 0 4px 0 !important;
   line-height: 1.25;
   letter-spacing: -0.015em;
@@ -1292,7 +1339,7 @@ input::placeholder, textarea::placeholder {
   font-family: var(--font-heading) !important;
   font-size: 15px !important;
   font-weight: 600 !important;
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   margin: 0 !important;
 }
 
@@ -1388,7 +1435,7 @@ input::placeholder, textarea::placeholder {
   background-color: rgba(245, 197, 66, 0.08);
   border: 1px solid rgba(245, 197, 66, 0.35);
   margin: 0 auto 20px !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  box-shadow: var(--shadow-card);
   max-width: 280px !important;
   width: 100% !important;
   box-sizing: border-box !important;
@@ -1554,7 +1601,7 @@ input::placeholder, textarea::placeholder {
 .battle-player-name {
   font-size: 11px !important;
   font-weight: 600 !important;
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   white-space: nowrap !important;
   overflow: hidden !important;
   text-overflow: ellipsis !important;
@@ -1798,7 +1845,7 @@ input::placeholder, textarea::placeholder {
   font-family: var(--font-heading) !important;
   font-size: 14px !important;
   font-weight: 600 !important;
-  color: #ffffff !important;
+  color: var(--text-primary) !important;
   line-height: 1.4 !important;
   margin: 0 0 12px 0 !important;
   word-break: break-word !important;
@@ -2032,7 +2079,7 @@ input::placeholder, textarea::placeholder {
     top: 0 !important;
     border-right: 1px solid var(--surface-border) !important;
     border-bottom: none !important;
-    background-color: var(--surface-canvas) !important;
+    background-color: var(--surface-card) !important;
     z-index: 40 !important;
     flex-shrink: 0 !important;
   }
@@ -2117,7 +2164,7 @@ input::placeholder, textarea::placeholder {
     margin-top: auto;
     position: sticky;
     bottom: 0;
-    background-color: var(--surface-canvas);
+    background-color: var(--surface-card) !important;
     z-index: 2;
   }
 

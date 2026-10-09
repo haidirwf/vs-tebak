@@ -70,7 +70,7 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                             initial={{ opacity: 0, y: 15 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.35, delay: i * 0.06 }}
-                            whileHover={{ y: -3, borderColor: 'rgba(255, 255, 255, 0.3)' }}
+                            whileHover={{ y: -3 }}
                             whileTap={{ scale: 0.98 }}
                             className="card hover-lift"
                             style={{
@@ -137,7 +137,7 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                     </div>
                                 </div>
 
-                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 400, color: '#ffffff', marginBottom: '4px', letterSpacing: '-0.015em' }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '18px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '4px', letterSpacing: '-0.015em' }}>
                                     {action.title}
                                 </div>
                                 <div style={{ fontSize: '11px', color: action.color, fontWeight: 500, marginBottom: '6px', fontFamily: 'var(--font-inter)' }}>
@@ -152,7 +152,7 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                 style={{
                                     marginTop: '16px',
                                     paddingTop: '12px',
-                                    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                    borderTop: '1px solid var(--surface-border)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'space-between',

@@ -88,7 +88,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                 borderRadius: '12px',
                 backgroundColor: 'var(--surface-card)',
                 border: '1px solid var(--surface-border)',
-                boxShadow: '0 12px 30px rgba(0,0,0,0.5)',
+                boxShadow: 'var(--shadow-card)',
             }}
         >
             {/* Header */}
@@ -134,15 +134,15 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                         type="button"
                         onClick={() => setViewMode('weekly')}
                         style={{
-                            padding: '5px 12px',
-                            fontSize: '11px',
+                            padding: '6px 14px',
+                            fontSize: '11.5px',
                             fontFamily: 'var(--font-heading)',
-                            fontWeight: viewMode === 'weekly' ? 600 : 400,
+                            fontWeight: viewMode === 'weekly' ? 700 : 500,
                             borderRadius: '6px',
-                            border: 'none',
+                            border: `1px solid ${viewMode === 'weekly' ? 'var(--accent-gold-border)' : 'transparent'}`,
                             cursor: 'pointer',
-                            backgroundColor: viewMode === 'weekly' ? '#F5C542' : 'transparent',
-                            color: viewMode === 'weekly' ? '#0a0a0a' : 'var(--text-secondary)',
+                            backgroundColor: viewMode === 'weekly' ? 'var(--accent-gold-bg)' : 'transparent',
+                            color: viewMode === 'weekly' ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                             transition: 'all 0.2s ease',
                         }}
                     >
@@ -152,15 +152,15 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                         type="button"
                         onClick={() => setViewMode('category')}
                         style={{
-                            padding: '5px 12px',
-                            fontSize: '11px',
+                            padding: '6px 14px',
+                            fontSize: '11.5px',
                             fontFamily: 'var(--font-heading)',
-                            fontWeight: viewMode === 'category' ? 600 : 400,
+                            fontWeight: viewMode === 'category' ? 700 : 500,
                             borderRadius: '6px',
-                            border: 'none',
+                            border: `1px solid ${viewMode === 'category' ? 'var(--accent-gold-border)' : 'transparent'}`,
                             cursor: 'pointer',
-                            backgroundColor: viewMode === 'category' ? '#F5C542' : 'transparent',
-                            color: viewMode === 'category' ? '#0a0a0a' : 'var(--text-secondary)',
+                            backgroundColor: viewMode === 'category' ? 'var(--accent-gold-bg)' : 'transparent',
+                            color: viewMode === 'category' ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                             transition: 'all 0.2s ease',
                         }}
                     >
@@ -172,9 +172,9 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
             {/* TAB 1: Diagram Batang XP 7 Hari */}
             {viewMode === 'weekly' && (
                 <div>
-                    <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '4px', padding: '0 2px 10px', borderBottom: '1px solid #222222' }}>
+                    <div style={{ height: '150px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: '6px', padding: '0 2px 10px', borderBottom: '1px solid var(--surface-border)' }}>
                         {weeklyData.items.map((item) => {
-                            const barHeightPercent = Math.max(10, Math.round((item.xp / weeklyData.maxXp) * 100))
+                            const barHeightPercent = Math.max(8, Math.round((item.xp / weeklyData.maxXp) * 100))
                             return (
                                 <div
                                     key={item.date}
@@ -189,7 +189,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                     }}
                                 >
                                     {/* Tooltip / value */}
-                                    <span style={{ fontSize: '10px', color: item.xp > 0 ? '#F5C542' : 'var(--text-muted)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
+                                    <span style={{ fontSize: '10px', color: item.xp > 0 ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: 600, fontFamily: 'var(--font-heading)' }}>
                                         {item.xp > 0 ? `+${item.xp}` : '0'}
                                     </span>
 
@@ -197,13 +197,16 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                     <div
                                         style={{
                                             width: '100%',
-                                            maxWidth: '30px',
+                                            maxWidth: '28px',
                                             height: `${barHeightPercent}%`,
-                                            backgroundColor: item.isToday ? '#F5C542' : item.xp > 0 ? 'rgba(245, 197, 66, 0.45)' : '#181818',
+                                            background: item.xp > 0 ? 'linear-gradient(180deg, #FDE047 0%, #F5C542 100%)' : 'var(--surface-elevated)',
                                             borderRadius: '6px 6px 2px 2px',
-                                            border: `1px solid ${item.isToday ? '#EAB308' : 'var(--surface-border)'}`,
+                                            border: item.isToday
+                                                ? '2px solid #EAB308'
+                                                : item.xp > 0
+                                                ? '1px solid #EAB308'
+                                                : '1px solid var(--surface-border)',
                                             transition: 'height 0.6s cubic-bezier(0.2, 0, 0, 1)',
-                                            boxShadow: item.isToday ? '0 0 14px rgba(245, 197, 66, 0.35)' : 'none',
                                         }}
                                     />
 
@@ -212,8 +215,8 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                         style={{
                                             fontSize: '11px',
                                             fontFamily: 'var(--font-heading)',
-                                            fontWeight: item.isToday ? 600 : 400,
-                                            color: item.isToday ? '#F5C542' : 'var(--text-secondary)',
+                                            fontWeight: item.isToday ? 700 : 500,
+                                            color: item.isToday ? 'var(--color-gold-text)' : 'var(--text-secondary)',
                                         }}
                                     >
                                         {item.day}
@@ -228,7 +231,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                             <TrendingUp size={14} style={{ color: '#22C55E', flexShrink: 0 }} />
                             <span style={{ fontSize: '11px', lineHeight: 1.3 }}>Konsistensi belajar harian tercatat otomatis</span>
                         </div>
-                        <span style={{ fontWeight: 600, color: '#F5C542', fontFamily: 'var(--font-heading)', fontSize: '11px', whiteSpace: 'nowrap' }}>
+                        <span style={{ fontWeight: 700, color: 'var(--color-gold-text)', fontFamily: 'var(--font-heading)', fontSize: '11px', whiteSpace: 'nowrap' }}>
                             Total: {totalXp.toLocaleString()} XP
                         </span>
                     </div>
@@ -252,7 +255,7 @@ export default function LearningAnalytics({ completedModules, xpLogs, totalXp }:
                                 </span>
                             </div>
 
-                            <div style={{ height: '6px', backgroundColor: '#141414', borderRadius: '4px', overflow: 'hidden', border: '1px solid #222222' }}>
+                            <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated)', borderRadius: '4px', overflow: 'hidden', border: '1px solid var(--surface-border)' }}>
                                 <motion.div
                                     initial={{ width: 0 }}
                                     animate={{ width: `${Math.max(stat.percent > 0 ? stat.percent : 4, 0)}%` }}

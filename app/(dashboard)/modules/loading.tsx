@@ -25,9 +25,9 @@ export default function ModulesLoading() {
                         style={{
                             padding: '24px',
                             height: '240px',
-                            borderRadius: '17px',
-                            backgroundColor: 'var(--surface-card, #141414)',
-                            border: '1px solid var(--surface-border, rgba(255, 255, 255, 0.08))',
+                            borderRadius: '12px',
+                            backgroundColor: 'var(--surface-card)',
+                            border: '1px solid var(--surface-border)',
                             display: 'flex',
                             flexDirection: 'column',
                         }}
@@ -39,7 +39,7 @@ export default function ModulesLoading() {
                         <div className="sq-skeleton" style={{ height: '22px', width: '75%', borderRadius: '6px', marginBottom: '10px' }} />
                         <div className="sq-skeleton" style={{ height: '14px', width: '90%', borderRadius: '4px', marginBottom: '8px' }} />
                         <div className="sq-skeleton" style={{ height: '14px', width: '60%', borderRadius: '4px', marginBottom: 'auto' }} />
-                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid #222222' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', paddingTop: '16px', borderTop: '1px solid var(--surface-border)' }}>
                             <div className="sq-skeleton" style={{ height: '16px', width: '50px', borderRadius: '4px' }} />
                             <div className="sq-skeleton" style={{ height: '16px', width: '60px', borderRadius: '4px' }} />
                             <div className="sq-skeleton" style={{ height: '16px', width: '70px', borderRadius: '4px' }} />
