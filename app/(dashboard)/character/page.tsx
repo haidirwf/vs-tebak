@@ -11,18 +11,18 @@ import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap, resolveEqui
 import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
 import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
-import { 
-    Swords, 
-    Shield, 
-    Sparkles, 
-    Zap, 
-    Coins, 
-    Check, 
-    ArrowRight, 
-    ShoppingBag, 
-    Package, 
-    Info, 
-    Clock, 
+import {
+    Swords,
+    Shield,
+    Sparkles,
+    Zap,
+    Coins,
+    Check,
+    ArrowRight,
+    ShoppingBag,
+    Package,
+    Info,
+    Clock,
     Flame,
     Lock,
     Loader2,
@@ -30,6 +30,7 @@ import {
     AlertCircle,
     X,
     SlidersHorizontal,
+    ChevronRight,
 } from 'lucide-react'
 
 const RARITY_META: Record<ItemRarity, { weight: number; stars: number; starText: string; tierLabel: string }> = {
@@ -886,22 +887,18 @@ export default function CharacterPage() {
                                     </p>
                                     <Link
                                         href="/shop?tab=items"
+                                        className="btn-signal-orange"
                                         style={{
-                                            display: 'inline-block',
                                             padding: '8px 18px',
-                                            borderRadius: '8px',
-                                            backgroundColor: 'var(--brand-primary)',
-                                            color: 'var(--brand-primary-text)',
-                                            border: '1px solid var(--brand-primary-border)',
-                                            boxShadow: 'var(--shadow-signal-orange)',
                                             fontSize: '12px',
                                             fontWeight: 700,
-                                            fontFamily: 'var(--font-heading)',
                                             textDecoration: 'none',
-                                            cursor: 'pointer',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '6px',
                                         }}
                                     >
-                                        Buka Toko Aksesoris ↗
+                                        <ShoppingBag size={14} /> Buka Toko Aksesoris <ChevronRight size={13} />
                                     </Link>
                                 </div>
                             ) : (

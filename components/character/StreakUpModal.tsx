@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { Flame, Sparkles, X } from 'lucide-react'
+import { Flame, Sparkles, X, ChevronRight } from 'lucide-react'
 
 interface StreakUpModalProps {
     oldStreak: number
@@ -274,20 +274,17 @@ export default function StreakUpModal({ oldStreak, newStreak, onClose }: StreakU
                     <button
                         type="button"
                         onClick={onClose}
-                        className="btn-primary"
+                        className="btn-signal-orange"
                         style={{
                             width: '100%',
-                            padding: '10px 16px',
+                            padding: '11px 18px',
                             borderRadius: '8px',
                             fontSize: '13px',
-                            fontWeight: 600,
-                            backgroundColor: 'var(--accent-red)',
-                            color: '#ffffff',
-                            border: 'none',
+                            fontWeight: 700,
                             cursor: 'pointer',
                         }}
                     >
-                        Lanjutkan
+                        <Flame size={14} /> Pertahankan Streak <ChevronRight size={14} />
                     </button>
                 </motion.div>
             </motion.div>

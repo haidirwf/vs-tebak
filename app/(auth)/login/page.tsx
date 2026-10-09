@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import { Swords, Mail, Lock, Loader2 } from 'lucide-react'
+import { Swords, Mail, Lock, Loader2, LogIn, ChevronRight } from 'lucide-react'
 
 const loginSchema = z.object({
     email: z.string().email('Email tidak valid'),
@@ -202,28 +202,22 @@ export default function LoginPage() {
                             disabled={isLoading}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
+                            className="btn-signal-orange"
                             style={{
                                 width: '100%',
-                                padding: '13px',
-                                backgroundColor: 'var(--brand-primary)',
-                                color: 'var(--brand-primary-text)',
-                                border: 'none',
-                                borderRadius: '10px',
-                                fontFamily: 'var(--font-heading)',
-                                fontSize: '14px',
-                                fontWeight: 600,
-                                letterSpacing: '0.01em',
+                                padding: '12px',
+                                fontSize: '13.5px',
+                                fontWeight: 700,
                                 cursor: isLoading ? 'not-allowed' : 'pointer',
                                 opacity: isLoading ? 0.7 : 1,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
-                                boxShadow: 'var(--shadow-card)',
                                 marginTop: '6px',
                             }}
                         >
-                            {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Memuat...</> : 'Masuk'}
+                            {isLoading ? (
+                                <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Memuat...</>
+                            ) : (
+                                <><LogIn size={15} /> Masuk ke Studio <ChevronRight size={14} /></>
+                            )}
                         </motion.button>
                     </form>
 

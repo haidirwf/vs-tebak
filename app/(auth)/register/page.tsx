@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
 import { createClient } from '@/lib/supabase/client'
-import { Swords, Mail, Lock, User, School, Loader2 } from 'lucide-react'
+import { Swords, Mail, Lock, User, School, Loader2, Sparkles, ChevronRight } from 'lucide-react'
 
 const registerSchema = z.object({
     email: z.string().email('Email tidak valid'),
@@ -273,28 +273,22 @@ export default function RegisterPage() {
                             disabled={isLoading}
                             whileHover={{ scale: 1.01 }}
                             whileTap={{ scale: 0.99 }}
+                            className="btn-signal-orange"
                             style={{
                                 width: '100%',
-                                padding: '13px',
+                                padding: '12px',
                                 marginTop: '10px',
-                                backgroundColor: 'var(--brand-primary)',
-                                color: 'var(--brand-primary-text)',
-                                border: 'none',
-                                borderRadius: '10px',
-                                fontFamily: 'var(--font-heading)',
-                                fontSize: '14px',
-                                fontWeight: 600,
-                                letterSpacing: '0.01em',
+                                fontSize: '13.5px',
+                                fontWeight: 700,
                                 cursor: isLoading ? 'not-allowed' : 'pointer',
                                 opacity: isLoading ? 0.7 : 1,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '8px',
-                                boxShadow: 'var(--shadow-card)',
                             }}
                         >
-                            {isLoading ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</> : 'Mulai Petualangan'}
+                            {isLoading ? (
+                                <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> Mendaftar...</>
+                            ) : (
+                                <><Sparkles size={15} /> Mulai Petualangan <ChevronRight size={14} /></>
+                            )}
                         </motion.button>
                     </form>
 

@@ -9,6 +9,7 @@ import {
     CheckCircle,
     Zap,
     Check,
+    ChevronRight,
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore, VoucherItem, RedemptionItem } from '@/stores/contentStore'
@@ -897,21 +898,17 @@ export default function ShopClient({
                             <button
                                 type="button"
                                 onClick={() => setRedeemResult(null)}
+                                className="btn-signal-orange"
                                 style={{
                                     width: '100%',
-                                    padding: '10px 16px',
-                                    borderRadius: '10px',
-                                    border: '1px solid var(--brand-primary-border)',
-                                    backgroundColor: 'var(--brand-primary)',
-                                    color: 'var(--brand-primary-text)',
-                                    boxShadow: 'var(--shadow-signal-orange)',
-                                    fontFamily: 'var(--font-heading)',
-                                    fontWeight: 600,
+                                    padding: '11px 18px',
+                                    borderRadius: '8px',
                                     fontSize: '13px',
+                                    fontWeight: 700,
                                     cursor: 'pointer',
                                 }}
                             >
-                                Tutup
+                                <Check size={14} /> Tutup <ChevronRight size={14} />
                             </button>
                         </motion.div>
                     </div>

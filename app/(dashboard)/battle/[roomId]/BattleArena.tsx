@@ -117,6 +117,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const myHpRef = useRef(myHp)
     const oppHpRef = useRef(100)
     const knockoutHandledRef = useRef(false)
+    const phaseRef = useRef<BattlePhase>(phase)
+    useEffect(() => {
+        phaseRef.current = phase
+    }, [phase])
 
     // Auto-save & clean up battle session snapshot
     useEffect(() => {
@@ -214,17 +218,19 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         router.push('/battle')
     }
 
-    // Automatically clean up waiting battle room when host leaves or unmounts
+    // Automatically clean up waiting battle room when host actually leaves or closes the tab
     useEffect(() => {
-        if (!isPlayer1 || phase !== 'waiting') return
+        if (!isPlayer1) return
 
         const handleBeforeUnload = () => {
-            const endpoint = `/api/battle/${battle.id}`
-            if (navigator.sendBeacon) {
-                const payload = new Blob([JSON.stringify({ reason: 'host_leave' })], { type: 'application/json' })
-                navigator.sendBeacon(endpoint, payload)
-            } else {
-                fetch(endpoint, { method: 'DELETE', keepalive: true }).catch(() => {})
+            if (phaseRef.current === 'waiting' && !finalizedRef.current) {
+                const endpoint = `/api/battle/${battle.id}`
+                if (navigator.sendBeacon) {
+                    const payload = new Blob([JSON.stringify({ reason: 'host_leave' })], { type: 'application/json' })
+                    navigator.sendBeacon(endpoint, payload)
+                } else {
+                    fetch(endpoint, { method: 'DELETE', keepalive: true }).catch(() => {})
+                }
             }
         }
 
@@ -232,11 +238,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
         return () => {
             window.removeEventListener('beforeunload', handleBeforeUnload)
-            if (phase === 'waiting' && !finalizedRef.current) {
-                fetch(`/api/battle/${battle.id}`, { method: 'DELETE', keepalive: true }).catch(() => {})
-            }
         }
-    }, [isPlayer1, phase, battle.id])
+    }, [isPlayer1, battle.id])
 
     const endBattle = useCallback(async (
         finalMyScore: number,
@@ -1097,7 +1100,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         <span className="battle-room-code-text">
                             {battle.room_code}
                         </span>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', justifyContent: 'center' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%', maxWidth: '170px' }}>
                             <button
                                 type="button"
                                 onClick={handleCopyRoomCode}
@@ -1107,7 +1110,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     gap: '6px',
-                                    padding: '8px 14px',
+                                    padding: '7px 12px',
                                     borderRadius: '8px',
                                     backgroundColor: copiedRoomCode ? 'rgba(34, 197, 94, 0.2)' : 'var(--surface-elevated)',
                                     border: `1px solid ${copiedRoomCode ? 'var(--color-vector-green)' : 'var(--surface-border)'}`,
@@ -1116,6 +1119,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     fontWeight: 600,
                                     cursor: 'pointer',
                                     transition: 'all 0.15s ease',
+                                    width: '100%',
                                 }}
                             >
                                 {copiedRoomCode ? <Check size={14} /> : <Copy size={14} />}
@@ -1130,7 +1134,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     gap: '6px',
-                                    padding: '8px 14px',
+                                    padding: '7px 12px',
                                     borderRadius: '8px',
                                     backgroundColor: copiedInviteLink ? 'rgba(34, 197, 94, 0.2)' : 'rgba(245, 197, 66, 0.12)',
                                     border: `1px solid ${copiedInviteLink ? 'var(--color-vector-green)' : 'rgba(245, 197, 66, 0.35)'}`,
@@ -1139,6 +1143,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     fontWeight: 600,
                                     cursor: 'pointer',
                                     transition: 'all 0.15s ease',
+                                    width: '100%',
                                 }}
                             >
                                 {copiedInviteLink ? <Check size={14} /> : <Share2 size={14} />}
@@ -1352,7 +1357,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                     cursor: 'pointer',
                                 }}
                             >
-                                <Swords size={16} /> Saya Siap Bertanding
+                                <Swords size={16} /> Saya Siap Bertanding <ChevronRight size={14} />
                             </motion.button>
                         ) : countdown !== null ? (
                             <motion.div initial={{ scale: 0.8, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -1574,7 +1579,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             className="btn-signal-orange battle-finish-btn"
                             style={{ padding: '9px 22px', fontSize: '12.5px', fontWeight: 700, borderRadius: '8px' }}
                         >
-                            <Swords size={15} /> Main Lagi
+                            <Swords size={15} /> Main Lagi <ChevronRight size={14} />
                         </motion.button>
                     </div>
 

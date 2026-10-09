@@ -17,7 +17,8 @@ import {
     Plus,
     ArrowRight,
     ArrowUpRight,
-    Check
+    Check,
+    ChevronRight,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -666,7 +667,7 @@ export default function BattlePage() {
                                     gap: '6px',
                                 }}
                             >
-                                <Plus size={14} /> Buat Room Sekarang
+                                <Plus size={14} /> Buat Room Sekarang <ChevronRight size={13} />
                             </motion.button>
                         </div>
                     ) : (
@@ -747,7 +748,7 @@ export default function BattlePage() {
                                                 flexShrink: 0,
                                             }}
                                         >
-                                            <Swords size={13} /> {loading ? '...' : 'Tantang Duel'}
+                                            <Swords size={13} /> {loading ? 'Memuat...' : 'Tantang Duel'} <ChevronRight size={13} />
                                         </motion.button>
                                     </div>
                                 )
@@ -889,7 +890,7 @@ export default function BattlePage() {
                                     className="btn-signal-orange"
                                     style={{ padding: '9px 20px', fontSize: '13px', fontWeight: 700 }}
                                 >
-                                    {loading ? 'Membuat...' : 'Buat Room'}
+                                    <Plus size={14} /> {loading ? 'Membuat...' : 'Buat Room'} <ChevronRight size={13} />
                                 </motion.button>
                             </div>
                         </motion.div>
@@ -1019,7 +1020,7 @@ export default function BattlePage() {
                                         opacity: loading || roomCode.trim().length === 0 ? 0.6 : 1,
                                     }}
                                 >
-                                    {loading ? 'Bergabung...' : 'Gabung'}
+                                    <Swords size={14} /> {loading ? 'Bergabung...' : 'Gabung'} <ChevronRight size={13} />
                                 </motion.button>
                             </div>
                         </motion.div>
@@ -1178,7 +1179,7 @@ export default function BattlePage() {
                                                 fontWeight: 700,
                                             }}
                                         >
-                                            Coba Lagi
+                                            <RefreshCw size={13} /> Coba Lagi <ChevronRight size={13} />
                                         </motion.button>
                                     </>
                                 ) : matchStatus !== 'found' ? (

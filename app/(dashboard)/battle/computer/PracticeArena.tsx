@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music } from 'lucide-react'
+import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music, Play, ChevronRight } from 'lucide-react'
 import { Question, Profile, AvatarClass } from '@/types'
 import { calculateCharacterStats } from '@/lib/game/character'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
@@ -497,15 +497,17 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             whileTap={{ scale: availableQuestions.length > 0 ? 0.97 : 1 }}
                             onClick={startPractice}
                             disabled={availableQuestions.length === 0}
+                            className="btn-signal-orange"
                             style={{
-                                padding: '10px 22px', borderRadius: '8px',
+                                padding: '10px 22px',
+                                borderRadius: '8px',
                                 cursor: availableQuestions.length > 0 ? 'pointer' : 'not-allowed',
-                                backgroundColor: 'var(--brand-primary)', border: 'none',
-                                color: 'var(--brand-primary-text)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+                                fontSize: '13px',
+                                fontWeight: 700,
                                 opacity: availableQuestions.length > 0 ? 1 : 0.5,
                             }}
                         >
-                            Mulai Latihan
+                            <Play size={14} /> Mulai Latihan <ChevronRight size={13} />
                         </motion.button>
                     </div>
                 </div>
@@ -640,7 +642,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             className="btn-signal-orange battle-finish-btn"
                             style={{ padding: '9px 22px', fontSize: '12.5px', fontWeight: 700, borderRadius: '8px' }}
                         >
-                            <Swords size={15} /> Main Lagi
+                            <Swords size={15} /> Main Lagi <ChevronRight size={14} />
                         </motion.button>
                     </div>
 

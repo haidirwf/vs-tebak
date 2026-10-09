@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation'
 import { Module, UserModule, Question, LessonStep } from '@/types'
 import {
     ChevronRight,
+    ChevronLeft,
     ChevronDown,
     Check,
     CheckCircle,
@@ -23,6 +24,7 @@ import {
     Clock,
     Zap,
     Swords,
+    BookOpen,
 } from 'lucide-react'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
 import { getCuratedStepsForModule } from '@/lib/content/module-lessons'
@@ -1243,16 +1245,16 @@ export default function ModuleDetail({
                     backgroundColor: 'var(--surface-card, #ffffff)',
                     borderTop: '1px solid var(--surface-border, #e4e4e7)',
                     color: 'var(--text-primary)',
-                    display: 'flex',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr auto 1fr',
                     alignItems: 'center',
-                    justifyContent: 'space-between',
                     padding: '0 20px',
                     zIndex: 50,
                     boxShadow: '0 -4px 16px rgba(0, 0, 0, 0.06)',
                 }}
             >
-                {/* Left: Previous step */}
-                <div>
+                {/* Left Action: Navigasi Mundur (Menempel di Kiri) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-start' }}>
                     {phase === 'lesson' ? (
                         currentStep > 0 ? (
                             <button
@@ -1261,7 +1263,7 @@ export default function ModuleDetail({
                                     backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                     border: '1px solid var(--surface-border, #e4e4e7)',
                                     borderRadius: '8px',
-                                    padding: '7px 16px',
+                                    padding: '8px 16px',
                                     color: 'var(--text-primary)',
                                     cursor: 'pointer',
                                     fontSize: '13px',
@@ -1269,15 +1271,12 @@ export default function ModuleDetail({
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '6px',
-                                    maxWidth: '220px',
+                                    whiteSpace: 'nowrap',
                                 }}
                                 title={steps[currentStep - 1]?.title}
                             >
-                                <span>&lt;</span>
-                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} className="hidden sm:inline">
-                                    {steps[currentStep - 1]?.title}
-                                </span>
-                                <span className="inline sm:hidden">Sebelumnya</span>
+                                <ChevronLeft size={14} />
+                                <span>Sebelumnya</span>
                             </button>
                         ) : (
                             <Link
@@ -1286,7 +1285,7 @@ export default function ModuleDetail({
                                     backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                     border: '1px solid var(--surface-border, #e4e4e7)',
                                     borderRadius: '8px',
-                                    padding: '7px 16px',
+                                    padding: '8px 16px',
                                     color: 'var(--text-primary)',
                                     textDecoration: 'none',
                                     fontSize: '13px',
@@ -1294,9 +1293,11 @@ export default function ModuleDetail({
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '6px',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
-                                <span>&lt;</span> Modul
+                                <ChevronLeft size={14} />
+                                <span>Modul</span>
                             </Link>
                         )
                     ) : (
@@ -1306,7 +1307,7 @@ export default function ModuleDetail({
                                 backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                 border: '1px solid var(--surface-border, #e4e4e7)',
                                 borderRadius: '8px',
-                                padding: '7px 16px',
+                                padding: '8px 16px',
                                 color: 'var(--text-primary)',
                                 cursor: 'pointer',
                                 fontSize: '13px',
@@ -1314,79 +1315,68 @@ export default function ModuleDetail({
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
+                                whiteSpace: 'nowrap',
                             }}
                         >
-                            <span>&lt;</span> Kembali ke Materi
+                            <ChevronLeft size={14} />
+                            <span className="hidden sm:inline">Kembali ke Materi</span>
+                            <span className="inline sm:hidden">Materi</span>
                         </button>
                     )}
                 </div>
 
-                {/* Center: Mulai Latihan Button (Skillungo Gold) */}
-                <div>
-                    {phase === 'lesson' && hasQuiz && (
-                        <button
-                            onClick={() => {
-                                setPhase('quiz')
-                                window.scrollTo({ top: 0, behavior: 'smooth' })
-                            }}
+                {/* Center: Indikator Status & Progres (Terkunci Presisi di Tengah) */}
+                <div
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        textAlign: 'center',
+                        whiteSpace: 'nowrap',
+                    }}
+                >
+                    {phase === 'lesson' && (
+                        <span
+                            className="hidden sm:inline-block"
                             style={{
-                                backgroundColor: 'var(--brand-primary)',
-                                color: 'var(--brand-primary-text)',
-                                border: 'none',
-                                borderRadius: '8px',
-                                padding: '7px 20px',
                                 fontSize: '13px',
-                                fontWeight: 700,
-                                fontFamily: 'var(--font-heading)',
-                                cursor: 'pointer',
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                boxShadow: '0 2px 8px rgba(245, 197, 66, 0.3)',
+                                fontWeight: 600,
+                                color: 'var(--text-secondary)',
                             }}
                         >
-                            <FileText size={14} /> Mulai Latihan
-                        </button>
+                            Materi {currentStep + 1} dari {totalSteps}
+                        </span>
                     )}
                     {phase === 'quiz' && (
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                        <span
+                            style={{
+                                fontSize: '13px',
+                                fontWeight: 600,
+                                color: 'var(--text-secondary)',
+                            }}
+                        >
                             {answeredCount}/{currentQuestions.length} Soal Dijawab
                         </span>
                     )}
-                    {completed && phase === 'lesson' && !hasQuiz && (
-                        <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent-green, #16a34a)' }}>
-                            ✓ Modul Selesai
-                        </span>
-                    )}
                 </div>
 
-                {/* Right: Next step or Complete action */}
-                <div>
+                {/* Right Action: Navigasi Maju (Menempel di Kanan) */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                     {phase === 'lesson' ? (
                         currentStep < totalSteps - 1 ? (
                             <button
                                 onClick={() => setCurrentStep((s) => s + 1)}
+                                className="btn-signal-orange"
                                 style={{
-                                    backgroundColor: 'var(--brand-primary)',
-                                    color: 'var(--brand-primary-text)',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    padding: '7px 18px',
-                                    cursor: 'pointer',
+                                    padding: '8px 18px',
                                     fontSize: '13px',
                                     fontWeight: 700,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
-                                    maxWidth: '220px',
+                                    whiteSpace: 'nowrap',
                                 }}
                                 title={steps[currentStep + 1]?.title}
                             >
-                                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} className="hidden sm:inline">
-                                    {steps[currentStep + 1]?.title}
-                                </span>
-                                <span className="inline sm:hidden">Selanjutnya</span>
-                                <span>&gt;</span>
+                                <span>Selanjutnya</span>
+                                <ChevronRight size={14} />
                             </button>
                         ) : hasQuiz ? (
                             <button
@@ -1394,21 +1384,17 @@ export default function ModuleDetail({
                                     setPhase('quiz')
                                     window.scrollTo({ top: 0, behavior: 'smooth' })
                                 }}
+                                className="btn-signal-orange"
                                 style={{
-                                    backgroundColor: 'var(--brand-primary)',
-                                    color: 'var(--brand-primary-text)',
-                                    border: 'none',
-                                    borderRadius: '8px',
-                                    padding: '7px 18px',
-                                    cursor: 'pointer',
+                                    padding: '8px 18px',
                                     fontSize: '13px',
                                     fontWeight: 700,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '6px',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
-                                Lanjut ke Latihan &gt;
+                                <FileText size={14} />
+                                <span>Mulai Latihan</span>
+                                <ChevronRight size={14} />
                             </button>
                         ) : !completed ? (
                             <button
@@ -1419,16 +1405,18 @@ export default function ModuleDetail({
                                     color: '#ffffff',
                                     border: 'none',
                                     borderRadius: '8px',
-                                    padding: '7px 18px',
+                                    padding: '8px 18px',
                                     cursor: loading ? 'not-allowed' : 'pointer',
                                     fontSize: '13px',
                                     fontWeight: 700,
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '6px',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
-                                Selesaikan &gt;
+                                <span>Selesaikan</span>
+                                <ChevronRight size={14} />
                             </button>
                         ) : (
                             <Link
@@ -1437,7 +1425,7 @@ export default function ModuleDetail({
                                     backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                     border: '1px solid var(--surface-border, #e4e4e7)',
                                     borderRadius: '8px',
-                                    padding: '7px 16px',
+                                    padding: '8px 16px',
                                     color: 'var(--text-primary)',
                                     textDecoration: 'none',
                                     fontSize: '13px',
@@ -1445,9 +1433,11 @@ export default function ModuleDetail({
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '6px',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
-                                Daftar Modul &gt;
+                                <span>Daftar Modul</span>
+                                <ChevronRight size={14} />
                             </Link>
                         )
                     ) : quizSubmitted && !completed ? (
@@ -1459,16 +1449,18 @@ export default function ModuleDetail({
                                 color: '#ffffff',
                                 border: 'none',
                                 borderRadius: '8px',
-                                padding: '7px 18px',
+                                padding: '8px 18px',
                                 cursor: loading ? 'not-allowed' : 'pointer',
                                 fontSize: '13px',
                                 fontWeight: 700,
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
+                                whiteSpace: 'nowrap',
                             }}
                         >
-                            Klaim XP &gt;
+                            <span>Klaim XP</span>
+                            <ChevronRight size={14} />
                         </button>
                     ) : (
                         <Link
@@ -1477,7 +1469,7 @@ export default function ModuleDetail({
                                 backgroundColor: 'var(--surface-elevated, #f4f4f5)',
                                 border: '1px solid var(--surface-border, #e4e4e7)',
                                 borderRadius: '8px',
-                                padding: '7px 16px',
+                                padding: '8px 16px',
                                 color: 'var(--text-primary)',
                                 textDecoration: 'none',
                                 fontSize: '13px',
@@ -1485,9 +1477,11 @@ export default function ModuleDetail({
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '6px',
+                                whiteSpace: 'nowrap',
                             }}
                         >
-                            Selesai &gt;
+                            <span>Selesai</span>
+                            <ChevronRight size={14} />
                         </Link>
                     )}
                 </div>
@@ -1909,19 +1903,17 @@ export default function ModuleDetail({
                                 </button>
                                 <button
                                     onClick={() => router.push('/modules')}
+                                    className="btn-signal-orange"
                                     style={{
                                         flex: 1,
                                         padding: '10px 14px',
                                         borderRadius: '8px',
-                                        border: 'none',
-                                        backgroundColor: 'var(--brand-primary)',
-                                        color: 'var(--brand-primary-text)',
-                                        fontWeight: 700,
                                         fontSize: '13px',
+                                        fontWeight: 700,
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    Kembali ke Modul
+                                    <BookOpen size={14} /> Kembali ke Modul <ChevronRight size={13} />
                                 </button>
                             </div>
                         </motion.div>

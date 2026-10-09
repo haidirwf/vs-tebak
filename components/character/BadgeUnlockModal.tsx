@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
-import { X } from 'lucide-react'
+import { X, Award, ChevronRight } from 'lucide-react'
 import BadgeIcon from '@/components/character/BadgeIcon'
 
 interface BadgeUnlockModalProps {
@@ -143,20 +143,17 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                     <button
                         type="button"
                         onClick={onClose}
-                        className="btn-primary"
+                        className="btn-signal-orange"
                         style={{
                             width: '100%',
-                            padding: '10px 16px',
+                            padding: '11px 18px',
                             borderRadius: '8px',
                             fontSize: '13px',
-                            fontWeight: 600,
-                            backgroundColor: 'var(--accent-cyan)',
-                            color: '#000000',
-                            border: 'none',
+                            fontWeight: 700,
                             cursor: 'pointer',
                         }}
                     >
-                        Koleksi Lencana
+                        <Award size={14} /> Koleksi Lencana <ChevronRight size={14} />
                     </button>
                 </motion.div>
             </motion.div>

@@ -444,6 +444,14 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   transition: all 0.15s ease;
 }
 
+.btn-signal-orange svg,
+.btn-primary svg,
+.btn-gold svg {
+  color: #18181b !important;
+  stroke: currentColor;
+  flex-shrink: 0;
+}
+
 .btn-signal-orange:hover,
 .btn-primary:hover,
 .btn-gold:hover {
@@ -457,17 +465,19 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 [data-theme="dark"] .btn-signal-orange,
 [data-theme="dark"] .btn-primary,
 [data-theme="dark"] .btn-gold {
-  background: #F5C542;
+  background: linear-gradient(180deg, #FDE047 0%, #F5C542 100%);
+  color: #18181b !important;
   border: 1px solid #EAB308;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(245, 197, 66, 0.25);
 }
 
 [data-theme="dark"] .btn-signal-orange:hover,
 [data-theme="dark"] .btn-primary:hover,
 [data-theme="dark"] .btn-gold:hover {
-  background: #EAB308;
-  border-color: #CA8A04;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+  background: linear-gradient(180deg, #FEF08A 0%, #FBBF24 100%);
+  color: #18181b !important;
+  border-color: #D97706;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45), 0 4px 10px rgba(245, 197, 66, 0.35);
 }
 
 /* Linearity Secondary/Ghost Button */
@@ -1465,25 +1475,24 @@ input::placeholder, textarea::placeholder {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 14px 16px !important;
+  gap: 14px !important;
+  padding: 16px 20px !important;
   border-radius: 12px !important;
   background-color: rgba(245, 197, 66, 0.08);
   border: 1px solid rgba(245, 197, 66, 0.35);
   margin: 0 auto 20px !important;
   box-shadow: var(--shadow-card);
-  max-width: 280px !important;
+  max-width: 100% !important;
   width: 100% !important;
   box-sizing: border-box !important;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 480px) {
   .battle-room-code-card {
     flex-direction: row !important;
-    justify-content: center !important;
-    gap: 16px !important;
-    padding: 12px 24px !important;
-    max-width: 380px !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 16px 22px !important;
   }
 }
 
@@ -1494,6 +1503,8 @@ input::placeholder, textarea::placeholder {
   color: var(--color-signal-orange);
   letter-spacing: 4px !important;
   line-height: 1;
+  white-space: nowrap !important;
+  flex-shrink: 0 !important;
 }
 
 @media (min-width: 640px) {

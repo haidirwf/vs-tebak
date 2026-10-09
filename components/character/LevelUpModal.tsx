@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUp, Sparkles, X } from 'lucide-react'
+import { ArrowUp, Sparkles, X, ChevronRight } from 'lucide-react'
 
 interface LevelUpModalProps {
     oldLevel: number
@@ -197,7 +197,7 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                             cursor: 'pointer',
                         }}
                     >
-                        Lanjutkan Belajar
+                        <Sparkles size={14} /> Lanjutkan Belajar <ChevronRight size={14} />
                     </button>
                 </motion.div>
             </motion.div>

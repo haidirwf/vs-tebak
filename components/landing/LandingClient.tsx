@@ -334,17 +334,16 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 href="/register"
                 className="btn-signal-orange"
                 style={{
-                  padding: '7px 13px',
+                  padding: '7px 14px',
                   fontSize: '12px',
                   textDecoration: 'none',
                   whiteSpace: 'nowrap',
                 }}
               >
+                <Sparkles size={14} />
                 <span>Daftar</span>
-                <span className="desktop-only">
-                  &nbsp;Gratis
-                </span>
-                <ChevronRight size={13} style={{ display: 'inline', verticalAlign: 'middle', marginLeft: '2px' }} />
+                <span className="desktop-only">&nbsp;Gratis</span>
+                <ChevronRight size={13} />
               </Link>
             </>
           )}
@@ -435,7 +434,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               className="btn-signal-orange"
               style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
             >
-              Daftar
+              <Sparkles size={14} /> Daftar Gratis <ChevronRight size={13} />
             </Link>
           </div>
         </div>
@@ -523,7 +522,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 className="btn-signal-orange"
                 style={{ padding: '12px 28px', fontSize: '13px' }}
               >
-                <LayoutDashboard size={16} /> BUKA DASHBOARD STUDIO <ChevronRight size={14} />
+                <LayoutDashboard size={15} /> Buka Dashboard Studio <ChevronRight size={14} />
               </Link>
             ) : (
               <Link
@@ -531,7 +530,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 className="btn-signal-orange"
                 style={{ padding: '12px 28px', fontSize: '13px' }}
               >
-                <Swords size={16} /> MULAI PETUALANGAN GRATIS <ChevronRight size={14} />
+                <Swords size={15} /> Mulai Petualangan Gratis <ChevronRight size={14} />
               </Link>
             )}
           </motion.div>
@@ -1437,18 +1436,18 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             href={isLoggedIn ? '/dashboard' : '/register'}
             className="btn-signal-orange"
             style={{
-              padding: '14px 34px',
-              fontSize: '14px',
+              padding: '13px 32px',
+              fontSize: '13.5px',
               textDecoration: 'none',
             }}
           >
             {isLoggedIn ? (
               <>
-                <LayoutDashboard size={18} /> BUKA DASHBOARD STUDIO
+                <LayoutDashboard size={16} /> Buka Dashboard Studio <ChevronRight size={15} />
               </>
             ) : (
               <>
-                <Swords size={18} /> DAFTAR GRATIS SEKARANG <ChevronRight size={16} />
+                <Swords size={16} /> Daftar Gratis Sekarang <ChevronRight size={15} />
               </>
             )}
           </Link>
