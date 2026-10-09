@@ -51,14 +51,14 @@ export default function BadgeUnlockModal({ badge, onClose }: BadgeUnlockModalPro
                     exit={{ scale: 0.94, opacity: 0, y: 10 }}
                     transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="card"
+                    className="modal-dialog-card"
                     style={{
                         backgroundColor: 'var(--surface-card)',
-                        border: '1px solid rgba(56, 189, 248, 0.35)',
+                        border: '1px solid var(--accent-cyan-border)',
                         borderRadius: '16px',
-                        padding: '24px 20px',
+                        padding: '28px 22px 24px',
                         textAlign: 'center',
-                        maxWidth: '360px',
+                        maxWidth: '380px',
                         width: '100%',
                         position: 'relative',
                         boxShadow: 'var(--shadow-modal)',

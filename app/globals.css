@@ -289,6 +289,13 @@ body {
   box-sizing: border-box !important;
 }
 
+.modal-dialog-card {
+  width: 100% !important;
+  max-width: 400px !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
 /* Fullscreen centered non-scrollable stage (waiting room, lobby, outcome) */
 .battle-fullscreen-stage {
   display: flex !important;
@@ -581,7 +588,7 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
 .card,
 .product-demo-panel,
 .hero-banner-panel {
-  max-width: 100% !important;
+  max-width: 100%;
   box-sizing: border-box !important;
   word-break: break-word;
   overflow-wrap: break-word;

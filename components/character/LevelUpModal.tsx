@@ -46,14 +46,14 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                     exit={{ scale: 0.94, opacity: 0, y: 10 }}
                     transition={{ type: 'spring', duration: 0.45, bounce: 0.2 }}
                     onClick={(e) => e.stopPropagation()}
-                    className="card"
+                    className="modal-dialog-card"
                     style={{
                         backgroundColor: 'var(--surface-card)',
-                        border: '1px solid rgba(245, 197, 66, 0.35)',
+                        border: '1px solid var(--accent-gold-border)',
                         borderRadius: '16px',
-                        padding: '24px 20px',
+                        padding: '28px 22px 24px',
                         textAlign: 'center',
-                        maxWidth: '360px',
+                        maxWidth: '380px',
                         width: '100%',
                         position: 'relative',
                         boxShadow: 'var(--shadow-modal)',
@@ -71,12 +71,13 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                             right: '12px',
                             background: 'none',
                             border: 'none',
-                            color: 'var(--color-fog)',
+                            color: 'var(--text-muted)',
                             cursor: 'pointer',
                             padding: '4px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
+                            borderRadius: '6px',
                         }}
                     >
                         <X size={16} />
@@ -88,15 +89,15 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                             width: '54px',
                             height: '54px',
                             borderRadius: '14px',
-                            backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                            border: '1px solid rgba(245, 197, 66, 0.3)',
+                            backgroundColor: 'var(--accent-gold-bg)',
+                            border: '1px solid var(--accent-gold-border)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            margin: '0 auto 16px',
+                            margin: '0 auto 14px',
                         }}
                     >
-                        <ArrowUp size={24} style={{ color: 'var(--color-gold-text)' }} />
+                        <ArrowUp size={24} style={{ color: 'var(--accent-gold-text)' }} />
                     </div>
 
                     {/* Subtitle / Header */}
@@ -108,10 +109,10 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                             fontFamily: 'var(--font-inter)',
                             fontSize: '11px',
                             fontWeight: 700,
-                            letterSpacing: '0.04em',
-                            color: 'var(--color-gold-text)',
+                            letterSpacing: '0.06em',
+                            color: 'var(--accent-gold-text)',
                             textTransform: 'uppercase',
-                            marginBottom: '10px',
+                            marginBottom: '12px',
                         }}
                     >
                         <Sparkles size={12} />
@@ -125,15 +126,15 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                             alignItems: 'center',
                             justifyContent: 'center',
                             gap: '12px',
-                            marginBottom: '14px',
+                            marginBottom: '16px',
                         }}
                     >
                         <div
                             style={{
                                 fontFamily: 'var(--font-mono)',
-                                fontSize: '28px',
+                                fontSize: '26px',
                                 fontWeight: 700,
-                                color: 'var(--color-silver)',
+                                color: 'var(--text-secondary)',
                                 backgroundColor: 'var(--surface-elevated)',
                                 border: '1px solid var(--surface-border)',
                                 borderRadius: '10px',
@@ -143,13 +144,13 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                         >
                             {oldLevel}
                         </div>
-                        <span style={{ color: 'var(--color-gold-text)', fontSize: '20px', fontWeight: 700 }}>→</span>
+                        <span style={{ color: 'var(--accent-gold-text)', fontSize: '20px', fontWeight: 700 }}>→</span>
                         <div
                             style={{
                                 fontFamily: 'var(--font-mono)',
-                                fontSize: '32px',
+                                fontSize: '30px',
                                 fontWeight: 700,
-                                color: 'var(--color-gold-text)',
+                                color: 'var(--accent-gold-text)',
                                 backgroundColor: 'var(--accent-gold-bg)',
                                 border: '1px solid var(--accent-gold-border)',
                                 borderRadius: '10px',
@@ -164,8 +165,8 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                     <h3
                         style={{
                             fontFamily: 'var(--font-heading)',
-                            fontSize: '16px',
-                            fontWeight: 600,
+                            fontSize: '17px',
+                            fontWeight: 700,
                             color: 'var(--text-primary)',
                             margin: '0 0 6px',
                         }}
@@ -174,9 +175,9 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                     </h3>
                     <p
                         style={{
-                            color: 'var(--color-fog)',
-                            fontSize: '12.5px',
-                            lineHeight: 1.45,
+                            color: 'var(--text-secondary)',
+                            fontSize: '13px',
+                            lineHeight: 1.5,
                             margin: '0 0 20px',
                         }}
                     >
@@ -186,10 +187,10 @@ export default function LevelUpModal({ oldLevel, newLevel, onClose }: LevelUpMod
                     <button
                         type="button"
                         onClick={onClose}
-                        className="btn-primary"
+                        className="btn-signal-orange"
                         style={{
                             width: '100%',
-                            padding: '10px 16px',
+                            padding: '11px 18px',
                             borderRadius: '8px',
                             fontSize: '13px',
                             fontWeight: 700,

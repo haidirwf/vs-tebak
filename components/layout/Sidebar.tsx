@@ -434,7 +434,7 @@ export default function Sidebar() {
                     onClick={() => setShowLogoutConfirm(false)}
                 >
                     <div
-                        className="card"
+                        className="modal-dialog-card"
                         style={{
                             width: '100%',
                             maxWidth: '360px',
