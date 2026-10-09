@@ -87,18 +87,6 @@ export default function QuickActions({ modulesCompletedCount = 0 }: QuickActions
                                 cursor: 'pointer',
                             }}
                         >
-                            {/* Subtle Ambient Glow in card corner */}
-                            <div
-                                style={{
-                                    position: 'absolute',
-                                    top: '-20px',
-                                    right: '-20px',
-                                    width: '80px',
-                                    height: '80px',
-                                    background: `radial-gradient(circle, ${action.color}25 0%, transparent 70%)`,
-                                    pointerEvents: 'none',
-                                }}
-                            />
 
                             <div>
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>

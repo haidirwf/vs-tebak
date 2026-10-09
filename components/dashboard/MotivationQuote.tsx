@@ -70,19 +70,6 @@ export default function MotivationQuote() {
                     Daily Motivation
                 </p>
             </div>
-
-            {/* Subtle glow effect */}
-            <div style={{
-                position: 'absolute',
-                top: '-20px',
-                right: '-20px',
-                width: '60px',
-                height: '60px',
-                backgroundColor: 'var(--accent-gold)',
-                filter: 'blur(40px)',
-                opacity: 0.1,
-                pointerEvents: 'none'
-            }} />
         </motion.div>
     )
 }

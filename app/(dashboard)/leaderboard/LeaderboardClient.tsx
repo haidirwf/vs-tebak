@@ -105,7 +105,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                             </div>
                                             <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'var(--text-primary)' }}>{u2.username}</div>
                                             <div style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 600 }}>{tab === 'all' ? `${u2.xp.toLocaleString()} XP` : `${u2.streak_count} Hari 🔥`}</div>
-                                            <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(148, 163, 184, 0.1)', border: '1px solid rgba(148, 163, 184, 0.3)', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600, color: '#64748b' }}>2</div>
+                                            <div style={{ height: '70px', width: '100%', backgroundColor: 'rgba(148, 163, 184, 0.1)', border: '1px solid rgba(148, 163, 184, 0.3)', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600, color: 'var(--text-secondary)' }}>2</div>
                                         </motion.div>
                                     </Link>
                                 )
@@ -133,8 +133,8 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                                 {CLASS_EMOJIS[u1.avatar_class] || '🎮'}
                                             </div>
                                             <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%' }}>{u1.username}</div>
-                                            <div style={{ fontSize: '12px', color: 'var(--color-gold-text)', fontWeight: 700 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
-                                            <div style={{ height: '95px', width: '100%', background: 'linear-gradient(180deg, #FEF9C3 0%, #FEF08A 100%)', border: '1px solid #FDE047', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: 'var(--color-gold-text)' }}>1</div>
+                                            <div style={{ fontSize: '12px', color: 'var(--accent-gold-text)', fontWeight: 700 }}>{tab === 'all' ? `${u1.xp.toLocaleString()} XP` : `${u1.streak_count} Hari 🔥`}</div>
+                                            <div style={{ height: '95px', width: '100%', background: 'var(--accent-gold-bg)', border: '1px solid var(--accent-gold-border)', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '32px', fontWeight: 800, color: 'var(--accent-gold-text)' }}>1</div>
                                         </motion.div>
                                     </Link>
                                 )
@@ -163,7 +163,7 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                                             </div>
                                             <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '100%', color: 'var(--text-primary)' }}>{u3.username}</div>
                                             <div style={{ fontSize: '11px', color: 'var(--accent-gold)', fontWeight: 600 }}>{tab === 'all' ? `${u3.xp.toLocaleString()} XP` : `${u3.streak_count} Hari 🔥`}</div>
-                                            <div style={{ height: '55px', width: '100%', backgroundColor: 'rgba(217, 119, 6, 0.08)', border: '1px solid rgba(217, 119, 6, 0.25)', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600, color: '#d97706' }}>3</div>
+                                            <div style={{ height: '55px', width: '100%', backgroundColor: 'var(--accent-gold-bg)', border: '1px solid var(--accent-gold-border)', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', marginTop: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 600, color: 'var(--accent-gold-text)' }}>3</div>
                                         </motion.div>
                                     </Link>
                                 )

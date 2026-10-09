@@ -717,8 +717,8 @@ export default function ModuleDetail({
                                                     padding: '8px 10px',
                                                     borderRadius: '6px',
                                                     border: 'none',
-                                                    backgroundColor: isCurrent ? 'rgba(245, 197, 66, 0.14)' : 'transparent',
-                                                    color: isCurrent ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
+                                                    backgroundColor: isCurrent ? 'var(--accent-gold-bg)' : 'transparent',
+                                                    color: isCurrent ? 'var(--accent-gold-text)' : 'var(--text-primary)',
                                                     cursor: 'pointer',
                                                     textAlign: 'left',
                                                     fontSize: '13px',
@@ -752,8 +752,8 @@ export default function ModuleDetail({
                                                 padding: '8px 10px',
                                                 borderRadius: '6px',
                                                 border: 'none',
-                                                backgroundColor: phase === 'quiz' ? 'rgba(245, 197, 66, 0.14)' : 'transparent',
-                                                color: phase === 'quiz' ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
+                                                backgroundColor: phase === 'quiz' ? 'var(--accent-gold-bg)' : 'transparent',
+                                                color: phase === 'quiz' ? 'var(--accent-gold-text)' : 'var(--text-primary)',
                                                 cursor: 'pointer',
                                                 textAlign: 'left',
                                                 fontSize: '13px',
@@ -962,7 +962,7 @@ export default function ModuleDetail({
                                                 alignItems: 'center',
                                                 gap: '6px',
                                                 fontSize: '13px',
-                                                color: 'var(--color-burnt-orange, #D97706)',
+                                                color: 'var(--accent-gold-text)',
                                                 textDecoration: 'none',
                                                 fontWeight: 600,
                                             }}
@@ -1175,8 +1175,8 @@ export default function ModuleDetail({
                                     onClick={handleSubmitQuiz}
                                     disabled={!allQuizAnswered}
                                     style={{
-                                        backgroundColor: 'var(--color-gold, #F5C542)',
-                                        color: '#0a0a0a',
+                                        backgroundColor: 'var(--brand-primary)',
+                                        color: 'var(--brand-primary-text)',
                                         border: 'none',
                                         borderRadius: '8px',
                                         padding: '12px 28px',
@@ -1330,8 +1330,8 @@ export default function ModuleDetail({
                                 window.scrollTo({ top: 0, behavior: 'smooth' })
                             }}
                             style={{
-                                backgroundColor: 'var(--color-gold, #F5C542)',
-                                color: '#0a0a0a',
+                                backgroundColor: 'var(--brand-primary)',
+                                color: 'var(--brand-primary-text)',
                                 border: 'none',
                                 borderRadius: '8px',
                                 padding: '7px 20px',
@@ -1367,8 +1367,8 @@ export default function ModuleDetail({
                             <button
                                 onClick={() => setCurrentStep((s) => s + 1)}
                                 style={{
-                                    backgroundColor: 'var(--color-gold, #F5C542)',
-                                    color: '#0a0a0a',
+                                    backgroundColor: 'var(--brand-primary)',
+                                    color: 'var(--brand-primary-text)',
                                     border: 'none',
                                     borderRadius: '8px',
                                     padding: '7px 18px',
@@ -1395,8 +1395,8 @@ export default function ModuleDetail({
                                     window.scrollTo({ top: 0, behavior: 'smooth' })
                                 }}
                                 style={{
-                                    backgroundColor: 'var(--color-gold, #F5C542)',
-                                    color: '#0a0a0a',
+                                    backgroundColor: 'var(--brand-primary)',
+                                    color: 'var(--brand-primary-text)',
                                     border: 'none',
                                     borderRadius: '8px',
                                     padding: '7px 18px',
@@ -1574,12 +1574,12 @@ export default function ModuleDetail({
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                                         <Clock size={12} /> {module.duration_minutes || 45} menit
                                     </span>
-                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--color-burnt-orange, #D97706)' }}>
+                                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-gold-text)' }}>
                                         <Zap size={12} /> +{module.xp_reward} XP
                                     </span>
                                 </div>
                                 <div style={{ height: '6px', backgroundColor: 'var(--surface-elevated, #f4f4f5)', borderRadius: '3px', overflow: 'hidden' }}>
-                                    <div style={{ height: '100%', width: `${progressPercent}%`, backgroundColor: 'var(--color-gold, #F5C542)' }} />
+                                    <div style={{ height: '100%', width: `${progressPercent}%`, backgroundColor: 'var(--brand-primary)' }} />
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
                                     <span>{progressPercent}% Selesai</span>
@@ -1606,9 +1606,9 @@ export default function ModuleDetail({
                                                 justifyContent: 'space-between',
                                                 padding: '12px',
                                                 borderRadius: '8px',
-                                                border: `1px solid ${isCurrent ? 'var(--color-gold, #F5C542)' : 'var(--surface-border, #e4e4e7)'}`,
-                                                backgroundColor: isCurrent ? 'rgba(245, 197, 66, 0.12)' : 'var(--surface-card, #ffffff)',
-                                                color: isCurrent ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
+                                                border: `1px solid ${isCurrent ? 'var(--accent-gold-border)' : 'var(--surface-border, #e4e4e7)'}`,
+                                                backgroundColor: isCurrent ? 'var(--accent-gold-bg)' : 'var(--surface-card, #ffffff)',
+                                                color: isCurrent ? 'var(--accent-gold-text)' : 'var(--text-primary)',
                                                 cursor: 'pointer',
                                                 textAlign: 'left',
                                                 marginBottom: '8px',
@@ -1621,8 +1621,8 @@ export default function ModuleDetail({
                                                         width: '28px',
                                                         height: '28px',
                                                         borderRadius: '6px',
-                                                        backgroundColor: isCurrent ? 'var(--color-gold, #F5C542)' : 'var(--surface-elevated, #f4f4f5)',
-                                                        color: isCurrent ? '#0a0a0a' : 'var(--text-secondary)',
+                                                        backgroundColor: isCurrent ? 'var(--brand-primary)' : 'var(--surface-elevated, #f4f4f5)',
+                                                        color: isCurrent ? 'var(--brand-primary-text)' : 'var(--text-secondary)',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         justifyContent: 'center',
@@ -1660,9 +1660,9 @@ export default function ModuleDetail({
                                             justifyContent: 'space-between',
                                             padding: '12px',
                                             borderRadius: '8px',
-                                            border: `1px solid ${phase === 'quiz' ? 'var(--color-gold, #F5C542)' : 'var(--surface-border, #e4e4e7)'}`,
-                                            backgroundColor: phase === 'quiz' ? 'rgba(245, 197, 66, 0.12)' : 'var(--surface-card, #ffffff)',
-                                            color: phase === 'quiz' ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-primary)',
+                                            border: `1px solid ${phase === 'quiz' ? 'var(--accent-gold-border)' : 'var(--surface-border, #e4e4e7)'}`,
+                                            backgroundColor: phase === 'quiz' ? 'var(--accent-gold-bg)' : 'var(--surface-card, #ffffff)',
+                                            color: phase === 'quiz' ? 'var(--accent-gold-text)' : 'var(--text-primary)',
                                             cursor: 'pointer',
                                             textAlign: 'left',
                                             marginTop: '12px',
@@ -1674,8 +1674,8 @@ export default function ModuleDetail({
                                                     width: '28px',
                                                     height: '28px',
                                                     borderRadius: '6px',
-                                                    backgroundColor: phase === 'quiz' ? 'var(--color-gold, #F5C542)' : 'var(--surface-elevated, #f4f4f5)',
-                                                    color: phase === 'quiz' ? '#0a0a0a' : 'var(--text-secondary)',
+                                                    backgroundColor: phase === 'quiz' ? 'var(--brand-primary)' : 'var(--surface-elevated, #f4f4f5)',
+                                                    color: phase === 'quiz' ? 'var(--brand-primary-text)' : 'var(--text-secondary)',
                                                     display: 'flex',
                                                     alignItems: 'center',
                                                     justifyContent: 'center',
@@ -1771,7 +1771,7 @@ export default function ModuleDetail({
                                     <span style={{ fontSize: '18px' }}>⚔️</span>
                                     <div>
                                         <strong style={{ color: 'var(--text-primary)' }}>Bonus Kelas RPG:</strong> {hasClassBonus ? (
-                                            <span style={{ color: 'var(--color-burnt-orange, #D97706)', fontWeight: 600 }}>
+                                            <span style={{ color: 'var(--accent-gold-text)', fontWeight: 600 }}>
                                                 Kelasmu ({avatarClass}) mendapatkan BONUS +{bonusXp} XP ({CLASS_BONUS_PERCENT}%) untuk kategori modul ini!
                                             </span>
                                         ) : (
@@ -1788,8 +1788,8 @@ export default function ModuleDetail({
                                     marginTop: '22px',
                                     padding: '11px',
                                     borderRadius: '8px',
-                                    backgroundColor: 'var(--color-gold, #F5C542)',
-                                    color: '#0a0a0a',
+                                    backgroundColor: 'var(--brand-primary)',
+                                    color: 'var(--brand-primary-text)',
                                     border: 'none',
                                     fontSize: '13px',
                                     fontWeight: 700,
@@ -1859,14 +1859,14 @@ export default function ModuleDetail({
                                 </div>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
                                     <span style={{ color: 'var(--text-secondary)' }}>Bonus Kelas</span>
-                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? 'var(--color-burnt-orange, #D97706)' : 'var(--text-muted)' }}>
+                                    <span style={{ fontWeight: 700, color: completionFeedback.bonusAmount > 0 ? 'var(--accent-gold-text)' : 'var(--text-muted)' }}>
                                         +{completionFeedback.bonusAmount}
                                     </span>
                                 </div>
                                 <div style={{ height: '1px', backgroundColor: 'var(--surface-border, #e4e4e7)' }} />
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16px' }}>
                                     <span style={{ color: 'var(--text-primary)', fontWeight: 700 }}>Total Reward</span>
-                                    <span style={{ fontWeight: 800, color: 'var(--color-burnt-orange, #D97706)' }}>+{completionFeedback.totalAwarded} XP</span>
+                                    <span style={{ fontWeight: 800, color: 'var(--accent-gold-text)' }}>+{completionFeedback.totalAwarded} XP</span>
                                 </div>
                             </div>
 
@@ -1879,7 +1879,7 @@ export default function ModuleDetail({
                                         border: '1px solid rgba(245, 197, 66, 0.4)',
                                         backgroundColor: 'rgba(245, 197, 66, 0.12)',
                                         fontSize: '13px',
-                                        color: 'var(--color-burnt-orange, #D97706)',
+                                        color: 'var(--accent-gold-text)',
                                         fontWeight: 700,
                                         display: 'flex',
                                         alignItems: 'center',
@@ -1914,8 +1914,8 @@ export default function ModuleDetail({
                                         padding: '10px 14px',
                                         borderRadius: '8px',
                                         border: 'none',
-                                        backgroundColor: 'var(--color-gold, #F5C542)',
-                                        color: '#0a0a0a',
+                                        backgroundColor: 'var(--brand-primary)',
+                                        color: 'var(--brand-primary-text)',
                                         fontWeight: 700,
                                         fontSize: '13px',
                                         cursor: 'pointer',

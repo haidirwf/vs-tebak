@@ -500,8 +500,8 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             style={{
                                 padding: '10px 22px', borderRadius: '8px',
                                 cursor: availableQuestions.length > 0 ? 'pointer' : 'not-allowed',
-                                backgroundColor: 'var(--accent-gold)', border: 'none',
-                                color: '#18181b', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
+                                backgroundColor: 'var(--brand-primary)', border: 'none',
+                                color: 'var(--brand-primary-text)', fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700,
                                 opacity: availableQuestions.length > 0 ? 1 : 0.5,
                             }}
                         >

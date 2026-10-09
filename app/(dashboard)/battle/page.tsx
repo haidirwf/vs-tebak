@@ -517,19 +517,6 @@ export default function BattlePage() {
                                 style={{ cursor: 'pointer', height: '100%', minWidth: 0 }}
                             >
                                 <div className="card hover-lift battle-action-card">
-                                    {/* Subtle Corner Glow */}
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '-20px',
-                                            right: '-20px',
-                                            width: '70px',
-                                            height: '70px',
-                                            background: `radial-gradient(circle, ${item.glow} 0%, transparent 70%)`,
-                                            pointerEvents: 'none',
-                                        }}
-                                    />
-
                                     {/* Top Row: Icon + Single Action Indicator */}
                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
                                         <div
@@ -797,80 +784,84 @@ export default function BattlePage() {
                             transition={{ duration: 0.15 }}
                             style={{
                                 width: '100%',
-                                maxWidth: '400px',
-                                maxHeight: '94dvh',
-                                overflow: 'hidden',
-                                touchAction: 'none',
-                                padding: '20px 18px',
+                                maxWidth: '480px',
+                                maxHeight: '90dvh',
+                                overflowY: 'auto',
+                                padding: '24px 22px',
                                 backgroundColor: 'var(--surface-card)',
-                                borderRadius: '12px',
+                                borderRadius: '14px',
                                 border: '1px solid var(--surface-border)',
                                 boxShadow: 'var(--shadow-modal)',
                                 boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
-                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
                                     Buat Room Battle
                                 </h2>
                                 <button
                                     type="button"
                                     onClick={() => setMode('select')}
+                                    aria-label="Tutup modal"
                                     style={{
                                         background: 'none',
                                         border: 'none',
-                                        color: 'var(--color-fog)',
+                                        color: 'var(--text-muted)',
                                         cursor: 'pointer',
                                         padding: '4px',
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
+                                        borderRadius: '6px',
+                                        transition: 'color 0.15s ease',
                                     }}
                                 >
                                     <X size={18} />
                                 </button>
                             </div>
 
-                            <p style={{ color: 'var(--text-secondary)', fontSize: '12.5px', marginBottom: '16px', lineHeight: 1.45 }}>
-                                Pilih topik soal untuk pertandingan. Setelah room dibuat, kamu akan mendapatkan kode akses untuk mengundang teman.
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '18px', lineHeight: 1.5 }}>
+                                Pilih topik soal untuk pertandingan. Setelah room dibuat, kamu akan mendapatkan kode akses untuk mengundang teman duel.
                             </p>
 
-                            <div style={{ marginBottom: '20px' }}>
-                                <label style={{ display: 'block', fontSize: '11.5px', color: 'var(--color-steel)', marginBottom: '8px', fontWeight: 600 }}>
+                            <div style={{ marginBottom: '22px' }}>
+                                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 600 }}>
                                     Kategori Soal
                                 </label>
-                                <div className="battle-category-grid">
-                                    {CATEGORIES.map(cat => (
-                                        <button
-                                            key={cat.value}
-                                            type="button"
-                                            onClick={() => setCategory(cat.value)}
-                                            style={{
-                                                padding: '9px 6px',
-                                                borderRadius: '8px',
-                                                cursor: 'pointer',
-                                                backgroundColor: category === cat.value ? 'rgba(245, 197, 66, 0.15)' : 'var(--surface-elevated)',
-                                                border: `1px solid ${category === cat.value ? 'var(--color-signal-orange)' : 'var(--surface-border)'}`,
-                                                color: category === cat.value ? 'var(--color-signal-orange)' : 'var(--color-silver)',
-                                                fontFamily: 'var(--font-heading)',
-                                                fontSize: '11.5px',
-                                                fontWeight: 600,
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                gap: '4px',
-                                                minWidth: 0,
-                                                overflow: 'hidden',
-                                                transition: 'all 0.15s ease',
-                                            }}
-                                        >
-                                            <span style={{ fontSize: '18px' }}>{cat.emoji}</span>
-                                            <span style={{ width: '100%', textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                                {cat.label}
-                                            </span>
-                                        </button>
-                                    ))}
+                                <div className="battle-category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+                                    {CATEGORIES.map(cat => {
+                                        const isSelected = category === cat.value
+                                        return (
+                                            <button
+                                                key={cat.value}
+                                                type="button"
+                                                onClick={() => setCategory(cat.value)}
+                                                style={{
+                                                    padding: '10px 12px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: isSelected ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                                    border: `1.5px solid ${isSelected ? 'var(--brand-primary-border)' : 'var(--surface-border)'}`,
+                                                    color: isSelected ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                                    fontFamily: 'var(--font-heading)',
+                                                    fontSize: '12.5px',
+                                                    fontWeight: isSelected ? 700 : 500,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    minWidth: 0,
+                                                    transition: 'all 0.15s ease',
+                                                    boxShadow: isSelected ? '0 1px 4px rgba(245, 197, 66, 0.2)' : 'none',
+                                                }}
+                                            >
+                                                <span style={{ fontSize: '18px', flexShrink: 0, lineHeight: 1 }}>{cat.emoji}</span>
+                                                <span style={{ textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {cat.label}
+                                                </span>
+                                            </button>
+                                        )
+                                    })}
                                 </div>
                             </div>
 
@@ -880,12 +871,12 @@ export default function BattlePage() {
                                 </div>
                             )}
 
-                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '22px' }}>
                                 <button
                                     type="button"
                                     onClick={() => setMode('select')}
                                     className="btn-dark-outline"
-                                    style={{ padding: '8px 16px', fontSize: '13px' }}
+                                    style={{ padding: '9px 18px', fontSize: '13px' }}
                                 >
                                     Batal
                                 </button>
@@ -896,7 +887,7 @@ export default function BattlePage() {
                                     onClick={handleCreate}
                                     disabled={loading}
                                     className="btn-signal-orange"
-                                    style={{ padding: '8px 18px', fontSize: '13px', fontWeight: 700 }}
+                                    style={{ padding: '9px 20px', fontSize: '13px', fontWeight: 700 }}
                                 >
                                     {loading ? 'Membuat...' : 'Buat Room'}
                                 </motion.button>

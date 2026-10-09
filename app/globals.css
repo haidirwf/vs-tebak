@@ -201,10 +201,22 @@
   --accent-purple-bg: rgba(168, 85, 247, 0.14);
   --accent-purple-border: rgba(168, 85, 247, 0.35);
 
+  --color-burnt-orange: #F5C542;
+  --color-vector-green: #22C55E;
+  --color-electric-yellow: #FDE047;
+  --color-ember: #EAB308;
+  --color-spark: var(--color-gold);
+
+  --gradient-vector-green: linear-gradient(to right, #22C55E 0%, #F5C542 50%, #38BDF8 100%);
+  --gradient-spectrum-rail: linear-gradient(to right, #F5C542 0%, #38BDF8 50%, #22C55E 100%);
+
   --shadow-signal-orange: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(245, 197, 66, 0.2);
   --shadow-gold: 0 1px 3px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(245, 197, 66, 0.2);
+  --shadow-panel: 0 2px 5px -1px rgba(0, 0, 0, 0.5), 0 1px 3px -1px rgba(0, 0, 0, 0.4);
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.6);
   --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
+  --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.4), 0 0 6px rgba(245, 197, 66, 0.25);
 }
 
 /* ===================================================
@@ -375,6 +387,10 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   border-color: var(--color-ash);
 }
 
+[data-theme="dark"] .card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
 /* Linearity Micro Eyebrow Label: 10px uppercase, tracking 1.5px-2px, Steel */
 .section-eyebrow,
 .eyebrow-label,
@@ -439,6 +455,14 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
+[data-theme="dark"] .btn-signal-orange:hover,
+[data-theme="dark"] .btn-primary:hover,
+[data-theme="dark"] .btn-gold:hover {
+  background: #EAB308;
+  border-color: #CA8A04;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
 /* Linearity Secondary/Ghost Button */
 .btn-dark-outline,
 .btn-secondary,
@@ -466,6 +490,13 @@ h3 { letter-spacing: -0.01em; line-height: 1.25; font-size: 20px; }
   background-color: var(--color-iron);
   border-color: var(--color-ash);
   transform: translateY(-1px);
+}
+
+[data-theme="dark"] .btn-dark-outline:hover,
+[data-theme="dark"] .btn-secondary:hover,
+[data-theme="dark"] .btn-ghost:hover {
+  background-color: var(--surface-elevated);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 /* Navigation Pill (Pill-shaped 9999px) */
@@ -652,6 +683,10 @@ input::placeholder, textarea::placeholder {
   transform: translateY(-2px);
   border-color: var(--color-ash) !important;
   box-shadow: var(--shadow-card);
+}
+
+[data-theme="dark"] .hover-lift:hover {
+  border-color: rgba(255, 255, 255, 0.2) !important;
 }
 
 /* Skeleton shimmer */
@@ -1414,14 +1449,8 @@ input::placeholder, textarea::placeholder {
 
 .battle-category-grid {
   display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(85px, 1fr)) !important;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
   gap: 8px !important;
-}
-
-@media (min-width: 640px) {
-  .battle-category-grid {
-    grid-template-columns: repeat(5, 1fr) !important;
-  }
 }
 
 /* Room Code Card in Waiting Lobby */

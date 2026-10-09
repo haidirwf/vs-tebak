@@ -27,11 +27,11 @@ const DIFFICULTY_COLORS: Record<string, string> = {
     advanced: 'var(--accent-red)',
 }
 
-const CATEGORY_COLORS: Record<string, string> = {
-    coding: 'var(--accent-cyan)',
-    design: 'var(--accent-gold)',
-    productivity: 'var(--accent-green)',
-    business: 'var(--accent-red)',
+const CATEGORY_CONFIG: Record<string, { color: string; bg: string; border: string }> = {
+    coding: { color: 'var(--accent-cyan)', bg: 'var(--accent-cyan-bg)', border: 'var(--accent-cyan-border)' },
+    design: { color: 'var(--accent-gold-text)', bg: 'var(--accent-gold-bg)', border: 'var(--accent-gold-border)' },
+    productivity: { color: 'var(--accent-green)', bg: 'var(--accent-green-bg)', border: 'var(--accent-green-border)' },
+    business: { color: 'var(--accent-red)', bg: 'var(--accent-red-bg)', border: 'var(--accent-red-border)' },
 }
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
@@ -162,7 +162,7 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                         const isCompleted = userModule?.status === 'completed'
                         const isInProgress = userModule?.status === 'in_progress'
                         const progress = userModule?.progress_percent || 0
-                        const catColor = CATEGORY_COLORS[module.category] || 'var(--accent-cyan)'
+                        const catMeta = CATEGORY_CONFIG[module.category] || CATEGORY_CONFIG.coding
                         const icon = CATEGORY_ICONS[module.category] || <BookOpen size={20} />
 
                         return (
@@ -230,7 +230,7 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                         {/* Status Icon Background */}
                                         <div style={{
                                             position: 'absolute', top: '-10px', right: '-10px',
-                                            opacity: 0.05, transform: 'rotate(-15deg)', color: catColor
+                                            opacity: 0.05, transform: 'rotate(-15deg)', color: catMeta.color
                                         }}>
                                             {icon}
                                         </div>
@@ -239,12 +239,12 @@ function ModulesClient({ modules, userModules, avatarClass }: ModulesClientProps
                                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', gap: '8px', flexWrap: 'wrap' }}>
                                             <div style={{
                                                 display: 'flex', alignItems: 'center', gap: '8px',
-                                                padding: '4px 10px', backgroundColor: `${catColor}12`,
-                                                borderRadius: '6px', border: `1px solid ${catColor}28`
+                                                padding: '4px 10px', backgroundColor: catMeta.bg,
+                                                borderRadius: '6px', border: `1px solid ${catMeta.border}`
                                             }}>
-                                                <div style={{ color: catColor }}>{icon}</div>
+                                                <div style={{ color: catMeta.color }}>{icon}</div>
                                                 <span style={{
-                                                    fontSize: '11px', fontWeight: 600, color: catColor,
+                                                    fontSize: '11px', fontWeight: 600, color: catMeta.color,
                                                     fontFamily: 'var(--font-heading)', textTransform: 'uppercase',
                                                 }}>
                                                     {module.category}
