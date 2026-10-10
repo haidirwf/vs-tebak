@@ -809,11 +809,11 @@ export default function ShopClient({
                                                 <span
                                                     style={{
                                                         fontSize: '11px',
-                                                        color: 'var(--text-secondary)',
-                                                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                                        color: 'var(--rarity-slot-color)',
+                                                        backgroundColor: 'var(--rarity-slot-bg)',
                                                         padding: '3px 8px',
                                                         borderRadius: '6px',
-                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                        border: '1px solid var(--rarity-slot-border)',
                                                         whiteSpace: 'nowrap',
                                                         display: 'inline-flex',
                                                         alignItems: 'center',
@@ -828,8 +828,8 @@ export default function ShopClient({
                                                             style={{
                                                                 fontSize: '9.5px',
                                                                 fontWeight: 700,
-                                                                color: '#fbbf24',
-                                                                backgroundColor: 'rgba(245, 158, 11, 0.25)',
+                                                                color: '#b45309',
+                                                                backgroundColor: 'rgba(245, 158, 11, 0.22)',
                                                                 border: '1px solid rgba(251, 191, 36, 0.65)',
                                                                 padding: '2px 6px',
                                                                 borderRadius: '5px',
@@ -854,9 +854,9 @@ export default function ShopClient({
                                                             gap: '3px',
                                                             textShadow:
                                                                 item.rarity === 'legendary'
-                                                                    ? '0 0 10px rgba(251, 191, 36, 0.65)'
+                                                                    ? '0 0 10px rgba(251, 191, 36, 0.45)'
                                                                     : item.rarity === 'epic'
-                                                                    ? '0 0 8px rgba(192, 132, 252, 0.5)'
+                                                                    ? '0 0 8px rgba(192, 132, 252, 0.35)'
                                                                     : 'none',
                                                         }}
                                                     >
@@ -875,12 +875,7 @@ export default function ShopClient({
                                                             fontFamily: 'var(--font-heading)',
                                                             fontSize: '13.5px',
                                                             fontWeight: 700,
-                                                            color:
-                                                                item.rarity === 'legendary'
-                                                                    ? '#fef3c7'
-                                                                    : item.rarity === 'epic'
-                                                                    ? '#f3e8ff'
-                                                                    : 'var(--text-primary)',
+                                                            color: `var(--rarity-title-${item.rarity})`,
                                                             lineHeight: 1.3,
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
@@ -888,7 +883,7 @@ export default function ShopClient({
                                                             overflow: 'hidden',
                                                             textShadow:
                                                                 item.rarity === 'legendary'
-                                                                    ? '0 1px 8px rgba(245, 158, 11, 0.3)'
+                                                                    ? '0 1px 8px rgba(245, 158, 11, 0.25)'
                                                                     : 'none',
                                                         }}
                                                     >
@@ -920,7 +915,7 @@ export default function ShopClient({
                                             <p
                                                 style={{
                                                     fontSize: '11.5px',
-                                                    color: 'var(--text-secondary)',
+                                                    color: `var(--rarity-desc-${item.rarity})`,
                                                     margin: '0 0 6px 0',
                                                     lineHeight: 1.45,
                                                     display: '-webkit-box',
@@ -939,9 +934,9 @@ export default function ShopClient({
                                                     <span
                                                         style={{
                                                             fontSize: '10px',
-                                                            color: 'var(--text-secondary)',
-                                                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                                                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                            color: 'var(--rarity-slot-color)',
+                                                            backgroundColor: 'var(--rarity-slot-bg)',
+                                                            border: '1px solid var(--rarity-slot-border)',
                                                             padding: '1.5px 6px',
                                                             borderRadius: '4px',
                                                             display: 'inline-flex',
@@ -963,7 +958,7 @@ export default function ShopClient({
                                                 justifyContent: 'space-between',
                                                 gap: '6px',
                                                 paddingTop: '10px',
-                                                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                                borderTop: '1px solid var(--rarity-divider)',
                                                 position: 'relative',
                                                 zIndex: 2,
                                             }}

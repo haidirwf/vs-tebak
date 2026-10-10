@@ -595,9 +595,9 @@ export default function GameLobbyStage({
                                     width: '180px',
                                     height: '38px',
                                     borderRadius: '50%',
-                                    background: `radial-gradient(ellipse at center, ${roleCfg.color}25 0%, rgba(20, 20, 20, 0.95) 75%)`,
+                                    background: `radial-gradient(ellipse at center, ${roleCfg.color}25 0%, var(--surface-card) 75%)`,
                                     border: `1.5px solid ${roleCfg.border}`,
-                                    boxShadow: `0 10px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px ${roleCfg.color}15`,
+                                    boxShadow: `0 8px 20px rgba(0, 0, 0, 0.18), inset 0 0 12px ${roleCfg.color}15`,
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
@@ -610,7 +610,7 @@ export default function GameLobbyStage({
                                         width: '140px',
                                         height: '24px',
                                         borderRadius: '50%',
-                                        border: '1px dashed rgba(255, 255, 255, 0.18)',
+                                        border: `1px dashed ${roleCfg.color}44`,
                                     }}
                                 />
                             </div>
