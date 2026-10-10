@@ -34,50 +34,73 @@ export default function ItemIcon({
     const effectiveSlot = slot || item?.slot || 'weapon'
     const FallbackIcon = SLOT_ICONS[effectiveSlot] || Swords
 
-    // Determine border and background based on rarity
-    const borderColor = showBorder && rarity ? rarity.border : 'var(--surface-border)'
-    const backgroundColor = rarity ? rarity.bg : 'var(--surface-elevated)'
+    // Determine border, background, and shadow based on rarity pedestal
+    const pedestalBorder = showBorder && rarity ? rarity.pedestalBorder : '1px solid var(--surface-border)'
+    const pedestalBg = rarity ? rarity.pedestalBg : 'var(--surface-elevated)'
+    const pedestalShadow = rarity ? rarity.pedestalShadow : 'none'
 
-    if (item && item.image_url && !imgError) {
+    if (item) {
+        if (item.image_url && !imgError) {
+            return (
+                <div
+                    className={`relative flex items-center justify-center overflow-hidden shrink-0 select-none rarity-pedestal ${className}`}
+                    style={{
+                        width: `${size}px`,
+                        height: `${size}px`,
+                        borderRadius: size >= 48 ? '12px' : '10px',
+                        background: pedestalBg,
+                        border: pedestalBorder,
+                        boxShadow: pedestalShadow,
+                    }}
+                >
+                    <img
+                        src={item.image_url}
+                        alt={item.name}
+                        width={size}
+                        height={size}
+                        onError={() => setImgError(true)}
+                        className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
+                        loading="lazy"
+                    />
+                </div>
+            )
+        }
+
+        // Render item emoji icon inside themed pedestal
         return (
             <div
-                className={`relative flex items-center justify-center overflow-hidden shrink-0 select-none ${className}`}
+                className={`relative flex items-center justify-center shrink-0 select-none rarity-pedestal ${className}`}
                 style={{
                     width: `${size}px`,
                     height: `${size}px`,
-                    borderRadius: size >= 48 ? '10px' : '8px',
-                    backgroundColor,
-                    border: `1px solid ${borderColor}`,
+                    borderRadius: size >= 48 ? '12px' : '10px',
+                    background: pedestalBg,
+                    border: pedestalBorder,
+                    boxShadow: pedestalShadow,
+                    fontSize: `${Math.round(size * 0.52)}px`,
                 }}
+                title={item.name}
             >
-                <img
-                    src={item.image_url}
-                    alt={item.name}
-                    width={size}
-                    height={size}
-                    onError={() => setImgError(true)}
-                    className="w-full h-full object-cover transition-transform duration-200 hover:scale-105"
-                    loading="lazy"
-                />
+                {item.icon || '⚔️'}
             </div>
         )
     }
 
-    // Fallback if no item equipped (empty slot) or image failed to load
+    // Fallback if no item equipped (empty slot)
     return (
         <div
             className={`relative flex items-center justify-center shrink-0 select-none ${className}`}
             style={{
                 width: `${size}px`,
                 height: `${size}px`,
-                borderRadius: size >= 48 ? '10px' : '8px',
-                backgroundColor: 'var(--surface-elevated)',
-                border: '1px solid var(--surface-border)',
+                borderRadius: size >= 48 ? '12px' : '10px',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                border: '1px dashed var(--surface-border)',
                 color: 'var(--text-muted)',
             }}
-            title={item ? item.name : `Slot ${effectiveSlot}`}
+            title={`Slot ${effectiveSlot}`}
         >
-            <FallbackIcon size={Math.round(size * 0.48)} style={{ opacity: 0.6 }} />
+            <FallbackIcon size={Math.round(size * 0.44)} style={{ opacity: 0.5 }} />
         </div>
     )
 }
