@@ -514,6 +514,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         isCrit: payload.is_crit,
                         isUltimate: payload.is_ultimate,
                         damage: payload.damage || 15,
+                        weaponId: payload.attacker_weapon || (opponent?.equipped_items as any)?.weapon,
                     })
 
                     setTimeout(() => {
@@ -902,6 +903,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 isCrit,
                 isUltimate,
                 damage: effectiveDamage,
+                weaponId: (currentUser?.equipped_items as any)?.weapon,
             })
 
             // Projectile arrives at opponent

@@ -170,6 +170,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 direction: 'right-to-left',
                 type: 'bot',
                 damage: 12,
+                weaponId: 'bot',
             })
 
             setTimeout(() => {
@@ -384,6 +385,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 isCrit,
                 isUltimate,
                 damage: effectiveDamage,
+                weaponId: (currentUser?.equipped_items as any)?.weapon,
             })
 
             // Projectile impact

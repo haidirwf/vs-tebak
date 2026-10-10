@@ -874,48 +874,247 @@ function CharacterVisual({
                             {/* Hand grip rendered on top so hand wraps firmly around the weapon */}
                             <circle cx="0" cy="0" r="7.5" fill="#fbcfe8" stroke="#0f172a" strokeWidth="1.5" />
 
-                            {/* Attack Slash Blade Arc & Spark Effect (Tangan Nyerang) */}
+                            {/* Distinctive Weapon-Tailored Attack Visual Effect (Tangan Nyerang) */}
                             {animationState === 'attack' && (
                                 <g>
-                                    <motion.path
-                                        d="M 12 -28 A 38 38 0 0 1 32 20"
-                                        fill="none"
-                                        stroke={primary}
-                                        strokeWidth="4"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0, opacity: 0 }}
-                                        animate={{ pathLength: [0, 1, 0.2], opacity: [0, 1, 0], scale: [0.8, 1.2, 1.4] }}
-                                        transition={{ duration: 0.45, ease: 'easeOut' }}
-                                        style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
-                                    />
-                                    <motion.path
-                                        d="M 6 -20 A 30 30 0 0 1 24 16"
-                                        fill="none"
-                                        stroke="#ffffff"
-                                        strokeWidth="2"
-                                        strokeLinecap="round"
-                                        initial={{ pathLength: 0, opacity: 0 }}
-                                        animate={{ pathLength: [0, 1, 0], opacity: [0, 0.9, 0] }}
-                                        transition={{ duration: 0.4, ease: 'easeOut' }}
-                                    />
-                                    <motion.circle
-                                        cx="30"
-                                        cy="0"
-                                        r="3"
-                                        fill="#ffffff"
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ scale: [0, 1.8, 0], opacity: [0, 1, 0], x: [0, 12], y: [0, -6] }}
-                                        transition={{ duration: 0.35 }}
-                                    />
-                                    <motion.circle
-                                        cx="26"
-                                        cy="14"
-                                        r="2.5"
-                                        fill={primary}
-                                        initial={{ scale: 0, opacity: 0 }}
-                                        animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0], x: [0, 10], y: [0, 8] }}
-                                        transition={{ duration: 0.35, delay: 0.05 }}
-                                    />
+                                    {weaponItem?.id === 'wpn_archmage_orb' ? (
+                                        /* ARCHMAGE GENESIS CORE - COSMIC SUPERNOVA SHOCKWAVE */
+                                        <g transform="translate(0, -22)">
+                                            <motion.circle
+                                                cx="0"
+                                                cy="0"
+                                                r="8"
+                                                fill="none"
+                                                stroke="#c084fc"
+                                                strokeWidth="2.5"
+                                                initial={{ scale: 0.3, opacity: 1 }}
+                                                animate={{ scale: [0.3, 2.8, 3.4], opacity: [1, 0.8, 0] }}
+                                                transition={{ duration: 0.45, ease: 'easeOut' }}
+                                                style={{ filter: 'drop-shadow(0 0 10px #c084fc)' }}
+                                            />
+                                            <motion.circle
+                                                cx="0"
+                                                cy="0"
+                                                r="6"
+                                                fill="none"
+                                                stroke="#38bdf8"
+                                                strokeWidth="1.8"
+                                                initial={{ scale: 0.3, opacity: 1 }}
+                                                animate={{ scale: [0.3, 2.2, 2.8], opacity: [1, 0.9, 0] }}
+                                                transition={{ duration: 0.42, delay: 0.04, ease: 'easeOut' }}
+                                            />
+                                            <motion.line
+                                                x1="-14" y1="0" x2="28" y2="0"
+                                                stroke="#ffffff"
+                                                strokeWidth="2.5"
+                                                strokeLinecap="round"
+                                                initial={{ scaleX: 0, opacity: 1 }}
+                                                animate={{ scaleX: [0, 1.8, 0.5], opacity: [1, 1, 0], x: [0, 16] }}
+                                                transition={{ duration: 0.4 }}
+                                                style={{ filter: 'drop-shadow(0 0 8px #ffffff)' }}
+                                            />
+                                            <motion.line
+                                                x1="0" y1="-18" x2="0" y2="18"
+                                                stroke="#fde047"
+                                                strokeWidth="2"
+                                                strokeLinecap="round"
+                                                initial={{ scaleY: 0, opacity: 1 }}
+                                                animate={{ scaleY: [0, 1.6, 0.4], opacity: [1, 0.9, 0] }}
+                                                transition={{ duration: 0.38 }}
+                                            />
+                                            <motion.circle
+                                                cx="24" cy="-10" r="3" fill="#fde047"
+                                                animate={{ x: [0, 18], y: [0, -12], scale: [1, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.4 }}
+                                            />
+                                            <motion.circle
+                                                cx="28" cy="8" r="3" fill="#38bdf8"
+                                                animate={{ x: [0, 22], y: [0, 10], scale: [1, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.4, delay: 0.03 }}
+                                            />
+                                            <motion.circle
+                                                cx="20" cy="0" r="3.5" fill="#e879f9"
+                                                animate={{ x: [0, 26], scale: [1.2, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.38 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_crystal_staff' || weaponItem?.id === 'wpn_astral_wand' || weaponItem?.id === 'wpn_mage_starter' ? (
+                                        /* ARCANE CRYSTAL MAGIC SURGE */
+                                        <g transform="translate(0, -22)">
+                                            <motion.path
+                                                d="M 6 -18 A 24 24 0 0 1 24 16"
+                                                fill="none"
+                                                stroke="#c084fc"
+                                                strokeWidth="4"
+                                                strokeLinecap="round"
+                                                animate={{ pathLength: [0, 1, 0], opacity: [0, 1, 0], scale: [0.8, 1.4, 1.6] }}
+                                                transition={{ duration: 0.42 }}
+                                                style={{ filter: 'drop-shadow(0 0 10px #a855f7)' }}
+                                            />
+                                            <motion.circle
+                                                cx="18" cy="0" r="5" fill="#a855f7" stroke="#ffffff" strokeWidth="1"
+                                                animate={{ scale: [0.5, 1.8, 0], opacity: [0, 1, 0], x: [0, 18] }}
+                                                transition={{ duration: 0.38 }}
+                                            />
+                                            <motion.polygon
+                                                points="26,-6 28,-2 32,-2 29,1 30,5 26,2 22,5 23,1 20,-2 24,-2"
+                                                fill="#f0abfc"
+                                                animate={{ scale: [0, 1.4, 0], opacity: [0, 1, 0], x: [0, 14], y: [0, -8] }}
+                                                transition={{ duration: 0.4 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_dragon_slayer' ? (
+                                        /* DRAGON HELLFIRE CLEAVE */
+                                        <g transform="translate(4, -14)">
+                                            <motion.path
+                                                d="M -4 -28 L 32 12"
+                                                fill="none"
+                                                stroke="#ef4444"
+                                                strokeWidth="5"
+                                                strokeLinecap="round"
+                                                animate={{ pathLength: [0, 1, 0.2], opacity: [0, 1, 0], scale: [0.8, 1.3, 1.5] }}
+                                                transition={{ duration: 0.42 }}
+                                                style={{ filter: 'drop-shadow(0 0 12px #ef4444) drop-shadow(0 0 4px #7f1d1d)' }}
+                                            />
+                                            <motion.path
+                                                d="M 8 -32 L 40 4"
+                                                fill="none"
+                                                stroke="#f59e0b"
+                                                strokeWidth="3.5"
+                                                strokeLinecap="round"
+                                                animate={{ pathLength: [0, 1, 0], opacity: [0, 1, 0], scale: [0.8, 1.25, 1.4] }}
+                                                transition={{ duration: 0.4, delay: 0.03 }}
+                                            />
+                                            <motion.circle
+                                                cx="36" cy="6" r="3.5" fill="#f59e0b"
+                                                animate={{ x: [0, 16], y: [0, 8], scale: [1, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.36 }}
+                                            />
+                                            <motion.circle
+                                                cx="30" cy="-14" r="3" fill="#ef4444"
+                                                animate={{ x: [0, 14], y: [0, -10], scale: [1, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.36 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_flame_claymore' ? (
+                                        /* FLAMING CLAYMORE BLADE WAVE */
+                                        <g transform="translate(4, -14)">
+                                            <motion.path
+                                                d="M 6 -26 A 34 34 0 0 1 30 18"
+                                                fill="none"
+                                                stroke="url(#flameBladeGrad)"
+                                                strokeWidth="5"
+                                                strokeLinecap="round"
+                                                animate={{ pathLength: [0, 1, 0.2], opacity: [0, 1, 0], scale: [0.8, 1.3, 1.5] }}
+                                                transition={{ duration: 0.42 }}
+                                                style={{ filter: 'drop-shadow(0 0 12px #f97316)' }}
+                                            />
+                                            <motion.circle
+                                                cx="32" cy="-4" r="3.5" fill="#fef08a"
+                                                animate={{ x: [0, 16], y: [0, -6], scale: [1, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.38 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_celestial_bow' ? (
+                                        /* CELESTIAL BOW PIERCING STARLIGHT BEAM */
+                                        <g transform="translate(6, -10)">
+                                            <motion.line
+                                                x1="-10" y1="0" x2="38" y2="0"
+                                                stroke="#ffffff"
+                                                strokeWidth="3.5"
+                                                strokeLinecap="round"
+                                                animate={{ scaleX: [0, 1.6, 0.5], opacity: [0, 1, 0], x: [0, 24] }}
+                                                transition={{ duration: 0.38 }}
+                                                style={{ filter: 'drop-shadow(0 0 10px #fde047)' }}
+                                            />
+                                            <motion.line
+                                                x1="-6" y1="0" x2="30" y2="0"
+                                                stroke="#facc15"
+                                                strokeWidth="5"
+                                                strokeLinecap="round"
+                                                animate={{ scaleX: [0, 1.4, 0.3], opacity: [0, 0.8, 0], x: [0, 20] }}
+                                                transition={{ duration: 0.38 }}
+                                            />
+                                            <motion.ellipse
+                                                cx="12" cy="0" rx="4" ry="12" fill="none" stroke="#22c55e" strokeWidth="2"
+                                                animate={{ scaleY: [0.4, 1.6], scaleX: [0.4, 1.2], opacity: [1, 0], x: [0, 18] }}
+                                                transition={{ duration: 0.35 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_archer_starter' || weaponItem?.id === 'wpn_recurve_bow' ? (
+                                        /* ARCHER GALE WIND ARROW */
+                                        <g transform="translate(4, -10)">
+                                            <motion.line
+                                                x1="-10" y1="0" x2="34" y2="0"
+                                                stroke="#22c55e"
+                                                strokeWidth="3.5"
+                                                strokeLinecap="round"
+                                                animate={{ scaleX: [0, 1.5, 0.4], opacity: [0, 1, 0], x: [0, 20] }}
+                                                transition={{ duration: 0.36 }}
+                                                style={{ filter: 'drop-shadow(0 0 8px #22c55e)' }}
+                                            />
+                                            <motion.path
+                                                d="M 12 -10 Q 24 0 12 10"
+                                                fill="none"
+                                                stroke="#86efac"
+                                                strokeWidth="2"
+                                                animate={{ x: [0, 16], opacity: [1, 0], scale: [0.8, 1.3] }}
+                                                transition={{ duration: 0.35 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_radiant_scepter' || weaponItem?.id === 'wpn_healer_starter' || weaponItem?.id === 'wpn_seraph_staff' ? (
+                                        /* SACRED RADIANT SUNBURST */
+                                        <g transform="translate(0, -20)">
+                                            <motion.circle
+                                                cx="0" cy="0" r="10" fill="#fef08a" stroke="#ca8a04" strokeWidth="1.5"
+                                                animate={{ scale: [0.4, 2.2, 0], opacity: [0, 1, 0] }}
+                                                transition={{ duration: 0.42 }}
+                                                style={{ filter: 'drop-shadow(0 0 12px #f59e0b)' }}
+                                            />
+                                            <motion.line
+                                                x1="-14" y1="0" x2="24" y2="0" stroke="#ffffff" strokeWidth="2.5"
+                                                animate={{ scaleX: [0, 1.5, 0], opacity: [1, 0], x: [0, 12] }}
+                                                transition={{ duration: 0.38 }}
+                                            />
+                                        </g>
+                                    ) : (
+                                        /* DEFAULT METALLIC STEEL BLADE SLASH (Iron Broadsword, Warrior Starter) */
+                                        <g>
+                                            <motion.path
+                                                d="M 12 -28 A 38 38 0 0 1 32 20"
+                                                fill="none"
+                                                stroke="#ffffff"
+                                                strokeWidth="4"
+                                                strokeLinecap="round"
+                                                initial={{ pathLength: 0, opacity: 0 }}
+                                                animate={{ pathLength: [0, 1, 0.2], opacity: [0, 1, 0], scale: [0.8, 1.25, 1.45] }}
+                                                transition={{ duration: 0.42, ease: 'easeOut' }}
+                                                style={{ filter: `drop-shadow(0 0 8px ${primary})` }}
+                                            />
+                                            <motion.path
+                                                d="M 6 -20 A 30 30 0 0 1 24 16"
+                                                fill="none"
+                                                stroke={primary}
+                                                strokeWidth="2.2"
+                                                strokeLinecap="round"
+                                                initial={{ pathLength: 0, opacity: 0 }}
+                                                animate={{ pathLength: [0, 1, 0], opacity: [0, 0.9, 0] }}
+                                                transition={{ duration: 0.38, ease: 'easeOut' }}
+                                            />
+                                            <motion.circle
+                                                cx="30" cy="0" r="3.5" fill="#ffffff"
+                                                initial={{ scale: 0, opacity: 0 }}
+                                                animate={{ scale: [0, 1.8, 0], opacity: [0, 1, 0], x: [0, 14], y: [0, -6] }}
+                                                transition={{ duration: 0.35 }}
+                                            />
+                                            <motion.circle
+                                                cx="26" cy="14" r="2.8" fill={primary}
+                                                initial={{ scale: 0, opacity: 0 }}
+                                                animate={{ scale: [0, 1.5, 0], opacity: [0, 1, 0], x: [0, 12], y: [0, 8] }}
+                                                transition={{ duration: 0.35, delay: 0.05 }}
+                                            />
+                                        </g>
+                                    )}
                                 </g>
                             )}
                         </g>
