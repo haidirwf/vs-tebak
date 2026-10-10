@@ -68,7 +68,6 @@ export default function Navbar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            prefetch={true}
                             title={item.label}
                             aria-label={item.label}
                             style={{
@@ -114,8 +113,7 @@ export default function Navbar() {
 
                                 {/* Subtle top line active indicator */}
                                 {isActive && (
-                                    <motion.div
-                                        layoutId="bottomNavIndicator"
+                                    <div
                                         style={{
                                             position: 'absolute',
                                             top: '0px',
@@ -125,7 +123,6 @@ export default function Navbar() {
                                             borderRadius: '2px',
                                             backgroundColor: 'var(--brand-primary)',
                                         }}
-                                        transition={{ type: 'spring', stiffness: 400, damping: 28 }}
                                     />
                                 )}
                             </motion.div>

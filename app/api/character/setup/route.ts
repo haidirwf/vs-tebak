@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { AvatarClass } from '@/types'
 import { getStarterItemsForClass, ItemSlot } from '@/lib/game/items'
+import { invalidateProfileCache } from '@/lib/auth/get-user'
 
 export async function POST(request: NextRequest) {
     const supabase = await createClient()
@@ -72,6 +73,8 @@ export async function POST(request: NextRequest) {
     if (profileResult.error) {
         return NextResponse.json({ error: profileResult.error.message }, { status: 500 })
     }
+
+    invalidateProfileCache(user.id)
 
     return NextResponse.json({
         success: true,

@@ -8,10 +8,35 @@ import { measureAsync } from '@/lib/utils/timing'
 import { extractAuthSessionFromCookies, isSessionExpiringSoon } from '@/lib/auth/token-utils'
 import { checkStreakStatus } from '@/lib/game/streak'
 
+// In-memory server-side cache across requests (survives route navigations within the same worker instance)
+interface CachedProfile {
+    profile: Profile
+    expiresAt: number
+}
+
+interface CachedUser {
+    user: User
+    expiresAt: number
+}
+
+const profileMemoryCache = new Map<string, CachedProfile>()
+const userMemoryCache = new Map<string, CachedUser>()
+
+const CACHE_TTL_MS = 60_000 // 60 seconds
+
+export function invalidateProfileCache(userId?: string) {
+    if (userId) {
+        profileMemoryCache.delete(userId)
+    } else {
+        profileMemoryCache.clear()
+    }
+}
+
 /**
  * Deduplicated getAuthenticatedUser.
- * Fast-path: reads user object directly from cached valid session cookie (0ms),
- * avoiding slow redundant HTTPS roundtrips to Supabase Auth on every page navigation.
+ * Fast-path 1: reads user object directly from cached valid session cookie (0ms).
+ * Fast-path 2: reads user object from server-side in-memory cache keyed by access token (0ms).
+ * Fallback: fetches from Supabase Auth and caches in memory.
  */
 export const getAuthenticatedUser = cache(async (): Promise<User | null> => {
     return measureAsync('auth:getUser (cached)', async () => {
@@ -30,27 +55,41 @@ export const getAuthenticatedUser = cache(async (): Promise<User | null> => {
             return session.user
         }
 
-        // 2. Fallback: jika token expired atau butuh refresh via server client
+        // 2. FAST-PATH: Server in-memory cache jika token masih valid (0ms)
+        if (session?.access_token && !isSessionExpiringSoon(session, 10)) {
+            const cached = userMemoryCache.get(session.access_token)
+            if (cached && Date.now() < cached.expiresAt) {
+                return cached.user
+            }
+        }
+
+        // 3. Fallback: jika token expired atau butuh refresh via server client
         try {
             const supabase = await createClient()
             const { data: { user }, error } = await supabase.auth.getUser()
             if (error || !user) {
                 return null
             }
+            if (session?.access_token) {
+                userMemoryCache.set(session.access_token, {
+                    user,
+                    expiresAt: Date.now() + CACHE_TTL_MS,
+                })
+            }
             return user
         } catch {
             return null
         }
-    }, 500)
+    }, 150)
 })
 
 /**
  * Deduplicated getAuthenticatedProfile.
- * Wrapped in React cache() so profile lookup is executed at most once per render lifecycle.
+ * Fast-path: checks server-side in-memory cache (0ms).
+ * Wrapped in React cache() so lookup is executed at most once per request lifecycle.
  */
 export const getAuthenticatedProfile = cache(async (explicitUserId?: string): Promise<Profile | null> => {
     return measureAsync('db:getProfile (cached)', async () => {
-        const supabase = await createClient()
         let userId = explicitUserId
 
         if (!userId) {
@@ -59,6 +98,13 @@ export const getAuthenticatedProfile = cache(async (explicitUserId?: string): Pr
             userId = user.id
         }
 
+        // 1. FAST-PATH: Memory cache check (0ms instead of 300ms network roundtrip to Supabase!)
+        const cached = profileMemoryCache.get(userId)
+        if (cached && Date.now() < cached.expiresAt) {
+            return cached.profile
+        }
+
+        const supabase = await createClient()
         const { data: profile } = await supabase
             .from('profiles')
             .select('*')
@@ -85,6 +131,14 @@ export const getAuthenticatedProfile = cache(async (explicitUserId?: string): Pr
             })()
         }
 
-        return (profile as Profile) || null
-    }, 400)
+        const normalizedProfile = (profile as Profile) || null
+        if (normalizedProfile) {
+            profileMemoryCache.set(userId, {
+                profile: normalizedProfile,
+                expiresAt: Date.now() + CACHE_TTL_MS,
+            })
+        }
+
+        return normalizedProfile
+    }, 150)
 })

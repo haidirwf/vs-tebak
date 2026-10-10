@@ -89,7 +89,6 @@ export default function Sidebar() {
             >
                 <Link
                     href="/dashboard"
-                    prefetch={true}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
@@ -287,7 +286,6 @@ export default function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            prefetch={true}
                             style={{ textDecoration: 'none', position: 'relative', display: 'block' }}
                         >
                             <motion.div
@@ -312,8 +310,7 @@ export default function Sidebar() {
                                 }}
                             >
                                 {isActive && (
-                                    <motion.div
-                                        layoutId="sidebarActiveBar"
+                                    <div
                                         style={{
                                             position: 'absolute',
                                             left: '4px',
@@ -322,7 +319,6 @@ export default function Sidebar() {
                                             borderRadius: '4px',
                                             backgroundColor: 'var(--brand-primary)',
                                         }}
-                                        transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                                     />
                                 )}
 

@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-import { getAuthenticatedUser } from '@/lib/auth/get-user'
+import { getAuthenticatedUser, invalidateProfileCache } from '@/lib/auth/get-user'
 import { NextRequest, NextResponse } from 'next/server'
 import { getItemById, ItemSlot } from '@/lib/game/items'
 
@@ -91,6 +91,8 @@ export async function POST(request: NextRequest) {
     if (updateErr) {
         return NextResponse.json({ error: updateErr.message }, { status: 500 })
     }
+
+    invalidateProfileCache(user.id)
 
     return NextResponse.json({
         success: true,

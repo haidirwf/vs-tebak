@@ -7,6 +7,7 @@ import { format } from 'date-fns'
 import { checkStreakStatus, getTodayDateString } from '@/lib/game/streak'
 import { ensureUserBadges } from '@/lib/game/badges'
 import { checkRateLimit, getRateLimitIdentifier } from '@/lib/server/rateLimit'
+import { invalidateProfileCache } from '@/lib/auth/get-user'
 
 type XpAction = 'complete_module' | 'battle_win' | 'battle_draw' | 'battle_loss'
 
@@ -279,6 +280,8 @@ export async function POST(request: NextRequest) {
     const finalLevel = finalProfile?.level ?? level
     const finalXpToNext = finalProfile?.xp_to_next_level ?? xpToNext
     const leveledUpFinal = finalLevel > profile.level
+
+    invalidateProfileCache(user.id)
 
     return NextResponse.json({
         success: true,

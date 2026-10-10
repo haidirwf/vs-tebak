@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { invalidateProfileCache } from '@/lib/auth/get-user'
 
 type RedeemResult = {
     redemption_id: string
@@ -61,6 +62,8 @@ export async function POST(request: NextRequest) {
     if (!row) {
         return NextResponse.json({ error: 'Gagal klaim voucher' }, { status: 500 })
     }
+
+    invalidateProfileCache(user.id)
 
     return NextResponse.json({
         success: true,
