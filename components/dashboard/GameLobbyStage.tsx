@@ -27,6 +27,7 @@ import {
     HelpCircle,
     Layers,
     ChevronDown,
+    ArrowDown,
 } from 'lucide-react'
 import { startOfWeek, addDays, format, parseISO, isSameDay } from 'date-fns'
 
@@ -627,121 +628,7 @@ export default function GameLobbyStage({
                         zIndex: 1,
                     }}
                 >
-                    {/* --- TALI / ROAD JALUR PETUALANGAN UTAMA DI ARENA --- */}
-                    <div
-                        className="stage-grand-road"
-                        style={{
-                            position: 'absolute',
-                            top: '52%',
-                            left: '5%',
-                            right: '5%',
-                            height: '24px',
-                            transform: 'translateY(-50%)',
-                            display: 'flex',
-                            alignItems: 'center',
-                            zIndex: 0,
-                            pointerEvents: 'none',
-                        }}
-                    >
-                        {/* Jembatan Tali / Jalan Kiri: Menghubungkan Materi Sebelumnya ke Center */}
-                        <div
-                            style={{
-                                flex: 1,
-                                height: '14px',
-                                borderRadius: '7px',
-                                background: 'linear-gradient(90deg, rgba(34, 197, 94, 0.22) 0%, rgba(34, 197, 94, 0.6) 100%)',
-                                borderTop: '2.5px solid rgba(34, 197, 94, 0.85)',
-                                borderBottom: '2.5px solid rgba(34, 197, 94, 0.85)',
-                                boxShadow: '0 0 16px rgba(34, 197, 94, 0.25)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                position: 'relative',
-                            }}
-                        >
-                            <div
-                                style={{
-                                    width: '100%',
-                                    height: '2px',
-                                    borderTop: '2px dashed rgba(255, 255, 255, 0.65)',
-                                    position: 'absolute',
-                                }}
-                            />
-                            <div
-                                style={{
-                                    padding: '2px 8px',
-                                    borderRadius: '6px',
-                                    backgroundColor: 'var(--surface-card)',
-                                    border: '1px solid rgba(34, 197, 94, 0.5)',
-                                    color: 'var(--accent-green)',
-                                    fontSize: '10px',
-                                    fontWeight: 700,
-                                    fontFamily: 'var(--font-heading)',
-                                    position: 'relative',
-                                    zIndex: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                                }}
-                            >
-                                <span>Jalur Selesai</span>
-                                <ArrowRight size={11} />
-                            </div>
-                        </div>
-
-                        {/* Spacer di bawah pedestal karakter agar platform arena tampak kokoh di atas jalan */}
-                        <div style={{ width: '270px', flexShrink: 0 }} />
-
-                        {/* Jembatan Tali / Jalan Kanan: Menghubungkan Center ke Materi Berikutnya */}
-                        <div
-                            style={{
-                                flex: 1,
-                                height: '14px',
-                                borderRadius: '7px',
-                                background: 'linear-gradient(90deg, rgba(245, 197, 66, 0.45) 0%, rgba(255, 255, 255, 0.08) 100%)',
-                                borderTop: '2.5px dashed rgba(245, 197, 66, 0.8)',
-                                borderBottom: '2.5px dashed rgba(245, 197, 66, 0.8)',
-                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.2)',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                position: 'relative',
-                            }}
-                        >
-                            <div
-                                style={{
-                                    width: '100%',
-                                    height: '2px',
-                                    borderTop: '2px dashed rgba(255, 255, 255, 0.4)',
-                                    position: 'absolute',
-                                }}
-                            />
-                            <div
-                                style={{
-                                    padding: '2px 8px',
-                                    borderRadius: '6px',
-                                    backgroundColor: 'var(--surface-card)',
-                                    border: '1px solid rgba(245, 197, 66, 0.5)',
-                                    color: 'var(--color-gold-text)',
-                                    fontSize: '10px',
-                                    fontWeight: 700,
-                                    fontFamily: 'var(--font-heading)',
-                                    position: 'relative',
-                                    zIndex: 1,
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    gap: '4px',
-                                    boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
-                                }}
-                            >
-                                <span>Langkah Selanjutnya</span>
-                                <ArrowRight size={11} />
-                            </div>
-                        </div>
-                    </div>
-
-                    {/* PETA JALUR / ROADMAP BAB MATERI DI ATAS KARAKTER */}
+                    {/* --- 1. PETA JALUR / ROADMAP BAB MATERI DI ATAS KARAKTER --- */}
                     <div
                         style={{
                             display: 'flex',
@@ -765,7 +652,6 @@ export default function GameLobbyStage({
                             const isCurrent = idx === activeStepIndex
                             return (
                                 <React.Fragment key={st.id || idx}>
-                                    {/* Tali / Garis Penghubung antar langkah di bar */}
                                     {idx > 0 && (
                                         <div style={{ display: 'flex', alignItems: 'center', margin: '0 3px' }}>
                                             <div
@@ -824,82 +710,146 @@ export default function GameLobbyStage({
                         })}
                     </div>
 
-                    {/* Three-Column Stage Layout (Left Lesson - Center Hero & Active Lesson - Right Lesson) */}
+                    {/* --- 2. HERO CHARACTER & ARENA PEDESTAL SHOWCASE --- */}
                     <div
-                        className="stage-nodes-layout"
                         style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'minmax(220px, 1fr) minmax(360px, 1.4fr) minmax(220px, 1fr)',
-                            alignItems: 'center',
-                            width: '100%',
-                            maxWidth: '1160px',
-                            gap: '24px',
                             position: 'relative',
-                            zIndex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            marginBottom: '16px',
+                            zIndex: 2,
                         }}
                     >
-                        {/* 1. NODE KIRI: Materi Sebelumnya di Dalam Modul yang Sama */}
-                        <div className="stage-side-node prev-node" style={{ display: 'flex', justifyContent: 'center' }}>
+                        <div style={{ position: 'relative', zIndex: 2, marginBottom: '-24px' }}>
+                            <CharacterVisual
+                                role={profile.avatar_class}
+                                equipped={equipped}
+                                size={200}
+                                showAura={true}
+                                animationState="idle"
+                                interactive={false}
+                            />
+                        </div>
+
+                        {/* Platform Arena Pedestal 3D */}
+                        <div
+                            style={{
+                                width: '220px',
+                                height: '52px',
+                                borderRadius: '50%',
+                                background: `radial-gradient(ellipse at center, ${roleCfg.color}28 0%, rgba(20, 20, 20, 0.95) 75%)`,
+                                border: `1.5px solid ${roleCfg.border}`,
+                                boxShadow: `0 14px 32px rgba(0, 0, 0, 0.5), inset 0 0 16px ${roleCfg.color}15`,
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 1,
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '172px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    border: '1px dashed rgba(255, 255, 255, 0.22)',
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* --- 3. THE 3-STATION MATERIAL ROADWAY (Clear Hierarchy: Past Checkpoint -> Main Quest -> Future Checkpoint) --- */}
+                    <div className="stage-materials-roadway">
+                        {/* A. STATION 1 (KIRI): MATERI SEBELUMNYA (Subdued Past Checkpoint) */}
+                        <div
+                            className="stage-side-station prev-station"
+                            style={{
+                                flex: '0 1 240px',
+                                width: '100%',
+                                maxWidth: '240px',
+                                position: 'relative',
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            {/* Anchor Pegs di sisi kanan kartu */}
+                            <div
+                                className="hidden lg:flex"
+                                style={{
+                                    position: 'absolute',
+                                    right: '-4px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    flexDirection: 'column',
+                                    gap: '14px',
+                                    zIndex: 3,
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#444', border: '1px solid #666' }} />
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#444', border: '1px solid #666' }} />
+                            </div>
+
                             {prevStep ? (
                                 <Link
                                     href={`/modules/${currentModule.slug}?step=${prevStepIndex}`}
-                                    style={{ textDecoration: 'none', width: '100%', maxWidth: '260px' }}
+                                    style={{ textDecoration: 'none', width: '100%' }}
                                 >
                                     <motion.div
-                                        whileHover={{ y: -4 }}
+                                        whileHover={{ y: -3, opacity: 0.95 }}
                                         style={{
-                                            backgroundColor: 'var(--surface-elevated)',
-                                            border: `1px solid ${isPrevStepCompleted ? 'rgba(34, 197, 94, 0.35)' : 'var(--surface-border)'}`,
+                                            backgroundColor: 'rgba(20, 20, 22, 0.75)',
+                                            border: `1px solid ${isPrevStepCompleted ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 255, 255, 0.08)'}`,
                                             borderRadius: '12px',
-                                            padding: '16px',
+                                            padding: '14px 16px',
                                             cursor: 'pointer',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             gap: '8px',
-                                            boxShadow: 'var(--shadow-card)',
-                                            transition: 'border-color 0.2s ease',
+                                            opacity: 0.72,
+                                            transition: 'all 0.2s ease',
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <span style={{ color: 'var(--accent-cyan)' }}>
+                                                <span style={{ color: 'var(--text-muted)' }}>
                                                     {getStepTypeIcon(prevStep.type)}
                                                 </span>
-                                                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
+                                                <span style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
                                                     Langkah {prevStepIndex! + 1}
                                                 </span>
                                             </div>
 
-                                            {/* Centang Selesai */}
                                             {isPrevStepCompleted ? (
                                                 <div
                                                     style={{
-                                                        padding: '2px 8px',
+                                                        padding: '1px 6px',
                                                         borderRadius: '6px',
                                                         backgroundColor: 'rgba(34, 197, 94, 0.12)',
-                                                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                                                        border: '1px solid rgba(34, 197, 94, 0.25)',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         gap: '4px',
                                                         color: 'var(--accent-green)',
-                                                        fontSize: '11px',
+                                                        fontSize: '10px',
                                                         fontWeight: 600,
                                                     }}
                                                 >
-                                                    <CheckCircle2 size={13} />
+                                                    <CheckCircle2 size={11} />
                                                     <span>Selesai</span>
                                                 </div>
                                             ) : (
-                                                <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Belum selesai</span>
+                                                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>Materi lalu</span>
                                             )}
                                         </div>
 
                                         <h4
                                             style={{
                                                 fontFamily: 'var(--font-heading)',
-                                                fontSize: '13.5px',
+                                                fontSize: '13px',
                                                 fontWeight: 600,
-                                                color: 'var(--text-primary)',
+                                                color: 'var(--text-secondary)',
                                                 margin: 0,
                                                 lineHeight: 1.35,
                                                 display: '-webkit-box',
@@ -911,134 +861,226 @@ export default function GameLobbyStage({
                                             {prevStep.title}
                                         </h4>
 
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                                            <span>Materi sebelumnya</span>
-                                        </div>
+                                        <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                                            Bab sebelumnya
+                                        </span>
                                     </motion.div>
                                 </Link>
                             ) : (
-                                /* Fallback jika sedang di langkah pertama */
                                 <div
                                     style={{
-                                        backgroundColor: 'var(--surface-elevated)',
-                                        border: '1px dashed var(--surface-border)',
+                                        backgroundColor: 'rgba(20, 20, 22, 0.5)',
+                                        border: '1px dashed rgba(255, 255, 255, 0.08)',
                                         borderRadius: '12px',
-                                        padding: '16px',
+                                        padding: '14px 16px',
                                         width: '100%',
-                                        maxWidth: '260px',
-                                        opacity: 0.65,
+                                        opacity: 0.5,
                                         display: 'flex',
                                         flexDirection: 'column',
                                         gap: '6px',
                                     }}
                                 >
                                     <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
-                                        Awal Modul
+                                        Titik Awal Modul
                                     </span>
-                                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', margin: 0, color: 'var(--text-secondary)' }}>
-                                        Ini adalah langkah pertama
+                                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '12.5px', margin: 0, color: 'var(--text-muted)' }}>
+                                        Langkah Pertama
                                     </h4>
-                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
-                                        Mulailah materi di tengah
+                                    <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                                        Mulai di stasiun tengah
                                     </span>
                                 </div>
                             )}
                         </div>
 
-                        {/* 2. CENTERPIECE: Karakter Hero di Atas Pedestal & Materi Saat Ini */}
+                        {/* B. BRIDGE 1 (HORIZONTAL DESKTOP): TALI & JALUR SELESAI */}
                         <div
+                            className="stage-road-bridge"
                             style={{
-                                display: 'flex',
-                                flexDirection: 'column',
-                                alignItems: 'center',
-                                textAlign: 'center',
+                                flex: '1 1 70px',
+                                minWidth: '40px',
+                                maxWidth: '110px',
+                                height: '34px',
                                 position: 'relative',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 0,
                             }}
                         >
-                            {/* Wrapper Karakter & Platform Pedestal */}
+                            {/* Tali Atas */}
                             <div
                                 style={{
-                                    position: 'relative',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
-                                    marginBottom: '16px',
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '2.5px',
+                                    background: 'linear-gradient(90deg, rgba(34, 197, 94, 0.4) 0%, rgba(34, 197, 94, 0.85) 50%, rgba(34, 197, 94, 0.4) 100%)',
+                                    borderRadius: '2px',
                                 }}
-                            >
-                                {/* Visual Karakter Interaktif */}
-                                <div style={{ position: 'relative', zIndex: 2, marginBottom: '-26px' }}>
-                                    <CharacterVisual
-                                        role={profile.avatar_class}
-                                        equipped={equipped}
-                                        size={220}
-                                        showAura={true}
-                                        animationState="idle"
-                                        interactive={false}
-                                    />
-                                </div>
+                            />
 
-                                {/* Platform Arena Pedestal 3D */}
-                                <div
-                                    style={{
-                                        width: '240px',
-                                        height: '58px',
-                                        borderRadius: '50%',
-                                        background: `radial-gradient(ellipse at center, ${roleCfg.color}28 0%, rgba(20, 20, 20, 0.95) 75%)`,
-                                        border: `1.5px solid ${roleCfg.border}`,
-                                        boxShadow: `0 14px 32px rgba(0, 0, 0, 0.5), inset 0 0 18px ${roleCfg.color}15`,
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        zIndex: 1,
-                                    }}
-                                >
-                                    <div
-                                        style={{
-                                            width: '188px',
-                                            height: '40px',
-                                            borderRadius: '50%',
-                                            border: '1px dashed rgba(255, 255, 255, 0.22)',
-                                        }}
-                                    />
-                                </div>
-                            </div>
-
-                            {/* Card Materi Saat Ini (Active Lesson Step Highlight) */}
+                            {/* Badan Jalan Paved */}
                             <div
                                 style={{
                                     width: '100%',
-                                    maxWidth: '400px',
-                                    backgroundColor: 'var(--surface-elevated)',
-                                    border: '1px solid var(--surface-border)',
-                                    borderRadius: '12px',
-                                    padding: '16px 20px',
+                                    height: '24px',
+                                    background: 'linear-gradient(180deg, rgba(34, 197, 94, 0.14) 0%, rgba(18, 18, 20, 0.95) 100%)',
                                     display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: '10px',
-                                    boxShadow: 'var(--shadow-card)',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                     position: 'relative',
-                                    zIndex: 2,
+                                    overflow: 'hidden',
                                 }}
                             >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: 0,
+                                        right: 0,
+                                        height: '2px',
+                                        transform: 'translateY(-50%)',
+                                        borderTop: '2px dashed rgba(255, 255, 255, 0.55)',
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        padding: '2px 7px',
+                                        borderRadius: '6px',
+                                        backgroundColor: 'var(--surface-card)',
+                                        border: '1px solid rgba(34, 197, 94, 0.45)',
+                                        color: 'var(--accent-green)',
+                                        fontSize: '9.5px',
+                                        fontWeight: 700,
+                                        fontFamily: 'var(--font-heading)',
+                                        position: 'relative',
+                                        zIndex: 2,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    <CheckCircle2 size={10} />
+                                    <span>Jalur selesai</span>
+                                    <ArrowRight size={10} />
+                                </div>
+                            </div>
+
+                            {/* Tali Bawah */}
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '2.5px',
+                                    background: 'linear-gradient(90deg, rgba(34, 197, 94, 0.4) 0%, rgba(34, 197, 94, 0.85) 50%, rgba(34, 197, 94, 0.4) 100%)',
+                                    borderRadius: '2px',
+                                }}
+                            />
+                        </div>
+
+                        {/* BRIDGE 1 (VERTICAL MOBILE) */}
+                        <div className="stage-road-bridge-vertical bridge-completed-vert">
+                            <div
+                                style={{
+                                    padding: '3px 10px',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: '1px solid rgba(34, 197, 94, 0.4)',
+                                    color: 'var(--accent-green)',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                <CheckCircle2 size={11} />
+                                <span>Jalur selesai</span>
+                                <ArrowDown size={11} />
+                            </div>
+                        </div>
+
+                        {/* C. STATION 2 (TENGAH): MATERI SAAT INI (THE UNDISPUTED HERO QUEST) */}
+                        <div
+                            className="active-station"
+                            style={{
+                                flex: '1 1 420px',
+                                width: '100%',
+                                maxWidth: '430px',
+                                position: 'relative',
+                                zIndex: 2,
+                            }}
+                        >
+                            {/* Anchor Pegs di sisi kiri dan kanan kartu */}
+                            <div
+                                className="hidden lg:flex"
+                                style={{
+                                    position: 'absolute',
+                                    left: '-4px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    flexDirection: 'column',
+                                    gap: '14px',
+                                    zIndex: 3,
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#555', border: '1px solid #777' }} />
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#555', border: '1px solid #777' }} />
+                            </div>
+                            <div
+                                className="hidden lg:flex"
+                                style={{
+                                    position: 'absolute',
+                                    right: '-4px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    flexDirection: 'column',
+                                    gap: '14px',
+                                    zIndex: 3,
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#555', border: '1px solid #777' }} />
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#555', border: '1px solid #777' }} />
+                            </div>
+
+                            {/* THE DOMINANT HERO QUEST CARD */}
+                            <motion.div
+                                whileHover={{ scale: 1.01 }}
+                                style={{
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1.5px solid var(--accent-gold-border)',
+                                    borderRadius: '14px',
+                                    padding: '20px 22px',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '12px',
+                                    boxShadow: '0 12px 36px rgba(0, 0, 0, 0.65), 0 0 24px rgba(245, 197, 66, 0.1)',
+                                    position: 'relative',
+                                }}
+                            >
+                                {/* Focal Header: Clear Stage Mission Tag */}
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                        <span style={{ color: 'var(--color-gold-text)' }}>
-                                            {getStepTypeIcon(activeStep.type)}
-                                        </span>
+                                        <Zap size={14} style={{ color: 'var(--color-gold-text)' }} />
                                         <span
                                             style={{
                                                 fontSize: '11px',
-                                                fontWeight: 600,
+                                                fontWeight: 700,
                                                 color: 'var(--color-gold-text)',
                                                 fontFamily: 'var(--font-heading)',
                                             }}
                                         >
-                                            {getStepTypeLabel(activeStep.type)}
+                                            Misi Aktif • Langkah {activeStepIndex + 1} dari {steps.length}
                                         </span>
                                     </div>
 
-                                    {/* Status Centang Selesai atau Indikator Aktif */}
                                     {isActiveStepCompleted ? (
                                         <div
                                             style={{
@@ -1069,20 +1111,21 @@ export default function GameLobbyStage({
                                                 borderRadius: '6px',
                                             }}
                                         >
-                                            Langkah {activeStepIndex + 1} dari {steps.length}
+                                            {getStepTypeLabel(activeStep.type)}
                                         </span>
                                     )}
                                 </div>
 
+                                {/* Active Lesson Title (Prominent, High Contrast) */}
                                 <div>
                                     <h3
                                         style={{
                                             fontFamily: 'var(--font-heading)',
-                                            fontSize: '16px',
-                                            fontWeight: 600,
+                                            fontSize: '18px',
+                                            fontWeight: 700,
                                             color: 'var(--text-primary)',
                                             margin: 0,
-                                            lineHeight: 1.35,
+                                            lineHeight: 1.3,
                                             letterSpacing: '-0.01em',
                                         }}
                                     >
@@ -1090,26 +1133,26 @@ export default function GameLobbyStage({
                                     </h3>
                                     <p
                                         style={{
-                                            fontSize: '12px',
+                                            fontSize: '12.5px',
                                             color: 'var(--text-secondary)',
-                                            margin: '4px 0 0',
-                                            lineHeight: 1.4,
+                                            margin: '6px 0 0',
+                                            lineHeight: 1.45,
                                             display: '-webkit-box',
                                             WebkitLineClamp: 2,
                                             WebkitBoxOrient: 'vertical',
                                             overflow: 'hidden',
                                         }}
                                     >
-                                        {activeStep.content.replace(/[#*`]/g, '').slice(0, 120)}...
+                                        {activeStep.content.replace(/[#*`]/g, '').slice(0, 130)}...
                                     </p>
                                 </div>
 
-                                {/* Progress bar modul */}
+                                {/* Progress Track */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
                                         <span>Progres Modul {currentModule.title}</span>
-                                        <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                                            {isModuleCompleted ? '100% Selesai' : `${moduleProgressPct}%`}
+                                        <span style={{ fontWeight: 700, color: 'var(--text-primary)' }}>
+                                            {isModuleCompleted ? '100% Tuntas' : `${moduleProgressPct}%`}
                                         </span>
                                     </div>
                                     <div style={{ width: '100%', height: '5px', backgroundColor: 'var(--surface-border)', borderRadius: '4px', overflow: 'hidden' }}>
@@ -1124,23 +1167,23 @@ export default function GameLobbyStage({
                                     </div>
                                 </div>
 
-                                {/* Main Game Action CTA */}
+                                {/* THE UNDISPUTED PRIMARY CALL TO ACTION BUTTON */}
                                 <Link
                                     href={`/modules/${currentModule.slug}?step=${activeStepIndex}`}
-                                    style={{ textDecoration: 'none', width: '100%', marginTop: '2px' }}
+                                    style={{ textDecoration: 'none', width: '100%', marginTop: '4px' }}
                                 >
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         style={{
                                             width: '100%',
-                                            padding: '10px 18px',
+                                            padding: '12px 20px',
                                             borderRadius: '8px',
                                             backgroundColor: 'var(--brand-primary)',
-                                            color: 'var(--brand-primary-text)',
+                                            color: '#0a0a0a',
                                             border: '1px solid var(--brand-primary-border)',
-                                            fontWeight: 700,
-                                            fontSize: '13px',
+                                            fontWeight: 800,
+                                            fontSize: '13.5px',
                                             fontFamily: 'var(--font-heading)',
                                             cursor: 'pointer',
                                             display: 'flex',
@@ -1148,91 +1191,217 @@ export default function GameLobbyStage({
                                             justifyContent: 'center',
                                             gap: '8px',
                                             boxShadow: 'var(--shadow-signal-orange)',
+                                            letterSpacing: '-0.01em',
                                         }}
                                     >
                                         <span>{isActiveStepCompleted ? 'Pelajari Ulang Materi' : 'Lanjut Belajar Materi Ini'}</span>
-                                        <ArrowRight size={15} />
+                                        <ArrowRight size={16} />
                                     </motion.button>
                                 </Link>
+                            </motion.div>
+                        </div>
+
+                        {/* D. BRIDGE 2 (HORIZONTAL DESKTOP): TALI & JALUR LANGKAH BERIKUTNYA */}
+                        <div
+                            className="stage-road-bridge"
+                            style={{
+                                flex: '1 1 70px',
+                                minWidth: '40px',
+                                maxWidth: '110px',
+                                height: '34px',
+                                position: 'relative',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                zIndex: 0,
+                            }}
+                        >
+                            {/* Tali Atas Emas */}
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '2.5px',
+                                    background: 'linear-gradient(90deg, rgba(245, 197, 66, 0.8) 0%, rgba(245, 197, 66, 0.3) 100%)',
+                                    borderRadius: '2px',
+                                }}
+                            />
+
+                            {/* Badan Jalan Emas */}
+                            <div
+                                style={{
+                                    width: '100%',
+                                    height: '24px',
+                                    background: 'linear-gradient(180deg, rgba(245, 197, 66, 0.12) 0%, rgba(18, 18, 20, 0.95) 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    position: 'relative',
+                                    overflow: 'hidden',
+                                }}
+                            >
+                                <div
+                                    style={{
+                                        position: 'absolute',
+                                        top: '50%',
+                                        left: 0,
+                                        right: 0,
+                                        height: '2px',
+                                        transform: 'translateY(-50%)',
+                                        borderTop: '2px dashed rgba(255, 255, 255, 0.4)',
+                                    }}
+                                />
+                                <div
+                                    style={{
+                                        padding: '2px 7px',
+                                        borderRadius: '6px',
+                                        backgroundColor: 'var(--surface-card)',
+                                        border: '1px solid rgba(245, 197, 66, 0.4)',
+                                        color: 'var(--color-gold-text)',
+                                        fontSize: '9.5px',
+                                        fontWeight: 700,
+                                        fontFamily: 'var(--font-heading)',
+                                        position: 'relative',
+                                        zIndex: 2,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '3px',
+                                        whiteSpace: 'nowrap',
+                                    }}
+                                >
+                                    <Sparkles size={10} />
+                                    <span>Langkah lanjut</span>
+                                    <ArrowRight size={10} />
+                                </div>
+                            </div>
+
+                            {/* Tali Bawah Emas */}
+                            <div
+                                style={{
+                                    position: 'absolute',
+                                    bottom: 0,
+                                    left: 0,
+                                    right: 0,
+                                    height: '2.5px',
+                                    background: 'linear-gradient(90deg, rgba(245, 197, 66, 0.8) 0%, rgba(245, 197, 66, 0.3) 100%)',
+                                    borderRadius: '2px',
+                                }}
+                            />
+                        </div>
+
+                        {/* BRIDGE 2 (VERTICAL MOBILE) */}
+                        <div className="stage-road-bridge-vertical bridge-upcoming-vert">
+                            <div
+                                style={{
+                                    padding: '3px 10px',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: '1px solid rgba(245, 197, 66, 0.4)',
+                                    color: 'var(--color-gold-text)',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                }}
+                            >
+                                <Sparkles size={11} />
+                                <span>Langkah berikutnya</span>
+                                <ArrowDown size={11} />
                             </div>
                         </div>
 
-                        {/* 3. NODE KANAN: Materi Berikutnya di Dalam Modul yang Sama */}
-                        <div className="stage-side-node next-node" style={{ display: 'flex', justifyContent: 'center' }}>
+                        {/* E. STATION 3 (KANAN): MATERI BERIKUTNYA (Subdued Upcoming Checkpoint) */}
+                        <div
+                            className="stage-side-station next-station"
+                            style={{
+                                flex: '0 1 240px',
+                                width: '100%',
+                                maxWidth: '240px',
+                                position: 'relative',
+                                display: 'flex',
+                                justifyContent: 'center',
+                            }}
+                        >
+                            {/* Anchor Pegs di sisi kiri kartu */}
+                            <div
+                                className="hidden lg:flex"
+                                style={{
+                                    position: 'absolute',
+                                    left: '-4px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    flexDirection: 'column',
+                                    gap: '14px',
+                                    zIndex: 3,
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#444', border: '1px solid #666' }} />
+                                <div style={{ width: '6px', height: '6px', borderRadius: '2px', backgroundColor: '#444', border: '1px solid #666' }} />
+                            </div>
+
                             {nextStep ? (
                                 <Link
                                     href={`/modules/${currentModule.slug}?step=${nextStepIndex}`}
-                                    style={{ textDecoration: 'none', width: '100%', maxWidth: '260px' }}
+                                    style={{ textDecoration: 'none', width: '100%' }}
                                 >
                                     <motion.div
-                                        whileHover={{ y: -4 }}
+                                        whileHover={{ y: -3, opacity: 0.95 }}
                                         style={{
-                                            backgroundColor: 'var(--surface-elevated)',
-                                            border: `1px solid ${isNextStepCompleted ? 'rgba(34, 197, 94, 0.35)' : 'var(--surface-border)'}`,
+                                            backgroundColor: 'rgba(20, 20, 22, 0.65)',
+                                            border: `1px dashed ${isNextStepCompleted ? 'rgba(34, 197, 94, 0.3)' : 'rgba(255, 255, 255, 0.12)'}`,
                                             borderRadius: '12px',
-                                            padding: '16px',
+                                            padding: '14px 16px',
                                             cursor: 'pointer',
                                             display: 'flex',
                                             flexDirection: 'column',
                                             gap: '8px',
-                                            boxShadow: 'var(--shadow-card)',
-                                            transition: 'border-color 0.2s ease',
+                                            opacity: 0.65,
+                                            transition: 'all 0.2s ease',
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                                <span style={{ color: 'var(--color-gold-text)' }}>
+                                                <span style={{ color: 'var(--text-muted)' }}>
                                                     {getStepTypeIcon(nextStep.type)}
                                                 </span>
-                                                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
+                                                <span style={{ fontSize: '10.5px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
                                                     Langkah {nextStepIndex! + 1}
                                                 </span>
                                             </div>
 
-                                            {/* Centang Selesai jika user sudah menyelesaikannya */}
                                             {isNextStepCompleted ? (
                                                 <div
                                                     style={{
-                                                        padding: '2px 8px',
+                                                        padding: '1px 6px',
                                                         borderRadius: '6px',
                                                         backgroundColor: 'rgba(34, 197, 94, 0.12)',
-                                                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                                                        border: '1px solid rgba(34, 197, 94, 0.25)',
                                                         display: 'flex',
                                                         alignItems: 'center',
                                                         gap: '4px',
                                                         color: 'var(--accent-green)',
-                                                        fontSize: '11px',
+                                                        fontSize: '10px',
                                                         fontWeight: 600,
                                                     }}
                                                 >
-                                                    <CheckCircle2 size={13} />
+                                                    <CheckCircle2 size={11} />
                                                     <span>Selesai</span>
                                                 </div>
                                             ) : (
-                                                <div
-                                                    style={{
-                                                        width: '24px',
-                                                        height: '24px',
-                                                        borderRadius: '6px',
-                                                        backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                                        border: '1px solid rgba(245, 197, 66, 0.3)',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        color: 'var(--color-gold-text)',
-                                                    }}
-                                                >
-                                                    <Sparkles size={13} />
-                                                </div>
+                                                <span style={{ fontSize: '10px', color: 'var(--color-gold-text)' }}>Berikutnya</span>
                                             )}
                                         </div>
 
                                         <h4
                                             style={{
                                                 fontFamily: 'var(--font-heading)',
-                                                fontSize: '13.5px',
+                                                fontSize: '13px',
                                                 fontWeight: 600,
-                                                color: 'var(--text-primary)',
+                                                color: 'var(--text-secondary)',
                                                 margin: 0,
                                                 lineHeight: 1.35,
                                                 display: '-webkit-box',
@@ -1244,34 +1413,33 @@ export default function GameLobbyStage({
                                             {nextStep.title}
                                         </h4>
 
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                                            <span>Materi berikutnya</span>
-                                        </div>
+                                        <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
+                                            Bab selanjutnya
+                                        </span>
                                     </motion.div>
                                 </Link>
                             ) : (
-                                /* Fallback jika sedang di langkah terakhir */
                                 <div
                                     style={{
-                                        backgroundColor: 'var(--surface-elevated)',
-                                        border: '1px dashed var(--surface-border)',
+                                        backgroundColor: 'rgba(20, 20, 22, 0.5)',
+                                        border: '1px dashed rgba(255, 255, 255, 0.08)',
                                         borderRadius: '12px',
-                                        padding: '16px',
+                                        padding: '14px 16px',
                                         width: '100%',
-                                        maxWidth: '260px',
+                                        opacity: 0.5,
                                         display: 'flex',
                                         flexDirection: 'column',
                                         gap: '6px',
                                     }}
                                 >
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-green)' }}>
-                                        <CheckCircle2 size={14} />
-                                        <span style={{ fontSize: '11px', fontWeight: 600 }}>Tuntas Akhir</span>
+                                        <CheckCircle2 size={13} />
+                                        <span style={{ fontSize: '10.5px', fontWeight: 600 }}>Tuntas Akhir</span>
                                     </div>
-                                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', margin: 0, color: 'var(--text-primary)' }}>
+                                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '12.5px', margin: 0, color: 'var(--text-muted)' }}>
                                         Materi Terakhir Modul
                                     </h4>
-                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                    <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>
                                         Semua bab telah tuntas
                                     </span>
                                 </div>
@@ -1280,216 +1448,103 @@ export default function GameLobbyStage({
                     </div>
                 </div>
 
-                {/* --- C. BOTTOM ROW: THE 3 GAME COMMAND CARDS (Shop, Module, Battle) --- */}
+                {/* --- C. BOTTOM ROW: SLEEK GAME COMMAND DOCK (Clear Separation as Utility Navigation) --- */}
                 <div
                     style={{
-                        padding: '16px 24px 20px',
+                        padding: '12px 24px 16px',
                         borderTop: '1px solid var(--surface-border)',
-                        backgroundColor: 'var(--surface-elevated)',
+                        backgroundColor: 'rgba(18, 18, 20, 0.95)',
                         position: 'relative',
                         zIndex: 3,
                         flexShrink: 0,
                     }}
                 >
-                    <div
-                        className="game-deck-grid"
-                        style={{
-                            display: 'grid',
-                            gridTemplateColumns: 'repeat(3, 1fr)',
-                            gap: '16px',
-                            width: '100%',
-                        }}
-                    >
-                        {/* 1. KARTU TOKO (SHOP) */}
-                        <Link href="/shop" style={{ textDecoration: 'none' }}>
-                            <motion.div
-                                whileHover={{ y: -3 }}
-                                whileTap={{ scale: 0.98 }}
+                    <div className="stage-command-dock">
+                        {/* 1. DOCK ITEM: PUSAT MODUL */}
+                        <Link href="/modules" className="stage-dock-item">
+                            <div
                                 style={{
-                                    backgroundColor: 'var(--surface-card)',
-                                    border: '1px solid var(--surface-border)',
-                                    borderRadius: '12px',
-                                    padding: '16px 18px',
-                                    cursor: 'pointer',
-                                    height: '100%',
+                                    width: '34px',
+                                    height: '34px',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'var(--accent-gold-bg)',
+                                    border: '1px solid var(--accent-gold-border)',
                                     display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    boxShadow: 'var(--shadow-card)',
-                                    transition: 'border-color 0.2s ease',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--color-gold-text)',
+                                    flexShrink: 0,
                                 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                    <div
-                                        style={{
-                                            width: '36px',
-                                            height: '36px',
-                                            borderRadius: '8px',
-                                            backgroundColor: 'var(--accent-gold-bg)',
-                                            border: '1px solid var(--accent-gold-border)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'var(--color-gold-text)',
-                                        }}
-                                    >
-                                        <ShoppingBag size={18} />
-                                    </div>
-                                    <ChevronRight size={16} style={{ color: 'var(--text-muted)' }} />
+                                <BookOpen size={16} />
+                            </div>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                                    Pusat Modul
                                 </div>
-
-                                <div>
-                                    <h4
-                                        style={{
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '14px',
-                                            fontWeight: 600,
-                                            color: 'var(--text-primary)',
-                                            margin: '0 0 4px',
-                                        }}
-                                    >
-                                        Toko Perlengkapan
-                                    </h4>
-                                    <p
-                                        style={{
-                                            fontSize: '12px',
-                                            color: 'var(--text-secondary)',
-                                            margin: 0,
-                                            lineHeight: 1.4,
-                                        }}
-                                    >
-                                        Tukarkan XP dengan voucher kantin dan gear pahlawan.
-                                    </p>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.2, marginTop: '2px' }}>
+                                    Katalog silabus belajar
                                 </div>
-                            </motion.div>
+                            </div>
+                            <ChevronRight size={15} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                         </Link>
 
-                        {/* 2. KARTU MODUL (MODULE - PRIMARY CENTER ACTION) */}
-                        <Link href="/modules" style={{ textDecoration: 'none' }}>
-                            <motion.div
-                                whileHover={{ y: -3 }}
-                                whileTap={{ scale: 0.98 }}
+                        {/* 2. DOCK ITEM: ARENA DUEL 1V1 */}
+                        <Link href="/battle" className="stage-dock-item">
+                            <div
                                 style={{
-                                    backgroundColor: 'var(--surface-card)',
-                                    border: '1px solid var(--brand-primary-border)',
-                                    borderRadius: '12px',
-                                    padding: '16px 18px',
-                                    cursor: 'pointer',
-                                    height: '100%',
+                                    width: '34px',
+                                    height: '34px',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'var(--accent-red-bg)',
+                                    border: '1px solid var(--accent-red-border)',
                                     display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    boxShadow: 'var(--shadow-signal-orange)',
-                                    transition: 'all 0.2s ease',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--accent-red)',
+                                    flexShrink: 0,
                                 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                    <div
-                                        style={{
-                                            width: '36px',
-                                            height: '36px',
-                                            borderRadius: '8px',
-                                            backgroundColor: 'rgba(245, 197, 66, 0.16)',
-                                            border: '1px solid var(--brand-primary-border)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'var(--color-gold-text)',
-                                        }}
-                                    >
-                                        <BookOpen size={18} />
-                                    </div>
-                                    <ChevronRight size={16} style={{ color: 'var(--brand-primary)' }} />
+                                <Swords size={16} />
+                            </div>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                                    Arena Duel 1v1
                                 </div>
-
-                                <div>
-                                    <h4
-                                        style={{
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '14px',
-                                            fontWeight: 600,
-                                            color: 'var(--text-primary)',
-                                            margin: '0 0 4px',
-                                        }}
-                                    >
-                                        Pusat Modul
-                                    </h4>
-                                    <p
-                                        style={{
-                                            fontSize: '12px',
-                                            color: 'var(--text-secondary)',
-                                            margin: 0,
-                                            lineHeight: 1.4,
-                                        }}
-                                    >
-                                        Jelajahi seluruh kurikulum dan taklukkan silabus belajar.
-                                    </p>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.2, marginTop: '2px' }}>
+                                    Tantang duel siswa lain
                                 </div>
-                            </motion.div>
+                            </div>
+                            <ChevronRight size={15} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                         </Link>
 
-                        {/* 3. KARTU BATTLE (BATTLE) */}
-                        <Link href="/battle" style={{ textDecoration: 'none' }}>
-                            <motion.div
-                                whileHover={{ y: -3 }}
-                                whileTap={{ scale: 0.98 }}
+                        {/* 3. DOCK ITEM: TOKO PERLENGKAPAN */}
+                        <Link href="/shop" className="stage-dock-item">
+                            <div
                                 style={{
-                                    backgroundColor: 'var(--surface-card)',
-                                    border: '1px solid var(--surface-border)',
-                                    borderRadius: '12px',
-                                    padding: '16px 18px',
-                                    cursor: 'pointer',
-                                    height: '100%',
+                                    width: '34px',
+                                    height: '34px',
+                                    borderRadius: '8px',
+                                    backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                                    border: '1px solid rgba(56, 189, 248, 0.3)',
                                     display: 'flex',
-                                    flexDirection: 'column',
-                                    justifyContent: 'space-between',
-                                    boxShadow: 'var(--shadow-card)',
-                                    transition: 'border-color 0.2s ease',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: 'var(--accent-cyan)',
+                                    flexShrink: 0,
                                 }}
                             >
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-                                    <div
-                                        style={{
-                                            width: '36px',
-                                            height: '36px',
-                                            borderRadius: '8px',
-                                            backgroundColor: 'var(--accent-red-bg)',
-                                            border: '1px solid var(--accent-red-border)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'var(--accent-red)',
-                                        }}
-                                    >
-                                        <Swords size={18} />
-                                    </div>
-                                    <ChevronRight size={16} style={{ color: 'var(--text-muted)' }} />
+                                <ShoppingBag size={16} />
+                            </div>
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1.2 }}>
+                                    Toko Perlengkapan
                                 </div>
-
-                                <div>
-                                    <h4
-                                        style={{
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '14px',
-                                            fontWeight: 600,
-                                            color: 'var(--text-primary)',
-                                            margin: '0 0 4px',
-                                        }}
-                                    >
-                                        Arena Pertarungan
-                                    </h4>
-                                    <p
-                                        style={{
-                                            fontSize: '12px',
-                                            color: 'var(--text-secondary)',
-                                            margin: 0,
-                                            lineHeight: 1.4,
-                                        }}
-                                    >
-                                        Duel kuis 1v1 realtime antar siswa atau latihan bot.
-                                    </p>
+                                <div style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.2, marginTop: '2px' }}>
+                                    Tukar XP & perlengkapan
                                 </div>
-                            </motion.div>
+                            </div>
+                            <ChevronRight size={15} style={{ color: 'var(--text-muted)', flexShrink: 0 }} />
                         </Link>
                     </div>
                 </div>

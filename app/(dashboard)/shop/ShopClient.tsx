@@ -397,75 +397,37 @@ export default function ShopClient({
                                 {vouchers.map((voucher) => {
                                     const alreadyClaimed = claimedVoucherIds.has(voucher.id)
                                     const canRedeem = !alreadyClaimed && displayXp >= voucher.xp_cost && (voucher.stock === null || voucher.stock > 0)
-                                    const rawName = voucher.name || 'Voucher Kantin'
-                                    const displayName = rawName.toLowerCase().includes('rp')
-                                        ? rawName
-                                        : `${rawName} Rp${voucher.voucher_value.toLocaleString('id-ID')}`
+                                    const cleanVoucherName = containsVoucherValueInName(voucher.name, voucher.voucher_value)
+                                        ? stripVoucherValueFromName(voucher.name, voucher.voucher_value)
+                                        : voucher.name
 
                                     return (
                                         <div
                                             key={voucher.id}
                                             style={{
-                                                border: canRedeem
-                                                    ? '1.5px solid var(--accent-gold-border)'
-                                                    : '1px solid var(--surface-border)',
+                                                border: '1px solid var(--surface-border)',
                                                 borderRadius: '12px',
-                                                backgroundColor: 'var(--surface-card)',
-                                                boxShadow: canRedeem
-                                                    ? '0 2px 12px rgba(245, 197, 66, 0.1)'
-                                                    : 'var(--shadow-card)',
+                                                backgroundColor: 'var(--surface-elevated)',
                                                 padding: '16px 18px',
-                                                transition: 'all 0.2s ease',
+                                                transition: 'border-color 0.2s',
                                             }}
                                         >
-                                            {/* Header Voucher: Icon, Name, and Value Badge */}
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0, flex: 1 }}>
-                                                    <div
-                                                        style={{
-                                                            width: '38px',
-                                                            height: '38px',
-                                                            borderRadius: '8px',
-                                                            backgroundColor: canRedeem ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
-                                                            border: `1px solid ${canRedeem ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
-                                                            display: 'flex',
-                                                            alignItems: 'center',
-                                                            justifyContent: 'center',
-                                                            color: canRedeem ? 'var(--accent-gold-text)' : 'var(--color-gold-text)',
-                                                            flexShrink: 0,
-                                                        }}
-                                                    >
-                                                        <Ticket size={20} />
-                                                    </div>
-                                                    <div style={{ minWidth: 0 }}>
-                                                        <strong
-                                                            style={{
-                                                                fontFamily: 'var(--font-heading)',
-                                                                fontSize: '14.5px',
-                                                                fontWeight: 700,
-                                                                color: 'var(--text-primary)',
-                                                                lineHeight: 1.3,
-                                                                display: 'block',
-                                                            }}
-                                                        >
-                                                            {displayName}
-                                                        </strong>
-                                                        <span style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
-                                                            Potongan kantin sekolah
-                                                        </span>
-                                                    </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                                                    <Ticket size={16} style={{ color: 'var(--color-gold-text)', flexShrink: 0 }} />
+                                                    <strong style={{ fontFamily: 'var(--font-heading)', fontSize: '14px', fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                        {cleanVoucherName}
+                                                    </strong>
                                                 </div>
-
                                                 <span
                                                     style={{
-                                                        fontSize: '12.5px',
-                                                        fontWeight: 700,
-                                                        fontFamily: 'var(--font-heading)',
-                                                        color: 'var(--accent-green)',
-                                                        backgroundColor: 'var(--accent-green-bg)',
-                                                        border: '1px solid var(--accent-green-border)',
+                                                        fontSize: '11px',
+                                                        color: '#08c380',
+                                                        backgroundColor: 'rgba(8, 195, 128, 0.1)',
+                                                        border: '1px solid rgba(8, 195, 128, 0.25)',
                                                         borderRadius: '6px',
-                                                        padding: '4px 9px',
+                                                        padding: '2px 8px',
+                                                        fontWeight: 600,
                                                         whiteSpace: 'nowrap',
                                                         flexShrink: 0,
                                                     }}
@@ -473,88 +435,32 @@ export default function ShopClient({
                                                     Rp{voucher.voucher_value.toLocaleString('id-ID')}
                                                 </span>
                                             </div>
-
-                                            {voucher.description && (
-                                                <p style={{ fontSize: '12px', color: 'var(--text-secondary)', margin: '0 0 12px 0', lineHeight: 1.4 }}>
-                                                    {voucher.description}
-                                                </p>
-                                            )}
-
-                                            {/* Bottom Action & Cost Tag */}
-                                            <div
-                                                style={{
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'space-between',
-                                                    gap: '8px',
-                                                    paddingTop: '10px',
-                                                    borderTop: '1px solid var(--surface-border)',
-                                                }}
-                                            >
-                                                {/* High-contrast XP Requirement Pill */}
-                                                <div
+                                            <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+                                                {voucher.description || 'Voucher kantin untuk penukaran makanan/minuman.'}
+                                            </p>
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                                <span style={{ fontSize: '12px', color: 'var(--color-gold-text)', fontWeight: 700 }}>
+                                                    Syarat: {voucher.xp_cost} XP
+                                                </span>
+                                                <motion.button
+                                                    whileHover={canRedeem && voucherLoadingId !== voucher.id ? { scale: 1.02 } : {}}
+                                                    whileTap={canRedeem && voucherLoadingId !== voucher.id ? { scale: 0.98 } : {}}
+                                                    type="button"
+                                                    onClick={() => handleRedeem(voucher)}
+                                                    disabled={!canRedeem || voucherLoadingId === voucher.id}
+                                                    className={canRedeem ? 'btn-signal-orange' : 'btn-dark-outline'}
                                                     style={{
-                                                        display: 'inline-flex',
-                                                        alignItems: 'center',
-                                                        gap: '5px',
-                                                        fontSize: '12px',
+                                                        padding: '7px 16px',
+                                                        borderRadius: '8px',
+                                                        cursor: canRedeem ? 'pointer' : 'not-allowed',
                                                         fontWeight: 700,
-                                                        padding: '4px 10px',
-                                                        borderRadius: '6px',
-                                                        backgroundColor: canRedeem ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
-                                                        border: `1px solid ${canRedeem ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
-                                                        color: canRedeem ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                                        fontSize: '12px',
+                                                        opacity: canRedeem ? (voucherLoadingId === voucher.id ? 0.75 : 1) : 0.6,
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
-                                                    <Zap size={13} style={{ color: canRedeem ? 'var(--accent-gold)' : 'var(--text-muted)' }} />
-                                                    <span>Syarat: {voucher.xp_cost} XP</span>
-                                                    {!canRedeem && !alreadyClaimed && displayXp < voucher.xp_cost && (
-                                                        <span style={{ fontSize: '11px', fontWeight: 500, opacity: 0.85 }}>
-                                                            (Kurang {voucher.xp_cost - displayXp})
-                                                        </span>
-                                                    )}
-                                                </div>
-
-                                                {alreadyClaimed ? (
-                                                    <span
-                                                        style={{
-                                                            fontSize: '11.5px',
-                                                            color: 'var(--accent-green)',
-                                                            backgroundColor: 'var(--accent-green-bg)',
-                                                            border: '1px solid var(--accent-green-border)',
-                                                            padding: '5px 12px',
-                                                            borderRadius: '6px',
-                                                            fontWeight: 700,
-                                                            display: 'inline-flex',
-                                                            alignItems: 'center',
-                                                            gap: '4px',
-                                                            whiteSpace: 'nowrap',
-                                                        }}
-                                                    >
-                                                        <CheckCircle size={13} />
-                                                        <span>Sudah Diklaim</span>
-                                                    </span>
-                                                ) : (
-                                                    <motion.button
-                                                        whileHover={canRedeem && voucherLoadingId !== voucher.id ? { scale: 1.02 } : {}}
-                                                        whileTap={canRedeem && voucherLoadingId !== voucher.id ? { scale: 0.98 } : {}}
-                                                        type="button"
-                                                        onClick={() => handleRedeem(voucher)}
-                                                        disabled={!canRedeem || voucherLoadingId === voucher.id}
-                                                        className={canRedeem ? 'btn-signal-orange' : 'btn-dark-outline'}
-                                                        style={{
-                                                            padding: '7px 18px',
-                                                            borderRadius: '8px',
-                                                            cursor: canRedeem ? 'pointer' : 'not-allowed',
-                                                            fontWeight: 700,
-                                                            fontSize: '12.5px',
-                                                            opacity: canRedeem ? (voucherLoadingId === voucher.id ? 0.75 : 1) : 0.7,
-                                                            whiteSpace: 'nowrap',
-                                                        }}
-                                                    >
-                                                        {voucherLoadingId === voucher.id ? 'Memproses...' : canRedeem ? 'Klaim Sekarang' : 'XP Kurang'}
-                                                    </motion.button>
-                                                )}
+                                                    {voucherLoadingId === voucher.id ? 'Memproses...' : alreadyClaimed ? 'Sudah Diklaim' : 'Klaim'}
+                                                </motion.button>
                                             </div>
                                         </div>
                                     )

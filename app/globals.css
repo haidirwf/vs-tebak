@@ -2434,45 +2434,87 @@ input::placeholder, textarea::placeholder {
 }
 
 @media (max-width: 900px) {
-  .stage-nodes-layout {
-    grid-template-columns: 1fr !important;
-    gap: 16px !important;
-  }
-  .stage-rail-line,
-  .stage-grand-road {
-    display: none !important;
-  }
-  .stage-vertical-road-bridge {
-    display: flex !important;
-  }
-  .stage-side-node {
+  .stage-materials-roadway {
+    flex-direction: column !important;
+    gap: 0 !important;
     width: 100% !important;
   }
-  .stage-side-node a {
+  .stage-road-bridge {
+    display: none !important;
+  }
+  .stage-road-bridge-vertical {
+    display: flex !important;
+  }
+  .stage-side-station {
+    width: 100% !important;
     max-width: 100% !important;
   }
-  .prev-node {
+  .stage-side-station a {
+    max-width: 100% !important;
+  }
+  .prev-station {
+    order: 1;
+  }
+  .bridge-completed-vert {
     order: 2;
   }
-  .next-node {
+  .active-station {
     order: 3;
+  }
+  .bridge-upcoming-vert {
+    order: 4;
+  }
+  .next-station {
+    order: 5;
   }
 }
 
-.stage-vertical-road-bridge {
+.stage-road-bridge-vertical {
   display: none;
-  flex-direction: column;
+  width: 100%;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  margin: 6px 0;
+  gap: 8px;
+  padding: 6px 0;
 }
 
 @media (max-width: 768px) {
-  .game-deck-grid {
+  .game-deck-grid,
+  .stage-command-dock {
     grid-template-columns: 1fr !important;
-    gap: 12px !important;
+    gap: 8px !important;
   }
+  .stage-dock-item {
+    min-height: 48px !important;
+    padding: 8px 14px !important;
+  }
+}
+
+/* Stage Command Dock (Sleek Console Navigation) */
+.stage-command-dock {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.stage-dock-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background-color: var(--surface-card);
+  border: 1px solid var(--surface-border);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  min-height: 52px;
+}
+
+.stage-dock-item:hover {
+  background-color: var(--surface-elevated);
+  border-color: rgba(255, 255, 255, 0.18);
+  transform: translateY(-2px);
 }
 
 
