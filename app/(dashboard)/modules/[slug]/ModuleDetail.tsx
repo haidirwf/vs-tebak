@@ -481,6 +481,20 @@ export default function ModuleDetail({
         }
     }, [currentStep, phase])
 
+    // Read initial step from URL query parameter (e.g. ?step=1)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search)
+            const stepVal = params.get('step')
+            if (stepVal !== null) {
+                const parsed = parseInt(stepVal, 10)
+                if (!isNaN(parsed) && parsed >= 0 && parsed < steps.length) {
+                    setCurrentStep(parsed)
+                }
+            }
+        }
+    }, [steps.length])
+
     // Handle Quiz Answer Selection
     const handleAnswer = (questionId: string, optionIdx: number) => {
         if (quizSubmitted) return

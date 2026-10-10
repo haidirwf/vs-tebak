@@ -1,13 +1,14 @@
 'use client'
 
-import React, { useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Profile, Module, UserModule, AvatarClass } from '@/types'
+import { Profile, Module, UserModule, AvatarClass, LessonStep } from '@/types'
 import { AVATAR_CLASS_STATS, getXpProgress } from '@/lib/game/xp'
 import { resolveEquippedMap } from '@/lib/game/character'
 import { getEffectiveStreak } from '@/lib/game/streak'
 import CharacterVisual from '@/components/character/CharacterVisual'
+import { MODULE_LESSONS_MAP, getCuratedStepsForModule } from '@/lib/content/module-lessons'
 import {
     Flame,
     Zap,
@@ -21,7 +22,11 @@ import {
     Shield,
     CheckCircle2,
     Sparkles,
-    Clock,
+    Play,
+    FileText,
+    HelpCircle,
+    Layers,
+    ChevronDown,
 } from 'lucide-react'
 import { startOfWeek, addDays, format, parseISO, isSameDay } from 'date-fns'
 
@@ -113,6 +118,78 @@ const FALLBACK_MODULES: Module[] = [
     },
 ]
 
+function resolveModuleLessons(mod: Module): LessonStep[] {
+    if (!mod) return []
+
+    // 1. Direct curated match
+    const curated = getCuratedStepsForModule(mod.slug)
+    if (curated && curated.length > 0) return curated
+
+    // 2. Fuzzy alias prefix match
+    const keys = Object.keys(MODULE_LESSONS_MAP)
+    const foundKey = keys.find(k => mod.slug.startsWith(k) || k.startsWith(mod.slug))
+    if (foundKey && MODULE_LESSONS_MAP[foundKey]) {
+        return MODULE_LESSONS_MAP[foundKey]
+    }
+
+    // 3. Raw content from database
+    if (Array.isArray(mod.content) && mod.content.length > 0) {
+        return mod.content as LessonStep[]
+    }
+
+    // 4. Default structured steps
+    return [
+        {
+            id: 'step-intro',
+            title: `Pengenalan Dasar: ${mod.title}`,
+            type: 'text',
+            content: mod.description || `Materi dasar untuk memahami ${mod.title}.`,
+        },
+        {
+            id: 'step-video',
+            title: `Video Pembelajaran: ${mod.title}`,
+            type: 'video',
+            content: 'https://www.youtube.com/watch?v=3U1AhjEf7DM',
+        },
+        {
+            id: 'step-core',
+            title: `Implementasi & Komponen: ${mod.title}`,
+            type: 'text',
+            content: `Studi kasus dan penerapan mendalam materi ${mod.title}.`,
+        },
+        {
+            id: 'step-quiz',
+            title: `Evaluasi & Kuis Pemahaman: ${mod.title}`,
+            type: 'quiz',
+            content: `Kuis latihan untuk menguji penguasaan materi ${mod.title}.`,
+        },
+    ]
+}
+
+function getStepTypeIcon(type?: string) {
+    switch (type) {
+        case 'video':
+            return <Play size={13} fill="currentColor" />
+        case 'quiz':
+            return <HelpCircle size={13} />
+        case 'text':
+        default:
+            return <FileText size={13} />
+    }
+}
+
+function getStepTypeLabel(type?: string) {
+    switch (type) {
+        case 'video':
+            return 'Video Materi'
+        case 'quiz':
+            return 'Kuis Latihan'
+        case 'text':
+        default:
+            return 'Bacaan & Konsep'
+    }
+}
+
 export default function GameLobbyStage({
     profile,
     xpLogs = [],
@@ -185,7 +262,7 @@ export default function GameLobbyStage({
         return days
     }, [profile.last_active, profile.streak_count, xpLogs])
 
-    // Map user progress to find active module and adjacent nodes
+    // Map user modules progress
     const userModulesMap = useMemo(() => {
         const map = new Map<string, UserModule>()
         for (const um of userModules) {
@@ -194,38 +271,70 @@ export default function GameLobbyStage({
         return map
     }, [userModules])
 
-    const { currentModule, prevModule, nextModule, currentModuleProgress, isCompleted } = useMemo(() => {
-        const list = modules && modules.length > 0 ? modules : FALLBACK_MODULES
+    const moduleList = useMemo(() => {
+        return modules && modules.length > 0 ? modules : FALLBACK_MODULES
+    }, [modules])
 
-        // 1. Check module with status 'in_progress'
-        let current = list.find(m => userModulesMap.get(m.id)?.status === 'in_progress')
+    // State for module selection
+    const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null)
 
-        // 2. If none, check first uncompleted module
-        if (!current) {
-            current = list.find(m => userModulesMap.get(m.id)?.status !== 'completed')
+    // Active module selection:
+    // User selected module OR module currently in progress OR first incomplete module
+    const currentModule = useMemo(() => {
+        if (selectedModuleId) {
+            const found = moduleList.find(m => m.id === selectedModuleId)
+            if (found) return found
         }
+        const inProgress = moduleList.find(m => userModulesMap.get(m.id)?.status === 'in_progress')
+        if (inProgress) return inProgress
 
-        // 3. Fallback to first module
-        if (!current) {
-            current = list[0]
+        const notCompleted = moduleList.find(m => userModulesMap.get(m.id)?.status !== 'completed')
+        if (notCompleted) return notCompleted
+
+        return moduleList[0]
+    }, [selectedModuleId, moduleList, userModulesMap])
+
+    // Steps / Lessons within the selected module
+    const steps = useMemo(() => {
+        return resolveModuleLessons(currentModule)
+    }, [currentModule])
+
+    // User's progress in this specific module
+    const userMod = userModulesMap.get(currentModule.id)
+    const isModuleCompleted = userMod?.status === 'completed'
+    const moduleProgressPct = userMod?.progress_percent || (isModuleCompleted ? 100 : 0)
+
+    // Calculate completed steps based on user's module progress
+    const completedStepsCount = isModuleCompleted
+        ? steps.length
+        : Math.min(steps.length, Math.floor((moduleProgressPct / 100) * steps.length))
+
+    // Interactive step preview state within this module
+    const [manualStepIndex, setManualStepIndex] = useState<number | null>(null)
+
+    // Reset manual step when module changes
+    const activeStepIndex = useMemo(() => {
+        if (manualStepIndex !== null && manualStepIndex >= 0 && manualStepIndex < steps.length) {
+            return manualStepIndex
         }
-
-        const currentIndex = list.findIndex(m => m.id === current?.id)
-        const prev = currentIndex > 0 ? list[currentIndex - 1] : list[list.length - 1]
-        const next = currentIndex < list.length - 1 ? list[currentIndex + 1] : list[0]
-
-        const uMod = current ? userModulesMap.get(current.id) : null
-        const completed = uMod?.status === 'completed'
-        const prog = uMod?.progress_percent || (completed ? 100 : 0)
-
-        return {
-            currentModule: current || list[0],
-            prevModule: prev || list[0],
-            nextModule: next || list[list.length - 1],
-            currentModuleProgress: prog,
-            isCompleted: completed,
+        if (isModuleCompleted) {
+            return Math.max(0, steps.length - 1)
         }
-    }, [modules, userModulesMap])
+        return Math.min(steps.length - 1, completedStepsCount)
+    }, [manualStepIndex, steps.length, isModuleCompleted, completedStepsCount])
+
+    const activeStep = steps[activeStepIndex] || steps[0]
+    const isActiveStepCompleted = isModuleCompleted || activeStepIndex < completedStepsCount
+
+    // Previous lesson step within this module
+    const prevStepIndex = activeStepIndex > 0 ? activeStepIndex - 1 : null
+    const prevStep = prevStepIndex !== null ? steps[prevStepIndex] : null
+    const isPrevStepCompleted = prevStepIndex !== null ? (isModuleCompleted || prevStepIndex < completedStepsCount) : false
+
+    // Next lesson step within this module
+    const nextStepIndex = activeStepIndex < steps.length - 1 ? activeStepIndex + 1 : null
+    const nextStep = nextStepIndex !== null ? steps[nextStepIndex] : null
+    const isNextStepCompleted = nextStepIndex !== null ? (isModuleCompleted || nextStepIndex < completedStepsCount) : false
 
     const effectiveStreak = profile.last_active && profile.streak_count > 0
         ? getEffectiveStreak(profile.last_active, profile.streak_count)
@@ -233,40 +342,38 @@ export default function GameLobbyStage({
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%' }}>
-            {/* 1. STAGE PANEL UTAMA (Game Lobby Canvas) */}
+            {/* 1. STAGE PANEL UTAMA (Game Lobby Canvas Fullscreen di Desktop) */}
             <div
                 className="card hero-stage-container"
                 style={{
                     backgroundColor: 'var(--surface-card)',
                     border: '1px solid var(--surface-border)',
-                    borderRadius: '14px',
+                    borderRadius: '16px',
                     boxShadow: 'var(--shadow-panel)',
                     overflow: 'hidden',
                     position: 'relative',
-                    display: 'flex',
-                    flexDirection: 'column',
                 }}
             >
                 {/* Radial Aura Latar Arena */}
                 <div
                     style={{
                         position: 'absolute',
-                        top: '20%',
+                        top: '30%',
                         left: '50%',
-                        transform: 'translate(-50%, -20%)',
-                        width: '700px',
-                        height: '420px',
-                        background: `radial-gradient(ellipse at center, ${roleCfg.color}15 0%, rgba(245, 197, 66, 0.04) 45%, transparent 70%)`,
-                        filter: 'blur(40px)',
+                        transform: 'translate(-50%, -30%)',
+                        width: '800px',
+                        height: '520px',
+                        background: `radial-gradient(ellipse at center, ${roleCfg.color}18 0%, rgba(245, 197, 66, 0.05) 50%, transparent 75%)`,
+                        filter: 'blur(50px)',
                         pointerEvents: 'none',
                         zIndex: 0,
                     }}
                 />
 
-                {/* --- A. TOP BAR: HERO IDENTITY & RESOURCES --- */}
+                {/* --- A. TOP BAR: HERO IDENTITY, RESOURCES & MODULE SELECTOR --- */}
                 <div
                     style={{
-                        padding: '18px 24px',
+                        padding: '16px 24px',
                         borderBottom: '1px solid var(--surface-border)',
                         backgroundColor: 'var(--surface-elevated)',
                         display: 'flex',
@@ -275,7 +382,8 @@ export default function GameLobbyStage({
                         flexWrap: 'wrap',
                         gap: '16px',
                         position: 'relative',
-                        zIndex: 2,
+                        zIndex: 3,
+                        flexShrink: 0,
                     }}
                 >
                     {/* Identitas Hero */}
@@ -284,8 +392,8 @@ export default function GameLobbyStage({
                         <div style={{ position: 'relative', flexShrink: 0 }}>
                             <div
                                 style={{
-                                    width: '54px',
-                                    height: '54px',
+                                    width: '52px',
+                                    height: '52px',
                                     borderRadius: '12px',
                                     backgroundColor: 'var(--surface-card)',
                                     border: `1px solid ${roleCfg.border}`,
@@ -362,15 +470,60 @@ export default function GameLobbyStage({
                         </div>
                     </div>
 
-                    {/* Resource Gauges (Streak, XP, Link Gear) */}
+                    {/* Module Selector & Resource Gauges */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                        {/* Selector Modul Aktif */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                padding: '4px 8px',
+                                backgroundColor: 'var(--surface-card)',
+                                border: '1px solid var(--surface-border)',
+                                borderRadius: '10px',
+                            }}
+                        >
+                            <Layers size={14} style={{ color: 'var(--color-gold-text)', flexShrink: 0 }} />
+                            <select
+                                aria-label="Pilih Modul Pembelajaran"
+                                value={currentModule.id}
+                                onChange={(e) => {
+                                    setSelectedModuleId(e.target.value)
+                                    setManualStepIndex(null)
+                                }}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    border: 'none',
+                                    color: 'var(--text-primary)',
+                                    fontSize: '12px',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                    outline: 'none',
+                                    paddingRight: '4px',
+                                    maxWidth: '180px',
+                                }}
+                            >
+                                {moduleList.map((m) => {
+                                    const u = userModulesMap.get(m.id)
+                                    const done = u?.status === 'completed'
+                                    return (
+                                        <option key={m.id} value={m.id} style={{ backgroundColor: '#141414', color: '#ffffff' }}>
+                                            {m.title} {done ? '✓' : ''}
+                                        </option>
+                                    )
+                                })}
+                            </select>
+                        </div>
+
                         {/* Streak Box */}
                         <div
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '8px',
-                                padding: '6px 12px',
+                                padding: '5px 12px',
                                 backgroundColor: 'var(--surface-card)',
                                 border: '1px solid var(--surface-border)',
                                 borderRadius: '10px',
@@ -381,21 +534,18 @@ export default function GameLobbyStage({
                                 <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
                                     {effectiveStreak} Hari
                                 </span>
-                                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                                    Streak login
-                                </span>
                             </div>
 
                             {/* Mini 7-day indicators */}
-                            <div style={{ display: 'flex', gap: '3px', marginLeft: '6px' }}>
+                            <div style={{ display: 'flex', gap: '3px', marginLeft: '4px' }}>
                                 {weekDays.map((day, idx) => (
                                     <div
                                         key={idx}
                                         title={`${day.dayName}: ${day.hasActivity ? 'Aktif' : 'Kosong'}`}
                                         style={{
-                                            width: '8px',
-                                            height: '14px',
-                                            borderRadius: '3px',
+                                            width: '7px',
+                                            height: '13px',
+                                            borderRadius: '2px',
                                             backgroundColor: day.hasActivity
                                                 ? '#F5C542'
                                                 : day.isToday
@@ -412,25 +562,20 @@ export default function GameLobbyStage({
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '8px',
-                                padding: '6px 12px',
+                                gap: '6px',
+                                padding: '5px 12px',
                                 backgroundColor: 'var(--surface-card)',
                                 border: '1px solid var(--surface-border)',
                                 borderRadius: '10px',
                             }}
                         >
                             <Zap size={16} style={{ color: 'var(--accent-cyan)' }} />
-                            <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
-                                    {(profile.xp || 0).toLocaleString()} XP
-                                </span>
-                                <span style={{ fontSize: '10px', color: 'var(--text-muted)' }}>
-                                    Total akumulasi
-                                </span>
-                            </div>
+                            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--text-primary)', fontFamily: 'var(--font-heading)' }}>
+                                {(profile.xp || 0).toLocaleString()} XP
+                            </span>
                         </div>
 
-                        {/* Link Kustomisasi Karakter */}
+                        {/* Link Kustomisasi Gear */}
                         <Link href="/character" style={{ textDecoration: 'none' }}>
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
@@ -439,7 +584,7 @@ export default function GameLobbyStage({
                                     display: 'flex',
                                     alignItems: 'center',
                                     gap: '6px',
-                                    padding: '7px 12px',
+                                    padding: '6px 12px',
                                     backgroundColor: 'var(--surface-card)',
                                     border: '1px solid var(--surface-border)',
                                     borderRadius: '10px',
@@ -451,14 +596,14 @@ export default function GameLobbyStage({
                                 }}
                             >
                                 <Shield size={14} style={{ color: roleCfg.color }} />
-                                <span>Gear Hero</span>
+                                <span>Gear</span>
                             </motion.button>
                         </Link>
                     </div>
                 </div>
 
                 {/* Level Progress Line */}
-                <div style={{ width: '100%', height: '3px', backgroundColor: 'var(--surface-border)', position: 'relative', zIndex: 2 }}>
+                <div style={{ width: '100%', height: '3px', backgroundColor: 'var(--surface-border)', position: 'relative', zIndex: 2, flexShrink: 0 }}>
                     <div
                         style={{
                             width: `${progressPercent}%`,
@@ -469,10 +614,11 @@ export default function GameLobbyStage({
                     />
                 </div>
 
-                {/* --- B. CENTER STAGE: HERO ADVENTURE & PATH PROGRESSION --- */}
+                {/* --- B. CENTER STAGE: HERO ARENA & ALUR MATERI DALAM MODUL --- */}
                 <div
+                    className="stage-center-content"
                     style={{
-                        padding: '36px 24px 28px',
+                        padding: '28px 24px 20px',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
@@ -486,91 +632,201 @@ export default function GameLobbyStage({
                         className="stage-rail-line"
                         style={{
                             position: 'absolute',
-                            top: '42%',
+                            top: '46%',
                             left: '8%',
                             right: '8%',
                             height: '2px',
-                            background: `linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 20%, ${roleCfg.color}40 50%, rgba(255, 255, 255, 0.1) 80%, transparent 100%)`,
+                            background: `linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 20%, ${roleCfg.color}45 50%, rgba(255, 255, 255, 0.1) 80%, transparent 100%)`,
                             zIndex: 0,
                             pointerEvents: 'none',
                         }}
                     />
 
-                    {/* Three-Column Stage Layout (Left Node - Center Hero & Quest - Right Node) */}
+                    {/* Breadcrumb / Step Strip Indikator Materi di Atas Karakter */}
+                    <div
+                        style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            marginBottom: '16px',
+                            padding: '6px 14px',
+                            backgroundColor: 'var(--surface-elevated)',
+                            border: '1px solid var(--surface-border)',
+                            borderRadius: '10px',
+                            zIndex: 2,
+                            flexWrap: 'wrap',
+                            justifyContent: 'center',
+                        }}
+                    >
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', marginRight: '4px' }}>
+                            Materi {currentModule.title}:
+                        </span>
+                        {steps.map((st, idx) => {
+                            const isDone = isModuleCompleted || idx < completedStepsCount
+                            const isCurrent = idx === activeStepIndex
+                            return (
+                                <button
+                                    key={st.id || idx}
+                                    onClick={() => setManualStepIndex(idx)}
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '5px',
+                                        padding: '4px 10px',
+                                        borderRadius: '6px',
+                                        backgroundColor: isCurrent
+                                            ? 'var(--accent-gold-bg)'
+                                            : isDone
+                                                ? 'rgba(34, 197, 94, 0.08)'
+                                                : 'transparent',
+                                        border: `1px solid ${isCurrent ? 'var(--accent-gold-border)' : isDone ? 'rgba(34, 197, 94, 0.25)' : 'var(--surface-border)'}`,
+                                        color: isCurrent
+                                            ? 'var(--color-gold-text)'
+                                            : isDone
+                                                ? 'var(--accent-green)'
+                                                : 'var(--text-muted)',
+                                        fontSize: '11px',
+                                        fontWeight: isCurrent ? 700 : 500,
+                                        fontFamily: 'var(--font-heading)',
+                                        cursor: 'pointer',
+                                        transition: 'all 0.2s ease',
+                                    }}
+                                >
+                                    {isDone ? (
+                                        <CheckCircle2 size={12} style={{ color: 'var(--accent-green)' }} />
+                                    ) : (
+                                        <span>{idx + 1}.</span>
+                                    )}
+                                    <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                        {st.title.replace(/^([0-9]+\.\s*|Video Pembelajaran:\s*|Pengenalan:\s*)/i, '')}
+                                    </span>
+                                </button>
+                            )
+                        })}
+                    </div>
+
+                    {/* Three-Column Stage Layout (Left Lesson - Center Hero & Active Lesson - Right Lesson) */}
                     <div
                         className="stage-nodes-layout"
                         style={{
                             display: 'grid',
-                            gridTemplateColumns: 'minmax(200px, 1fr) minmax(320px, 1.4fr) minmax(200px, 1fr)',
+                            gridTemplateColumns: 'minmax(220px, 1fr) minmax(360px, 1.4fr) minmax(220px, 1fr)',
                             alignItems: 'center',
                             width: '100%',
-                            maxWidth: '1100px',
+                            maxWidth: '1160px',
                             gap: '24px',
                             position: 'relative',
                             zIndex: 1,
                         }}
                     >
-                        {/* 1. NODE KIRI: Materi Sebelumnya (Fondasi Pembelajaran) */}
+                        {/* 1. NODE KIRI: Materi Sebelumnya di Dalam Modul yang Sama */}
                         <div className="stage-side-node prev-node" style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Link href={`/modules/${prevModule.slug}`} style={{ textDecoration: 'none', width: '100%', maxWidth: '240px' }}>
-                                <motion.div
-                                    whileHover={{ y: -3 }}
-                                    style={{
-                                        backgroundColor: 'var(--surface-elevated)',
-                                        border: '1px solid var(--surface-border)',
-                                        borderRadius: '12px',
-                                        padding: '16px',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '8px',
-                                        transition: 'border-color 0.2s ease',
-                                    }}
+                            {prevStep ? (
+                                <Link
+                                    href={`/modules/${currentModule.slug}?step=${prevStepIndex}`}
+                                    style={{ textDecoration: 'none', width: '100%', maxWidth: '260px' }}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
-                                            Materi Sebelumnya
-                                        </span>
-                                        <div
-                                            style={{
-                                                width: '24px',
-                                                height: '24px',
-                                                borderRadius: '6px',
-                                                backgroundColor: 'rgba(34, 197, 94, 0.12)',
-                                                border: '1px solid rgba(34, 197, 94, 0.3)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                color: 'var(--accent-green)',
-                                            }}
-                                        >
-                                            <CheckCircle2 size={13} />
-                                        </div>
-                                    </div>
-
-                                    <h4
+                                    <motion.div
+                                        whileHover={{ y: -4 }}
                                         style={{
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '13px',
-                                            fontWeight: 600,
-                                            color: 'var(--text-primary)',
-                                            margin: 0,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap',
+                                            backgroundColor: 'var(--surface-elevated)',
+                                            border: `1px solid ${isPrevStepCompleted ? 'rgba(34, 197, 94, 0.35)' : 'var(--surface-border)'}`,
+                                            borderRadius: '12px',
+                                            padding: '16px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            boxShadow: 'var(--shadow-card)',
+                                            transition: 'border-color 0.2s ease',
                                         }}
                                     >
-                                        {prevModule.title}
-                                    </h4>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <span style={{ color: 'var(--accent-cyan)' }}>
+                                                    {getStepTypeIcon(prevStep.type)}
+                                                </span>
+                                                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
+                                                    Langkah {prevStepIndex! + 1}
+                                                </span>
+                                            </div>
 
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--accent-green)' }}>
-                                        <span>Selesai dipelajari</span>
-                                    </div>
-                                </motion.div>
-                            </Link>
+                                            {/* Centang Selesai */}
+                                            {isPrevStepCompleted ? (
+                                                <div
+                                                    style={{
+                                                        padding: '2px 8px',
+                                                        borderRadius: '6px',
+                                                        backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                                                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                        color: 'var(--accent-green)',
+                                                        fontSize: '11px',
+                                                        fontWeight: 600,
+                                                    }}
+                                                >
+                                                    <CheckCircle2 size={13} />
+                                                    <span>Selesai</span>
+                                                </div>
+                                            ) : (
+                                                <span style={{ fontSize: '10.5px', color: 'var(--text-muted)' }}>Belum selesai</span>
+                                            )}
+                                        </div>
+
+                                        <h4
+                                            style={{
+                                                fontFamily: 'var(--font-heading)',
+                                                fontSize: '13.5px',
+                                                fontWeight: 600,
+                                                color: 'var(--text-primary)',
+                                                margin: 0,
+                                                lineHeight: 1.35,
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            {prevStep.title}
+                                        </h4>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                                            <span>Materi sebelumnya</span>
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            ) : (
+                                /* Fallback jika sedang di langkah pertama */
+                                <div
+                                    style={{
+                                        backgroundColor: 'var(--surface-elevated)',
+                                        border: '1px dashed var(--surface-border)',
+                                        borderRadius: '12px',
+                                        padding: '16px',
+                                        width: '100%',
+                                        maxWidth: '260px',
+                                        opacity: 0.65,
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '6px',
+                                    }}
+                                >
+                                    <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
+                                        Awal Modul
+                                    </span>
+                                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', margin: 0, color: 'var(--text-secondary)' }}>
+                                        Ini adalah langkah pertama
+                                    </h4>
+                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                        Mulailah materi di tengah
+                                    </span>
+                                </div>
+                            )}
                         </div>
 
-                        {/* 2. CENTERPIECE: Karakter Hero di Atas Pedestal & Modul Saat Ini */}
+                        {/* 2. CENTERPIECE: Karakter Hero di Atas Pedestal & Materi Saat Ini */}
                         <div
                             style={{
                                 display: 'flex',
@@ -592,11 +848,11 @@ export default function GameLobbyStage({
                                 }}
                             >
                                 {/* Visual Karakter Interaktif */}
-                                <div style={{ position: 'relative', zIndex: 2, marginBottom: '-28px' }}>
+                                <div style={{ position: 'relative', zIndex: 2, marginBottom: '-26px' }}>
                                     <CharacterVisual
                                         role={profile.avatar_class}
                                         equipped={equipped}
-                                        size={210}
+                                        size={220}
                                         showAura={true}
                                         animationState="idle"
                                         interactive={false}
@@ -606,12 +862,12 @@ export default function GameLobbyStage({
                                 {/* Platform Arena Pedestal 3D */}
                                 <div
                                     style={{
-                                        width: '230px',
-                                        height: '56px',
+                                        width: '240px',
+                                        height: '58px',
                                         borderRadius: '50%',
-                                        background: `radial-gradient(ellipse at center, ${roleCfg.color}25 0%, rgba(20, 20, 20, 0.95) 75%)`,
+                                        background: `radial-gradient(ellipse at center, ${roleCfg.color}28 0%, rgba(20, 20, 20, 0.95) 75%)`,
                                         border: `1.5px solid ${roleCfg.border}`,
-                                        boxShadow: `0 12px 28px rgba(0, 0, 0, 0.5), inset 0 0 16px ${roleCfg.color}15`,
+                                        boxShadow: `0 14px 32px rgba(0, 0, 0, 0.5), inset 0 0 18px ${roleCfg.color}15`,
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
@@ -620,20 +876,20 @@ export default function GameLobbyStage({
                                 >
                                     <div
                                         style={{
-                                            width: '180px',
-                                            height: '38px',
+                                            width: '188px',
+                                            height: '40px',
                                             borderRadius: '50%',
-                                            border: '1px dashed rgba(255, 255, 255, 0.2)',
+                                            border: '1px dashed rgba(255, 255, 255, 0.22)',
                                         }}
                                     />
                                 </div>
                             </div>
 
-                            {/* Card Modul Saat Ini (Active Quest Highlight) */}
+                            {/* Card Materi Saat Ini (Active Lesson Step Highlight) */}
                             <div
                                 style={{
                                     width: '100%',
-                                    maxWidth: '380px',
+                                    maxWidth: '400px',
                                     backgroundColor: 'var(--surface-elevated)',
                                     border: '1px solid var(--surface-border)',
                                     borderRadius: '12px',
@@ -647,17 +903,42 @@ export default function GameLobbyStage({
                                 }}
                             >
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
-                                    <span
-                                        style={{
-                                            fontSize: '10.5px',
-                                            fontWeight: 600,
-                                            color: 'var(--color-gold-text)',
-                                            fontFamily: 'var(--font-heading)',
-                                        }}
-                                    >
-                                        Modul Saat Ini
-                                    </span>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                        <span style={{ color: 'var(--color-gold-text)' }}>
+                                            {getStepTypeIcon(activeStep.type)}
+                                        </span>
+                                        <span
+                                            style={{
+                                                fontSize: '11px',
+                                                fontWeight: 600,
+                                                color: 'var(--color-gold-text)',
+                                                fontFamily: 'var(--font-heading)',
+                                            }}
+                                        >
+                                            {getStepTypeLabel(activeStep.type)}
+                                        </span>
+                                    </div>
+
+                                    {/* Status Centang Selesai atau Indikator Aktif */}
+                                    {isActiveStepCompleted ? (
+                                        <div
+                                            style={{
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '4px',
+                                                padding: '2px 8px',
+                                                borderRadius: '6px',
+                                                backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                                                border: '1px solid rgba(34, 197, 94, 0.3)',
+                                                color: 'var(--accent-green)',
+                                                fontSize: '11px',
+                                                fontWeight: 600,
+                                            }}
+                                        >
+                                            <CheckCircle2 size={13} />
+                                            <span>Selesai</span>
+                                        </div>
+                                    ) : (
                                         <span
                                             style={{
                                                 fontSize: '10.5px',
@@ -665,13 +946,13 @@ export default function GameLobbyStage({
                                                 color: 'var(--accent-cyan)',
                                                 backgroundColor: 'var(--accent-cyan-bg)',
                                                 border: '1px solid var(--accent-cyan-border)',
-                                                padding: '2px 6px',
-                                                borderRadius: '5px',
+                                                padding: '2px 8px',
+                                                borderRadius: '6px',
                                             }}
                                         >
-                                            +{currentModule.xp_reward} XP
+                                            Langkah {activeStepIndex + 1} dari {steps.length}
                                         </span>
-                                    </div>
+                                    )}
                                 </div>
 
                                 <div>
@@ -682,43 +963,42 @@ export default function GameLobbyStage({
                                             fontWeight: 600,
                                             color: 'var(--text-primary)',
                                             margin: 0,
+                                            lineHeight: 1.35,
                                             letterSpacing: '-0.01em',
                                         }}
                                     >
-                                        {currentModule.title}
+                                        {activeStep.title}
                                     </h3>
-                                    {currentModule.description && (
-                                        <p
-                                            style={{
-                                                fontSize: '12px',
-                                                color: 'var(--text-secondary)',
-                                                margin: '4px 0 0',
-                                                lineHeight: 1.4,
-                                                display: '-webkit-box',
-                                                WebkitLineClamp: 2,
-                                                WebkitBoxOrient: 'vertical',
-                                                overflow: 'hidden',
-                                            }}
-                                        >
-                                            {currentModule.description}
-                                        </p>
-                                    )}
+                                    <p
+                                        style={{
+                                            fontSize: '12px',
+                                            color: 'var(--text-secondary)',
+                                            margin: '4px 0 0',
+                                            lineHeight: 1.4,
+                                            display: '-webkit-box',
+                                            WebkitLineClamp: 2,
+                                            WebkitBoxOrient: 'vertical',
+                                            overflow: 'hidden',
+                                        }}
+                                    >
+                                        {activeStep.content.replace(/[#*`]/g, '').slice(0, 120)}...
+                                    </p>
                                 </div>
 
                                 {/* Progress bar modul */}
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
-                                        <span>Progres Belajar</span>
+                                        <span>Progres Modul {currentModule.title}</span>
                                         <span style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
-                                            {isCompleted ? '100% Selesai' : `${currentModuleProgress}%`}
+                                            {isModuleCompleted ? '100% Selesai' : `${moduleProgressPct}%`}
                                         </span>
                                     </div>
                                     <div style={{ width: '100%', height: '5px', backgroundColor: 'var(--surface-border)', borderRadius: '4px', overflow: 'hidden' }}>
                                         <div
                                             style={{
-                                                width: `${currentModuleProgress}%`,
+                                                width: `${moduleProgressPct}%`,
                                                 height: '100%',
-                                                backgroundColor: isCompleted ? 'var(--accent-green)' : 'var(--brand-primary)',
+                                                backgroundColor: isModuleCompleted ? 'var(--accent-green)' : 'var(--brand-primary)',
                                                 borderRadius: '4px',
                                             }}
                                         />
@@ -726,7 +1006,10 @@ export default function GameLobbyStage({
                                 </div>
 
                                 {/* Main Game Action CTA */}
-                                <Link href={`/modules/${currentModule.slug}`} style={{ textDecoration: 'none', width: '100%', marginTop: '2px' }}>
+                                <Link
+                                    href={`/modules/${currentModule.slug}?step=${activeStepIndex}`}
+                                    style={{ textDecoration: 'none', width: '100%', marginTop: '2px' }}
+                                >
                                     <motion.button
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
@@ -748,72 +1031,132 @@ export default function GameLobbyStage({
                                             boxShadow: 'var(--shadow-signal-orange)',
                                         }}
                                     >
-                                        <span>{isCompleted ? 'Pelajari Ulang' : currentModuleProgress > 0 ? 'Lanjut Belajar' : 'Mulai Belajar'}</span>
+                                        <span>{isActiveStepCompleted ? 'Pelajari Ulang Materi' : 'Lanjut Belajar Materi Ini'}</span>
                                         <ArrowRight size={15} />
                                     </motion.button>
                                 </Link>
                             </div>
                         </div>
 
-                        {/* 3. NODE KANAN: Materi Berikutnya (Next Quest Node) */}
+                        {/* 3. NODE KANAN: Materi Berikutnya di Dalam Modul yang Sama */}
                         <div className="stage-side-node next-node" style={{ display: 'flex', justifyContent: 'center' }}>
-                            <Link href={`/modules/${nextModule.slug}`} style={{ textDecoration: 'none', width: '100%', maxWidth: '240px' }}>
-                                <motion.div
-                                    whileHover={{ y: -3 }}
-                                    style={{
-                                        backgroundColor: 'var(--surface-elevated)',
-                                        border: '1px solid var(--surface-border)',
-                                        borderRadius: '12px',
-                                        padding: '16px',
-                                        cursor: 'pointer',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        gap: '8px',
-                                        transition: 'border-color 0.2s ease',
-                                    }}
+                            {nextStep ? (
+                                <Link
+                                    href={`/modules/${currentModule.slug}?step=${nextStepIndex}`}
+                                    style={{ textDecoration: 'none', width: '100%', maxWidth: '260px' }}
                                 >
-                                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                        <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
-                                            Materi Berikutnya
-                                        </span>
-                                        <div
-                                            style={{
-                                                width: '24px',
-                                                height: '24px',
-                                                borderRadius: '6px',
-                                                backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                                                border: '1px solid rgba(245, 197, 66, 0.3)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                color: 'var(--color-gold-text)',
-                                            }}
-                                        >
-                                            <Sparkles size={13} />
-                                        </div>
-                                    </div>
-
-                                    <h4
+                                    <motion.div
+                                        whileHover={{ y: -4 }}
                                         style={{
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '13px',
-                                            fontWeight: 600,
-                                            color: 'var(--text-primary)',
-                                            margin: 0,
-                                            overflow: 'hidden',
-                                            textOverflow: 'ellipsis',
-                                            whiteSpace: 'nowrap',
+                                            backgroundColor: 'var(--surface-elevated)',
+                                            border: `1px solid ${isNextStepCompleted ? 'rgba(34, 197, 94, 0.35)' : 'var(--surface-border)'}`,
+                                            borderRadius: '12px',
+                                            padding: '16px',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                            boxShadow: 'var(--shadow-card)',
+                                            transition: 'border-color 0.2s ease',
                                         }}
                                     >
-                                        {nextModule.title}
-                                    </h4>
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                                <span style={{ color: 'var(--color-gold-text)' }}>
+                                                    {getStepTypeIcon(nextStep.type)}
+                                                </span>
+                                                <span style={{ fontSize: '10px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)' }}>
+                                                    Langkah {nextStepIndex! + 1}
+                                                </span>
+                                            </div>
 
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
-                                        <Clock size={12} />
-                                        <span>+{nextModule.xp_reward} XP • {nextModule.duration_minutes || 45}m</span>
+                                            {/* Centang Selesai jika user sudah menyelesaikannya */}
+                                            {isNextStepCompleted ? (
+                                                <div
+                                                    style={{
+                                                        padding: '2px 8px',
+                                                        borderRadius: '6px',
+                                                        backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                                                        border: '1px solid rgba(34, 197, 94, 0.3)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                        color: 'var(--accent-green)',
+                                                        fontSize: '11px',
+                                                        fontWeight: 600,
+                                                    }}
+                                                >
+                                                    <CheckCircle2 size={13} />
+                                                    <span>Selesai</span>
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    style={{
+                                                        width: '24px',
+                                                        height: '24px',
+                                                        borderRadius: '6px',
+                                                        backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                                                        border: '1px solid rgba(245, 197, 66, 0.3)',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        justifyContent: 'center',
+                                                        color: 'var(--color-gold-text)',
+                                                    }}
+                                                >
+                                                    <Sparkles size={13} />
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <h4
+                                            style={{
+                                                fontFamily: 'var(--font-heading)',
+                                                fontSize: '13.5px',
+                                                fontWeight: 600,
+                                                color: 'var(--text-primary)',
+                                                margin: 0,
+                                                lineHeight: 1.35,
+                                                display: '-webkit-box',
+                                                WebkitLineClamp: 2,
+                                                WebkitBoxOrient: 'vertical',
+                                                overflow: 'hidden',
+                                            }}
+                                        >
+                                            {nextStep.title}
+                                        </h4>
+
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                                            <span>Materi berikutnya</span>
+                                        </div>
+                                    </motion.div>
+                                </Link>
+                            ) : (
+                                /* Fallback jika sedang di langkah terakhir */
+                                <div
+                                    style={{
+                                        backgroundColor: 'var(--surface-elevated)',
+                                        border: '1px dashed var(--surface-border)',
+                                        borderRadius: '12px',
+                                        padding: '16px',
+                                        width: '100%',
+                                        maxWidth: '260px',
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        gap: '6px',
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--accent-green)' }}>
+                                        <CheckCircle2 size={14} />
+                                        <span style={{ fontSize: '11px', fontWeight: 600 }}>Tuntas Akhir</span>
                                     </div>
-                                </motion.div>
-                            </Link>
+                                    <h4 style={{ fontFamily: 'var(--font-heading)', fontSize: '13px', margin: 0, color: 'var(--text-primary)' }}>
+                                        Materi Terakhir Modul
+                                    </h4>
+                                    <span style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                                        Semua bab telah tuntas
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
@@ -825,7 +1168,8 @@ export default function GameLobbyStage({
                         borderTop: '1px solid var(--surface-border)',
                         backgroundColor: 'var(--surface-elevated)',
                         position: 'relative',
-                        zIndex: 2,
+                        zIndex: 3,
+                        flexShrink: 0,
                     }}
                 >
                     <div

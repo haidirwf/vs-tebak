@@ -2388,6 +2388,23 @@ input::placeholder, textarea::placeholder {
   width: 100%;
 }
 
+@media (min-width: 1024px) {
+  .hero-stage-container {
+    min-height: calc(100vh - 104px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+  }
+
+  .stage-center-content {
+    flex: 1 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-height: 0 !important;
+  }
+}
+
 @media (max-width: 900px) {
   .stage-nodes-layout {
     grid-template-columns: 1fr !important;
@@ -2416,6 +2433,7 @@ input::placeholder, textarea::placeholder {
     gap: 12px !important;
   }
 }
+
 
 
 
