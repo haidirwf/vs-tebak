@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
@@ -11,6 +11,7 @@ import {
   Flame,
   LayoutDashboard,
   ChevronRight,
+  ChevronLeft,
   Shield,
   Star,
   Users,
@@ -22,17 +23,38 @@ import {
   ChevronDown,
   Menu,
   X,
-  Layers,
   Code,
   Compass,
   Terminal,
+  Check,
+  Laptop,
+  GraduationCap,
+  ExternalLink,
+  Smartphone,
+  Coins,
+  Ticket,
 } from 'lucide-react'
+import CharacterVisual from '@/components/character/CharacterVisual'
+import { AvatarClass } from '@/types'
 
 interface LandingClientProps {
   isLoggedIn: boolean
 }
 
-const CLASSES_DATA = [
+const CLASSES_DATA: {
+  id: AvatarClass
+  name: string
+  title: string
+  emoji: string
+  color: string
+  accent: string
+  tagline: string
+  stats: { label: string; value: number }[]
+  perk: string
+  perkDesc: string
+  suitable: string
+  tileBg: string
+}[] = [
   {
     id: 'warrior',
     name: 'Warrior',
@@ -111,67 +133,35 @@ const CLASSES_DATA = [
   },
 ]
 
-const FEATURES_DATA = [
-  {
-    icon: BookOpen,
-    title: 'Modul Interaktif Step-by-Step',
-    desc: 'Kurikulum ringkas pemrograman, UI/UX, dan AI modern dengan materi teks padat, tutorial YouTube pilihan, dan kuis cek pemahaman.',
-    tag: 'Kurikulum Terpadu',
-    accent: 'var(--color-signal-orange)',
-  },
-  {
-    icon: Zap,
-    title: 'Duel Kuis Battle 1v1 Real-Time',
-    desc: 'Tantang teman satu sekolah atau cari lawan acak se-Indonesia dalam arena kuis interaktif dengan socket real-time dan combo multiplier.',
-    tag: 'Multiplayer Real-Time',
-    accent: 'var(--accent-red)',
-  },
-  {
-    icon: Trophy,
-    title: 'Leaderboard Siswa & Sekolah',
-    desc: 'Papan reputasi nasional berdasarkan total XP dan kemenangan battle. Bawa nama sekolahmu mendominasi puncak ranking!',
-    tag: 'Kompetisi Nasional',
-    accent: 'var(--color-signal-orange)',
-  },
-  {
-    icon: Flame,
-    title: 'Daily Streak & Quest Harian',
-    desc: 'Misi harian yang diperbarui setiap 24 jam. Bangun konsistensi belajar setiap hari untuk mendapatkan bonus XP dan Gold koin ekstra.',
-    tag: 'Gamifikasi Harian',
-    accent: 'var(--accent-red)',
-  },
-  {
-    icon: Gift,
-    title: 'Toko Voucher & Reward Nyata',
-    desc: 'Tukarkan Gold yang kamu kumpulkan dari modul dan battle dengan kupon diskon kursus, merchandise, atau voucher menarik.',
-    tag: 'Reward Store',
-    accent: 'var(--color-electric-yellow)',
-  },
-  {
-    icon: Shield,
-    title: 'Sertifikat & Profil Kompetensi',
-    desc: 'Profil portofolio publik yang memamerkan badge pencapaian, level hero, dan rekam jejak penyelesaian modul yang valid.',
-    tag: 'Portofolio Digital',
-    accent: 'var(--accent-green)',
-  },
+const TECH_TRACK = [
+  { name: 'HTML & CSS', icon: '🌐', slug: 'html-css-dasar' },
+  { name: 'JavaScript', icon: '⚡', slug: 'javascript-pemula' },
+  { name: 'TypeScript', icon: '🔷', slug: 'typescript-dasar' },
+  { name: 'React', icon: '⚛️', slug: 'react-dasar-komponen' },
+  { name: 'Next.js', icon: '▲', slug: 'nextjs-app-router' },
+  { name: 'Tailwind CSS', icon: '🎨', slug: 'tailwind-css' },
+  { name: 'Python Dasar', icon: '🐍', slug: 'python-dasar' },
+  { name: 'UI/UX Design', icon: '📐', slug: 'ui-ux-design-system' },
+  { name: 'SQL & Database', icon: '🗄️', slug: 'sql-database' },
+  { name: 'Git & GitHub', icon: '🐙', slug: 'git-github-kolaborasi' },
 ]
 
 const FAQS = [
   {
     q: 'Apakah Skillungo gratis untuk digunakan?',
-    a: 'Ya, Skillungo 100% gratis untuk seluruh pelajar di Indonesia. Kamu bisa mempelajari modul, mengikuti duel kuis battle 1v1, mengklaim quest harian, dan naik ranking tanpa biaya.',
+    a: 'Ya, Skillungo 100% gratis untuk seluruh pelajar di Indonesia. Kamu bisa mempelajari modul, mengikuti duel kuis battle 1v1, mengklaim quest harian, dan naik ranking tanpa biaya apa pun.',
   },
   {
     q: 'Bagaimana cara kerja sistem duel battle 1v1?',
-    a: 'Kamu bisa menantang lawan acak secara matchmaking atau membuat private room dan membagikan kode ruangan ke temanmu. Pertandingan berlangsung dalam 5 ronde kuis cepat dengan sistem waktu dan combo multiplier.',
+    a: 'Kamu bisa menantang lawan acak melalui matchmaking atau membuat private room dan membagikan kode ruangan ke temanmu. Pertandingan berlangsung dalam 5 ronde kuis cepat dengan sistem waktu dan combo multiplier.',
   },
   {
-    q: 'Apa fungsi pemilihan kelas karakter (Warrior, Mage, Archer, Healer)?',
-    a: 'Setiap kelas memberikan bonus multiplier XP khusus pada kategori modul dan mode belajar tertentu. Kamu bisa menyesuaikan kelas dengan passion dan fokus belajarmu.',
+    q: 'Apa fungsi pemilihan role karakter (Warrior, Mage, Archer, Healer)?',
+    a: 'Setiap role memberikan bonus multiplier XP khusus pada kategori modul dan mode belajar tertentu. Kamu bisa menyesuaikan peran karakter dengan minat dan spesialisasi belajarmu.',
   },
   {
     q: 'Materi apa saja yang tersedia di Skillungo?',
-    a: 'Skillungo berfokus pada skill industri digital: Web Development (Frontend/Backend/JavaScript), UI/UX Design, Algoritma Pemrograman, dan Produktivitas Modern yang dirancang relevan dengan kebutuhan industri saat ini.',
+    a: 'Skillungo berfokus pada kompetensi industri digital: Web Development (Frontend & Backend), UI/UX Design System, Algoritma Pemrograman, dan Tool Produktivitas Modern yang relevan dengan standar industri.',
   },
 ]
 
@@ -192,8 +182,15 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
   }
 
   return (
-    <div style={{ backgroundColor: 'var(--color-void)', minHeight: '100vh', color: 'var(--text-primary)', overflowX: 'hidden' }}>
-      {/* Fixed Header Navbar */}
+    <div
+      style={{
+        backgroundColor: 'var(--color-void)',
+        minHeight: '100vh',
+        color: 'var(--text-primary)',
+        overflowX: 'hidden',
+      }}
+    >
+      {/* ── Fixed Header Navbar ── */}
       <header
         style={{
           position: 'fixed',
@@ -201,22 +198,31 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           left: 0,
           right: 0,
           zIndex: 100,
-          height: '60px',
+          height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          padding: '0 clamp(12px, 3vw, 32px)',
+          padding: '0 clamp(16px, 4vw, 40px)',
           backgroundColor: 'var(--bg-navbar)',
           backdropFilter: 'blur(16px)',
           WebkitBackdropFilter: 'blur(16px)',
           borderBottom: '1px solid var(--surface-border)',
         }}
       >
-        <Link href="/" style={{ display: 'flex', alignItems: 'center', gap: '9px', textDecoration: 'none', flexShrink: 0 }}>
+        <Link
+          href="/"
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            textDecoration: 'none',
+            flexShrink: 0,
+          }}
+        >
           <div
             style={{
-              width: '32px',
-              height: '32px',
+              width: '34px',
+              height: '34px',
               borderRadius: '9px',
               background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
               border: '1px solid #F59E0B',
@@ -228,7 +234,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             }}
           >
             <Swords
-              size={16}
+              size={18}
               style={{
                 color: '#ffffff',
                 filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
@@ -238,13 +244,14 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           <span
             style={{
               fontFamily: 'var(--font-heading)',
-              fontSize: '18px',
+              fontSize: '19px',
               fontWeight: 700,
               color: 'var(--text-primary)',
               letterSpacing: '-0.02em',
             }}
           >
-            Skill<span
+            Skill
+            <span
               style={{
                 background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
                 WebkitBackgroundClip: 'text',
@@ -258,42 +265,93 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         </Link>
 
         {/* Desktop Navigation Links */}
-        <nav className="desktop-only" style={{ display: 'flex', gap: '28px', alignItems: 'center' }}>
+        <nav
+          className="desktop-only"
+          style={{
+            display: 'flex',
+            gap: '28px',
+            alignItems: 'center',
+          }}
+        >
           <a
             href="#hero"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            style={{
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+              transition: 'color 0.15s',
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
-            Studio
+            Beranda
           </a>
           <a
-            href="#preview"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            href="#metode"
+            style={{
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+              transition: 'color 0.15s',
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
-            Arena Console
+            Metode Belajar
           </a>
           <a
-            href="#kelas"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            href="#keunggulan"
+            style={{
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+              transition: 'color 0.15s',
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
-            Roles & Classes
+            Keunggulan
           </a>
           <a
-            href="#fitur"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            href="#battle"
+            style={{
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+              transition: 'color 0.15s',
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
-            Features
+            Arena Battle
+          </a>
+          <a
+            href="#leaderboard"
+            style={{
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+              transition: 'color 0.15s',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
+            onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
+          >
+            Leaderboard
           </a>
           <a
             href="#faq"
-            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '13px', fontWeight: 500, transition: 'color 0.15s' }}
+            style={{
+              color: 'var(--text-secondary)',
+              textDecoration: 'none',
+              fontSize: '13px',
+              fontWeight: 500,
+              transition: 'color 0.15s',
+            }}
             onMouseEnter={(e) => (e.currentTarget.style.color = 'var(--text-primary)')}
             onMouseLeave={(e) => (e.currentTarget.style.color = 'var(--text-secondary)')}
           >
@@ -302,19 +360,19 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         </nav>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexShrink: 0 }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
           {isLoggedIn ? (
             <Link
               href="/dashboard"
               className="btn-signal-orange"
               style={{
-                padding: '7px 14px',
-                fontSize: '12px',
+                padding: '8px 16px',
+                fontSize: '12.5px',
                 textDecoration: 'none',
                 whiteSpace: 'nowrap',
               }}
             >
-              <LayoutDashboard size={14} /> Dashboard <ChevronRight size={13} />
+              <LayoutDashboard size={14} /> Buka Dashboard <ChevronRight size={13} />
             </Link>
           ) : (
             <>
@@ -322,8 +380,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 href="/login"
                 className="btn-dark-outline"
                 style={{
-                  padding: '6px 12px',
-                  fontSize: '12px',
+                  padding: '7px 14px',
+                  fontSize: '12.5px',
                   textDecoration: 'none',
                   whiteSpace: 'nowrap',
                 }}
@@ -334,21 +392,20 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 href="/register"
                 className="btn-signal-orange"
                 style={{
-                  padding: '7px 14px',
-                  fontSize: '12px',
+                  padding: '8px 16px',
+                  fontSize: '12.5px',
                   textDecoration: 'none',
                   whiteSpace: 'nowrap',
                 }}
               >
                 <Sparkles size={14} />
-                <span>Daftar</span>
-                <span className="desktop-only">&nbsp;Gratis</span>
+                <span>Daftar Gratis</span>
                 <ChevronRight size={13} />
               </Link>
             </>
           )}
 
-          {/* Mobile hamburger */}
+          {/* Mobile hamburger button */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="mobile-only-btn"
@@ -362,6 +419,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               display: 'none',
               flexShrink: 0,
             }}
+            aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X size={18} /> : <Menu size={18} />}
           </button>
@@ -373,7 +431,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         <div
           style={{
             position: 'fixed',
-            top: '60px',
+            top: '64px',
             left: 0,
             right: 0,
             backgroundColor: 'var(--surface-canvas)',
@@ -390,28 +448,35 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             onClick={() => setMobileMenuOpen(false)}
             style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
-            Studio
+            Beranda
           </a>
           <a
-            href="#preview"
+            href="#metode"
             onClick={() => setMobileMenuOpen(false)}
             style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
-            Arena Console
+            Metode Belajar
           </a>
           <a
-            href="#kelas"
+            href="#keunggulan"
             onClick={() => setMobileMenuOpen(false)}
             style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
-            Roles & Classes
+            Keunggulan
           </a>
           <a
-            href="#fitur"
+            href="#battle"
             onClick={() => setMobileMenuOpen(false)}
             style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
           >
-            Features
+            Arena Battle
+          </a>
+          <a
+            href="#leaderboard"
+            onClick={() => setMobileMenuOpen(false)}
+            style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '14px' }}
+          >
+            Leaderboard
           </a>
           <a
             href="#faq"
@@ -422,893 +487,2164 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           </a>
 
           <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-            <Link
-              href="/login"
-              className="btn-dark-outline"
-              style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
-            >
-              Masuk
-            </Link>
-            <Link
-              href="/register"
-              className="btn-signal-orange"
-              style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
-            >
-              <Sparkles size={14} /> Daftar Gratis <ChevronRight size={13} />
-            </Link>
-          </div>
-        </div>
-      )}
-
-      {/* ── 1. Centered Black Hero (Exact Linearity Spec) ── */}
-      <section
-        id="hero"
-        style={{
-          position: 'relative',
-          paddingTop: '140px',
-          paddingBottom: '60px',
-          paddingLeft: '24px',
-          paddingRight: '24px',
-          textAlign: 'center',
-          overflow: 'hidden',
-          backgroundColor: 'var(--color-void)',
-        }}
-      >
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1040px', margin: '0 auto' }}>
-          {/* Main Display Headline */}
-          <motion.h1
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(32px, 5.2vw, 56px)',
-              fontWeight: 500,
-              lineHeight: 1.15,
-              marginBottom: '20px',
-              letterSpacing: '-0.02em',
-              color: 'var(--text-primary)',
-            }}
-          >
-            Level Up Skill Digitalmu.
-            <br />
-            <span style={{ position: 'relative', display: 'inline-block' }}>
-              Taklukkan Masa Depan.
-              {/* Spectrum Rail underline beneath emphasized line */}
-              <span
-                className="spectrum-rail-line"
-                style={{
-                  position: 'absolute',
-                  bottom: '-6px',
-                  left: '10%',
-                  right: '10%',
-                  height: '2px',
-                }}
-              />
-            </span>
-          </motion.h1>
-
-          {/* Supporting Subtitle (Fog #999999, Inter 14-15px) */}
-          <motion.p
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            style={{
-              fontSize: '15px',
-              color: 'var(--color-fog)',
-              maxWidth: '640px',
-              margin: '0 auto 32px',
-              lineHeight: 1.65,
-              fontWeight: 400,
-            }}
-          >
-            Platform studio gamifikasi untuk pelajar SMK dan SMA Indonesia. Asah skill coding, UI/UX, dan AI modern, bertarung dalam duel kuis real-time, dan bangun reputasi sekolahmu di leaderboard nasional.
-          </motion.p>
-
-          {/* Conversion Button */}
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            style={{
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '20px',
-            }}
-          >
             {isLoggedIn ? (
               <Link
                 href="/dashboard"
                 className="btn-signal-orange"
-                style={{ padding: '12px 28px', fontSize: '13px' }}
+                style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
               >
-                <LayoutDashboard size={15} /> Buka Dashboard Studio <ChevronRight size={14} />
+                <LayoutDashboard size={14} /> Buka Dashboard
               </Link>
             ) : (
-              <Link
-                href="/register"
-                className="btn-signal-orange"
-                style={{ padding: '12px 28px', fontSize: '13px' }}
-              >
-                <Swords size={15} /> Mulai Petualangan Gratis <ChevronRight size={14} />
-              </Link>
+              <>
+                <Link
+                  href="/login"
+                  className="btn-dark-outline"
+                  style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
+                >
+                  Masuk
+                </Link>
+                <Link
+                  href="/register"
+                  className="btn-signal-orange"
+                  style={{ flex: 1, textAlign: 'center', justifyContent: 'center' }}
+                >
+                  <Sparkles size={14} /> Daftar Gratis
+                </Link>
+              </>
             )}
-          </motion.div>
+          </div>
         </div>
-      </section>
+      )}
 
-      {/* ── 2. Interactive 1v1 Battle Arena ── */}
+      {/* ── 1. Hero Section (Duolingo 2-Column Showcase Layout) ── */}
       <section
-        id="preview"
+        id="hero"
         style={{
-          padding: '40px 24px 80px',
-          maxWidth: '1120px',
-          margin: '0 auto',
+          position: 'relative',
+          paddingTop: '120px',
+          paddingBottom: '60px',
+          paddingLeft: 'clamp(20px, 4vw, 48px)',
+          paddingRight: 'clamp(20px, 4vw, 48px)',
           backgroundColor: 'var(--color-void)',
+          borderBottom: '1px solid var(--surface-border)',
+          overflow: 'hidden',
         }}
       >
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h2
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '32px',
-              fontWeight: 400,
-              marginBottom: '10px',
-              letterSpacing: '-0.015em',
-            }}
-          >
-            Console Arena: Duel Kuis 1v1 Real-Time
-          </h2>
-          <p style={{ color: 'var(--color-fog)', fontSize: '14px', maxWidth: '560px', margin: '0 auto' }}>
-            Uji kecepatan logika dan ketepatan analisismu melawan siswa lain. Klik opsi jawaban di bawah untuk melancarkan serangan combo!
-          </p>
-        </div>
+        {/* Subtle cosmic background dust (zero glowing dots) */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            background:
+              'radial-gradient(ellipse 60% 50% at 20% 30%, rgba(245, 197, 66, 0.04) 0%, transparent 70%), radial-gradient(ellipse 50% 40% at 80% 70%, rgba(56, 189, 248, 0.03) 0%, transparent 60%)',
+          }}
+        />
 
-        {/* Linearity Frosted Product Demonstration Panel (25.7143px radius) */}
-        <div className="product-demo-panel">
-          {/* Panel Chrome Topbar */}
+        <div
+          style={{
+            maxWidth: '1160px',
+            margin: '0 auto',
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            alignItems: 'center',
+            gap: 'clamp(36px, 5vw, 64px)',
+            position: 'relative',
+            zIndex: 1,
+          }}
+        >
+          {/* Left Column: Big Interactive Focal Visual (Duolingo Globe equivalent -> Hero RPG Arena Stage) */}
           <div
             style={{
               display: 'flex',
+              flexDirection: 'column',
               alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingBottom: '16px',
-              marginBottom: '20px',
-              borderBottom: '1px solid var(--surface-border)',
+              justifyContent: 'center',
+              position: 'relative',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-              <span
-                style={{
-                  fontFamily: 'var(--font-inter)',
-                  fontSize: '12px',
-                  fontWeight: 500,
-                  color: 'var(--text-primary)',
-                  letterSpacing: '0.02em',
-                  whiteSpace: 'nowrap',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis',
-                }}
-              >
-                Algoritma & JavaScript
-              </span>
-            </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexShrink: 0 }}>
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: 'var(--color-signal-orange)',
-                  fontWeight: 600,
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '4px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Active Round'}
-              </span>
-              <span
-                style={{
-                  fontSize: '12px',
-                  color: 'var(--accent-red)',
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 600,
-                  backgroundColor: 'rgba(255, 51, 68, 0.1)',
-                  padding: '2px 8px',
-                  borderRadius: '6px',
-                  border: '1px solid rgba(255, 51, 68, 0.3)',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                00:08s
-              </span>
-            </div>
-          </div>
-
-          {/* Versus Contestant Row */}
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              gap: '8px',
-              padding: '12px 14px',
-              borderRadius: '12px',
-              backgroundColor: 'var(--surface-elevated)',
-              border: '1px solid var(--surface-border)',
-              marginBottom: '20px',
-              minWidth: 0,
-              width: '100%',
-              boxSizing: 'border-box',
-            }}
-          >
-            {/* Player 1 (You) */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-              <div
-                style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(245, 197, 66, 0.12)',
-                  border: '1px solid rgba(245, 197, 66, 0.4)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  flexShrink: 0,
-                }}
-              >
-                ⚔️
-              </div>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    Kamu (Hero)
-                  </span>
-                  <span
-                    style={{
-                      fontSize: '9px',
-                      padding: '1px 5px',
-                      borderRadius: '4px',
-                      backgroundColor: 'var(--color-signal-orange)',
-                      color: '#0a0a0a',
-                      fontWeight: 700,
-                      flexShrink: 0,
-                    }}
-                  >
-                    LV.12
-                  </span>
-                </div>
-                <div style={{ fontSize: '10.5px', color: 'var(--color-steel)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  SMK Telkom Malang
-                </div>
-                {/* Health Bar */}
-                <div
-                  style={{
-                    width: '100%',
-                    maxWidth: '100px',
-                    height: '4px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '4px',
-                    marginTop: '4px',
-                    overflow: 'hidden',
-                  }}
-                >
-                  <div style={{ width: '92%', height: '100%', backgroundColor: 'var(--color-vector-green)' }} />
-                </div>
-              </div>
-            </div>
-
-            {/* VS Badge */}
+            {/* Stage Backdrop Plate */}
             <div
               style={{
-                fontFamily: 'var(--font-inter)',
-                fontSize: '10px',
-                fontWeight: 700,
-                color: 'var(--color-signal-orange)',
-                backgroundColor: 'rgba(245, 197, 66, 0.1)',
-                padding: '4px 8px',
-                borderRadius: '6px',
-                border: '1px solid rgba(245, 197, 66, 0.3)',
-                letterSpacing: '0.04em',
-                flexShrink: 0,
+                width: '100%',
+                maxWidth: '420px',
+                aspectRatio: '1 / 1',
+                borderRadius: '16px',
+                backgroundColor: 'var(--surface-card)',
+                border: '1px solid var(--surface-border)',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                position: 'relative',
+                boxShadow: 'var(--shadow-card)',
+                padding: '24px',
+                boxSizing: 'border-box',
               }}
             >
-              VS
-            </div>
-
-            {/* Player 2 (Opponent) */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '8px', minWidth: 0, flex: 1, textAlign: 'right' }}>
-              <div style={{ minWidth: 0, flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px' }}>
-                  <span
-                    style={{
-                      fontSize: '9px',
-                      padding: '1px 5px',
-                      borderRadius: '4px',
-                      backgroundColor: 'rgba(0, 212, 255, 0.2)',
-                      color: '#00d4ff',
-                      fontWeight: 700,
-                      flexShrink: 0,
-                    }}
-                  >
-                    LV.14
-                  </span>
-                  <span style={{ fontSize: '13px', fontWeight: 500, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                    Dina Alchemist
-                  </span>
-                </div>
-                <div style={{ fontSize: '10.5px', color: 'var(--color-steel)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                  SMAN 1 Yogyakarta
-                </div>
-                {/* Health Bar */}
+              {/* Floating Badge 1 (Top Left): Daily Streak */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  left: '16px',
+                  backgroundColor: 'var(--surface-elevated)',
+                  border: '1px solid var(--surface-border)',
+                  borderRadius: '10px',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                }}
+              >
                 <div
                   style={{
-                    width: '100%',
-                    maxWidth: '100px',
-                    height: '4px',
-                    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                    borderRadius: '4px',
-                    marginTop: '4px',
-                    marginLeft: 'auto',
-                    overflow: 'hidden',
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-red)',
                   }}
                 >
-                  <div
-                    style={{
-                      width: quizAnswered === 0 || quizAnswered === 2 ? '52%' : '84%',
-                      height: '100%',
-                      backgroundColor: 'var(--accent-red)',
-                      transition: 'width 0.4s ease',
-                    }}
-                  />
+                  <Flame size={16} />
                 </div>
+                <div>
+                  <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    7 Hari Streak
+                  </div>
+                  <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
+                    Bonus XP aktif
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Floating Badge 2 (Top Right): Level Milestone */}
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                style={{
+                  position: 'absolute',
+                  top: '16px',
+                  right: '16px',
+                  backgroundColor: 'var(--surface-elevated)',
+                  border: '1px solid var(--surface-border)',
+                  borderRadius: '10px',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.25)',
+                }}
+              >
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-signal-orange)',
+                  }}
+                >
+                  <Trophy size={16} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    Level 12
+                  </div>
+                  <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
+                    Champion Rank
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Central Character Visual */}
+              <div style={{ marginTop: '16px', marginBottom: '8px' }}>
+                <CharacterVisual
+                  role={selectedClass.id}
+                  size={200}
+                  animationState="idle"
+                  showAura={true}
+                  showRoleBadge={false}
+                />
               </div>
+
+              {/* Role Switcher Controls */}
               <div
                 style={{
-                  width: '36px',
-                  height: '36px',
-                  borderRadius: '8px',
-                  backgroundColor: 'rgba(0, 212, 255, 0.1)',
-                  border: '1px solid rgba(0, 212, 255, 0.35)',
                   display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '16px',
-                  flexShrink: 0,
+                  gap: '6px',
+                  width: '100%',
+                  marginTop: 'auto',
                 }}
               >
-                🔮
-              </div>
-            </div>
-          </div>
-
-          {/* Interactive Question Card */}
-          <div
-            style={{
-              padding: '20px',
-              backgroundColor: 'var(--color-carbon)',
-              borderRadius: '12px',
-              border: '1px solid var(--surface-border)',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-              <span style={{ fontSize: '10px', color: 'var(--color-signal-orange)', fontWeight: 600, letterSpacing: '1px' }}>
-                ROUND 3 OF 5
-              </span>
-              <span style={{ color: 'var(--color-steel)' }}>•</span>
-              <span style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Pilih opsi yang benar untuk menyerang lawan:</span>
-            </div>
-
-            <h3
-              style={{
-                fontFamily: 'var(--font-inter)',
-                fontSize: '16px',
-                fontWeight: 500,
-                marginBottom: '18px',
-                color: 'var(--text-primary)',
-                lineHeight: 1.5,
-              }}
-            >
-              Manakah ekspresi JavaScript yang mengembalikan nilai boolean <code style={{ color: 'var(--color-gold)', backgroundColor: 'rgba(245, 197, 66, 0.1)', padding: '2px 6px', borderRadius: '4px' }}>true</code>?
-            </h3>
-
-            {/* Answer Options Grid */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '10px', marginBottom: '16px' }}>
-              {[
-                { id: 0, text: "typeof NaN === 'number'", correct: true },
-                { id: 1, text: "Boolean('') === true", correct: false },
-                { id: 2, text: "Array.isArray([]) === true", correct: true },
-                { id: 3, text: "'5' === 5", correct: false },
-              ].map((opt) => {
-                const isSelected = quizAnswered === opt.id
-                let bg = 'var(--surface-elevated)'
-                let border = 'var(--surface-border)'
-                let textColor = 'var(--text-primary)'
-
-                if (isSelected) {
-                  if (opt.correct) {
-                    bg = 'rgba(8, 195, 128, 0.15)'
-                    border = 'var(--color-vector-green)'
-                    textColor = 'var(--color-vector-green)'
-                  } else {
-                    bg = 'rgba(255, 51, 68, 0.15)'
-                    border = 'var(--accent-red)'
-                    textColor = 'var(--accent-red)'
-                  }
-                }
-
-                return (
-                  <button
-                    key={opt.id}
-                    onClick={() => handleQuizAnswer(opt.id)}
-                    style={{
-                      padding: '12px 16px',
-                      borderRadius: '12px',
-                      border: `1px solid ${border}`,
-                      backgroundColor: bg,
-                      color: textColor,
-                      fontSize: '13px',
-                      fontWeight: 500,
-                      textAlign: 'left',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      transition: 'all 0.15s ease',
-                    }}
-                  >
-                    <span>
-                      <strong style={{ color: 'var(--color-steel)', marginRight: '8px' }}>{String.fromCharCode(65 + opt.id)}</strong>
-                      <code>{opt.text}</code>
-                    </span>
-                    {isSelected && (opt.correct ? <CheckCircle size={15} /> : <X size={15} />)}
-                  </button>
-                )
-              })}
-            </div>
-
-            {/* Result Feedback message */}
-            {quizAnswered !== null && (
-              <motion.div
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                style={{
-                  padding: '10px 14px',
-                  borderRadius: '8px',
-                  backgroundColor: quizAnswered === 0 || quizAnswered === 2 ? 'rgba(8, 195, 128, 0.12)' : 'rgba(255, 51, 68, 0.12)',
-                  border: `1px solid ${quizAnswered === 0 || quizAnswered === 2 ? 'var(--color-vector-green)' : 'var(--accent-red)'}`,
-                  fontSize: '12px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <span>
-                  {quizAnswered === 0 || quizAnswered === 2
-                    ? '⚔️ Serangan Combo Berhasil! Health lawan berkurang drastis.'
-                    : '🛡️ Salah sasaran! Lawan berhasil menangkis seranganmu.'}
-                </span>
-                <span style={{ fontWeight: 600, color: 'var(--color-signal-orange)' }}>
-                  +120 XP
-                </span>
-              </motion.div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 3. Asymmetric Workflow & Roles Section (Exact Linearity Spec) ── */}
-      <section
-        id="kelas"
-        style={{
-          padding: '80px 24px',
-          borderTop: '1px solid var(--surface-border)',
-          borderBottom: '1px solid var(--surface-border)',
-          backgroundColor: 'var(--color-void)',
-        }}
-      >
-        <div style={{ maxWidth: '1120px', margin: '0 auto' }}>
-          {/* Asymmetric 3-part layout: Copy on left, Role chips in center, Frosted Panel on right */}
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '36px',
-              alignItems: 'start',
-            }}
-          >
-            {/* Left: Headline & Editorial Context */}
-            <div>
-              <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '10px' }}>
-                RPG WORKFLOW & CLASS ARCHITECTURE
-              </span>
-              <h2
-                style={{
-                  fontFamily: 'var(--font-heading)',
-                  fontSize: '38px',
-                  fontWeight: 400,
-                  lineHeight: 1.15,
-                  marginBottom: '16px',
-                  letterSpacing: '-0.02em',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                Pilih Role.
-                <br />
-                Kuasai Domain Belajarmu.
-              </h2>
-              <p
-                style={{
-                  color: 'var(--color-fog)',
-                  fontSize: '14px',
-                  lineHeight: 1.65,
-                  marginBottom: '24px',
-                }}
-              >
-                Setiap karakter memiliki spesialisasi statistik, peran unik di battle arena, dan pengali XP untuk memandu akselerasi skill digitalmu di SMK/SMA.
-              </p>
-
-              {/* Four Outlined Role Chips (Linearity Spec) */}
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {CLASSES_DATA.map((cls) => {
-                  const isSelected = selectedClass.id === cls.id
+                  const isCurrent = selectedClass.id === cls.id
                   return (
                     <button
                       key={cls.id}
                       onClick={() => setSelectedClass(cls)}
-                      className={`role-selector-chip ${isSelected ? 'active' : ''}`}
                       style={{
-                        justifyContent: 'space-between',
-                        padding: '10px 16px',
-                        border: isSelected
+                        flex: 1,
+                        padding: '6px 4px',
+                        borderRadius: '8px',
+                        border: isCurrent
                           ? '1px solid var(--color-signal-orange)'
-                          : '1px solid rgba(255, 255, 255, 0.12)',
-                        boxShadow: isSelected
-                          ? '0 0 16px rgba(245, 197, 66, 0.25)'
-                          : 'none',
+                          : '1px solid var(--surface-border)',
+                        backgroundColor: isCurrent
+                          ? 'rgba(245, 197, 66, 0.12)'
+                          : 'var(--surface-elevated)',
+                        color: isCurrent ? 'var(--text-primary)' : 'var(--color-steel)',
+                        cursor: 'pointer',
+                        fontSize: '11px',
+                        fontWeight: 600,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '2px',
+                        transition: 'all 0.15s ease',
                       }}
                     >
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                        <span style={{ fontSize: '18px' }}>{cls.emoji}</span>
-                        <div style={{ textAlign: 'left' }}>
-                          <span style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            {cls.name}
-                          </span>
-                          <span style={{ display: 'block', fontSize: '11px', color: 'var(--color-steel)' }}>
-                            {cls.title}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
-                        <span
-                          style={{
-                            fontSize: '11px',
-                            fontWeight: 600,
-                            color: isSelected ? 'var(--color-signal-orange)' : 'var(--color-steel)',
-                          }}
-                        >
-                          {isSelected ? 'Aktif' : 'Pilih'}
-                        </span>
-                      </div>
+                      <span style={{ fontSize: '13px' }}>{cls.emoji}</span>
+                      <span>{cls.name}</span>
                     </button>
                   )
                 })}
               </div>
             </div>
+          </div>
 
-            {/* Right: Linearity Frosted Product Demonstration Panel */}
-            <div className="product-demo-panel">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={selectedClass.id}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  transition={{ duration: 0.25 }}
-                >
-                  {/* Campaign Asset Tile inside panel (Linearity Spec) */}
-                  <div
-                    className="campaign-asset-tile"
+          {/* Right Column: Punchy Headline & Dual Conversion Buttons */}
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 'clamp(32px, 4.4vw, 52px)',
+                fontWeight: 600,
+                lineHeight: 1.18,
+                marginBottom: '18px',
+                letterSpacing: '-0.02em',
+                color: 'var(--text-primary)',
+              }}
+            >
+              Cara seru, interaktif, dan efektif kuasai skill coding & digital!
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              style={{
+                fontSize: '15px',
+                color: 'var(--color-fog)',
+                lineHeight: 1.65,
+                marginBottom: '32px',
+                maxWidth: '560px',
+              }}
+            >
+              Platform belajar gamifikasi untuk siswa SMK dan SMA. Taklukkan modul pemrograman, tantang teman dalam duel kuis 1v1 real-time, dan bawa reputasi sekolahmu ke puncak leaderboard nasional.
+            </motion.p>
+
+            {/* Dual CTA Button Stack (Duolingo signature action layout) */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '12px',
+                maxWidth: '380px',
+              }}
+            >
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href="/dashboard"
+                    className="btn-signal-orange"
                     style={{
-                      padding: '20px',
-                      marginBottom: '20px',
-                      backgroundColor: selectedClass.tileBg,
+                      padding: '14px 24px',
+                      fontSize: '14px',
+                      textAlign: 'center',
+                      textDecoration: 'none',
                     }}
                   >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '10px' }}>
-                      <div
-                        style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '8.57143px',
-                          backgroundColor: 'rgba(0, 0, 0, 0.4)',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          fontSize: '26px',
-                          border: '1px solid rgba(255, 255, 255, 0.15)',
-                        }}
-                      >
-                        {selectedClass.emoji}
-                      </div>
-                      <div>
-                        <h3
-                          style={{
-                            fontFamily: 'var(--font-heading)',
-                            fontSize: '20px',
-                            fontWeight: 400,
-                            margin: 0,
-                            color: 'var(--text-primary)',
-                          }}
-                        >
-                          {selectedClass.name} — {selectedClass.title}
-                        </h3>
-                        <p style={{ margin: 0, fontSize: '12px', color: 'var(--color-silver)' }}>
-                          {selectedClass.tagline}
-                        </p>
-                      </div>
-                    </div>
+                    <LayoutDashboard size={16} /> Buka Dashboard Studio <ChevronRight size={15} />
+                  </Link>
+                  <Link
+                    href="/modules"
+                    className="btn-dark-outline"
+                    style={{
+                      padding: '13px 24px',
+                      fontSize: '13.5px',
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Lanjutkan Belajar Modul
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href="/register"
+                    className="btn-signal-orange"
+                    style={{
+                      padding: '14px 24px',
+                      fontSize: '14px',
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    <Swords size={16} /> Mulai Petualangan Gratis <ChevronRight size={15} />
+                  </Link>
+                  <Link
+                    href="/login"
+                    className="btn-dark-outline"
+                    style={{
+                      padding: '13px 24px',
+                      fontSize: '13.5px',
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                    }}
+                  >
+                    Saya Sudah Punya Akun
+                  </Link>
+                </>
+              )}
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
+      {/* ── 2. Technology & Module Selector Strip (Duolingo Language Bar) ── */}
+      <section
+        style={{
+          borderBottom: '1px solid var(--surface-border)',
+          backgroundColor: 'var(--surface-canvas)',
+          padding: '14px clamp(16px, 4vw, 40px)',
+        }}
+      >
+        <div
+          style={{
+            maxWidth: '1160px',
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '11px',
+              fontWeight: 600,
+              color: 'var(--color-steel)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.06em',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            Modul Pilihan:
+          </span>
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              overflowX: 'auto',
+              scrollbarWidth: 'none',
+              paddingBottom: '2px',
+              width: '100%',
+            }}
+          >
+            {TECH_TRACK.map((tech) => (
+              <Link
+                key={tech.slug}
+                href="/modules"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  padding: '6px 12px',
+                  borderRadius: '8px',
+                  backgroundColor: 'var(--surface-card)',
+                  border: '1px solid var(--surface-border)',
+                  color: 'var(--text-secondary)',
+                  textDecoration: 'none',
+                  fontSize: '12px',
+                  fontWeight: 500,
+                  whiteSpace: 'nowrap',
+                  flexShrink: 0,
+                  transition: 'all 0.15s ease',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = 'var(--text-primary)'
+                  e.currentTarget.style.borderColor = 'var(--color-signal-orange)'
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = 'var(--text-secondary)'
+                  e.currentTarget.style.borderColor = 'var(--surface-border)'
+                }}
+              >
+                <span>{tech.icon}</span>
+                <span>{tech.name}</span>
+              </Link>
+            ))}
+          </div>
+
+          <Link
+            href="/modules"
+            style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '4px',
+              fontSize: '12px',
+              fontWeight: 600,
+              color: 'var(--color-signal-orange)',
+              textDecoration: 'none',
+              whiteSpace: 'nowrap',
+              flexShrink: 0,
+            }}
+          >
+            Semua Modul <ChevronRight size={13} />
+          </Link>
+        </div>
+      </section>
+
+      {/* ── 3. Section 1: The Intro Hook (Duolingo: Mascot Left, Copy Right) ── */}
+      <section
+        id="metode"
+        style={{
+          padding: '80px clamp(20px, 4vw, 48px)',
+          maxWidth: '1160px',
+          margin: '0 auto',
+          borderBottom: '1px solid var(--surface-border)',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            alignItems: 'center',
+            gap: ' clamp(36px, 5vw, 64px)',
+          }}
+        >
+          {/* Visual Left: Character Role Profile Card */}
+          <div>
+            <div
+              style={{
+                backgroundColor: 'var(--surface-card)',
+                borderRadius: '14px',
+                border: '1px solid var(--surface-border)',
+                padding: '24px',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '14px',
+                  marginBottom: '18px',
+                }}
+              >
+                <div
+                  style={{
+                    width: '46px',
+                    height: '46px',
+                    borderRadius: '10px',
+                    backgroundColor: selectedClass.tileBg,
+                    border: `1px solid ${selectedClass.color}40`,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '22px',
+                  }}
+                >
+                  {selectedClass.emoji}
+                </div>
+                <div>
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-heading)',
+                      fontSize: '18px',
+                      fontWeight: 600,
+                      margin: 0,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    {selectedClass.name} — {selectedClass.title}
+                  </h3>
+                  <p style={{ margin: '2px 0 0', fontSize: '12px', color: 'var(--color-steel)' }}>
+                    {selectedClass.tagline}
+                  </p>
+                </div>
+              </div>
+
+              {/* Role Perk Block */}
+              <div
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--surface-elevated)',
+                  border: '1px solid var(--surface-border)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  marginBottom: '18px',
+                }}
+              >
+                <div>
+                  <div style={{ fontSize: '10.5px', color: 'var(--color-steel)' }}>Role Perk:</div>
+                  <div style={{ fontSize: '12.5px', fontWeight: 600, color: 'var(--color-signal-orange)' }}>
+                    {selectedClass.perk}
+                  </div>
+                </div>
+                <span
+                  style={{
+                    fontSize: '11px',
+                    color: 'var(--text-primary)',
+                    backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                    padding: '3px 8px',
+                    borderRadius: '6px',
+                    border: '1px solid rgba(245, 197, 66, 0.35)',
+                    fontWeight: 600,
+                  }}
+                >
+                  +25% XP Bonus
+                </span>
+              </div>
+
+              {/* Stat Progress Bars */}
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '18px' }}>
+                {selectedClass.stats.map((st) => (
+                  <div key={st.label}>
                     <div
                       style={{
-                        padding: '10px 14px',
-                        borderRadius: '8.57143px',
-                        backgroundColor: 'rgba(0, 0, 0, 0.35)',
-                        border: '1px solid var(--surface-border)',
                         display: 'flex',
-                        alignItems: 'center',
                         justifyContent: 'space-between',
+                        fontSize: '11.5px',
+                        marginBottom: '4px',
                       }}
                     >
-                      <div>
-                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Role Perk:</div>
-                        <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-signal-orange)' }}>
-                          {selectedClass.perk}
-                        </div>
-                      </div>
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          color: 'var(--text-primary)',
-                          backgroundColor: 'rgba(245, 197, 66, 0.2)',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          border: '1px solid rgba(245, 197, 66, 0.35)',
-                        }}
-                      >
-                        +25% XP Bonus
+                      <span style={{ color: 'var(--color-silver)' }}>{st.label}</span>
+                      <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>
+                        {st.value}%
                       </span>
                     </div>
+                    <div
+                      style={{
+                        height: '4px',
+                        backgroundColor: 'rgba(255, 255, 255, 0.08)',
+                        borderRadius: '4px',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: `${st.value}%`,
+                          height: '100%',
+                          backgroundColor: selectedClass.color,
+                          borderRadius: '4px',
+                        }}
+                      />
+                    </div>
                   </div>
+                ))}
+              </div>
 
-                  {/* Stat Progress Bars */}
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
-                    {selectedClass.stats.map((st) => (
-                      <div key={st.label}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', marginBottom: '4px' }}>
-                          <span style={{ color: 'var(--color-silver)' }}>{st.label}</span>
-                          <span style={{ color: 'var(--text-primary)', fontFamily: 'var(--font-mono)' }}>{st.value}%</span>
-                        </div>
-                        <div
-                          style={{
-                            height: '4px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                            borderRadius: '4px',
-                            overflow: 'hidden',
-                          }}
-                        >
-                          <motion.div
-                            initial={{ width: 0 }}
-                            animate={{ width: `${st.value}%` }}
-                            transition={{ duration: 0.5, ease: 'easeOut' }}
-                            style={{
-                              height: '100%',
-                              backgroundColor: 'var(--color-signal-orange)',
-                            }}
-                          />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
+              <div
+                style={{
+                  padding: '10px 14px',
+                  borderRadius: '10px',
+                  backgroundColor: 'var(--surface-canvas)',
+                  border: '1px solid var(--surface-border)',
+                  fontSize: '11.5px',
+                  color: 'var(--color-fog)',
+                }}
+              >
+                <strong style={{ color: 'var(--text-primary)' }}>Cocok untuk: </strong>
+                {selectedClass.suitable}
+              </div>
+            </div>
+          </div>
 
-                  <div
-                    style={{
-                      padding: '12px 14px',
-                      borderRadius: '12px',
-                      backgroundColor: 'rgba(255, 255, 255, 0.03)',
-                      border: '1px solid rgba(255, 255, 255, 0.08)',
-                      fontSize: '12px',
-                      color: 'var(--color-fog)',
-                    }}
-                  >
-                    <strong style={{ color: 'var(--text-primary)' }}>Target Profil: </strong>
-                    {selectedClass.suitable}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
+          {/* Editorial Right: Headline & Key Points */}
+          <div>
+            <h2
+              style={{
+                fontFamily: 'var(--font-heading)',
+                fontSize: 'clamp(26px, 3.5vw, 38px)',
+                fontWeight: 600,
+                lineHeight: 1.25,
+                marginBottom: '16px',
+                letterSpacing: '-0.02em',
+                color: 'var(--text-primary)',
+              }}
+            >
+              Metode paling seru menguasai skill masa depan
+            </h2>
+            <p
+              style={{
+                fontSize: '15px',
+                color: 'var(--color-fog)',
+                lineHeight: 1.65,
+                marginBottom: '28px',
+              }}
+            >
+              Belajar coding dan desain di Skillungo dirancang layaknya menamatkan quest RPG. Modul bite-sized yang padat teori langsung praktik, tutorial terkurasi, dan kuis cek pemahaman membuatmu terus termotivasi tanpa rasa lelah.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '28px' }}>
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--color-signal-orange)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <BookOpen size={16} />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 600 }}>
+                    Bite-Sized & Langsung Praktik
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.5 }}>
+                    Setiap unit berdurasi 5-10 menit. Tanpa materi bertele-tele, langsung fokus pada konsep esensial yang dipakai industri.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-cyan)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <Zap size={16} />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 600 }}>
+                    Sistem RPG & Role Karakter
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.5 }}>
+                    Pilih peran Warrior, Mage, Archer, atau Healer. Nikmati bonus multiplier XP pada modul yang sesuai dengan minat belajarmu.
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+                <div
+                  style={{
+                    width: '32px',
+                    height: '32px',
+                    borderRadius: '8px',
+                    backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: 'var(--accent-green)',
+                    flexShrink: 0,
+                  }}
+                >
+                  <GraduationCap size={16} />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 2px', fontSize: '14px', fontWeight: 600 }}>
+                    100% Gratis untuk Pelajar
+                  </h4>
+                  <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.5 }}>
+                    Seluruh modul, duel kuis, dan quest harian terbuka penuh tanpa biaya langganan atau fitur terkunci berbayar.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <Link
+              href="/modules"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+                fontSize: '13.5px',
+                fontWeight: 600,
+                color: 'var(--color-signal-orange)',
+                textDecoration: 'none',
+              }}
+            >
+              Jelajahi Kurikulum Lengkap <ChevronRight size={14} />
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ── 4. Section 2: "Why you'll love Skillungo" (Duolingo 4-Pillar Grid with Center Device Mockup) ── */}
+      <section
+        id="keunggulan"
+        style={{
+          padding: '80px clamp(20px, 4vw, 48px)',
+          maxWidth: '1160px',
+          margin: '0 auto',
+          borderBottom: '1px solid var(--surface-border)',
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+          <h2
+            style={{
+              fontFamily: 'var(--font-heading)',
+              fontSize: 'clamp(28px, 4vw, 40px)',
+              fontWeight: 600,
+              marginBottom: '10px',
+              letterSpacing: '-0.02em',
+              color: 'var(--text-primary)',
+            }}
+          >
+            Kenapa kamu akan menyukai belajar di Skillungo
+          </h2>
+          <p
+            style={{
+              color: 'var(--color-fog)',
+              fontSize: '15px',
+              maxWidth: '600px',
+              margin: '0 auto',
+            }}
+          >
+            Kombinasi kurikulum industri dan gamifikasi modern yang terbukti efektif menjaga motivasi belajar mandiri.
+          </p>
+        </div>
+
+        {/* 3-Column Layout: 2 Pillars Left, Device Mockup Center, 2 Pillars Right */}
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+            gap: '24px',
+            alignItems: 'center',
+          }}
+        >
+          {/* Left Column (2 Value Props) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Pillar 1 */}
+            <div
+              style={{
+                padding: '24px',
+                backgroundColor: 'var(--surface-card)',
+                borderRadius: '14px',
+                border: '1px solid var(--surface-border)',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: 'rgba(245, 197, 66, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--color-signal-orange)',
+                  marginBottom: '14px',
+                }}
+              >
+                <Zap size={20} />
+              </div>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '17px',
+                  fontWeight: 600,
+                  marginBottom: '6px',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Efektif dan terarah
+              </h3>
+              <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.6 }}>
+                Kurikulum terstruktur langsung ke inti konsep. Pelajari logika, arsitektur sintaksis modern, dan langsung implementasikan ke kode nyata.
+              </p>
+            </div>
+
+            {/* Pillar 2 */}
+            <div
+              style={{
+                padding: '24px',
+                backgroundColor: 'var(--surface-card)',
+                borderRadius: '14px',
+                border: '1px solid var(--surface-border)',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: 'rgba(56, 189, 248, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--accent-cyan)',
+                  marginBottom: '14px',
+                }}
+              >
+                <Compass size={20} />
+              </div>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '17px',
+                  fontWeight: 600,
+                  marginBottom: '6px',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Pembelajaran terpersonalisasi
+              </h3>
+              <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.6 }}>
+                Pilih peran RPG yang mencerminkan minat karirmu (Warrior, Mage, Archer, Healer) dan nikmati akselerasi XP di spesialisasi pilihanmu.
+              </p>
+            </div>
+          </div>
+
+          {/* Center Column: High-Fidelity Code Console / Terminal Screen */}
+          <div
+            style={{
+              backgroundColor: 'var(--surface-card)',
+              borderRadius: '14px',
+              border: '1px solid var(--surface-border)',
+              overflow: 'hidden',
+              boxShadow: 'var(--shadow-card)',
+            }}
+          >
+            {/* Terminal Window Header */}
+            <div
+              style={{
+                padding: '12px 16px',
+                backgroundColor: 'var(--surface-elevated)',
+                borderBottom: '1px solid var(--surface-border)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <span
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#EF4444',
+                    display: 'inline-block',
+                  }}
+                />
+                <span
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#F59E0B',
+                    display: 'inline-block',
+                  }}
+                />
+                <span
+                  style={{
+                    width: '10px',
+                    height: '10px',
+                    borderRadius: '50%',
+                    backgroundColor: '#22C55E',
+                    display: 'inline-block',
+                  }}
+                />
+              </div>
+              <span
+                style={{
+                  fontSize: '11px',
+                  fontFamily: 'var(--font-mono)',
+                  color: 'var(--color-steel)',
+                }}
+              >
+                lesson-runner.ts
+              </span>
+              <div style={{ width: '40px' }} />
+            </div>
+
+            {/* Code Body */}
+            <div
+              style={{
+                padding: '18px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '12px',
+                lineHeight: 1.7,
+                backgroundColor: 'var(--surface-canvas)',
+              }}
+            >
+              <div style={{ color: 'var(--color-steel)' }}>// Quest: Hitung Bonus XP & Streak Multiplier</div>
+              <div>
+                <span style={{ color: '#38BDF8' }}>function</span>{' '}
+                <span style={{ color: '#F5C542' }}>calculateLevelUp</span>
+                (xp: <span style={{ color: '#22C55E' }}>number</span>, streak: <span style={{ color: '#22C55E' }}>number</span>) {'{'}
+              </div>
+              <div style={{ paddingLeft: '16px' }}>
+                <span style={{ color: '#38BDF8' }}>const</span> multiplier = streak &gt;= <span style={{ color: '#F5C542' }}>7</span> ? <span style={{ color: '#F5C542' }}>1.5</span> : <span style={{ color: '#F5C542' }}>1.0</span>;
+              </div>
+              <div style={{ paddingLeft: '16px' }}>
+                <span style={{ color: '#38BDF8' }}>return</span> {'{'}
+              </div>
+              <div style={{ paddingLeft: '32px' }}>
+                level: Math.floor(xp / <span style={{ color: '#F5C542' }}>100</span>) + <span style={{ color: '#F5C542' }}>1</span>,
+              </div>
+              <div style={{ paddingLeft: '32px' }}>
+                earnedXp: xp * multiplier,
+              </div>
+              <div style={{ paddingLeft: '16px' }}>{'}'};</div>
+              <div>{'}'}</div>
+            </div>
+
+            {/* Test Passed Badge Footnote */}
+            <div
+              style={{
+                padding: '12px 16px',
+                backgroundColor: 'rgba(34, 197, 94, 0.08)',
+                borderTop: '1px solid rgba(34, 197, 94, 0.2)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                fontSize: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--accent-green)' }}>
+                <Check size={14} />
+                <span style={{ fontWeight: 600 }}>3/3 Tes Unit Lolos</span>
+              </div>
+              <span style={{ color: 'var(--color-signal-orange)', fontWeight: 600 }}>
+                +150 XP Diperoleh
+              </span>
+            </div>
+          </div>
+
+          {/* Right Column (2 Value Props) */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Pillar 3 */}
+            <div
+              style={{
+                padding: '24px',
+                backgroundColor: 'var(--surface-card)',
+                borderRadius: '14px',
+                border: '1px solid var(--surface-border)',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--accent-red)',
+                  marginBottom: '14px',
+                }}
+              >
+                <Flame size={20} />
+              </div>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '17px',
+                  fontWeight: 600,
+                  marginBottom: '6px',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Tetap termotivasi setiap hari
+              </h3>
+              <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.6 }}>
+                Bangun rutinitas konsisten dengan daily streak, misi 24 jam, dan perlindungan streak freeze saat kamu membutuhkan istirahat.
+              </p>
+            </div>
+
+            {/* Pillar 4 */}
+            <div
+              style={{
+                padding: '24px',
+                backgroundColor: 'var(--surface-card)',
+                borderRadius: '14px',
+                border: '1px solid var(--surface-border)',
+                boxShadow: 'var(--shadow-card)',
+              }}
+            >
+              <div
+                style={{
+                  width: '40px',
+                  height: '40px',
+                  borderRadius: '10px',
+                  backgroundColor: 'rgba(34, 197, 94, 0.12)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: 'var(--accent-green)',
+                  marginBottom: '14px',
+                }}
+              >
+                <Swords size={20} />
+              </div>
+              <h3
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: '17px',
+                  fontWeight: 600,
+                  marginBottom: '6px',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Belajar sambil bermain game
+              </h3>
+              <p style={{ margin: 0, fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.6 }}>
+                Bosan belajar sendirian? Masuki arena duel kuis 1v1 real-time untuk menguji kecepatan logika dan kombo serangan melawan siswa lain.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── 4. Centered Editorial Statement with Spectrum Rail Underline (Linearity Spec) ── */}
-      <section
-        style={{
-          padding: '90px 24px',
-          textAlign: 'center',
-          backgroundColor: 'var(--color-void)',
-          borderBottom: '1px solid var(--surface-border)',
-        }}
-      >
-        <div style={{ maxWidth: '860px', margin: '0 auto' }}>
-          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '14px' }}>
-            EDUCATIONAL EXCELLENCE
-          </span>
-          <h2
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(28px, 4.5vw, 45px)',
-              fontWeight: 400,
-              lineHeight: 1.25,
-              color: 'var(--text-primary)',
-              letterSpacing: '-0.02em',
-              marginBottom: '24px',
-            }}
-          >
-            Satu ekosistem belajar gamifikasi untuk mencetak talenta digital Indonesia{' '}
-            <span style={{ position: 'relative', display: 'inline-block' }}>
-              yang siap industri.
-              <span
-                className="spectrum-rail-line"
-                style={{
-                  position: 'absolute',
-                  bottom: '-4px',
-                  left: 0,
-                  right: 0,
-                  height: '2px',
-                }}
-              />
-            </span>
-          </h2>
-          <p style={{ color: 'var(--color-fog)', fontSize: '15px', maxWidth: '600px', margin: '0 auto' }}>
-            Dari fondasi logika pemrograman hingga arsitektur UI modern, setiap materi dirancang ringkas, aplikatif, dan memicu motivasi belajar intrinsik melalui mekanika game.
-          </p>
-        </div>
-      </section>
-
-      {/* ── 5. Features Grid (12px Cards, Hairline Outlines) ── */}
-      <section
-        id="fitur"
-        style={{
-          padding: '80px 24px',
-          maxWidth: '1120px',
-          margin: '0 auto',
-          backgroundColor: 'var(--color-void)',
-        }}
-      >
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '8px' }}>
-            STUDIO CAPABILITIES
-          </span>
-          <h2
-            style={{
-              fontFamily: 'var(--font-heading)',
-              fontSize: '32px',
-              fontWeight: 400,
-              marginBottom: '8px',
-              letterSpacing: '-0.015em',
-            }}
-          >
-            Fitur Utama Ekosistem Skillungo
-          </h2>
-          <p style={{ color: 'var(--color-fog)', fontSize: '14px' }}>
-            Dirancang khusus untuk mendukung ritme belajar mandiri dan kompetisi sekolah.
-          </p>
-        </div>
-
-        <div
+      {/* ── 5. Alternating Z-Pattern Showcase Rows (Duolingo Distinct Feature Rows) ── */}
+      <div style={{ maxWidth: '1160px', margin: '0 auto' }}>
+        {/* Row 1: Battle Quiz Arena (Left Visual, Right Copy) */}
+        <section
+          id="battle"
           style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '20px',
+            padding: '80px clamp(20px, 4vw, 48px)',
+            borderBottom: '1px solid var(--surface-border)',
           }}
         >
-          {FEATURES_DATA.map((feat) => {
-            const Icon = feat.icon
-            return (
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              alignItems: 'center',
+              gap: 'clamp(36px, 5vw, 64px)',
+            }}
+          >
+            {/* Left: Interactive 1v1 Battle Arena Quiz Console */}
+            <div>
               <div
-                key={feat.title}
-                className="card hover-lift"
                 style={{
-                  padding: '24px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
                   backgroundColor: 'var(--surface-card)',
+                  borderRadius: '14px',
+                  border: '1px solid var(--surface-border)',
+                  padding: '24px',
+                  boxShadow: 'var(--shadow-card)',
                 }}
               >
-                <div>
+                {/* Console Topbar */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    paddingBottom: '14px',
+                    marginBottom: '16px',
+                    borderBottom: '1px solid var(--surface-border)',
+                  }}
+                >
+                  <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                    Algoritma & JavaScript
+                  </span>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        fontSize: '11.5px',
+                        color: 'var(--color-signal-orange)',
+                        fontWeight: 600,
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                      }}
+                    >
+                      <Flame size={14} /> {comboCount > 1 ? `x${comboCount} COMBO!` : 'Active Round'}
+                    </span>
+                    <span
+                      style={{
+                        fontSize: '11px',
+                        color: 'var(--accent-red)',
+                        fontFamily: 'var(--font-mono)',
+                        fontWeight: 600,
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                      }}
+                    >
+                      00:08s
+                    </span>
+                  </div>
+                </div>
+
+                {/* Contestants Row */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--surface-border)',
+                    marginBottom: '18px',
+                  }}
+                >
+                  {/* Player 1 (You) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '15px',
+                      }}
+                    >
+                      ⚔️
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 600 }}>Kamu (Hero)</div>
+                      <div
+                        style={{
+                          width: '70px',
+                          height: '4px',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          borderRadius: '4px',
+                          marginTop: '3px',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div style={{ width: '90%', height: '100%', backgroundColor: 'var(--accent-green)' }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 700,
+                      color: 'var(--color-signal-orange)',
+                      backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                      padding: '3px 8px',
+                      borderRadius: '6px',
+                    }}
+                  >
+                    VS
+                  </span>
+
+                  {/* Player 2 (Opponent) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', textAlign: 'right' }}>
+                    <div>
+                      <div style={{ fontSize: '12px', fontWeight: 600 }}>Dina Alchemist</div>
+                      <div
+                        style={{
+                          width: '70px',
+                          height: '4px',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                          borderRadius: '4px',
+                          marginTop: '3px',
+                          marginLeft: 'auto',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: quizAnswered === 0 || quizAnswered === 2 ? '45%' : '85%',
+                            height: '100%',
+                            backgroundColor: 'var(--accent-red)',
+                            transition: 'width 0.3s ease',
+                          }}
+                        />
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '8px',
+                        backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '15px',
+                      }}
+                    >
+                      🔮
+                    </div>
+                  </div>
+                </div>
+
+                {/* Question */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginBottom: '6px' }}>
+                    RONDE 3 DARI 5 · Klik jawaban untuk menyerang lawan:
+                  </div>
+                  <div style={{ fontSize: '14px', fontWeight: 500, lineHeight: 1.5 }}>
+                    Manakah ekspresi JavaScript yang mengembalikan nilai <code style={{ color: 'var(--color-signal-orange)' }}>true</code>?
+                  </div>
+                </div>
+
+                {/* Options Grid */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '8px', marginBottom: '14px' }}>
+                  {[
+                    { id: 0, text: "typeof NaN === 'number'", correct: true },
+                    { id: 1, text: "Boolean('') === true", correct: false },
+                    { id: 2, text: 'Array.isArray([]) === true', correct: true },
+                    { id: 3, text: "'5' === 5", correct: false },
+                  ].map((opt) => {
+                    const isSelected = quizAnswered === opt.id
+                    let bg = 'var(--surface-elevated)'
+                    let border = 'var(--surface-border)'
+                    let textColor = 'var(--text-primary)'
+
+                    if (isSelected) {
+                      if (opt.correct) {
+                        bg = 'rgba(34, 197, 94, 0.15)'
+                        border = 'var(--accent-green)'
+                        textColor = 'var(--accent-green)'
+                      } else {
+                        bg = 'rgba(239, 68, 68, 0.15)'
+                        border = 'var(--accent-red)'
+                        textColor = 'var(--accent-red)'
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={opt.id}
+                        onClick={() => handleQuizAnswer(opt.id)}
+                        style={{
+                          padding: '10px 12px',
+                          borderRadius: '8px',
+                          border: `1px solid ${border}`,
+                          backgroundColor: bg,
+                          color: textColor,
+                          fontSize: '12px',
+                          fontWeight: 500,
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                          transition: 'all 0.15s ease',
+                        }}
+                      >
+                        <span>
+                          <strong style={{ color: 'var(--color-steel)', marginRight: '6px' }}>
+                            {String.fromCharCode(65 + opt.id)}
+                          </strong>
+                          <code>{opt.text}</code>
+                        </span>
+                        {isSelected && (opt.correct ? <CheckCircle size={14} /> : <X size={14} />)}
+                      </button>
+                    )
+                  })}
+                </div>
+
+                {/* Feedback */}
+                {quizAnswered !== null && (
+                  <div
+                    style={{
+                      padding: '8px 12px',
+                      borderRadius: '8px',
+                      backgroundColor:
+                        quizAnswered === 0 || quizAnswered === 2
+                          ? 'rgba(34, 197, 94, 0.1)'
+                          : 'rgba(239, 68, 68, 0.1)',
+                      border: `1px solid ${
+                        quizAnswered === 0 || quizAnswered === 2
+                          ? 'var(--accent-green)'
+                          : 'var(--accent-red)'
+                      }`,
+                      fontSize: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <span>
+                      {quizAnswered === 0 || quizAnswered === 2
+                        ? '⚔️ Serangan Combo Kena! Health musuh berkurang.'
+                        : '🛡️ Kurang tepat! Musuh berhasil menangkis.'}
+                    </span>
+                    <span style={{ fontWeight: 600, color: 'var(--color-signal-orange)' }}>
+                      +120 XP
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right: Copy */}
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 'clamp(26px, 3.5vw, 36px)',
+                  fontWeight: 600,
+                  lineHeight: 1.25,
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Adu ketangkasan logika di Arena Duel 1v1
+              </h2>
+              <p
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--color-fog)',
+                  lineHeight: 1.65,
+                  marginBottom: '24px',
+                }}
+              >
+                Uji seberapa cepat kemampuan analisismu saat berhadapan dengan waktu. Masuk ke matchmaking publik untuk menantang siswa se-Indonesia, atau buat ruangan private untuk bertanding bersama teman sekelas.
+              </p>
+              <Link
+                href="/battle"
+                className="btn-signal-orange"
+                style={{ padding: '10px 20px', fontSize: '13px', textDecoration: 'none' }}
+              >
+                <Swords size={15} /> Coba Arena Duel 1v1 <ChevronRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Row 2: Learn Anywhere / Modular Roadmap (Left Copy, Right Visual) */}
+        <section
+          style={{
+            padding: '80px clamp(20px, 4vw, 48px)',
+            borderBottom: '1px solid var(--surface-border)',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              alignItems: 'center',
+              gap: 'clamp(36px, 5vw, 64px)',
+            }}
+          >
+            {/* Left: Copy */}
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 'clamp(26px, 3.5vw, 36px)',
+                  fontWeight: 600,
+                  lineHeight: 1.25,
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Belajar kapan saja, di perangkat mana saja
+              </h2>
+              <p
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--color-fog)',
+                  lineHeight: 1.65,
+                  marginBottom: '24px',
+                }}
+              >
+                Akses materi dari komputer laboratorium sekolah, laptop di rumah, atau ponsel pintarmu saat di perjalanan. Modul dirancang responsif, ringan, dan ramah kuota untuk memudahkan akses belajar mandiri.
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '28px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px' }}>
+                  <Check size={16} style={{ color: 'var(--accent-green)', flexShrink: 0 }} />
+                  <span>Sinkronisasi progres cloud otomatis di seluruh perangkat.</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px' }}>
+                  <Check size={16} style={{ color: 'var(--accent-green)', flexShrink: 0 }} />
+                  <span>Durasi ringkas 5-10 menit per materi untuk fokus maksimal.</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13.5px' }}>
+                  <Check size={16} style={{ color: 'var(--accent-green)', flexShrink: 0 }} />
+                  <span>Kuis evaluasi instan di setiap akhir unit pelajaran.</span>
+                </div>
+              </div>
+
+              <Link
+                href="/modules"
+                className="btn-signal-orange"
+                style={{ padding: '10px 20px', fontSize: '13px', textDecoration: 'none' }}
+              >
+                <BookOpen size={15} /> Jelajahi Modul Belajar <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* Right: Curriculum Roadmap Step Mockup */}
+            <div>
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-card)',
+                  borderRadius: '14px',
+                  border: '1px solid var(--surface-border)',
+                  padding: '24px',
+                  boxShadow: 'var(--shadow-card)',
+                }}
+              >
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--color-steel)', marginBottom: '14px' }}>
+                  ALUR PEMBELAJARAN: WEB DEVELOPMENT
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {/* Step 1 */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--surface-elevated)',
+                      border: '1px solid var(--surface-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'var(--accent-green)',
+                        }}
+                      >
+                        <Check size={13} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600 }}>1. Struktur Dokumen HTML</div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Materi teks & video selesai</div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600 }}>
+                      +100 XP
+                    </span>
+                  </div>
+
+                  {/* Step 2 */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--surface-elevated)',
+                      border: '1px solid var(--surface-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          backgroundColor: 'rgba(34, 197, 94, 0.15)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'var(--accent-green)',
+                        }}
+                      >
+                        <Check size={13} />
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600 }}>2. Styling Selektor CSS Modern</div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Praktik flexbox & grid selesai</div>
+                      </div>
+                    </div>
+                    <span style={{ fontSize: '11px', color: 'var(--accent-green)', fontWeight: 600 }}>
+                      +120 XP
+                    </span>
+                  </div>
+
+                  {/* Step 3 (Current Active) */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(245, 197, 66, 0.08)',
+                      border: '1px solid rgba(245, 197, 66, 0.35)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--color-signal-orange)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: '#0a0a0a',
+                          fontWeight: 700,
+                          fontSize: '11px',
+                        }}
+                      >
+                        3
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                          3. Logika Komponen JavaScript
+                        </div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-signal-orange)' }}>
+                          Sedang dipelajari · Kuis siap
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      style={{
+                        fontSize: '10.5px',
+                        backgroundColor: 'var(--color-signal-orange)',
+                        color: '#0a0a0a',
+                        padding: '2px 8px',
+                        borderRadius: '6px',
+                        fontWeight: 700,
+                      }}
+                    >
+                      Aktif
+                    </span>
+                  </div>
+
+                  {/* Step 4 (Locked) */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--surface-canvas)',
+                      border: '1px solid var(--surface-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      opacity: 0.6,
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <div
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          backgroundColor: 'var(--surface-elevated)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'var(--color-steel)',
+                          fontSize: '11px',
+                        }}
+                      >
+                        4
+                      </div>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 500 }}>4. Evaluasi Akhir & Sertifikat</div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Terkunci hingga langkah 3 tuntas</div>
+                      </div>
+                    </div>
+                    <Shield size={14} style={{ color: 'var(--color-steel)' }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Row 3: School Leaderboard (Left Visual, Right Copy) */}
+        <section
+          id="leaderboard"
+          style={{
+            padding: '80px clamp(20px, 4vw, 48px)',
+            borderBottom: '1px solid var(--surface-border)',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              alignItems: 'center',
+              gap: 'clamp(36px, 5vw, 64px)',
+            }}
+          >
+            {/* Left: Leaderboard Card Mockup */}
+            <div>
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-card)',
+                  borderRadius: '14px',
+                  border: '1px solid var(--surface-border)',
+                  padding: '24px',
+                  boxShadow: 'var(--shadow-card)',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '16px',
+                  }}
+                >
+                  <div>
+                    <div style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 600 }}>
+                      KLASEMEN NASIONAL
+                    </div>
+                    <div style={{ fontSize: '16px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                      Top Sekolah Pekan Ini
+                    </div>
+                  </div>
+                  <Trophy size={18} style={{ color: 'var(--color-signal-orange)' }} />
+                </div>
+
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  {/* Rank 1 */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                      border: '1px solid rgba(245, 197, 66, 0.35)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '16px' }}>🥇</span>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600 }}>SMK Telkom Malang</div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>32 siswa aktif</div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--color-signal-orange)' }}>
+                        14,820 XP
+                      </div>
+                      <div style={{ fontSize: '10px', color: 'var(--accent-green)' }}>+1,250 hari ini</div>
+                    </div>
+                  </div>
+
+                  {/* Rank 2 */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--surface-elevated)',
+                      border: '1px solid var(--surface-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '16px' }}>🥈</span>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600 }}>SMAN 1 Yogyakarta</div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>28 siswa aktif</div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600 }}>12,450 XP</div>
+                      <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>+980 hari ini</div>
+                    </div>
+                  </div>
+
+                  {/* Rank 3 */}
+                  <div
+                    style={{
+                      padding: '12px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--surface-elevated)',
+                      border: '1px solid var(--surface-border)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                    }}
+                  >
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <span style={{ fontSize: '16px' }}>🥉</span>
+                      <div>
+                        <div style={{ fontSize: '13px', fontWeight: 600 }}>SMKN 2 Bandung</div>
+                        <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>24 siswa aktif</div>
+                      </div>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <div style={{ fontSize: '13px', fontWeight: 600 }}>10,910 XP</div>
+                      <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>+740 hari ini</div>
+                    </div>
+                  </div>
+
+                  {/* You indicator */}
+                  <div
+                    style={{
+                      padding: '10px 14px',
+                      borderRadius: '10px',
+                      backgroundColor: 'var(--surface-canvas)',
+                      border: '1px dashed var(--surface-border)',
+                      fontSize: '11.5px',
+                      color: 'var(--color-fog)',
+                      textAlign: 'center',
+                      marginTop: '4px',
+                    }}
+                  >
+                    🏫 <strong>Sekolahmu:</strong> Selesaikan modul & kuis untuk mendongkrak peringkat sekolahmu!
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: Copy */}
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 'clamp(26px, 3.5vw, 36px)',
+                  fontWeight: 600,
+                  lineHeight: 1.25,
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Bawa nama sekolahmu mendominasi puncak nasional
+              </h2>
+              <p
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--color-fog)',
+                  lineHeight: 1.65,
+                  marginBottom: '24px',
+                }}
+              >
+                Setiap quest yang kamu selesaikan dan duel kuis yang kamu menangkan otomatis menyumbang poin langsung ke reputasi sekolahmu. Bersainglah secara sehat dengan ribuan siswa dari seluruh penjuru nusantara.
+              </p>
+              <Link
+                href="/leaderboard"
+                className="btn-signal-orange"
+                style={{ padding: '10px 20px', fontSize: '13px', textDecoration: 'none' }}
+              >
+                <Trophy size={15} /> Lihat Peringkat Sekolah <ChevronRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* Row 4: Certificate & Digital Portfolio (Left Copy, Right Visual) */}
+        <section
+          style={{
+            padding: '80px clamp(20px, 4vw, 48px)',
+            borderBottom: '1px solid var(--surface-border)',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              alignItems: 'center',
+              gap: 'clamp(36px, 5vw, 64px)',
+            }}
+          >
+            {/* Left: Copy */}
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 'clamp(26px, 3.5vw, 36px)',
+                  fontWeight: 600,
+                  lineHeight: 1.25,
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Validasi kompetensi dengan portofolio & sertifikat
+              </h2>
+              <p
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--color-fog)',
+                  lineHeight: 1.65,
+                  marginBottom: '24px',
+                }}
+              >
+                Tuntaskan seluruh modul untuk mendapatkan sertifikat digital resmi beserta badge keahlian terverifikasi. Bagikan tautan profil publikmu ke LinkedIn atau lampirkan ke berkas lamaran magang industri.
+              </p>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '28px' }}>
+                <span
+                  style={{
+                    fontSize: '11.5px',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--surface-border)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  🛡️ ID Verifikasi Unik
+                </span>
+                <span
+                  style={{
+                    fontSize: '11.5px',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--surface-border)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  📜 Sertifikat Digital
+                </span>
+                <span
+                  style={{
+                    fontSize: '11.5px',
+                    padding: '4px 10px',
+                    borderRadius: '6px',
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--surface-border)',
+                    color: 'var(--text-primary)',
+                  }}
+                >
+                  💼 Profil Siap Kerja
+                </span>
+              </div>
+
+              <Link
+                href="/modules"
+                className="btn-signal-orange"
+                style={{ padding: '10px 20px', fontSize: '13px', textDecoration: 'none' }}
+              >
+                <Award size={15} /> Mulai Raih Sertifikat <ChevronRight size={14} />
+              </Link>
+            </div>
+
+            {/* Right: Verified Certificate Mockup Card */}
+            <div>
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-card)',
+                  borderRadius: '14px',
+                  border: '1px solid rgba(245, 197, 66, 0.35)',
+                  padding: '24px',
+                  boxShadow: 'var(--shadow-card)',
+                  position: 'relative',
+                }}
+              >
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '16px',
+                    borderBottom: '1px solid var(--surface-border)',
+                    paddingBottom: '12px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div
+                      style={{
+                        width: '28px',
+                        height: '28px',
+                        borderRadius: '7px',
+                        backgroundColor: 'rgba(245, 197, 66, 0.15)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        color: 'var(--color-signal-orange)',
+                      }}
+                    >
+                      <Award size={16} />
+                    </div>
+                    <span style={{ fontSize: '12px', fontWeight: 700, letterSpacing: '0.04em' }}>
+                      SKILLUNGO CERTIFICATE OF COMPLETION
+                    </span>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: '10px',
+                      color: 'var(--accent-green)',
+                      backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                      border: '1px solid rgba(34, 197, 94, 0.3)',
+                      padding: '2px 6px',
+                      borderRadius: '4px',
+                      fontWeight: 600,
+                    }}
+                  >
+                    TERVERIFIKASI
+                  </span>
+                </div>
+
+                <div style={{ textAlign: 'center', padding: '12px 0 16px' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--color-steel)', marginBottom: '4px' }}>
+                    Diberikan kepada:
+                  </div>
+                  <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '4px' }}>
+                    Ahmad Fauzan
+                  </div>
+                  <div style={{ fontSize: '12px', color: 'var(--color-fog)', marginBottom: '14px' }}>
+                    Telah menuntaskan kurikulum kompetensi:
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '14px',
+                      fontWeight: 600,
+                      color: 'var(--color-signal-orange)',
+                      backgroundColor: 'var(--surface-elevated)',
+                      padding: '6px 12px',
+                      borderRadius: '8px',
+                      display: 'inline-block',
+                      border: '1px solid var(--surface-border)',
+                    }}
+                  >
+                    React & Modern Web Architecture
+                  </div>
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    borderTop: '1px solid var(--surface-border)',
+                    paddingTop: '12px',
+                    fontSize: '10.5px',
+                    color: 'var(--color-steel)',
+                  }}
+                >
+                  <span>ID: SKL-2026-9482X</span>
+                  <span>Terbit: Oktober 2026</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Row 5: Streak, Quests & Reward Shop (Left Visual, Right Copy) */}
+        <section
+          style={{
+            padding: '80px clamp(20px, 4vw, 48px)',
+            borderBottom: '1px solid var(--surface-border)',
+          }}
+        >
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+              alignItems: 'center',
+              gap: 'clamp(36px, 5vw, 64px)',
+            }}
+          >
+            {/* Left: Gamified Reward Card */}
+            <div>
+              <div
+                style={{
+                  backgroundColor: 'var(--surface-card)',
+                  borderRadius: '14px',
+                  border: '1px solid var(--surface-border)',
+                  padding: '24px',
+                  boxShadow: 'var(--shadow-card)',
+                }}
+              >
+                {/* Streak Bar */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
+                    border: '1px solid rgba(239, 68, 68, 0.25)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '12px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Flame size={18} style={{ color: 'var(--accent-red)' }} />
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: 600 }}>7 Hari Streak Harian</div>
+                      <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Multiplier XP x1.5 aktif</div>
+                    </div>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: '11px',
+                      fontWeight: 600,
+                      color: 'var(--accent-red)',
+                    }}
+                  >
+                    🔥 Terjaga
+                  </span>
+                </div>
+
+                {/* Quests */}
+                <div
+                  style={{
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    backgroundColor: 'var(--surface-elevated)',
+                    border: '1px solid var(--surface-border)',
+                    marginBottom: '12px',
+                  }}
+                >
                   <div
                     style={{
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      marginBottom: '18px',
+                      marginBottom: '8px',
                     }}
                   >
-                    <div
-                      style={{
-                        width: '38px',
-                        height: '38px',
-                        borderRadius: '10px',
-                        backgroundColor: 'var(--surface-elevated)',
-                        border: '1px solid var(--surface-border)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: feat.accent,
-                      }}
-                    >
-                      <Icon size={18} />
-                    </div>
-                    <span
-                      style={{
-                        fontSize: '10px',
-                        fontFamily: 'var(--font-inter)',
-                        color: 'var(--color-steel)',
-                        letterSpacing: '1px',
-                        textTransform: 'uppercase',
-                      }}
-                    >
-                      {feat.tag}
+                    <span style={{ fontSize: '12px', fontWeight: 600 }}>Misi Harian (2/3 Selesai)</span>
+                    <span style={{ fontSize: '11px', color: 'var(--color-signal-orange)', fontWeight: 600 }}>
+                      +50 Koin Gold
                     </span>
                   </div>
-
-                  <h3
+                  <div
                     style={{
-                      fontFamily: 'var(--font-heading)',
-                      fontSize: '18px',
-                      fontWeight: 400,
-                      marginBottom: '8px',
-                      color: 'var(--text-primary)',
+                      width: '100%',
+                      height: '4px',
+                      backgroundColor: 'rgba(255,255,255,0.08)',
+                      borderRadius: '4px',
+                      overflow: 'hidden',
                     }}
                   >
-                    {feat.title}
-                  </h3>
-                  <p style={{ fontSize: '13px', color: 'var(--color-fog)', lineHeight: 1.6 }}>
-                    {feat.desc}
-                  </p>
+                    <div style={{ width: '66%', height: '100%', backgroundColor: 'var(--color-signal-orange)' }} />
+                  </div>
+                </div>
+
+                {/* Wallet Balance & Coupon Item */}
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    padding: '12px 14px',
+                    borderRadius: '10px',
+                    backgroundColor: 'rgba(245, 197, 66, 0.1)',
+                    border: '1px solid rgba(245, 197, 66, 0.35)',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Gift size={18} style={{ color: 'var(--color-signal-orange)' }} />
+                    <div>
+                      <div style={{ fontSize: '13px', fontWeight: 600 }}>Saldo Dompet Petualang</div>
+                      <div style={{ fontSize: '11px', color: 'var(--color-steel)' }}>Tukarkan voucher & item</div>
+                    </div>
+                  </div>
+                  <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--color-signal-orange)' }}>
+                    1,450 Gold
+                  </span>
                 </div>
               </div>
-            )
-          })}
-        </div>
-      </section>
+            </div>
 
-      {/* ── 6. FAQ Section ── */}
+            {/* Right: Copy */}
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-heading)',
+                  fontSize: 'clamp(26px, 3.5vw, 36px)',
+                  fontWeight: 600,
+                  lineHeight: 1.25,
+                  marginBottom: '16px',
+                  letterSpacing: '-0.02em',
+                  color: 'var(--text-primary)',
+                }}
+              >
+                Kumpulkan koin emas, tukarkan dengan reward nyata
+              </h2>
+              <p
+                style={{
+                  fontSize: '15px',
+                  color: 'var(--color-fog)',
+                  lineHeight: 1.65,
+                  marginBottom: '24px',
+                }}
+              >
+                Konsistensi belajarmu dihargai secara nyata. Kumpulkan koin emas dari modul dan kemenangan duel kuis, lalu tukarkan di Toko Petualang dengan perlindungan streak freeze, kosmetik avatar, atau voucher diskon kursus lanjutan.
+              </p>
+              <Link
+                href="/shop"
+                className="btn-signal-orange"
+                style={{ padding: '10px 20px', fontSize: '13px', textDecoration: 'none' }}
+              >
+                <Gift size={15} /> Kunjungi Toko Petualang <ChevronRight size={14} />
+              </Link>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ── 6. Section 4: FAQ (Accordion) ── */}
       <section
         id="faq"
         style={{
-          padding: '80px 24px',
-          maxWidth: '820px',
+          padding: '80px clamp(20px, 4vw, 48px)',
+          maxWidth: '860px',
           margin: '0 auto',
-          backgroundColor: 'var(--color-void)',
         }}
       >
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <span className="micro-eyebrow" style={{ display: 'block', marginBottom: '8px' }}>
-            HELP & DOCUMENTATION
-          </span>
           <h2
             style={{
               fontFamily: 'var(--font-heading)',
-              fontSize: '32px',
-              fontWeight: 400,
+              fontSize: 'clamp(28px, 4vw, 36px)',
+              fontWeight: 600,
               marginBottom: '8px',
-              letterSpacing: '-0.015em',
+              letterSpacing: '-0.02em',
+              color: 'var(--text-primary)',
             }}
           >
             Pertanyaan yang Sering Diajukan
@@ -1324,9 +2660,10 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             return (
               <div
                 key={i}
-                className="card"
                 style={{
                   backgroundColor: 'var(--surface-card)',
+                  borderRadius: '12px',
+                  border: '1px solid var(--surface-border)',
                   overflow: 'hidden',
                 }}
               >
@@ -1342,7 +2679,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                     border: 'none',
                     color: 'var(--text-primary)',
                     fontFamily: 'var(--font-inter)',
-                    fontSize: '14px',
+                    fontSize: '14.5px',
                     fontWeight: 500,
                     textAlign: 'left',
                     cursor: 'pointer',
@@ -1364,7 +2701,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   <div
                     style={{
                       padding: '0 20px 18px',
-                      fontSize: '13px',
+                      fontSize: '13.5px',
                       color: 'var(--color-fog)',
                       lineHeight: 1.65,
                       borderTop: '1px solid var(--surface-border)',
@@ -1380,20 +2717,33 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         </div>
       </section>
 
-      {/* ── 7. Final Call to Action on Void ── */}
+      {/* ── 7. Section 5: Duolingo Pre-Footer Call to Action Banner ── */}
       <section
         style={{
-          padding: '80px 24px',
           borderTop: '1px solid var(--surface-border)',
-          backgroundColor: 'var(--color-void)',
+          borderBottom: '1px solid var(--surface-border)',
+          backgroundColor: 'var(--surface-canvas)',
+          padding: '80px clamp(20px, 4vw, 48px)',
           textAlign: 'center',
+          position: 'relative',
+          overflow: 'hidden',
         }}
       >
-        <div style={{ maxWidth: '680px', margin: '0 auto' }}>
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            pointerEvents: 'none',
+            background:
+              'radial-gradient(circle at 50% 50%, rgba(245, 197, 66, 0.05) 0%, transparent 60%)',
+          }}
+        />
+
+        <div style={{ maxWidth: '680px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
           <div
             style={{
-              width: '48px',
-              height: '48px',
+              width: '44px',
+              height: '44px',
               borderRadius: '12px',
               backgroundColor: 'rgba(245, 197, 66, 0.12)',
               border: '1px solid rgba(245, 197, 66, 0.4)',
@@ -1409,36 +2759,38 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
           <h2
             style={{
               fontFamily: 'var(--font-heading)',
-              fontSize: 'clamp(28px, 4vw, 40px)',
-              fontWeight: 400,
-              marginBottom: '12px',
+              fontSize: 'clamp(28px, 4vw, 42px)',
+              fontWeight: 600,
+              marginBottom: '14px',
               letterSpacing: '-0.02em',
               color: 'var(--text-primary)',
             }}
           >
             {isLoggedIn ? 'Karaktermu Siap Masuk Arena.' : 'Mulai Petualangan Skill Digitalmu.'}
           </h2>
+
           <p
             style={{
               color: 'var(--color-fog)',
-              fontSize: '14px',
-              maxWidth: '500px',
+              fontSize: '15px',
+              maxWidth: '520px',
               margin: '0 auto 32px',
               lineHeight: 1.6,
             }}
           >
             {isLoggedIn
-              ? 'Lanjutkan modul belajar, selesaikan quest harian, dan pertahankan posisi terbaik di Leaderboard.'
-              : 'Daftar gratis dalam hitungan detik. Kumpulkan XP, kuasai modul coding & desain, dan raih prestasi untuk sekolahmu.'}
+              ? 'Lanjutkan modul belajar, selesaikan quest harian, dan pertahankan posisi terbaik almamatermu di Leaderboard.'
+              : 'Daftar gratis dalam hitungan detik. Kumpulkan XP, kuasai modul coding & desain, dan raih prestasi membanggakan untuk sekolahmu.'}
           </p>
 
           <Link
             href={isLoggedIn ? '/dashboard' : '/register'}
             className="btn-signal-orange"
             style={{
-              padding: '13px 32px',
-              fontSize: '13.5px',
+              padding: '14px 32px',
+              fontSize: '14px',
               textDecoration: 'none',
+              display: 'inline-flex',
             }}
           >
             {isLoggedIn ? (
@@ -1451,102 +2803,159 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               </>
             )}
           </Link>
+
+          <div style={{ marginTop: '16px', fontSize: '11.5px', color: 'var(--color-steel)' }}>
+            100% Gratis untuk Pelajar · Tanpa Kartu Kredit
+          </div>
         </div>
       </section>
 
-      {/* ── 8. Footer (Floating text on Void per Linearity spec) ── */}
+      {/* ── 8. Section 6: Comprehensive Multi-Column Footer (Duolingo Style) ── */}
       <footer
         style={{
-          padding: '36px 32px',
-          borderTop: '1px solid var(--surface-border)',
+          padding: '60px clamp(20px, 4vw, 48px) 36px',
           backgroundColor: 'var(--color-void)',
         }}
       >
-        <div
-          style={{
-            maxWidth: '1120px',
-            margin: '0 auto',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '16px',
-            textAlign: 'center',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <div
-              style={{
-                width: '28px',
-                height: '28px',
-                borderRadius: '8px',
-                background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
-                border: '1px solid #F59E0B',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 2px 6px rgba(245, 158, 11, 0.25)',
-                flexShrink: 0,
-              }}
-            >
-              <Swords
-                size={14}
-                style={{
-                  color: '#ffffff',
-                  filter: 'drop-shadow(0 1px 1px rgba(180, 83, 9, 0.4))',
-                }}
-              />
-            </div>
-            <span
-              style={{
-                fontFamily: 'var(--font-heading)',
-                fontSize: '17px',
-                fontWeight: 700,
-                color: 'var(--text-primary)',
-                letterSpacing: '-0.02em',
-              }}
-            >
-              Skill<span
-                style={{
-                  background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  fontWeight: 700,
-                }}
-              >
-                ungo
-              </span>
-            </span>
-          </div>
-
+        <div style={{ maxWidth: '1160px', margin: '0 auto' }}>
+          {/* Top Multi-Column Grid */}
           <div
             style={{
-              display: 'flex',
-              gap: '20px',
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-              fontSize: '12px',
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+              gap: '36px',
+              marginBottom: '48px',
             }}
           >
-            <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
-              Modul Belajar
-            </Link>
-            <Link href="/battle" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
-              Battle Arena 1v1
-            </Link>
-            <Link href="/leaderboard" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
-              Leaderboard Sekolah
-            </Link>
-            <Link href="/shop" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
-              Toko Petualang
-            </Link>
-            <Link href="/login" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
-              Masuk Akun
-            </Link>
+            {/* Column 1: Brand Info */}
+            <div style={{ gridColumn: 'span 1' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '14px' }}>
+                <div
+                  style={{
+                    width: '28px',
+                    height: '28px',
+                    borderRadius: '8px',
+                    background: 'linear-gradient(135deg, #FBBF24 0%, #F59E0B 100%)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <Swords size={15} style={{ color: '#ffffff' }} />
+                </div>
+                <span style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700 }}>
+                  Skill<span style={{ color: 'var(--color-signal-orange)' }}>ungo</span>
+                </span>
+              </div>
+              <p style={{ fontSize: '12.5px', color: 'var(--color-steel)', lineHeight: 1.6, margin: 0 }}>
+                Platform belajar gamifikasi untuk siswa SMK & SMA Indonesia. Asah keahlian digital, taklukkan kuis, dan bangun portofolio masa depan.
+              </p>
+            </div>
+
+            {/* Column 2: Produk & Fitur */}
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '14px' }}>
+                Produk & Fitur
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '12.5px' }}>
+                <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Modul Belajar
+                </Link>
+                <Link href="/battle" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Arena Duel 1v1
+                </Link>
+                <Link href="/leaderboard" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Leaderboard Sekolah
+                </Link>
+                <Link href="/shop" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Toko Petualang
+                </Link>
+                <Link href="/quests" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Misi Harian
+                </Link>
+              </div>
+            </div>
+
+            {/* Column 3: Modul Populer */}
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '14px' }}>
+                Modul Populer
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '12.5px' }}>
+                <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  HTML & CSS Dasar
+                </Link>
+                <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  JavaScript Modern
+                </Link>
+                <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  React & Next.js
+                </Link>
+                <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  UI/UX Design System
+                </Link>
+                <Link href="/modules" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  SQL & Basis Data
+                </Link>
+              </div>
+            </div>
+
+            {/* Column 4: Bantuan & Komunitas */}
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '14px' }}>
+                Bantuan & Panduan
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '12.5px' }}>
+                <a href="#faq" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  FAQ Siswa
+                </a>
+                <a href="#metode" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Panduan Belajar
+                </a>
+                <Link href="/login" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Masuk Akun
+                </Link>
+                <Link href="/register" style={{ color: 'var(--color-silver)', textDecoration: 'none' }}>
+                  Pendaftaran Baru
+                </Link>
+              </div>
+            </div>
+
+            {/* Column 5: Legal & Kebijakan */}
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '14px' }}>
+                Legal & Privasi
+              </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '9px', fontSize: '12.5px' }}>
+                <span style={{ color: 'var(--color-steel)' }}>Ketentuan Layanan</span>
+                <span style={{ color: 'var(--color-steel)' }}>Kebijakan Privasi</span>
+                <span style={{ color: 'var(--color-steel)' }}>Pedoman Komunitas</span>
+                <span style={{ color: 'var(--color-steel)' }}>Keamanan Siswa</span>
+              </div>
+            </div>
           </div>
 
-          <p style={{ fontSize: '11px', color: 'var(--color-steel)' }}>
-            © 2026 Skillungo. &quot;Level Up Your Skills, Conquer Your Future&quot; · Glowing Studio Console Edition.
-          </p>
+          {/* Bottom Divider & Copyright */}
+          <div
+            style={{
+              borderTop: '1px solid var(--surface-border)',
+              paddingTop: '24px',
+              display: 'flex',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              fontSize: '12px',
+              color: 'var(--color-steel)',
+            }}
+          >
+            <div>
+              © 2026 Skillungo. Seluruh hak cipta dilindungi undang-undang.
+            </div>
+            <div>
+              &quot;Level Up Your Skills, Conquer Your Future&quot; · Duolingo-Structured Edition.
+            </div>
+          </div>
         </div>
       </footer>
     </div>
