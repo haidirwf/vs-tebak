@@ -160,7 +160,19 @@ export default function DashboardPage() {
                 />
             )}
 
-            {/* 2. Grid Dua Kolom Gamified (Misi & Aktivitas di Kiri, Analisa & Leaderboard di Kanan) */}
+            {/* 2. Header Seksi & Grid Dua Kolom Gamified (Misi & Aktivitas) */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '16px', marginBottom: '-8px', padding: '0 4px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div style={{ width: '4px', height: '18px', borderRadius: '2px', backgroundColor: 'var(--brand-primary)' }} />
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                        Misi Harian & Aktivitas Petualang
+                    </h2>
+                </div>
+                <span style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+                    Pembaruan Realtime
+                </span>
+            </div>
+
             <div className="two-col-grid" style={{ display: 'grid', gap: '24px', alignItems: 'start', width: '100%', minWidth: 0 }}>
                 {/* Kolom Kiri: Misi Harian & Aktivitas XP Terbaru */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', minWidth: 0 }}>
