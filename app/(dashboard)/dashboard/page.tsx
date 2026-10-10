@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import HeroBanner from '@/components/dashboard/HeroBanner'
+import GameLobbyStage from '@/components/dashboard/GameLobbyStage'
 import DailyQuestList from '@/components/quest/DailyQuestList'
 import RecentActivity from '@/components/dashboard/RecentActivity'
 import QuickLeaderboard from '@/components/dashboard/QuickLeaderboard'
@@ -11,6 +11,7 @@ import { format } from 'date-fns'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { createClient } from '@/lib/supabase/client'
+import { Module, UserModule } from '@/types'
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -22,6 +23,9 @@ export default function DashboardPage() {
         xpLogs,
         dashboardFetchedAt,
         setDashboardData,
+        modules,
+        userModules,
+        setModulesData,
     } = useContentStore()
 
     const [isFetching, setIsFetching] = useState(!dashboardFetchedAt)
@@ -39,6 +43,23 @@ export default function DashboardPage() {
 
             try {
                 const t0 = performance.now()
+
+                // Fetch modules and user_modules in parallel if not yet cached
+                const shouldFetchModules = !modules || modules.length === 0
+                const modulesPromise = shouldFetchModules
+                    ? Promise.all([
+                        supabase
+                            .from('modules')
+                            .select('id, slug, title, description, category, difficulty, xp_reward, duration_minutes, is_published, created_at')
+                            .eq('is_published', true)
+                            .order('created_at'),
+                        supabase
+                            .from('user_modules')
+                            .select('id, user_id, module_id, status, progress_percent, completed_at, xp_granted_at')
+                            .eq('user_id', user.id),
+                    ])
+                    : null
+
                 const { data: rpcData, error: rpcError } = await supabase
                     .rpc('get_dashboard_summary', { p_user_id: user.id, p_today: today })
 
@@ -89,6 +110,17 @@ export default function DashboardPage() {
                         xpLogs: xpLogRes.data || [],
                     })
                 }
+
+                // Hydrate modules in content store if fetched
+                if (modulesPromise) {
+                    const [modRes, userModRes] = await modulesPromise
+                    if (modRes.data) {
+                        setModulesData({
+                            modules: modRes.data as Module[],
+                            userModules: (userModRes.data || []) as UserModule[],
+                        })
+                    }
+                }
             } catch (err) {
                 console.error('Error loading dashboard data:', err)
             } finally {
@@ -103,49 +135,47 @@ export default function DashboardPage() {
         } else {
             setIsFetching(false)
         }
-    }, [today, dashboardFetchedAt, setDashboardData, router])
+    }, [today, dashboardFetchedAt, setDashboardData, setModulesData, modules, router])
 
     return (
-        <div className="responsive-page" style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
-            {/* 1. Header Hero Banner (Profil, Avatar, Kelas RPG, Level Progress, Kalender Streak 7 Hari) */}
+        <div className="responsive-page" style={{ maxWidth: '1240px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', minWidth: 0, paddingBottom: '32px' }}>
+            {/* 1. Game Lobby Stage & Trio Action Deck */}
             {profile ? (
-                <HeroBanner
+                <GameLobbyStage
                     profile={profile}
                     modulesCompletedCount={completedModules.length}
                     xpLogs={xpLogs}
+                    modules={modules}
+                    userModules={userModules}
                 />
             ) : (
                 <div
                     className="card"
                     style={{
-                        height: '140px',
+                        height: '280px',
                         backgroundColor: 'var(--surface-card)',
                         border: '1px solid var(--surface-border)',
-                        borderRadius: '8px',
+                        borderRadius: '14px',
                     }}
                 />
             )}
 
-            {/* 3. Diagram Analisa Pembelajaran (Grafik Bar XP 7 Hari & Penguasaan Kategori Modul) */}
-            <div style={{ width: '100%', minWidth: 0 }}>
-                <LearningAnalytics
-                    completedModules={completedModules}
-                    xpLogs={xpLogs}
-                    totalXp={profile?.xp || 0}
-                    level={profile?.level || 1}
-                />
-            </div>
-
-            {/* 4. Grid Dua Kolom Utama (Quest Harian & Aktivitas di Kiri, Top Hero Leaderboard di Kanan) */}
-            <div className="two-col-grid" style={{ display: 'grid', gap: '20px', alignItems: 'start', width: '100%', minWidth: 0 }}>
-                {/* Kolom Kiri: Quest Harian & Aktivitas XP Terbaru */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
+            {/* 2. Grid Dua Kolom Gamified (Misi & Aktivitas di Kiri, Analisa & Leaderboard di Kanan) */}
+            <div className="two-col-grid" style={{ display: 'grid', gap: '24px', alignItems: 'start', width: '100%', minWidth: 0 }}>
+                {/* Kolom Kiri: Misi Harian & Aktivitas XP Terbaru */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', minWidth: 0 }}>
                     <DailyQuestList quests={quests} userQuests={userQuests} />
                     <RecentActivity modules={completedModules} xpLogs={xpLogs} />
                 </div>
 
-                {/* Kolom Kanan: Top Hero Leaderboard */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', width: '100%', minWidth: 0 }}>
+                {/* Kolom Kanan: Diagram Analisa & Top Hero Leaderboard */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', width: '100%', minWidth: 0 }}>
+                    <LearningAnalytics
+                        completedModules={completedModules}
+                        xpLogs={xpLogs}
+                        totalXp={profile?.xp || 0}
+                        level={profile?.level || 1}
+                    />
                     <QuickLeaderboard
                         currentUserId={profile?.id}
                         userStreak={profile?.streak_count}

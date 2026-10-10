@@ -2383,4 +2383,39 @@ input::placeholder, textarea::placeholder {
   contain-intrinsic-size: 0 320px;
 }
 
+/* Game Lobby Stage & Action Cards Layout */
+.hero-stage-container {
+  width: 100%;
+}
+
+@media (max-width: 900px) {
+  .stage-nodes-layout {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .stage-rail-line {
+    display: none !important;
+  }
+  .stage-side-node {
+    width: 100% !important;
+  }
+  .stage-side-node a {
+    max-width: 100% !important;
+  }
+  .prev-node {
+    order: 2;
+  }
+  .next-node {
+    order: 3;
+  }
+}
+
+@media (max-width: 768px) {
+  .game-deck-grid {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+}
+
+
 
