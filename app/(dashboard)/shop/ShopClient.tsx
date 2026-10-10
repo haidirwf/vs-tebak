@@ -288,53 +288,59 @@ export default function ShopClient({
                     overflowX: 'auto',
                 }}
             >
-                <button
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     type="button"
                     onClick={() => setActiveTab('voucher')}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        padding: '10px 18px',
-                        borderRadius: '10px',
-                        border: activeTab === 'voucher' ? '1px solid var(--accent-gold-border)' : '1px solid transparent',
-                        backgroundColor: activeTab === 'voucher' ? 'var(--accent-gold-bg)' : 'transparent',
+                        padding: '7px 16px',
+                        borderRadius: '8px',
+                        border: `1px solid ${activeTab === 'voucher' ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                        backgroundColor: activeTab === 'voucher' ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
                         color: activeTab === 'voucher' ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-heading)',
                         fontSize: '13px',
-                        fontWeight: 600,
+                        fontWeight: activeTab === 'voucher' ? 700 : 500,
                         cursor: 'pointer',
                         transition: 'all 0.15s ease',
                         whiteSpace: 'nowrap',
+                        boxShadow: 'none',
                     }}
                 >
                     <Ticket size={16} />
                     <span>Voucher Kantin</span>
-                </button>
+                </motion.button>
 
-                <button
+                <motion.button
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     type="button"
                     onClick={() => setActiveTab('items')}
                     style={{
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
-                        padding: '10px 18px',
-                        borderRadius: '10px',
-                        border: activeTab === 'items' ? '1px solid var(--accent-gold-border)' : '1px solid transparent',
-                        backgroundColor: activeTab === 'items' ? 'var(--accent-gold-bg)' : 'transparent',
+                        padding: '7px 16px',
+                        borderRadius: '8px',
+                        border: `1px solid ${activeTab === 'items' ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                        backgroundColor: activeTab === 'items' ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
                         color: activeTab === 'items' ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                         fontFamily: 'var(--font-heading)',
                         fontSize: '13px',
-                        fontWeight: 600,
+                        fontWeight: activeTab === 'items' ? 700 : 500,
                         cursor: 'pointer',
                         transition: 'all 0.15s ease',
                         whiteSpace: 'nowrap',
+                        boxShadow: 'none',
                     }}
                 >
                     <ShoppingBag size={16} />
                     <span>Toko Aksesoris</span>
-                </button>
+                </motion.button>
             </div>
 
             {/* Notification Toast */}
@@ -433,27 +439,25 @@ export default function ShopClient({
                                                 <span style={{ fontSize: '12px', color: 'var(--color-gold-text)', fontWeight: 700 }}>
                                                     Syarat: {voucher.xp_cost} XP
                                                 </span>
-                                                <button
+                                                <motion.button
+                                                    whileHover={canRedeem && voucherLoadingId !== voucher.id ? { scale: 1.02 } : {}}
+                                                    whileTap={canRedeem && voucherLoadingId !== voucher.id ? { scale: 0.98 } : {}}
                                                     type="button"
                                                     onClick={() => handleRedeem(voucher)}
                                                     disabled={!canRedeem || voucherLoadingId === voucher.id}
+                                                    className={canRedeem ? 'btn-signal-orange' : 'btn-dark-outline'}
                                                     style={{
-                                                        border: canRedeem ? '1px solid var(--brand-primary-border)' : '1px solid var(--surface-border)',
+                                                        padding: '7px 16px',
                                                         borderRadius: '8px',
-                                                        padding: '8px 16px',
                                                         cursor: canRedeem ? 'pointer' : 'not-allowed',
-                                                        fontFamily: 'var(--font-heading)',
                                                         fontWeight: 700,
                                                         fontSize: '12px',
-                                                        backgroundColor: canRedeem ? 'var(--brand-primary)' : 'var(--surface-elevated)',
-                                                        color: canRedeem ? 'var(--brand-primary-text)' : 'var(--text-muted)',
-                                                        boxShadow: canRedeem ? 'var(--shadow-signal-orange)' : 'none',
-                                                        opacity: voucherLoadingId === voucher.id ? 0.75 : 1,
-                                                        transition: 'all 0.15s ease',
+                                                        opacity: canRedeem ? (voucherLoadingId === voucher.id ? 0.75 : 1) : 0.6,
+                                                        whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     {voucherLoadingId === voucher.id ? 'Memproses...' : alreadyClaimed ? 'Sudah Diklaim' : 'Klaim'}
-                                                </button>
+                                                </motion.button>
                                             </div>
                                         </div>
                                     )
@@ -490,13 +494,19 @@ export default function ShopClient({
                                             }}
                                             style={{
                                                 border: '1px solid var(--surface-border)',
-                                                borderRadius: '12px',
+                                                borderRadius: '10px',
                                                 backgroundColor: 'var(--surface-elevated)',
                                                 padding: '12px 14px',
                                                 textAlign: 'left',
                                                 cursor: 'pointer',
                                                 width: '100%',
-                                                transition: 'border-color 0.2s',
+                                                transition: 'all 0.15s ease',
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                e.currentTarget.style.borderColor = 'var(--accent-gold-border)'
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                e.currentTarget.style.borderColor = 'var(--surface-border)'
                                             }}
                                         >
                                             <div style={{ display: 'flex', justifyContent: 'space-between', gap: '10px', marginBottom: '4px' }}>
@@ -538,26 +548,33 @@ export default function ShopClient({
                     >
                         {/* Slot Filter Chips */}
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => (
-                                <button
-                                    key={slotKey}
-                                    type="button"
-                                    onClick={() => setSelectedSlotFilter(slotKey)}
-                                    style={{
-                                        padding: '6px 12px',
-                                        borderRadius: '8px',
-                                        border: `1px solid ${selectedSlotFilter === slotKey ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
-                                        backgroundColor: selectedSlotFilter === slotKey ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
-                                        color: selectedSlotFilter === slotKey ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
-                                        fontSize: '12px',
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.15s ease',
-                                    }}
-                                >
-                                    {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
-                                </button>
-                            ))}
+                            {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
+                                const isSlotActive = selectedSlotFilter === slotKey
+                                return (
+                                    <motion.button
+                                        key={slotKey}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        type="button"
+                                        onClick={() => setSelectedSlotFilter(slotKey)}
+                                        style={{
+                                            padding: '6px 12px',
+                                            borderRadius: '8px',
+                                            border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                            backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                            color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '12px',
+                                            fontWeight: isSlotActive ? 700 : 500,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease',
+                                            boxShadow: 'none',
+                                        }}
+                                    >
+                                        {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
+                                    </motion.button>
+                                )
+                            })}
                         </div>
                     </div>
 
@@ -577,22 +594,19 @@ export default function ShopClient({
                             <p style={{ margin: '0 0 12px 0', fontSize: '13px' }}>
                                 Tidak ada item toko yang cocok dengan filter slot ini.
                             </p>
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 type="button"
                                 onClick={() => setSelectedSlotFilter('all')}
+                                className="btn-dark-outline"
                                 style={{
-                                    padding: '8px 16px',
-                                    borderRadius: '8px',
-                                    backgroundColor: 'var(--surface-elevated)',
-                                    color: 'var(--text-primary)',
-                                    border: '1px solid var(--surface-border)',
+                                    padding: '7px 16px',
                                     fontSize: '12px',
-                                    fontWeight: 600,
-                                    cursor: 'pointer',
                                 }}
                             >
                                 Tampilkan Semua Slot
-                            </button>
+                            </motion.button>
                         </div>
                     ) : (
                         <div className="shop-items-grid">
@@ -769,27 +783,25 @@ export default function ShopClient({
                                                     <Check size={12} /> Dimiliki
                                                 </span>
                                             ) : (
-                                                <button
+                                                <motion.button
+                                                    whileHover={canAfford && !isLoading ? { scale: 1.02 } : {}}
+                                                    whileTap={canAfford && !isLoading ? { scale: 0.98 } : {}}
                                                     type="button"
                                                     onClick={() => handleBuyItem(item)}
                                                     disabled={!canAfford || isLoading}
+                                                    className={canAfford ? 'btn-signal-orange' : 'btn-dark-outline'}
                                                     style={{
-                                                        padding: '5px 12px',
-                                                        borderRadius: '7px',
-                                                        border: canAfford ? '1px solid var(--brand-primary-border)' : '1px solid var(--surface-border)',
-                                                        backgroundColor: canAfford ? 'var(--brand-primary)' : 'var(--surface-elevated)',
-                                                        color: canAfford ? 'var(--brand-primary-text)' : 'var(--text-muted)',
-                                                        boxShadow: canAfford ? 'var(--shadow-signal-orange)' : 'none',
-                                                        fontFamily: 'var(--font-heading)',
-                                                        fontSize: '11.5px',
+                                                        padding: '6px 14px',
+                                                        fontSize: '12px',
                                                         fontWeight: 700,
+                                                        borderRadius: '8px',
                                                         cursor: canAfford ? 'pointer' : 'not-allowed',
-                                                        transition: 'all 0.15s ease',
+                                                        opacity: canAfford ? (isLoading ? 0.75 : 1) : 0.6,
                                                         whiteSpace: 'nowrap',
                                                     }}
                                                 >
                                                     {isLoading ? '...' : canAfford ? 'Beli' : 'XP Kurang'}
-                                                </button>
+                                                </motion.button>
                                             )}
                                         </div>
                                     </div>
@@ -870,32 +882,34 @@ export default function ShopClient({
                                 <div style={{ fontFamily: 'monospace', fontSize: '20px', fontWeight: 700, color: '#08c380', letterSpacing: '1px', marginBottom: '10px' }}>
                                     {redeemResult.code}
                                 </div>
-                                <button
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
                                     type="button"
                                     onClick={() => copyCode(redeemResult.code)}
+                                    className="btn-dark-outline"
                                     style={{
                                         display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: '6px',
-                                        padding: '6px 14px',
-                                        borderRadius: '6px',
-                                        border: '1px solid var(--surface-border)',
-                                        backgroundColor: 'var(--surface-elevated)',
-                                        color: 'var(--text-primary)',
-                                        fontSize: '12px',
+                                        padding: '7px 16px',
+                                        borderRadius: '8px',
+                                        fontSize: '12.5px',
                                         cursor: 'pointer',
                                     }}
                                 >
                                     {copied ? <CheckCircle size={14} style={{ color: '#08c380' }} /> : <Copy size={14} />}
                                     <span>{copied ? 'Tersalin!' : 'Salin Kode'}</span>
-                                </button>
+                                </motion.button>
                             </div>
 
                             <p style={{ fontSize: '11.5px', color: 'var(--text-muted)', marginBottom: '20px' }}>
                                 Tunjukkan kode ini kepada petugas kantin saat melakukan pembayaran.
                             </p>
 
-                            <button
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
                                 type="button"
                                 onClick={() => setRedeemResult(null)}
                                 className="btn-signal-orange"
@@ -909,7 +923,7 @@ export default function ShopClient({
                                 }}
                             >
                                 <Check size={14} /> Tutup <ChevronRight size={14} />
-                            </button>
+                            </motion.button>
                         </motion.div>
                     </div>
                 )}
