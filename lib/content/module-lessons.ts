@@ -6,152 +6,561 @@ export const MODULE_LESSONS_MAP: Record<string, LessonStep[]> = {
     // =========================================================================
     'html-css-dasar': [
         {
-            id: 'html-struktur-semantik',
-            title: 'Struktur Fondasi & Elemen Semantik HTML5',
+            id: 'html-fondasi-anatomi',
+            title: 'Fondasi Web & Anatomi Dokumen HTML5',
             type: 'text',
-            content: `HTML (*Hypertext Markup Language*) merupakan fondasi utama dari setiap situs web di internet. Bahasa ini menggunakan tag dan elemen untuk menstrukturkan informasi agar dipahami oleh peramban (*browser*), mesin pencari (SEO), dan teknologi asistif (*screen reader*).
+            content: `HTML (*Hypertext Markup Language*) adalah bahasa markah standar yang menjadi fondasi dan kerangka struktural bagi seluruh situs web di internet. HTML bertindak layaknya rangka baja pada gedung bertingkat; tanpa HTML, peramban (*browser*) tidak memiliki konten dasar untuk ditampilkan.
 
-## Struktur Standar Dokumen HTML5
-Setiap dokumen HTML diawali dengan deklarasi \`<!DOCTYPE html>\` yang menginstruksikan peramban agar menggunakan mode standar HTML5 modern.
+## Cara Kerja Web & Peran HTML
+Ketika kamu mengetikkan alamat web di peramban, terjadi alur komunikasi standar:
+1. **HTTP Request**: Peramban mengirimkan permintaan berkas ke komputer server.
+2. **Server Response**: Server membalas dengan mengirimkan dokumen kode HTML, lembar gaya CSS, dan skrip JavaScript.
+3. **DOM Parsing**: Peramban membaca tag HTML dari atas ke bawah, lalu membangun *Document Object Model* (DOM) untuk dirender menjadi antarmuka visual di layar.
 
-Contoh kerangka dokumen lengkap:
+## Anatomi Standar Dokumen HTML5
+Setiap dokumen web modern diawali dengan deklarasi \`<!DOCTYPE html>\` yang memberi tahu peramban agar menerapkan mode standar W3C terbaru.
+
+Contoh kerangka lengkap berkas HTML5:
 \`\`\`html
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Petualangan Web Pertama — Skillungo</title>
+  <title>Akademi Koding Skillungo</title>
 </head>
 <body>
-  <header>
-    <h1>Skillungo RPG Academy</h1>
-    <p>Platform pembelajaran digital gamified untuk pelajar Indonesia.</p>
-  </header>
-  
-  <main>
-    <section>
-      <h2>Selamat Datang di Dunia Web Development</h2>
-      <p>Pelajari fondasi kode HTML dan CSS untuk merakit antarmuka modern.</p>
-    </section>
-  </main>
-  
-  <footer>
-    <p>&copy; 2026 Skillungo. All rights reserved.</p>
-  </footer>
+  <h1>Selamat Datang di Dunia Web Development</h1>
+  <p>Mulai petualangan kodingmu dari memahami struktur kode HTML5.</p>
 </body>
 </html>
 \`\`\`
 
-## Memahami Elemen Semantik HTML5
-Sebelum era HTML5, pengembang banyak menggunakan tag umum \`<div class="header">\` atau \`<div class="menu">\`. HTML5 memperkenalkan tag **semantik** yang memiliki arti jelas bagi peramban dan manusia:
+### Fungsi Elemen Kunci di Bagian \`<head>\`
+- **\`<html lang="id">\`**: Menentukan bahasa utama dokumen (Bahasa Indonesia), membantu mesin pencari dan teknologi pembaca layar (*screen reader*).
+- **\`<meta charset="UTF-8">\`**: Menetapkan pengkodean karakter universal agar simbol khusus, huruf aksen, dan emoji dapat ditampilkan tanpa eror (*mojibake*).
+- **\`<meta name="viewport" content="width=device-width, initial-scale=1.0">\`**: Sangat krusial untuk responsivitas! Memastikan skala halaman menyesuaikan lebar fisik layar perangkat pengguna (ponsel, tablet, atau desktop).
+- **\`<title>\`**: Menentukan teks judul tab pada peramban dan cuplikan tautan hasil pencarian Google.
 
-- **\`<header>\`**: Bagian kepala halaman atau pengantar konten, biasanya memuat judul atau logo.
-- **\`<nav>\`**: Penampung navigasi utama (menu tautan).
-- **\`<main>\`**: Konten utama yang unik pada halaman tersebut (hanya boleh ada satu \`<main>\` per halaman).
-- **\`<article>\`**: Komponen konten mandiri yang dapat didistribusikan atau digunakan ulang (misalnya postingan artikel, kartu profil, atau kartu produk).
-- **\`<section>\`**: Bagian tematik dari sebuah halaman, umumnya diawali dengan heading.
-- **\`<aside>\`**: Konten sampingan yang terkait secara tidak langsung (sidebar atau kutipan).
-- **\`<footer>\`**: Kaki halaman yang memuat hak cipta, kontak, atau tautan tambahan.
+## Anatomi Elemen HTML: Tag, Konten, & Atribut
+Elemen HTML pada umumnya terdiri dari tiga komponen utama:
+\`\`\`html
+<p class="adventurer-bio" id="bio-utama">Petualang tangguh penakluk tantangan kode!</p>
+\`\`\`
+1. **Tag Pembuka (\`<p ...>\`)**: Menandai awal elemen dan memuat **atribut** tambahan seperti \`class\` dan \`id\`.
+2. **Konten**: Informasi teks atau elemen bersarang yang berada di antara tag pembuka dan penutup.
+3. **Tag Penutup (\`</p>\`)**: Menandai akhir elemen dengan garis miring penutup (\`/\`).
 
-## Hirarki Teks & Media Penting
-1. **Heading (\`<h1>\` sampai \`<h6>\`)**: Gunakan satu \`<h1>\` utama per halaman sebagai judul paling penting, disusul \`<h2>\` untuk sub-bagian, dan seterusnya.
-2. **Paragraf (\`<p>\`)**: Digunakan untuk teks deskriptif atau alinea bacaan.
-3. **Tautan (\`<a href="...">\`)**: Menghubungkan halaman satu dengan halaman lainnya.
-4. **Gambar (\`<img src="..." alt="...">\`)**: Wajib menyertakan atribut \`alt\` sebagai teks pengganti bila gambar gagal dimuat dan ramah bagi pengguna pembaca layar.`,
+### Elemen Kosong (Void Elements)
+Beberapa elemen tidak memiliki pasangan tag penutup karena tidak membungkus teks konten secara langsung, melainkan menyematkan data dari luar:
+- **\`<img src="..." alt="...">\`**: Menyisipkan berkas gambar.
+- **\`<br>\`**: Membuat jeda baris baru (*line break*).
+- **\`<hr>\`**: Membuat garis pemisah horizontal tematik.
+- **\`<input type="text">\`**: Menyediakan kolom isian data bagi pengguna.`,
         },
         {
-            id: 'html-video',
-            title: 'Video Pembelajaran: Dasar HTML & CSS Web Development',
+            id: 'html-tipografi-teks-list',
+            title: 'Hierarki Heading, Format Teks, & Pengorganisasian List',
+            type: 'text',
+            content: `Menyusun konten dengan hirarki visual yang jelas sangat penting agar pengguna dapat membaca (*scanning*) materi dengan nyaman dan mesin pencari (SEO) dapat mengindeks halaman secara akurat.
+
+## Hierarki Judul (\`<h1>\` sampai \`<h6>\`)
+HTML menyediakan enam tingkatan heading:
+- **\`<h1>\`**: Judul utama paling penting dari seluruh halaman. **Aturan baku SEO**: Gunakan hanya satu tag \`<h1>\` per halaman dokumen!
+- **\`<h2>\`**: Subjudul bab utama atau nama section besar.
+- **\`<h3>\`**: Sub-bagian di bawah \`<h2>\`.
+- **\`<h4>\` s/d \`<h6>\`**: Judul tingkat lanjut untuk konten yang sangat rinci atau bersarang.
+
+\`\`\`html
+<h1>Panduan Lengkap Front-End Developer</h1>
+<h2>Bab 1: Dasar HTML5</h2>
+<h3>1.1 Anatomi Elemen Teks</h3>
+\`\`\`
+
+## Pemformatan Teks Semantik
+Hindari pemformatan teks murni dekoratif lama. Gunakan elemen yang memiliki bobot makna semantik:
+- **\`<strong>\`**: Memberikan penekanan penting secara mendesak (tampil tebal). Sangat diperhatikan oleh peramban dan pembaca layar tunanetra.
+- **\`<em>\`**: Memberikan penekanan intonasi bacaan (*emphasis*, tampil miring).
+- **\`<mark>\`**: Menandai atau menyorot teks penting (tampil berlatar kuning stabilo).
+- **\`<code>\`**: Menampilkan potongan sintaks kode komputer dalam font monospace.
+- **\`<blockquote cite="...">\`**: Membungkus kutipan panjang dari sumber eksternal.
+
+\`\`\`html
+<p>
+  Pastikan kamu <strong>selalu menyimpan berkas kode</strong> sebelum melakukan refresh pada peramban.
+  Ketikkan perintah <code>npm run dev</code> untuk memulai server lokal.
+</p>
+\`\`\`
+
+## Pengorganisasian List (Daftar Terstruktur)
+HTML menyediakan 3 varian daftar untuk mengelompokkan butir informasi:
+
+### 1. Unordered List (\`<ul>\`)
+Digunakan untuk kumpulan butir yang urutan posisinya tidak memiliki makna kronologis (ditampilkan dengan simbol buletin/titik):
+\`\`\`html
+<ul>
+  <li>Editor Kode (Visual Studio Code)</li>
+  <li>Peramban Web (Google Chrome)</li>
+  <li>Terminal Bash / Zsh</li>
+</ul>
+\`\`\`
+
+### 2. Ordered List (\`<ol>\`)
+Digunakan untuk urutan langkah terstruktur, resep, atau panduan tutorial bertahap (ditampilkan dengan angka penomoran otomatis 1, 2, 3):
+\`\`\`html
+<ol>
+  <li>Tuliskan kerangka HTML dasar.</li>
+  <li>Tautkan lembar gaya CSS eksternal.</li>
+  <li>Buka berkas di peramban untuk melihat hasil.</li>
+</ol>
+\`\`\`
+
+### 3. Description List (\`<dl>\`)
+Digunakan untuk daftar pasangan istilah (\`<dt>\`) dan deskripsi penjelasannya (\`<dd>\`):
+\`\`\`html
+<dl>
+  <dt>HTML</dt>
+  <dd>Bahasa markah untuk menyusun struktur kerangka situs web.</dd>
+  <dt>CSS</dt>
+  <dd>Lembar gaya untuk menghias estetika warna, ukuran, dan tata letak visual.</dd>
+</dl>
+\`\`\``,
+        },
+        {
+            id: 'html-semantik-aksesibilitas',
+            title: 'Elemen Semantik HTML5 & Aksesibilitas Modern (a11y)',
+            type: 'text',
+            content: `Sebelum era HTML5, pengembang web terbiasa menumpuk ratusan tag umum tanpa makna (fenomena dikenal sebagai *"div soup"*), seperti \`<div class="header">\`, \`<div id="sidebar">\`, atau \`<div class="footer">\`.
+
+HTML5 memodernisasi cara kita mengkode dengan memperkenalkan **elemen semantik** — tag yang memiliki makna eksplisit bagi manusia, peramban, bot mesin pencari, dan teknologi asistif.
+
+## Peta Arsitektur Halaman Semantik
+Berikut tata letak standar rancangan web modern menggunakan elemen semantik:
+\`\`\`html
+<body>
+  <header>
+    <nav>...</nav>
+  </header>
+
+  <main>
+    <article>
+      <section>...</section>
+      <section>...</section>
+    </article>
+    <aside>...</aside>
+  </main>
+
+  <footer>...</footer>
+</body>
+\`\`\`
+
+## Memahami Fungsi Masing-Masing Tag Semantik
+1. **\`<header>\`**: Bagian kepala halaman atau pengantar artikel, biasanya memuat logo, judul situs, atau metadata pengarang.
+2. **\`<nav>\`**: Penampung blok navigasi utama (menu tautan navigasi web).
+3. **\`<main>\`**: Konten sentral dan unik dari sebuah halaman web. **Aturan**: Hanya boleh ada satu \`<main>\` dalam satu dokumen HTML, dan tidak boleh berada di dalam \`<header>\` atau \`<footer>\`.
+4. **\`<article>\`**: Komponen konten mandiri yang dapat didistribusikan secara independen (contoh: postingan artikel berita, kartu ulasan, atau kartu produk toko online).
+5. **\`<section>\`**: Pengelompokan konten tematik dari sebuah halaman, umumnya selalu diawali dengan judul heading (\`<h2>\` atau \`<h3>\`).
+6. **\`<aside>\`**: Konten sampingan yang melengkapi konten utama secara tidak langsung (contoh: widget sidebar, artikel terkait, atau kutipan pendukung).
+7. **\`<footer>\`**: Kaki halaman yang memuat hak cipta, informasi kontak, tautan kebijakan privasi, atau peta situs.
+
+## Aksesibilitas Web (Accessibility / a11y)
+Aksesibilitas adalah prinsip memastikan bahwa situs web dapat dinikmati oleh semua kalangan, termasuk pengguna penyandang disabilitas yang mengandalkan pembaca layar (*screen reader*).
+
+### Praktik Aksesibilitas Wajib:
+- **Atribut \`alt\` pada Gambar**: Tag \`<img>\` wajib menyertakan atribut \`alt\` yang mendeskripsikan isi visual gambar secara padat dan bermakna. Jika gambar murni bersifat dekorasi latar, beri nilai kosong (\`alt=""\`).
+- **Heading Terurut Rapi**: Jangan melompati tingkatan heading (misal dari \`<h1>\` langsung melompat ke \`<h4>\`) karena pengguna screen reader bernavigasi lewat daftar heading.
+- **Kontras Teks Cukup**: Pastikan rasio kontras warna teks terhadap warna latar memenuhi standar WCAG (minimal 4.5:1 untuk teks normal).`,
+        },
+        {
+            id: 'html-media-tautan',
+            title: 'Media Grafis, Tautan Hiperteks, & Atribut Global',
+            type: 'text',
+            content: `Kekuatan utama World Wide Web terletak pada kemampuan menghubungkan dokumen satu dengan dokumen lain (*hyperlink*) serta menyajikan media grafis kaya rupa.
+
+## Menautkan Dokumen dengan Tag \`<a>\` (Anchor)
+Tag jangkar \`<a>\` menggunakan atribut \`href\` (*hypertext reference*) untuk menentukan alamat tujuan:
+
+\`\`\`html
+<!-- 1. Tautan Eksternal Aman -->
+<a href="https://skillungo.id" target="_blank" rel="noopener noreferrer">
+  Kunjungi Skillungo Academy
+</a>
+
+<!-- 2. Tautan Relatif Internal -->
+<a href="/modules/html-css-dasar">
+  Buka Modul HTML
+</a>
+
+<!-- 3. Tautan Bookmark ID (Pindah ke Bagian Tertentu) -->
+<a href="#kontak-kami">
+  Lompat ke Formulir Kontak
+</a>
+
+<!-- 4. Tautan Interaksi Perangkat -->
+<a href="mailto:support@skillungo.id">Kirim Email Bantuan</a>
+<a href="tel:+628123456789">Hubungi Hotline</a>
+\`\`\`
+
+> **Catatan Keamanan**: Saat menggunakan \`target="_blank"\` (membuka tab baru), selalu tambahkan atribut \`rel="noopener noreferrer"\` untuk mencegah celah keamanan *reverse tab-nabbing* di mana tab baru dapat mengakses objek peramban halaman asal.
+
+## Menampilkan Gambar Web Modern (\`<img>\`)
+\`\`\`html
+<figure>
+  <img 
+    src="/images/hero-banner.webp" 
+    alt="Ilustrasi petualang koding sedang menatap layar laptop futuristik"
+    width="800" 
+    height="450"
+    loading="lazy"
+  >
+  <figcaption>Gambar 1.1: Suasana belajar gamified di akademi digital.</figcaption>
+</figure>
+\`\`\`
+
+### Panduan Gambar Berkualitas Tinggi:
+- **Format Modern**: Gunakan format gambar terkompresi seperti **WebP** atau **AVIF** untuk menghemat bandwidth hingga 30-50% dibandingkan PNG atau JPEG konvensional.
+- **Atribut \`loading="lazy"\`**: Menginstruksikan peramban agar hanya mengunduh gambar saat pengguna menggulir mendekati posisi gambar tersebut (*lazy loading* native).
+- **Semantik \`<figure>\` dan \`<figcaption>\`**: Menggabungkan gambar dengan takarir teks keterangannya secara semantik.
+
+## Atribut Global Penting pada HTML
+Atribut global dapat diterapkan pada hampir seluruh elemen HTML:
+- **\`id\`**: Penanda identitas unik elemen (tidak boleh ada dua elemen dengan \`id\` yang sama persis di satu halaman).
+- **\`class\`**: Penanda klasifikasi gaya yang dapat dipakai bersama oleh banyak elemen untuk styling CSS.
+- **\`title\`**: Menampilkan balon teks tooltip kecil saat kursor mouse diarahkan di atas elemen.
+- **\`data-*\`**: Atribut kustom untuk menyimpan metadata internal yang dapat diakses oleh skrip JavaScript (contoh: \`data-level="5"\`).`,
+        },
+        {
+            id: 'html-form-validasi',
+            title: 'Formulir Interaktif, Kontrol Input, & Validasi Native',
+            type: 'text',
+            content: `Formulir merupakan jembatan interaksi dua arah antara pengguna dan aplikasi web — mulai dari pendaftaran akun, kuis evaluasi, hingga pembayaran digital.
+
+## Struktur Dasar Elemen \`<form>\`
+\`\`\`html
+<form action="/api/register" method="POST">
+  <div class="form-group">
+    <label for="username-input">Nama Pengguna:</label>
+    <input 
+      type="text" 
+      id="username-input" 
+      name="username" 
+      placeholder="Masukkan username petualang"
+      required 
+      minlength="3" 
+      maxlength="20"
+    >
+  </div>
+
+  <div class="form-group">
+    <label for="email-input">Alamat Email:</label>
+    <input 
+      type="email" 
+      id="email-input" 
+      name="email" 
+      placeholder="nama@email.com"
+      required
+    >
+  </div>
+
+  <button type="submit">Daftar Sekarang</button>
+</form>
+\`\`\`
+
+### Hubungan Wajib Antara \`<label>\` dan \`<input>\`
+Perhatikan atribut \`for="..."\` pada tag \`<label>\` yang bernilai sama persis dengan atribut \`id="..."\` pada tag \`<input>\`.
+Keuntungan besarnya: Saat pengguna mengklik teks label, kursor pengetikan akan otomatis terfokus ke dalam kolom input terkait. Hal ini sangat mempermudah pengguna ponsel dengan layar sentuh kecil!
+
+## Beragam Tipe Elemen \`<input>\`
+HTML5 menyediakan puluhan tipe kontrol input bawaan:
+- **\`type="text"\`**: Isian teks umum satu baris.
+- **\`type="email"\`**: Memvalidasi format alamat email otomatis (harus memuat tanda \`@\` dan domain).
+- **\`type="password"\`**: Menyembunyikan karakter yang diketikkan menjadi bulatan sensor.
+- **\`type="number"\`**: Hanya menerima angka numerik, dapat dikombinasikan dengan atribut \`min="1"\`, \`max="100"\`, dan \`step="5"\`.
+- **\`type="checkbox"\`**: Kotak centang pilihan majemuk (pengguna dapat memilih lebih dari satu opsi).
+- **\`type="radio"\`**: Pilihan tunggal eksklusif. **Kunci**: Semua tombol radio dalam satu grup wajib memiliki nilai atribut \`name\` yang sama persis!
+- **\`type="date"\`**: Pemilih tanggal dengan kalender interaktif bawaan peramban.
+
+## Elemen Formulir Non-Input
+- **\`<textarea rows="4" cols="50">\`**: Kotak teks multibaris untuk pesan panjang, ulasan, atau bio pengguna.
+- **\`<select>\` dan \`<option>\`**: Menu pilihan dropdown tarik-turun.
+- **\`<button type="submit">\`**: Tombol pemicu pengiriman data formulir.
+
+## Validasi Formulir Native HTML5
+Tanpa sebaris pun kode JavaScript, peramban dapat menolak pengiriman formulir jika data tidak sesuai aturan:
+- **\`required\`**: Mencegah pengiriman jika kolom masih kosong.
+- **\`minlength\` / \`maxlength\`**: Membatasi jumlah minimum dan maksimum karakter.
+- **\`pattern="[A-Za-z0-9]+"\`**: Validasi ekspresi reguler (Regex) untuk pola karakter tertentu.`,
+        },
+        {
+            id: 'html-css-video',
+            title: 'Video Pembelajaran: Panduan Visual HTML5 & CSS3 dari Nol',
             type: 'video',
             content: 'https://www.youtube.com/watch?v=3U1AhjEf7DM',
         },
         {
-            id: 'css-selektor-tipografi',
-            title: 'Fondasi CSS: Selektor, Warna & Tipografi',
+            id: 'css-sintaks-selektor-spesifisitas',
+            title: 'Arsitektur CSS: Selektor, Cascading, & Spesifisitas',
             type: 'text',
-            content: `CSS (*Cascading Style Sheets*) bertanggung jawab atas seluruh aspek visual: estetika warna, tata letak, tipografi, dan responsivitas halaman.
+            content: `CSS (*Cascading Style Sheets*) adalah bahasa pendamping HTML yang bertugas mengatur estetika visual: tata warna, dimensi ukuran, tipografi, dan komposisi ruang antarmuka.
 
-## Anatomi Deklarasi CSS
-Aturan CSS terdiri dari **selektor** (target elemen) dan blok deklarasi berisi pasangan **properti** serta **nilai**:
+## Tiga Cara Menyematkan CSS ke Dokumen HTML
+1. **Inline Style**: Dituliskan langsung di dalam atribut elemen (\`<h1 style="color: red;">\`). *Sangat tidak disarankan* untuk produksi karena mengotori berkas HTML dan sulit dirawat.
+2. **Internal Style**: Dituliskan di dalam tag \`<style>\` pada bagian \`<head>\`. Cocok untuk prototipe cepat satu berkas.
+3. **External Stylesheet**: Dituliskan pada berkas \`.css\` terpisah lalu ditautkan via tag \`<link rel="stylesheet" href="style.css">\`. **Standar industri profesional** karena memisahkan struktur isi (*content*) dari tampilan gaya (*presentation*).
 
+## Anatomi Aturan CSS (CSS Rule)
+Sebuah aturan CSS terdiri dari **selektor** dan **blok deklarasi**:
 \`\`\`css
-/* Selektor class kartu */
-.hero-card {
-  background-color: #1a1a24;
-  color: #f8fafc;
-  border-radius: 10px;
-  padding: 24px;
+/* Selektor menargetkan class kartu */
+.card-profile {
+  background-color: #1e293b; /* Deklarasi: Properti dan Nilai */
+  border-radius: 12px;
+  padding: 20px;
 }
 \`\`\`
 
-## Macam-Macam Selektor CSS
-- **Selektor Tag**: Menargetkan semua elemen HTML tertentu (misal: \`h1 { color: #f59e0b; }\`).
-- **Selektor Class (\`.\`)**: Menargetkan elemen dengan atribut class tertentu (misal: \`.btn-action\`). Fleksibel dan sangat dianjurkan untuk gaya yang dapat dipakai ulang.
-- **Selektor ID (\`#\`)**: Menargetkan elemen unik dengan ID tertentu (misal: \`#navbar\`). Hindari penggunaan berlebih karena spesifisitasnya yang terlalu tinggi.
-- **Pseudo-Class (\`:\`)**: Mengatur gaya saat elemen berada dalam kondisi tertentu, seperti ketika kursor diarahkan:
-\`\`\`css
-.btn-action:hover {
-  background-color: #d97706;
-  transform: translateY(-2px);
-}
-\`\`\`
+## Ragam Selektor CSS Modern
+- **Selektor Universal (\`*\`)**: Menargetkan seluruh elemen tanpa terkecuali.
+- **Selektor Elemen/Tag**: Menargetkan tag tertentu (contoh: \`p { line-height: 1.6; }\`).
+- **Selektor Class (\`.\`)**: Menargetkan elemen dengan atribut class (contoh: \`.btn-primary\`). Fleksibel dan dapat digunakan berulang.
+- **Selektor ID (\`#\`)**: Menargetkan elemen dengan atribut ID unik (contoh: \`#navbar-main\`).
+- **Grouping Selector (\`,\`)**: Menggabungkan beberapa selektor dengan gaya sama (contoh: \`h1, h2, h3 { color: #f8fafc; }\`).
+- **Descendant Selector (Spasi)**: Menargetkan elemen anak di dalam induk tertentu (contoh: \`.card p\` memilih seluruh \`<p>\` yang ada di dalam elemen \`.card\`).
+- **Direct Child Selector (\`>\`)**: Menargetkan anak langsung (satu generasi persis di bawahnya).
 
-## Pewarnaan & Tipografi Modern
-1. **Sistem Warna**:
-   - **HEX**: \`#F59E0B\` (kombinasi 6 digit heksadesimal).
-   - **RGB / RGBA**: \`rgba(245, 158, 11, 0.85)\` (memiliki saluran alfa untuk transparansi).
-   - **HSL**: \`hsl(38, 92%, 50%)\` (Hue, Saturation, Lightness — intuitif untuk penyesuaian gelap-terang).
-2. **Tipografi**:
-   - Selalu atur \`line-height\` yang nyaman (misal: \`1.6\` untuk teks paragraf).
-   - Gunakan \`font-family\` sistem atau web font dengan *fallback generic* (seperti \`sans-serif\`).`,
+## Memahami Cascading & Perhitungan Spesifisitas
+Kata *"Cascading"* berarti aturan gaya mengalir dari atas ke bawah. Bila ada dua aturan yang bersaing menargetkan elemen yang sama, peramban menggunakan kalkulasi **spesifisitas** (bobot kekuatan selektor):
+
+1. **Inline Style**: Bobot 1000 poin.
+2. **ID Selector (\`#id\`)**: Bobot 100 poin.
+3. **Class, Atribut, & Pseudo-class (\`.class\`, \`:hover\`)**: Bobot 10 poin.
+4. **Elemen & Pseudo-element (\`h1\`, \`::before\`)**: Bobot 1 poin.
+
+> **Peringatan Penting**: Hindari penggunaan \`!important\` untuk memaksakan gaya CSS! Penyalahgunaan \`!important\` merusak alur cascading alami dan membuat kode di masa mendatang sangat sulit diperbaiki.`,
         },
         {
-            id: 'css-box-model-flexbox',
-            title: 'CSS Box Model & Tata Letak Flexbox Modern',
+            id: 'css-warna-tipografi-unit',
+            title: 'Sistem Warna, Tipografi Modern, & Satuan Ukuran (px vs rem)',
             type: 'text',
-            content: `Dua konsep terpenting yang wajib dikuasai setiap developer web adalah **CSS Box Model** dan **Flexbox**.
+            content: `Kualitas desain antarmuka ditentukan oleh pemilihan palet warna yang harmonis dan tipografi yang mudah dibaca (*legible*).
 
-## CSS Box Model
-Setiap elemen di peramban pada dasarnya adalah sebuah kotak (*box*) yang memiliki 4 lapisan:
+## Model Pewarnaan pada CSS
+Peramban modern mendukung beragam format pewarnaan:
+\`\`\`css
+:root {
+  /* 1. Hexadecimal (#RRGGBB) */
+  --brand-gold: #f59e0b;
+
+  /* 2. RGB & RGBA (Red, Green, Blue, Alpha/Transparansi) */
+  --surface-card: rgba(30, 41, 59, 0.95);
+
+  /* 3. HSL (Hue, Saturation, Lightness) — Sangat intuitif untuk variasi warna */
+  --accent-cyan: hsl(190, 95%, 50%);
+}
+\`\`\`
+
+### Variabel CSS (CSS Custom Properties)
+Deklarasikan warna tema di dalam blok \`:root\` agar dapat digunakan kembali di seluruh berkas dan mudah diubah saat mengimplementasikan mode gelap/terang:
+\`\`\`css
+.btn-action {
+  background-color: var(--brand-gold);
+  color: #0f172a;
+}
+\`\`\`
+
+## Satuan Ukuran CSS: Absolut vs Relatif
+Memilih satuan ukuran yang tepat adalah kunci rancangan web yang adaptif dan inklusif:
+
+### 1. Satuan Absolut (\`px\`)
+- Menetapkan ukuran piksel fisik tetap di layar.
+- **Kapan digunakan**: Cocok untuk ketebalan garis tepi border (\`1px\`), radius sudut (\`8px\`), atau bayangan kartu (\`box-shadow\`).
+
+### 2. Satuan Relatif (\`rem\` & \`em\`)
+- **\`rem\` (Root EM)**: Relatif terhadap ukuran font akar dokumen (\`<html>\`). Bawaan standar peramban adalah \`1rem = 16px\`.
+  - Jika pengguna tunanetra memperbesar preferensi font di pengaturan sistem perambannya dari 16px menjadi 24px, seluruh layout bertanda \`rem\` akan membesar secara proporsional!
+- **\`em\`**: Relatif terhadap ukuran font elemen induk langsungnya (*parent element*).
+
+> **Rekomendasi Terbaik**: Selalu gunakan satuan **\`rem\`** untuk properti \`font-size\`, \`margin\`, dan \`padding\` layout utama agar situsmu ramah aksesibilitas!
+
+## Pengaturan Tipografi Profesional
+\`\`\`css
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1rem;       /* Setara 16px */
+  line-height: 1.65;     /* Jarak antar-baris yang nyaman untuk membaca */
+  color: #334155;
+  letter-spacing: -0.01em;
+}
+
+h1, h2, h3 {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #0f172a;
+}
+\`\`\``,
+        },
+        {
+            id: 'css-box-model-display',
+            title: 'CSS Box Model, Nilai Display, & Pengendalian Dimensi',
+            type: 'text',
+            content: `Semua elemen yang kamu lihat pada halaman web pada hakikatnya adalah sebuah kotak empat persegi (*box*). Memahami Box Model adalah fondasi paling esensial untuk menguasai tata letak CSS.
+
+## 4 Lapisan CSS Box Model
+Mulai dari lapisan paling dalam ke lapisan terluar:
 1. **Content**: Area inti tempat teks, gambar, atau elemen anak berada.
-2. **Padding**: Ruang kosong di dalam elemen (antara konten dan border).
-3. **Border**: Garis pembatas yang mengelilingi padding dan konten.
-4. **Margin**: Ruang kosong di luar elemen yang memisahkan elemen tersebut dari tetangganya.
+2. **Padding**: Ruang nafas bagian dalam (antara konten teks dan garis border).
+3. **Border**: Garis tepi pembatas yang mengelilingi padding dan konten.
+4. **Margin**: Ruang kosong transparan di luar elemen yang memisahkannya dari elemen-elemen tetangga.
 
-### Mengapa \`box-sizing: border-box\` Sangat Krusial?
-Secara bawaan (\`content-box\`), jika kamu memberi elemen lebar \`200px\` lalu menambahkan padding \`20px\`, lebar total elemen akan membengkak menjadi \`240px\`.
-Dengan menerapkan:
+## Penyelamat Tata Letak: \`box-sizing: border-box\`
+Secara bawaan (\`content-box\`), jika kamu memberi elemen lebar \`300px\` lalu menambahkan \`padding: 20px\` dan \`border: 2px\`, lebar fisik total elemen di layar akan membengkak menjadi \`344px\` (\`300 + 20 + 20 + 2 + 2\`). Hal ini sering menyebabkan tata letak pecah atau bergeser berantakan!
+
+Dengan menerapkan **CSS Reset Universal**:
 \`\`\`css
-* {
+*, *::before, *::after {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 \`\`\`
-Peramban akan menyertakan padding dan border ke dalam ukuran lebar total yang ditentukan, sehingga tata letak tidak akan pecah atau bergeser secara tidak terduga.
+Peramban akan secara otomatis menghitung padding dan border **ke dalam** lebar yang ditentukan. Jika kamu menetapkan lebar \`300px\`, maka lebarnya akan tetap pas \`300px\`!
 
-## Tata Letak Modern dengan Flexbox
-Flexbox (*Flexible Box Layout*) memudahkan penataan elemen secara satu dimensi (baris atau kolom) dengan pembagian ruang yang fleksibel.
+## Karakteristik Nilai Properti \`display\`
+- **\`display: block\`**: Elemen mengambil lebar penuh 100% dari induknya dan selalu memaksa baris baru (contoh bawaan: \`<div>\`, \`<p>\`, \`<h1>\`, \`<section>\`).
+- **\`display: inline\`**: Elemen mengalir berdampingan sebaris dengan teks. **Perhatian**: Elemen inline tidak dapat diatur \`width\`, \`height\`, atau margin atas-bawah (contoh bawaan: \`<span>\`, \`<a>\`, \`<strong>\`).
+- **\`display: inline-block\`**: Elemen tetap mengalir sebaris, namun properti \`width\`, \`height\`, dan \`padding\` tetap dihormati secara penuh.
+- **\`display: none\`**: Menghilangkan elemen dari tampilan dan struktur alur dokumen sepenuhnya (berbeda dengan \`visibility: hidden\` yang tetap menyisakan ruang kosong).
 
-Contoh penataan baris kartu petualang:
+## Trik Meratakan Konten di Tengah Layar
+Untuk membuat kartu atau wadah penampung berada tepat di tengah secara horizontal:
 \`\`\`css
-.card-container {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between; /* Rata kiri-kanan dengan ruang di tengah */
-  align-items: center;            /* Rata tengah secara vertikal */
-  gap: 16px;                      /* Jarak antar kartu */
+.container {
+  max-width: 1140px; /* Batas lebar maksimum */
+  margin: 0 auto;    /* 0 untuk atas-bawah, auto untuk kiri-kanan */
+  padding: 0 16px;   /* Ruang nafas aman di layar ponsel */
 }
+\`\`\``,
+        },
+        {
+            id: 'css-flexbox-tata-letak',
+            title: 'Tata Letak Modern: Flexbox 1D & Desain Komponen',
+            type: 'text',
+            content: `Sebelum kehadiran Flexbox (*Flexible Box Layout*), pengembang terpaksa menggunakan teknik kuno yang rumit seperti \`float\`, \`clear: both\`, atau manipulasi \`table\`. Flexbox menyederhanakan penyusunan tata letak satu dimensi (baris atau kolom) secara elegan dan fleksibel.
 
-.card-item {
-  flex: 1;                        /* Setiap kartu membagi lebar sama rata */
+## Konsep Induk & Anak (Container vs Items)
+Flexbox bekerja dengan sistem hubungan dua pihak:
+1. **Flex Container**: Elemen pembungkus yang diberi deklarasi \`display: flex;\`.
+2. **Flex Items**: Elemen-elemen anak yang berada langsung di dalam container tersebut.
+
+## Dua Sumbu Utama Flexbox
+- **Main Axis (Sumbu Utama)**: Arah utama aliran item (bawaannya adalah horizontal dari kiri ke kanan bila \`flex-direction: row\`).
+- **Cross Axis (Sumbu Silang)**: Sumbu yang tegak lurus dengan sumbu utama (vertikal bila alirannya baris).
+
+## Properti untuk Flex Container
+\`\`\`css
+.navbar {
+  display: flex;
+  flex-direction: row;            /* row (horizontal) atau column (vertikal) */
+  justify-content: space-between; /* Distribusi sepanjang sumbu utama (Main Axis) */
+  align-items: center;            /* Perataan sepanjang sumbu silang (Cross Axis) */
+  gap: 16px;                      /* Jarak bersih antar elemen tanpa perlu margin */
+  flex-wrap: wrap;                /* Mengizinkan baris baru jika layar sempit */
 }
 \`\`\`
 
-Dengan menggabungkan Box Model dan Flexbox, kamu dapat membangun antarmuka web apa pun dengan rapi, proporsional, dan adaptif di berbagai resolusi layar.`,
+### Memahami Pilihan \`justify-content\`:
+- **\`flex-start\`**: Semua item merapat ke awal sumbu.
+- **\`center\`**: Semua item berkumpul di tengah-tengah.
+- **\`flex-end\`**: Semua item merapat ke akhir sumbu.
+- **\`space-between\`**: Item pertama di tepi kiri paling ujung, item terakhir di tepi kanan paling ujung, sisa ruang dibagi rata di antaranya.
+- **\`space-evenly\`**: Semua celah antar-item dan celah ke dinding tepi memiliki ukuran yang sama persis.
+
+## Properti untuk Flex Items (Anak)
+\`\`\`css
+.nav-search {
+  flex: 1; /* Otomatis membesar mengisi sisa ruang kosong yang tersedia */
+}
+
+.profile-badge {
+  flex-shrink: 0; /* Menolak untuk menyusut atau gepeng meskipun ruang sempit */
+  align-self: flex-start; /* Mengabaikan align-items induk untuk dirinya sendiri */
+}
+\`\`\`
+
+### Studi Kasus: Trik Meratakan Tengah Sempurna
+Memposisikan elemen tepat di tengah-tengah kotak penampung (baik horizontal maupun vertikal) yang dahulu terkenal sulit, kini hanya butuh 3 baris kode CSS:
+\`\`\`css
+.hero-banner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+}
+\`\`\``,
+        },
+        {
+            id: 'css-media-queries-responsive',
+            title: 'Responsive Web Design, Media Queries, & Mobile-First',
+            type: 'text',
+            content: `Saat ini lebih dari 60% lalu lintas internet global berasal dari perangkat seluler pintar (*smartphone*). Desain Web Responsif (*Responsive Web Design* / RWD) memastikan situs web tampil proporsional, nyaman dibaca, dan mudah disentuh di segala ukuran resolusi layar.
+
+## Tiga Pilar Desain Web Responsif
+1. **Viewport Meta Tag**: Wajib ada di \`<head>\` HTML agar skala layar ponsel tidak mengecil seperti perangko.
+2. **Fluid Layout & Satuan Fleksibel**: Menggunakan persentase (\`%\`), Flexbox, CSS Grid, serta fungsi matematis modern seperti \`clamp()\`.
+3. **CSS Media Queries**: Aturan bersyarat yang menerapkan gaya CSS spesifik berdasarkan karakteristik perangkat (terutama lebar layar).
+
+## Filosofi Desain Mobile-First
+**Mobile-First** adalah standar industri modern di mana kamu menuliskan gaya dasar untuk tampilan ponsel pintar terlebih dahulu tanpa media query, lalu menambahkan aturan \`@media (min-width: ...)\` untuk memperluas tata letak saat layar semakin lebar (tablet dan desktop).
+
+Mengapa pendekatan \`min-width\` lebih unggul daripada \`max-width\`?
+- Beban muat kode di ponsel lebih ringan dan cepat.
+- Logika aturan CSS bertambah secara aditif (*progressive enhancement*) alih-alih menimpa ulang gaya berulang kali.
+
+\`\`\`css
+/* 1. GAYA DASAR: Layar Ponsel Pintar (< 640px) */
+.card-grid {
+  display: flex;
+  flex-direction: column; /* 1 kartu per baris di HP */
+  gap: 16px;
+  padding: 16px;
+}
+
+/* 2. TABLET: Mulai dari lebar layar 640px ke atas */
+@media (min-width: 640px) {
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); /* 2 kartu berdampingan */
+    gap: 20px;
+    padding: 24px;
+  }
+}
+
+/* 3. DESKTOP / LAPTOP: Mulai dari lebar layar 1024px ke atas */
+@media (min-width: 1024px) {
+  .card-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 kartu berdampingan */
+    max-width: 1140px;
+    margin: 0 auto;
+  }
+}
+\`\`\`
+
+## Media Grafis Responsif
+Pastikan gambar atau video tidak meluber keluar dari batas layar pengguna:
+\`\`\`css
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+\`\`\`
+
+Dengan menerapkan Box Model, Flexbox, dan Media Queries Mobile-First, kamu siap membangun antarmuka web modern yang tangguh di semua perangkat!`,
         },
         {
             id: 'html-css-challenge',
-            title: 'Tantangan Koding: Membangun Kartu Profil Petualang',
+            title: 'Tantangan Koding: Membangun Kartu Profil Petualang Responsif',
             type: 'code',
             content: 'Latihan praktik koding interaktif: Bangun komponen Kartu Profil Petualang RPG menggunakan HTML semantik dan styling CSS modern.',
             codeChallenge: {
@@ -217,7 +626,7 @@ Dengan menggabungkan Box Model dan Flexbox, kamu dapat membangun antarmuka web a
 
 .btn-action:hover {
   opacity: 0.9;
-}`,
+} `,
                 testCases: [
                     {
                         id: 'tc-card',
@@ -1166,6 +1575,45 @@ export const MODULE_QUESTIONS_MAP: Record<string, Question[]> = {
             correct_option: 0,
             difficulty: 'intermediate',
             explanation: 'Spesifisitas terendah dimulai dari tag elemen (h1, p), lalu class (.btn), kemudian ID (#hero), dan tertinggi adalah inline style (style="...").',
+        },
+        {
+            id: 'q-html-6',
+            question_text: 'Bagaimana cara menghubungkan elemen <label> dengan <input> agar ketika teks label diklik, kursor otomatis fokus ke kolom input?',
+            options: [
+                'Menyamakan nilai atribut for pada <label> dengan atribut id pada <input>',
+                'Menyamakan nilai atribut name pada kedua elemen',
+                'Menempatkan atribut class yang sama pada <label> dan <input>',
+                'Menggunakan atribut target pada <label>',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'Atribut for pada <label> harus bernilai identik dengan atribut id pada <input> untuk mengaitkan interaksi klik secara otomatis.',
+        },
+        {
+            id: 'q-html-7',
+            question_text: 'Mengapa pengembang web modern sangat dianjurkan menggunakan satuan "rem" untuk font-size daripada "px"?',
+            options: [
+                'Mendukung aksesibilitas karena otomatis berskala mengikuti preferensi zoom font pengguna di browser',
+                'Mempercepat waktu muat render CSS di peramban',
+                'Mencegah teks agar tidak bisa disalin oleh pengguna lain',
+                'Mengubah teks secara otomatis menjadi huruf kapital',
+            ],
+            correct_option: 0,
+            difficulty: 'intermediate',
+            explanation: 'Satuan rem berbasis pada ukuran font root (<html>), sehingga saat pengguna dengan gangguan penglihatan mengubah ukuran font dasar di browsernya, seluruh layout ikut membesar secara proporsional.',
+        },
+        {
+            id: 'q-html-8',
+            question_text: 'Dalam metodologi Mobile-First Responsive Design, pendekatan apakah yang digunakan saat menuliskan CSS Media Queries?',
+            options: [
+                'Menuliskan gaya dasar untuk ponsel pintar, lalu menggunakan @media (min-width: ...) untuk layar yang lebih besar',
+                'Menuliskan gaya desktop terlebih dahulu, lalu menggunakan @media (max-width: ...) untuk mempersempit layar',
+                'Membuat berkas CSS yang berbeda untuk setiap ukuran layar secara terpisah',
+                'Menggunakan inline style di setiap elemen HTML agar tidak terpengaruh resolusi',
+            ],
+            correct_option: 0,
+            difficulty: 'intermediate',
+            explanation: 'Filosofi Mobile-First menuliskan gaya dasar ponsel pintar secara alami, kemudian memperkaya tata letak dengan aturan aditif @media (min-width: ...) saat layar melebar ke ukuran tablet dan desktop.',
         },
     ],
 }
