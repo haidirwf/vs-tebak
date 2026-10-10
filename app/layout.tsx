@@ -55,6 +55,8 @@ export const metadata: Metadata = {
   },
 }
 
+import DynamicFavicon from '@/components/layout/DynamicFavicon'
+
 export default function RootLayout({
   children,
 }: {
@@ -63,7 +65,10 @@ export default function RootLayout({
   const judgeMode = process.env.NEXT_PUBLIC_JUDGE_MODE === 'true'
   return (
     <html lang="id">
-      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>{children}</body>
+      <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>
+        <DynamicFavicon />
+        {children}
+      </body>
     </html>
   )
 }

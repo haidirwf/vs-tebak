@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <rect width="512" height="512" rx="120" fill="#111114" />
+  <rect x="10" y="10" width="492" height="492" rx="110" fill="none" stroke="#23232C" stroke-width="16" />
+
+  <radialGradient id="lead-glow" cx="50%" cy="45%" r="42%">
+    <stop offset="0%" stop-color="#F5C542" stop-opacity="0.25" />
+    <stop offset="100%" stop-color="#F5C542" stop-opacity="0" />
+  </radialGradient>
+  <rect width="512" height="512" rx="120" fill="url(#lead-glow)" />
+
+  <!-- Trophy Cup Emblem -->
+  <g transform="translate(256, 256) scale(15)" stroke="#F5C542" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <g transform="translate(-12, -12)">
+      <!-- Cup Base & Stem -->
+      <path d="M6 9a6 6 0 0 0 12 0V3H6v6z" fill="#F5C542" fill-opacity="0.18" />
+      <path d="M6 5H3a2 2 0 0 0-2 2 4 4 0 0 0 4 4h1" />
+      <path d="M18 5h3a2 2 0 0 1 2 2 4 4 0 0 1-4 4h-1" />
+      <path d="M12 15v4" stroke-width="2.5" />
+      <path d="M8 21h8" stroke-width="2.5" />
+      <!-- Star on cup -->
+      <polygon points="12 6.5 12.6 8 14.2 8.2 13 9.3 13.4 10.9 12 10 10.6 10.9 11 9.3 9.8 8.2 11.4 8" fill="#FFF" stroke="none" />
+    </g>
+  </g>
+</svg>

@@ -13,14 +13,14 @@ import {
     Trophy,
 } from 'lucide-react'
 
-// Navigasi bawah selayaknya Duolingo - hanya icon recognizable tanpa teks judul
+// Navigasi bawah selayaknya Duolingo - icon recognizable bertema game per-halaman
 const NAV_ITEMS = [
-    { href: '/dashboard', icon: Home, label: 'Beranda' },
-    { href: '/modules', icon: BookOpen, label: 'Modul Belajar' },
-    { href: '/battle', icon: Swords, label: 'Battle Arena' },
-    { href: '/character', icon: Shield, label: 'Karakter & Kostum' },
-    { href: '/shop', icon: ShoppingBag, label: 'Toko Petualang' },
-    { href: '/leaderboard', icon: Trophy, label: 'Papan Peringkat' },
+    { href: '/dashboard', favicon: '/favicons/dashboard.svg', icon: Home, label: 'Beranda' },
+    { href: '/modules', favicon: '/favicons/modules.svg', icon: BookOpen, label: 'Modul Belajar' },
+    { href: '/battle', favicon: '/favicons/battle.svg', icon: Swords, label: 'Battle Arena' },
+    { href: '/character', favicon: '/favicons/character.svg', icon: Shield, label: 'Karakter & Kostum' },
+    { href: '/shop', favicon: '/favicons/shop.svg', icon: ShoppingBag, label: 'Toko Petualang' },
+    { href: '/leaderboard', favicon: '/favicons/leaderboard.svg', icon: Trophy, label: 'Papan Peringkat' },
 ]
 
 export default function Navbar() {
@@ -63,7 +63,6 @@ export default function Navbar() {
                     const isActive =
                         pathname === item.href ||
                         (item.href !== '/dashboard' && pathname.startsWith(item.href))
-                    const Icon = item.icon
 
                     return (
                         <Link
@@ -96,11 +95,25 @@ export default function Navbar() {
                                     position: 'relative',
                                     backgroundColor: isActive ? 'var(--accent-gold-bg)' : 'transparent',
                                     border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
-                                    color: isActive ? 'var(--accent-gold-text)' : 'var(--text-muted)',
-                                    transition: 'color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease',
+                                    transition: 'background-color 0.15s ease, border-color 0.15s ease',
                                 }}
                             >
-                                <Icon size={21} strokeWidth={isActive ? 2.3 : 1.8} />
+                                <img
+                                    src={item.favicon}
+                                    alt={item.label}
+                                    width={26}
+                                    height={26}
+                                    style={{
+                                        width: '26px',
+                                        height: '26px',
+                                        objectFit: 'contain',
+                                        filter: isActive
+                                            ? 'brightness(1.15) drop-shadow(0 2px 6px rgba(245, 197, 66, 0.35))'
+                                            : 'grayscale(0.35) opacity(0.72)',
+                                        transition: 'filter 0.2s ease, transform 0.2s ease',
+                                        transform: isActive ? 'scale(1.06)' : 'scale(1)',
+                                    }}
+                                />
 
                                 {/* Subtle top line active indicator */}
                                 {isActive && (

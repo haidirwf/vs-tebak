@@ -23,13 +23,13 @@ import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const navItems = [
-    { href: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/modules', icon: BookOpen, label: 'Modul' },
-    { href: '/battle', icon: Swords, label: 'Battle' },
-    { href: '/character', icon: Shield, label: 'Karakter' },
-    { href: '/shop', icon: ShoppingBag, label: 'Toko' },
-    { href: '/leaderboard', icon: Trophy, label: 'Leaderboard' },
-    { href: '/profile', icon: User, label: 'Profil' },
+    { href: '/dashboard', favicon: '/favicons/dashboard.svg', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/modules', favicon: '/favicons/modules.svg', icon: BookOpen, label: 'Modul' },
+    { href: '/battle', favicon: '/favicons/battle.svg', icon: Swords, label: 'Battle' },
+    { href: '/character', favicon: '/favicons/character.svg', icon: Shield, label: 'Karakter' },
+    { href: '/shop', favicon: '/favicons/shop.svg', icon: ShoppingBag, label: 'Toko' },
+    { href: '/leaderboard', favicon: '/favicons/leaderboard.svg', icon: Trophy, label: 'Leaderboard' },
+    { href: '/profile', favicon: '/favicons/profile.svg', icon: User, label: 'Profil' },
 ]
 
 const CLASS_COLORS: Record<string, string> = {
@@ -331,13 +331,22 @@ export default function Sidebar() {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
+                                        width: '20px',
+                                        height: '20px',
+                                        flexShrink: 0,
                                     }}
                                 >
-                                    <Icon
-                                        size={16}
+                                    <img
+                                        src={item.favicon}
+                                        alt={item.label}
+                                        width={18}
+                                        height={18}
                                         style={{
-                                            color: isActive ? 'var(--accent-gold-text)' : 'var(--color-silver)',
-                                            flexShrink: 0,
+                                            width: '18px',
+                                            height: '18px',
+                                            objectFit: 'contain',
+                                            filter: isActive ? 'brightness(1.15) drop-shadow(0 1px 4px rgba(245, 197, 66, 0.35))' : 'grayscale(0.35) opacity(0.75)',
+                                            transition: 'filter 0.15s ease',
                                         }}
                                     />
                                 </div>
