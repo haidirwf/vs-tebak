@@ -1,9 +1,9 @@
 'use client'
 
 import { useMemo, useState, useEffect, useRef } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music, Play, ChevronRight } from 'lucide-react'
+import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music, Play, ChevronRight, Bot, X } from 'lucide-react'
 import { Question, Profile, AvatarClass } from '@/types'
 import { calculateCharacterStats } from '@/lib/game/character'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
@@ -61,10 +61,22 @@ function botAccuracyByDifficulty(difficulty: string) {
 
 export default function PracticeArena({ questionPool, currentUser }: PracticeArenaProps) {
     const router = useRouter()
+    const searchParams = useSearchParams()
     const timerRef = useRef<NodeJS.Timeout | null>(null)
     const botRef = useRef<NodeJS.Timeout | null>(null)
+    const autoStartedRef = useRef(false)
 
-    const [selectedCategory, setSelectedCategory] = useState<PracticeCategory>('general')
+    const categoryParam = searchParams.get('category') as PracticeCategory | null
+    const autostartParam = searchParams.get('autostart')
+
+    const initialCategory: PracticeCategory = useMemo(() => {
+        if (categoryParam && CATEGORIES.some(c => c.value === categoryParam)) {
+            return categoryParam
+        }
+        return 'general'
+    }, [categoryParam])
+
+    const [selectedCategory, setSelectedCategory] = useState<PracticeCategory>(initialCategory)
     const [started, setStarted] = useState(false)
     const [questions, setQuestions] = useState<PracticeQuestion[]>([])
     const [currentQ, setCurrentQ] = useState(0)
@@ -94,6 +106,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     const [bgmMuted, setBgmMuted] = useState(() => battleSounds.getIsBgmMuted())
     const [quizReviews, setQuizReviews] = useState<QuizReviewItem[]>([])
     const [showReviewModal, setShowReviewModal] = useState(false)
+    const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
 
     const myStats = useMemo(() => {
         return calculateCharacterStats(
@@ -210,8 +223,28 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         setBotAnswered(false)
     }
 
-    function startPractice() {
-        const picked = shuffle(availableQuestions)
+    useEffect(() => {
+        if (categoryParam && CATEGORIES.some(c => c.value === categoryParam)) {
+            setSelectedCategory(categoryParam)
+        }
+    }, [categoryParam])
+
+    useEffect(() => {
+        if (autoStartedRef.current) return
+        if (autostartParam === 'true') {
+            const cat = categoryParam && CATEGORIES.some(c => c.value === categoryParam) ? categoryParam : 'general'
+            const pool = cat === 'general' ? questionPool : questionPool.filter(q => q.category === cat)
+            if (pool.length > 0 && !started) {
+                autoStartedRef.current = true
+                startPractice(cat)
+            }
+        }
+    }, [autostartParam, categoryParam, questionPool, started])
+
+    function startPractice(catOverride?: PracticeCategory) {
+        const cat = catOverride || selectedCategory
+        const pool = cat === 'general' ? questionPool : questionPool.filter(q => q.category === cat)
+        const picked = shuffle(pool)
             .slice(0, BATTLE_QUESTION_COUNT)
             .map((q) => shuffleQuestionOptions(q))
         if (picked.length === 0) return
@@ -433,85 +466,154 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
 
     if (!started) {
         return (
-            <div className="responsive-page" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 'calc(100vh - 160px)', width: '100%', padding: '24px' }}>
-                <div style={{ width: '100%', maxWidth: '540px' }}>
-                <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '24px', fontWeight: 700, marginBottom: '6px' }}>
-                        🤖 Battle vs Computer
-                    </h1>
-                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', margin: 0 }}>
-                        Mode latihan solo. Main 10 soal melawan AI bot.
-                    </p>
-                </div>
-
-                <div className="card" style={{ padding: '24px' }}>
-                    <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px' }}>
-                        Pilih kategori latihan
-                    </p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(110px, 1fr))', gap: '8px', marginBottom: '20px' }}>
-                        {CATEGORIES.map(cat => (
-                            <button
-                                key={cat.value}
-                                type="button"
-                                onClick={() => setSelectedCategory(cat.value)}
-                                style={{
-                                    padding: '12px 8px', borderRadius: '4px', cursor: 'pointer',
-                                    backgroundColor: selectedCategory === cat.value ? 'rgba(245,197,66,0.1)' : 'var(--bg-tertiary)',
-                                    border: `1px solid ${selectedCategory === cat.value ? 'var(--accent-gold)' : 'var(--border)'}`,
-                                    color: selectedCategory === cat.value ? 'var(--accent-gold)' : 'var(--text-secondary)',
-                                    fontFamily: 'var(--font-heading)', fontSize: '12px', fontWeight: 600,
-                                    display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px',
-                                }}
-                            >
-                                <span style={{ fontSize: '18px' }}>{cat.emoji}</span>
-                                {cat.label}
-                            </button>
-                        ))}
-                    </div>
-
-                    {availableQuestions.length === 0 ? (
-                        <p style={{ color: 'var(--accent-red)', fontSize: '13px', marginBottom: '12px', textAlign: 'center' }}>
-                            Soal untuk kategori ini belum tersedia.
-                        </p>
-                    ) : (
-                        <p style={{ color: 'var(--text-secondary)', fontSize: '12px', marginBottom: '16px', textAlign: 'center' }}>
-                            Soal tersedia: {availableQuestions.length}
-                        </p>
-                    )}
-
-                    <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>
+            <div
+                className="modal-overlay"
+                style={{
+                    position: 'fixed',
+                    inset: 0,
+                    backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                    backdropFilter: 'blur(8px)',
+                    WebkitBackdropFilter: 'blur(8px)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    zIndex: 1000,
+                    padding: '16px',
+                    overflow: 'hidden',
+                    touchAction: 'none',
+                    overscrollBehavior: 'none',
+                }}
+                onClick={() => router.push('/battle')}
+            >
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                    transition={{ duration: 0.15 }}
+                    style={{
+                        width: '100%',
+                        maxWidth: '480px',
+                        maxHeight: '90dvh',
+                        overflowY: 'auto',
+                        padding: '24px 22px',
+                        backgroundColor: 'var(--surface-card)',
+                        borderRadius: '14px',
+                        border: '1px solid var(--surface-border)',
+                        boxShadow: 'var(--shadow-modal)',
+                        boxSizing: 'border-box',
+                    }}
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Bot size={20} style={{ color: 'var(--accent-purple)' }} />
+                            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                                Battle vs Computer
+                            </h2>
+                        </div>
                         <button
                             type="button"
                             onClick={() => router.push('/battle')}
+                            aria-label="Tutup modal"
                             style={{
-                                padding: '10px 20px', borderRadius: '8px', cursor: 'pointer',
-                                backgroundColor: 'transparent', border: '1px solid var(--border)',
-                                color: 'var(--text-secondary)', fontSize: '13px',
+                                background: 'none',
+                                border: 'none',
+                                color: 'var(--text-muted)',
+                                cursor: 'pointer',
+                                padding: '4px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                borderRadius: '6px',
+                                transition: 'color 0.15s ease',
                             }}
+                        >
+                            <X size={18} />
+                        </button>
+                    </div>
+
+                    <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '18px', lineHeight: 1.5 }}>
+                        Latihan solo 10 soal melawan AI Sentinel tanpa antrean. Pilih kategori materi untuk menguji kecepatan dan pemahamanmu.
+                    </p>
+
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 600 }}>
+                            Kategori Latihan
+                        </label>
+                        <div className="battle-category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+                            {CATEGORIES.map(cat => {
+                                const isSelected = selectedCategory === cat.value
+                                return (
+                                    <button
+                                        key={cat.value}
+                                        type="button"
+                                        onClick={() => setSelectedCategory(cat.value)}
+                                        style={{
+                                            padding: '10px 12px',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            backgroundColor: isSelected ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                            border: `1.5px solid ${isSelected ? 'var(--brand-primary-border)' : 'var(--surface-border)'}`,
+                                            color: isSelected ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '12.5px',
+                                            fontWeight: isSelected ? 700 : 500,
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '8px',
+                                            minWidth: 0,
+                                            transition: 'all 0.15s ease',
+                                            boxShadow: isSelected ? '0 1px 4px rgba(245, 197, 66, 0.2)' : 'none',
+                                        }}
+                                    >
+                                        <span style={{ fontSize: '18px', flexShrink: 0, lineHeight: 1 }}>{cat.emoji}</span>
+                                        <span style={{ textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                            {cat.label}
+                                        </span>
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </div>
+
+                    {availableQuestions.length === 0 ? (
+                        <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                            Soal untuk kategori ini belum tersedia.
+                        </div>
+                    ) : (
+                        <p style={{ color: 'var(--color-fog)', fontSize: '11.5px', marginBottom: '18px' }}>
+                            Soal tersedia di kategori ini: {availableQuestions.length} soal
+                        </p>
+                    )}
+
+                    <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '18px' }}>
+                        <button
+                            type="button"
+                            onClick={() => router.push('/battle')}
+                            className="btn-dark-outline"
+                            style={{ padding: '9px 18px', fontSize: '13px' }}
                         >
                             Kembali
                         </button>
                         <motion.button
                             type="button"
                             whileHover={{ scale: availableQuestions.length > 0 ? 1.02 : 1 }}
-                            whileTap={{ scale: availableQuestions.length > 0 ? 0.97 : 1 }}
-                            onClick={startPractice}
+                            whileTap={{ scale: availableQuestions.length > 0 ? 0.98 : 1 }}
+                            onClick={() => startPractice()}
                             disabled={availableQuestions.length === 0}
                             className="btn-signal-orange"
                             style={{
-                                padding: '10px 22px',
-                                borderRadius: '8px',
-                                cursor: availableQuestions.length > 0 ? 'pointer' : 'not-allowed',
+                                padding: '9px 20px',
                                 fontSize: '13px',
                                 fontWeight: 700,
                                 opacity: availableQuestions.length > 0 ? 1 : 0.5,
+                                cursor: availableQuestions.length > 0 ? 'pointer' : 'not-allowed',
                             }}
                         >
                             <Play size={14} /> Mulai Latihan <ChevronRight size={13} />
                         </motion.button>
                     </div>
-                </div>
-                </div>
+                </motion.div>
             </div>
         )
     }
@@ -638,7 +740,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             type="button"
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={startPractice}
+                            onClick={() => startPractice()}
                             className="btn-signal-orange battle-finish-btn"
                             style={{ padding: '9px 22px', fontSize: '12.5px', fontWeight: 700, borderRadius: '8px' }}
                         >
@@ -926,11 +1028,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingTop: '12px', borderTop: '1px solid var(--surface-border)' }}>
                         <button
                             type="button"
-                            onClick={() => {
-                                resetTimers()
-                                setStarted(false)
-                                setFinished(false)
-                            }}
+                            onClick={() => setShowSurrenderConfirm(true)}
                             className="btn-dark-outline"
                             style={{ padding: '6px 12px', fontSize: '11px', color: 'var(--accent-red)', borderColor: 'rgba(232, 64, 64, 0.3)', borderRadius: '8px' }}
                         >
@@ -939,6 +1037,99 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     </div>
                 </div>
             </div>
+
+            {/* Exit / Surrender Confirmation Modal */}
+            {showSurrenderConfirm && (
+                <div
+                    className="modal-overlay"
+                    style={{
+                        position: 'fixed',
+                        inset: 0,
+                        backgroundColor: 'rgba(0, 0, 0, 0.75)',
+                        backdropFilter: 'blur(8px)',
+                        WebkitBackdropFilter: 'blur(8px)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        zIndex: 1000,
+                        padding: '16px',
+                        overflow: 'hidden',
+                        touchAction: 'none',
+                        overscrollBehavior: 'none',
+                    }}
+                    onClick={() => setShowSurrenderConfirm(false)}
+                >
+                    <div
+                        className="product-demo-panel battle-surrender-card"
+                        style={{
+                            width: '100%',
+                            maxWidth: '380px',
+                            padding: '22px',
+                            backgroundColor: 'var(--surface-card)',
+                            border: '1px solid var(--surface-border)',
+                            borderRadius: '14px',
+                            boxShadow: 'var(--shadow-modal)',
+                            textAlign: 'center',
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        <div style={{ fontSize: '28px', marginBottom: '6px' }}>🚩</div>
+                        <h3
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '16px',
+                                fontWeight: 700,
+                                color: 'var(--text-primary)',
+                                marginBottom: '6px',
+                            }}
+                        >
+                            Akhiri Latihan?
+                        </h3>
+                        <p style={{ color: 'var(--color-fog)', fontSize: '12px', lineHeight: 1.45, margin: '0 0 16px 0' }}>
+                            Sesi latihan saat ini akan dihentikan dan progres duel akan direset.
+                        </p>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                            <button
+                                type="button"
+                                onClick={() => setShowSurrenderConfirm(false)}
+                                className="btn-dark-outline"
+                                style={{
+                                    flex: 1,
+                                    padding: '8px 12px',
+                                    fontSize: '12.5px',
+                                    fontWeight: 600,
+                                    borderRadius: '8px',
+                                }}
+                            >
+                                Batal
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowSurrenderConfirm(false)
+                                    resetTimers()
+                                    setStarted(false)
+                                    setFinished(false)
+                                }}
+                                style={{
+                                    flex: 1,
+                                    padding: '8px 12px',
+                                    borderRadius: '8px',
+                                    border: '1px solid rgba(232, 64, 64, 0.6)',
+                                    backgroundColor: 'rgba(232, 64, 64, 0.2)',
+                                    color: 'var(--accent-red)',
+                                    fontFamily: 'var(--font-heading)',
+                                    fontWeight: 700,
+                                    fontSize: '12.5px',
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                Ya, Akhiri
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }

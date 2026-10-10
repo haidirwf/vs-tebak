@@ -19,6 +19,7 @@ import {
     ArrowUpRight,
     Check,
     ChevronRight,
+    Play,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 
@@ -43,7 +44,7 @@ interface AvailableRoom {
 export default function BattlePage() {
     const router = useRouter()
     const supabase = useMemo(() => createClient(), [])
-    const [mode, setMode] = useState<'select' | 'create' | 'join' | 'matchmaking'>('select')
+    const [mode, setMode] = useState<'select' | 'create' | 'join' | 'matchmaking' | 'computer'>('select')
     const [roomCode, setRoomCode] = useState('')
     const [category, setCategory] = useState('general')
     const [loading, setLoading] = useState(false)
@@ -480,7 +481,7 @@ export default function BattlePage() {
             label: 'Vs Computer',
             icon: Bot,
             desc: 'Latihan asah kecepatan kuis melawan bot AI tanpa antrean.',
-            action: () => router.push('/battle/computer'),
+            action: () => { setError(null); setMode('computer') },
             color: 'var(--accent-purple)',
             bg: 'var(--accent-purple-bg)',
             border: 'var(--accent-purple-border)',
@@ -891,6 +892,145 @@ export default function BattlePage() {
                                     style={{ padding: '9px 20px', fontSize: '13px', fontWeight: 700 }}
                                 >
                                     <Plus size={14} /> {loading ? 'Membuat...' : 'Buat Room'} <ChevronRight size={13} />
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+
+            {/* Modal: Battle vs Computer */}
+            <AnimatePresence>
+                {mode === 'computer' && (
+                    <div
+                        className="modal-overlay"
+                        style={{
+                            position: 'fixed',
+                            inset: 0,
+                            backgroundColor: 'rgba(0, 0, 0, 0.85)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            zIndex: 1000,
+                            padding: '16px',
+                            overflow: 'hidden',
+                            touchAction: 'none',
+                            overscrollBehavior: 'none',
+                        }}
+                        onClick={() => setMode('select')}
+                    >
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 8 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 8 }}
+                            transition={{ duration: 0.15 }}
+                            style={{
+                                width: '100%',
+                                maxWidth: '480px',
+                                maxHeight: '90dvh',
+                                overflowY: 'auto',
+                                padding: '24px 22px',
+                                backgroundColor: 'var(--surface-card)',
+                                borderRadius: '14px',
+                                border: '1px solid var(--surface-border)',
+                                boxShadow: 'var(--shadow-modal)',
+                                boxSizing: 'border-box',
+                            }}
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px', paddingBottom: '12px', borderBottom: '1px solid var(--surface-border)' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                    <Bot size={20} style={{ color: 'var(--accent-purple)' }} />
+                                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '17px', fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>
+                                        Battle vs Computer
+                                    </h2>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setMode('select')}
+                                    aria-label="Tutup modal"
+                                    style={{
+                                        background: 'none',
+                                        border: 'none',
+                                        color: 'var(--text-muted)',
+                                        cursor: 'pointer',
+                                        padding: '4px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        borderRadius: '6px',
+                                        transition: 'color 0.15s ease',
+                                    }}
+                                >
+                                    <X size={18} />
+                                </button>
+                            </div>
+
+                            <p style={{ color: 'var(--text-secondary)', fontSize: '13px', marginBottom: '18px', lineHeight: 1.5 }}>
+                                Latihan solo 10 soal melawan AI Sentinel tanpa antrean. Pilih kategori materi untuk menguji kecepatan dan pemahamanmu.
+                            </p>
+
+                            <div style={{ marginBottom: '22px' }}>
+                                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 600 }}>
+                                    Kategori Latihan
+                                </label>
+                                <div className="battle-category-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+                                    {CATEGORIES.map(cat => {
+                                        const isSelected = category === cat.value
+                                        return (
+                                            <button
+                                                key={cat.value}
+                                                type="button"
+                                                onClick={() => setCategory(cat.value)}
+                                                style={{
+                                                    padding: '10px 12px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: isSelected ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                                    border: `1.5px solid ${isSelected ? 'var(--brand-primary-border)' : 'var(--surface-border)'}`,
+                                                    color: isSelected ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                                    fontFamily: 'var(--font-heading)',
+                                                    fontSize: '12.5px',
+                                                    fontWeight: isSelected ? 700 : 500,
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '8px',
+                                                    minWidth: 0,
+                                                    transition: 'all 0.15s ease',
+                                                    boxShadow: isSelected ? '0 1px 4px rgba(245, 197, 66, 0.2)' : 'none',
+                                                }}
+                                            >
+                                                <span style={{ fontSize: '18px', flexShrink: 0, lineHeight: 1 }}>{cat.emoji}</span>
+                                                <span style={{ textAlign: 'left', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                    {cat.label}
+                                                </span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
+                            <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '22px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => setMode('select')}
+                                    className="btn-dark-outline"
+                                    style={{ padding: '9px 18px', fontSize: '13px' }}
+                                >
+                                    Batal
+                                </button>
+                                <motion.button
+                                    type="button"
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => {
+                                        setMode('select')
+                                        router.push(`/battle/computer?category=${category}&autostart=true`)
+                                    }}
+                                    className="btn-signal-orange"
+                                    style={{ padding: '9px 20px', fontSize: '13px', fontWeight: 700 }}
+                                >
+                                    <Play size={14} /> Mulai Latihan <ChevronRight size={13} />
                                 </motion.button>
                             </div>
                         </motion.div>

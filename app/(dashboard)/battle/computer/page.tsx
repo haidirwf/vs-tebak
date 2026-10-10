@@ -1,3 +1,4 @@
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getAuthenticatedUser } from '@/lib/auth/get-user'
 import { redirect } from 'next/navigation'
@@ -22,5 +23,10 @@ export default async function BattleComputerPage() {
             .single(),
     ])
 
-    return <PracticeArena questionPool={questionPool || []} currentUser={profile} />
+    return (
+        <Suspense fallback={null}>
+            <PracticeArena questionPool={questionPool || []} currentUser={profile} />
+        </Suspense>
+    )
 }
+
