@@ -28,25 +28,43 @@ export function DashboardProvider({
     } = useUserStore()
 
     // Seed user store profile synchronously if empty so child pages have profile on initial render
-    const storeProfile = useUserStore.getState().profile
-    if (profile && !storeProfile) {
+    const initialStoreProfile = useUserStore.getState().profile
+    if (profile && !initialStoreProfile) {
         useUserStore.setState({ profile, isLoading: false })
     }
 
     const [hasCompletedCreation, setHasCompletedCreation] = useState(false)
 
     // Akun baru maupun akun lama yang belum menyelesaikan kustomisasi karakter wajib melalui CharacterCreationModal
-    const activeProfile = useUserStore((s) => s.profile) || profile
-    const needsCharacterCreation = Boolean(
-        activeProfile && !activeProfile.character_created && !hasCompletedCreation
+    const subscribedProfile = useUserStore((s) => s.profile)
+    const activeProfile = subscribedProfile || profile
+    const isCharacterCreated = Boolean(
+        activeProfile?.character_created || hasCompletedCreation
     )
-    const [showCharacterModal, setShowCharacterModal] = useState(needsCharacterCreation)
+    const [showCharacterModal, setShowCharacterModal] = useState(!isCharacterCreated)
 
     useEffect(() => {
-        setProfile(profile)
+        if (profile) {
+            const current = useUserStore.getState().profile
+            // Prevent stale server profile from clearing freshly created character
+            if (current?.character_created && !profile.character_created) {
+                setProfile({
+                    ...profile,
+                    character_created: true,
+                    avatar_class: current.avatar_class || profile.avatar_class,
+                    equipped_items: current.equipped_items || profile.equipped_items,
+                })
+            } else {
+                setProfile(profile)
+            }
+        }
         setLoading(false)
-        if (profile && !profile.character_created && !hasCompletedCreation) {
+
+        const currentCreated = useUserStore.getState().profile?.character_created || profile?.character_created || hasCompletedCreation
+        if (!currentCreated) {
             setShowCharacterModal(true)
+        } else {
+            setShowCharacterModal(false)
         }
 
         // Trigger background user/quest sync non-blocking (throttled to 5 mins)

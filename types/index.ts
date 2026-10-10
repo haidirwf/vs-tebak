@@ -40,12 +40,41 @@ export interface Module {
   created_at: string
 }
 
+export type CodeChallengeLanguage = 'html' | 'css' | 'javascript' | 'typescript'
+
+export interface CodeTestCase {
+  id: string
+  description: string
+  type: 'selector' | 'text' | 'css' | 'regex' | 'eval'
+  selector?: string
+  expectedText?: string
+  cssProperty?: string
+  expectedCssValue?: string
+  regex?: string
+  evalFnBody?: string
+  hint?: string
+}
+
+export interface CodeChallenge {
+  language: CodeChallengeLanguage
+  instructions: string
+  starterHtml?: string
+  starterCss?: string
+  starterJs?: string
+  solutionHtml?: string
+  solutionCss?: string
+  solutionJs?: string
+  testCases: CodeTestCase[]
+  hints?: string[]
+}
+
 export interface LessonStep {
   id: string
   title: string
-  type: 'text' | 'video' | 'quiz'
+  type: 'text' | 'video' | 'quiz' | 'code'
   content: string
   questions?: Question[]
+  codeChallenge?: CodeChallenge
 }
 
 export interface UserModule {

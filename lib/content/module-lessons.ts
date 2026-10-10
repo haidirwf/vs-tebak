@@ -1,4 +1,4 @@
-import { LessonStep } from '@/types'
+import { LessonStep, Question } from '@/types'
 
 export const MODULE_LESSONS_MAP: Record<string, LessonStep[]> = {
     // =========================================================================
@@ -6,72 +6,270 @@ export const MODULE_LESSONS_MAP: Record<string, LessonStep[]> = {
     // =========================================================================
     'html-css-dasar': [
         {
-            id: 'html-struktur',
-            title: 'Struktur Dasar Dokumen HTML',
+            id: 'html-struktur-semantik',
+            title: 'Struktur Fondasi & Elemen Semantik HTML5',
             type: 'text',
-            content: `HTML (*Hypertext Markup Language*) merupakan bahasa markah standar untuk menstrukturkan halaman web dan kontennya. Setiap antarmuka web modern dibangun di atas susunan elemen hierarkis yang rapi.
+            content: `HTML (*Hypertext Markup Language*) merupakan fondasi utama dari setiap situs web di internet. Bahasa ini menggunakan tag dan elemen untuk menstrukturkan informasi agar dipahami oleh peramban (*browser*), mesin pencari (SEO), dan teknologi asistif (*screen reader*).
 
-## Hal yang Harus Diperhatikan dalam Menyusun Dokumen HTML
-Dokumen HTML standar selalu diawali dengan deklarasi \`<!DOCTYPE html>\` yang memberi tahu peramban bahwa dokumen menggunakan standar HTML5 terbaru.
+## Struktur Standar Dokumen HTML5
+Setiap dokumen HTML diawali dengan deklarasi \`<!DOCTYPE html>\` yang menginstruksikan peramban agar menggunakan mode standar HTML5 modern.
 
-Contoh struktur dokumen dasar:
+Contoh kerangka dokumen lengkap:
 \`\`\`html
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Halaman Web Pertama</title>
+  <title>Petualangan Web Pertama — Skillungo</title>
 </head>
 <body>
   <header>
-    <h1>Selamat Datang di Skillungo</h1>
+    <h1>Skillungo RPG Academy</h1>
+    <p>Platform pembelajaran digital gamified untuk pelajar Indonesia.</p>
   </header>
+  
   <main>
-    <p>HTML mendefinisikan struktur informasi halaman web.</p>
+    <section>
+      <h2>Selamat Datang di Dunia Web Development</h2>
+      <p>Pelajari fondasi kode HTML dan CSS untuk merakit antarmuka modern.</p>
+    </section>
   </main>
+  
+  <footer>
+    <p>&copy; 2026 Skillungo. All rights reserved.</p>
+  </footer>
 </body>
 </html>
 \`\`\`
 
-Elemen \`<head>\` memuat metadata yang penting untuk SEO dan peramban, sedangkan seluruh konten visual yang dilihat pengguna berada di dalam tag \`<body>\`.`,
+## Memahami Elemen Semantik HTML5
+Sebelum era HTML5, pengembang banyak menggunakan tag umum \`<div class="header">\` atau \`<div class="menu">\`. HTML5 memperkenalkan tag **semantik** yang memiliki arti jelas bagi peramban dan manusia:
+
+- **\`<header>\`**: Bagian kepala halaman atau pengantar konten, biasanya memuat judul atau logo.
+- **\`<nav>\`**: Penampung navigasi utama (menu tautan).
+- **\`<main>\`**: Konten utama yang unik pada halaman tersebut (hanya boleh ada satu \`<main>\` per halaman).
+- **\`<article>\`**: Komponen konten mandiri yang dapat didistribusikan atau digunakan ulang (misalnya postingan artikel, kartu profil, atau kartu produk).
+- **\`<section>\`**: Bagian tematik dari sebuah halaman, umumnya diawali dengan heading.
+- **\`<aside>\`**: Konten sampingan yang terkait secara tidak langsung (sidebar atau kutipan).
+- **\`<footer>\`**: Kaki halaman yang memuat hak cipta, kontak, atau tautan tambahan.
+
+## Hirarki Teks & Media Penting
+1. **Heading (\`<h1>\` sampai \`<h6>\`)**: Gunakan satu \`<h1>\` utama per halaman sebagai judul paling penting, disusul \`<h2>\` untuk sub-bagian, dan seterusnya.
+2. **Paragraf (\`<p>\`)**: Digunakan untuk teks deskriptif atau alinea bacaan.
+3. **Tautan (\`<a href="...">\`)**: Menghubungkan halaman satu dengan halaman lainnya.
+4. **Gambar (\`<img src="..." alt="...">\`)**: Wajib menyertakan atribut \`alt\` sebagai teks pengganti bila gambar gagal dimuat dan ramah bagi pengguna pembaca layar.`,
         },
         {
             id: 'html-video',
-            title: 'Video Pembelajaran: Dasar HTML & CSS',
+            title: 'Video Pembelajaran: Dasar HTML & CSS Web Development',
             type: 'video',
             content: 'https://www.youtube.com/watch?v=3U1AhjEf7DM',
         },
         {
-            id: 'css-styling',
-            title: 'Penerapan Styling & Selektor CSS',
+            id: 'css-selektor-tipografi',
+            title: 'Fondasi CSS: Selektor, Warna & Tipografi',
             type: 'text',
-            content: `Pemberian styling dengan CSS (*Cascading Style Sheets*) digunakan untuk mengatur warna, tipografi, dan tata letak agar antarmuka tampak profesional.
+            content: `CSS (*Cascading Style Sheets*) bertanggung jawab atas seluruh aspek visual: estetika warna, tata letak, tipografi, dan responsivitas halaman.
 
-## Penerapan Selektor & Properti CSS
-Terdapat beberapa cara menghubungkan styling dengan elemen, mulai dari selektor class hingga pemisahan stylesheet eksternal.
+## Anatomi Deklarasi CSS
+Aturan CSS terdiri dari **selektor** (target elemen) dan blok deklarasi berisi pasangan **properti** serta **nilai**:
 
-Contoh styling kartu komponen:
 \`\`\`css
-/* Selektor class untuk kartu konten */
-.card-container {
-  background-color: #ffffff;
-  border: 1px solid #e4e4e7;
-  border-radius: 8px;
-  padding: 20px;
-  color: #1d1d1d;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #D97706;
-  margin-bottom: 8px;
+/* Selektor class kartu */
+.hero-card {
+  background-color: #1a1a24;
+  color: #f8fafc;
+  border-radius: 10px;
+  padding: 24px;
 }
 \`\`\`
 
-Gunakan selektor berbasis class daripada ID untuk menjaga kemudahan perawatan (*reusability*) gaya pada berbagai elemen antarmuka.`,
+## Macam-Macam Selektor CSS
+- **Selektor Tag**: Menargetkan semua elemen HTML tertentu (misal: \`h1 { color: #f59e0b; }\`).
+- **Selektor Class (\`.\`)**: Menargetkan elemen dengan atribut class tertentu (misal: \`.btn-action\`). Fleksibel dan sangat dianjurkan untuk gaya yang dapat dipakai ulang.
+- **Selektor ID (\`#\`)**: Menargetkan elemen unik dengan ID tertentu (misal: \`#navbar\`). Hindari penggunaan berlebih karena spesifisitasnya yang terlalu tinggi.
+- **Pseudo-Class (\`:\`)**: Mengatur gaya saat elemen berada dalam kondisi tertentu, seperti ketika kursor diarahkan:
+\`\`\`css
+.btn-action:hover {
+  background-color: #d97706;
+  transform: translateY(-2px);
+}
+\`\`\`
+
+## Pewarnaan & Tipografi Modern
+1. **Sistem Warna**:
+   - **HEX**: \`#F59E0B\` (kombinasi 6 digit heksadesimal).
+   - **RGB / RGBA**: \`rgba(245, 158, 11, 0.85)\` (memiliki saluran alfa untuk transparansi).
+   - **HSL**: \`hsl(38, 92%, 50%)\` (Hue, Saturation, Lightness — intuitif untuk penyesuaian gelap-terang).
+2. **Tipografi**:
+   - Selalu atur \`line-height\` yang nyaman (misal: \`1.6\` untuk teks paragraf).
+   - Gunakan \`font-family\` sistem atau web font dengan *fallback generic* (seperti \`sans-serif\`).`,
+        },
+        {
+            id: 'css-box-model-flexbox',
+            title: 'CSS Box Model & Tata Letak Flexbox Modern',
+            type: 'text',
+            content: `Dua konsep terpenting yang wajib dikuasai setiap developer web adalah **CSS Box Model** dan **Flexbox**.
+
+## CSS Box Model
+Setiap elemen di peramban pada dasarnya adalah sebuah kotak (*box*) yang memiliki 4 lapisan:
+1. **Content**: Area inti tempat teks, gambar, atau elemen anak berada.
+2. **Padding**: Ruang kosong di dalam elemen (antara konten dan border).
+3. **Border**: Garis pembatas yang mengelilingi padding dan konten.
+4. **Margin**: Ruang kosong di luar elemen yang memisahkan elemen tersebut dari tetangganya.
+
+### Mengapa \`box-sizing: border-box\` Sangat Krusial?
+Secara bawaan (\`content-box\`), jika kamu memberi elemen lebar \`200px\` lalu menambahkan padding \`20px\`, lebar total elemen akan membengkak menjadi \`240px\`.
+Dengan menerapkan:
+\`\`\`css
+* {
+  box-sizing: border-box;
+}
+\`\`\`
+Peramban akan menyertakan padding dan border ke dalam ukuran lebar total yang ditentukan, sehingga tata letak tidak akan pecah atau bergeser secara tidak terduga.
+
+## Tata Letak Modern dengan Flexbox
+Flexbox (*Flexible Box Layout*) memudahkan penataan elemen secara satu dimensi (baris atau kolom) dengan pembagian ruang yang fleksibel.
+
+Contoh penataan baris kartu petualang:
+\`\`\`css
+.card-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between; /* Rata kiri-kanan dengan ruang di tengah */
+  align-items: center;            /* Rata tengah secara vertikal */
+  gap: 16px;                      /* Jarak antar kartu */
+}
+
+.card-item {
+  flex: 1;                        /* Setiap kartu membagi lebar sama rata */
+}
+\`\`\`
+
+Dengan menggabungkan Box Model dan Flexbox, kamu dapat membangun antarmuka web apa pun dengan rapi, proporsional, dan adaptif di berbagai resolusi layar.`,
+        },
+        {
+            id: 'html-css-challenge',
+            title: 'Tantangan Koding: Membangun Kartu Profil Petualang',
+            type: 'code',
+            content: 'Latihan praktik koding interaktif: Bangun komponen Kartu Profil Petualang RPG menggunakan HTML semantik dan styling CSS modern.',
+            codeChallenge: {
+                language: 'html',
+                instructions: 'Lengkapi file index.html dan style.css untuk merakit sebuah Kartu Profil Petualang RPG. Ikuti kriteria: buat elemen kartu semantik <article class="adventurer-card">, tambahkan judul nama petualang <h2> dengan class "adventurer-name", sertakan paragraf <p> dengan class "adventurer-bio", serta sebuah tombol <button class="btn-action">. Di file style.css, pastikan kartu memiliki border-radius dan padding, serta tombol memiliki background-color yang menarik!',
+                starterHtml: `<!-- Lengkapi struktur kartu profil petualang di bawah ini -->
+<article class="adventurer-card">
+  <div class="card-header">
+    <h2 class="adventurer-name">Ksatria Skillungo</h2>
+    <span class="adventurer-role">Warrior Kelas 1</span>
+  </div>
+
+  <p class="adventurer-bio">
+    Petualang tangguh yang siap menaklukkan berbagai tantangan kode dan logika web!
+  </p>
+
+  <!-- Tambahkan tombol aksi di bawah ini dengan class "btn-action" -->
+  <button class="btn-action">Mulai Petualangan</button>
+</article>`,
+                starterCss: `/* Atur tampilan kartu profil petualang RPG di bawah ini */
+.adventurer-card {
+  background-color: #181822;
+  border: 1px solid #2e2e42;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 380px;
+  margin: 0 auto;
+  color: #f8fafc;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.adventurer-name {
+  color: #f5c542;
+  font-size: 20px;
+  margin: 0 0 4px 0;
+}
+
+.adventurer-role {
+  color: #94a3b8;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.adventurer-bio {
+  color: #cbd5e1;
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 16px 0 20px 0;
+}
+
+/* Berikan styling pada tombol .btn-action */
+.btn-action {
+  background-color: #f59e0b;
+  color: #0f172a;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.btn-action:hover {
+  opacity: 0.9;
+}`,
+                testCases: [
+                    {
+                        id: 'tc-card',
+                        description: 'Memiliki elemen kartu <article> dengan class "adventurer-card"',
+                        type: 'selector',
+                        selector: 'article.adventurer-card',
+                        hint: 'Pastikan ada tag <article class="adventurer-card"> sebagai pembungkus utama.',
+                    },
+                    {
+                        id: 'tc-name',
+                        description: 'Memiliki judul nama petualang <h2> dengan class "adventurer-name"',
+                        type: 'selector',
+                        selector: 'h2.adventurer-name',
+                        hint: 'Tambahkan tag <h2 class="adventurer-name"> untuk nama karakter.',
+                    },
+                    {
+                        id: 'tc-bio',
+                        description: 'Memiliki paragraf <p> dengan class "adventurer-bio" yang terisi teks',
+                        type: 'selector',
+                        selector: 'p.adventurer-bio',
+                        hint: 'Pastikan elemen <p class="adventurer-bio"> memuat deskripsi petualang.',
+                    },
+                    {
+                        id: 'tc-button',
+                        description: 'Memiliki tombol aksi <button> dengan class "btn-action"',
+                        type: 'selector',
+                        selector: 'button.btn-action',
+                        hint: 'Tambahkan tag <button class="btn-action">Teks Tombol</button>.',
+                    },
+                    {
+                        id: 'tc-css-card',
+                        description: 'File style.css menerapkan properti "border-radius" pada kartu .adventurer-card',
+                        type: 'css',
+                        selector: '.adventurer-card',
+                        cssProperty: 'border-radius',
+                        hint: 'Buka tab style.css dan pastikan .adventurer-card memiliki border-radius.',
+                    },
+                    {
+                        id: 'tc-css-btn',
+                        description: 'File style.css menerapkan properti "background-color" pada tombol .btn-action',
+                        type: 'css',
+                        selector: '.btn-action',
+                        cssProperty: 'background-color',
+                        hint: 'Buka tab style.css dan berikan properti background-color pada .btn-action.',
+                    },
+                ],
+                hints: [
+                    'Gunakan tab index.html untuk menyusun elemen dan tab style.css untuk memberikan gaya tampilan.',
+                    'Pastikan ejaan class sesuai huruf kecil: "adventurer-card", "adventurer-name", dan "btn-action".',
+                    'Periksa apakah tombol sudah berada di dalam elemen <article class="adventurer-card">.',
+                ],
+            },
         },
     ],
 
@@ -915,4 +1113,63 @@ Pahami di tahap mana audiensmu berada agar pesan komunikasi yang kamu buat tepat
 
 export function getCuratedStepsForModule(slug: string): LessonStep[] | null {
     return MODULE_LESSONS_MAP[slug] || null
+}
+
+export const MODULE_QUESTIONS_MAP: Record<string, Question[]> = {
+    'html-css-dasar': [
+        {
+            id: 'q-html-1',
+            question_text: 'Tag semantik HTML5 manakah yang paling tepat untuk mengelompokkan konten mandiri yang dapat didistribusikan secara independen (seperti postingan blog atau kartu produk)?',
+            options: ['<article>', '<section>', '<div>', '<aside>'],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: '<article> dirancang khusus untuk membungkus konten mandiri yang memiliki arti utuh tersendiri.',
+        },
+        {
+            id: 'q-html-2',
+            question_text: 'Apa fungsi utama dari deklarasi box-sizing: border-box pada CSS?',
+            options: [
+                'Menghitung padding dan border ke dalam total dimensi elemen',
+                'Menghilangkan margin bawaan pada browser secara otomatis',
+                'Membuat elemen menjadi fleksibel layaknya display: flex',
+                'Mengubah elemen inline menjadi elemen blok',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'border-box memastikan padding dan border tidak menambah ukuran total lebar dan tinggi elemen sehingga kalkulasi tata letak konsisten.',
+        },
+        {
+            id: 'q-html-3',
+            question_text: 'Properti Flexbox manakah yang digunakan untuk meratakan dan mendistribusikan elemen anak sepanjang sumbu utama (main axis)?',
+            options: ['justify-content', 'align-items', 'flex-wrap', 'align-content'],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'justify-content mengatur perataan sepanjang main axis (horizontal secara default), sedangkan align-items mengatur sumbu silang (cross axis).',
+        },
+        {
+            id: 'q-html-4',
+            question_text: 'Atribut apakah yang wajib disertakan pada tag <img> untuk mendukung aksesibilitas (screen reader) dan SEO?',
+            options: ['alt', 'title', 'aria-label', 'caption'],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'Atribut alt (alternative text) mendeskripsikan isi visual gambar bagi pengguna pembaca layar dan saat gambar gagal dimuat.',
+        },
+        {
+            id: 'q-html-5',
+            question_text: 'Manakah urutan hierarki spesifisitas (kekuatan bobot) selektor CSS dari yang terendah ke tertinggi?',
+            options: [
+                'Tag elemen < Class selector < ID selector < Inline style',
+                'ID selector < Class selector < Tag elemen < Inline style',
+                'Class selector < ID selector < Tag elemen < Inline style',
+                'Inline style < ID selector < Class selector < Tag elemen',
+            ],
+            correct_option: 0,
+            difficulty: 'intermediate',
+            explanation: 'Spesifisitas terendah dimulai dari tag elemen (h1, p), lalu class (.btn), kemudian ID (#hero), dan tertinggi adalah inline style (style="...").',
+        },
+    ],
+}
+
+export function getCuratedQuestionsForModule(slug: string): Question[] | null {
+    return MODULE_QUESTIONS_MAP[slug] || null
 }

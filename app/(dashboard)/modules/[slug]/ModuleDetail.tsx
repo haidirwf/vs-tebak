@@ -25,9 +25,11 @@ import {
     Zap,
     Swords,
     BookOpen,
+    Code2,
 } from 'lucide-react'
 import { classHasBonusForCategory, CLASS_BONUS_PERCENT } from '@/lib/game/xp'
-import { getCuratedStepsForModule } from '@/lib/content/module-lessons'
+import { getCuratedStepsForModule, getCuratedQuestionsForModule } from '@/lib/content/module-lessons'
+import CodeChallengeWorkspace from '@/components/modules/CodeChallengeWorkspace'
 
 interface ModuleDetailProps {
     module: Module
@@ -418,6 +420,7 @@ export default function ModuleDetail({
     const [completed, setCompleted] = useState(Boolean(userModule?.status === 'completed' || completedFromLog))
     const [loading, setLoading] = useState(false)
     const [completionFeedback, setCompletionFeedback] = useState<CompletionFeedback | null>(null)
+    const [challengePassedMap, setChallengePassedMap] = useState<Record<string, boolean>>({})
 
     // UI Interactive States
     const [isStepDropdownOpen, setIsStepDropdownOpen] = useState(false)
@@ -436,11 +439,23 @@ export default function ModuleDetail({
 
     // Questions Resolution
     const currentQuestions = useMemo(() => {
-        const prioritized = prioritizeModuleQuestions(questions, module.id)
+        let combinedQuestions = [...questions]
+        const curated = getCuratedQuestionsForModule(module.slug)
+        if (curated && curated.length > 0) {
+            const existingTexts = new Set(
+                combinedQuestions.map((q) => (q.question_text || '').trim().toLowerCase())
+            )
+            for (const cq of curated) {
+                if (!existingTexts.has(cq.question_text.trim().toLowerCase())) {
+                    combinedQuestions.push(cq)
+                }
+            }
+        }
+        const prioritized = prioritizeModuleQuestions(combinedQuestions, module.id)
         return prioritized
             .slice(0, MAX_QUIZ_QUESTIONS)
             .map((q) => shuffleModuleQuestionOptions(q, `${module.id}:${q.id}`))
-    }, [questions, module.id])
+    }, [questions, module.id, module.slug])
 
     const hasQuiz = currentQuestions.length > 0
     const answeredCount = Object.keys(quizAnswers).length
@@ -743,7 +758,7 @@ export default function ModuleDetail({
                                                 }}
                                             >
                                                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
-                                                    {st.type === 'video' ? <Play size={14} /> : <FileText size={14} />}
+                                                    {st.type === 'video' ? <Play size={14} /> : st.type === 'code' ? <Code2 size={14} /> : <FileText size={14} />}
                                                     <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                         {i + 1}. {st.title}
                                                     </span>
@@ -993,6 +1008,16 @@ export default function ModuleDetail({
                                         <RichContentRenderer content={videoRawContent} />
                                     </div>
                                 )}
+                            </div>
+                        ) : activeStep?.type === 'code' && activeStep.codeChallenge ? (
+                            <div id="code-challenge-section">
+                                <CodeChallengeWorkspace
+                                    challenge={activeStep.codeChallenge}
+                                    onPass={(passed) => {
+                                        setChallengePassedMap((prev) => ({ ...prev, [activeStep.id]: passed }))
+                                    }}
+                                    initialPassed={Boolean(completed || challengePassedMap[activeStep.id])}
+                                />
                             </div>
                         ) : (
                             <div>
@@ -1377,7 +1402,33 @@ export default function ModuleDetail({
                 {/* Right Action: Navigasi Maju (Menempel di Kanan) */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
                     {phase === 'lesson' ? (
-                        currentStep < totalSteps - 1 ? (
+                        activeStep?.type === 'code' && !completed && !challengePassedMap[activeStep.id] ? (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    const el = document.getElementById('code-challenge-section')
+                                    if (el) el.scrollIntoView({ behavior: 'smooth' })
+                                }}
+                                style={{
+                                    padding: '8px 18px',
+                                    fontSize: '13px',
+                                    fontWeight: 600,
+                                    whiteSpace: 'nowrap',
+                                    backgroundColor: 'var(--surface-elevated)',
+                                    border: '1px solid var(--surface-border)',
+                                    color: 'var(--text-muted)',
+                                    borderRadius: '8px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '6px',
+                                }}
+                                title="Jalankan dan uji kode hingga semua kriteria terpenuhi untuk melanjutkan"
+                            >
+                                <Code2 size={14} />
+                                <span>Uji Kode Dahulu</span>
+                            </button>
+                        ) : currentStep < totalSteps - 1 ? (
                             <button
                                 onClick={() => setCurrentStep((s) => s + 1)}
                                 className="btn-signal-orange"
@@ -1639,7 +1690,7 @@ export default function ModuleDetail({
                                                         flexShrink: 0,
                                                     }}
                                                 >
-                                                    {st.type === 'video' ? <Play size={13} /> : <FileText size={13} />}
+                                                    {st.type === 'video' ? <Play size={13} /> : st.type === 'code' ? <Code2 size={13} /> : <FileText size={13} />}
                                                 </div>
                                                 <div style={{ minWidth: 0 }}>
                                                     <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '2px' }}>
