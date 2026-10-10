@@ -627,27 +627,126 @@ export default function GameLobbyStage({
                         zIndex: 1,
                     }}
                 >
-                    {/* Connecting Energy Beam / Track Line di Background */}
+                    {/* --- TALI / ROAD JALUR PETUALANGAN UTAMA DI ARENA --- */}
                     <div
-                        className="stage-rail-line"
+                        className="stage-grand-road"
                         style={{
                             position: 'absolute',
-                            top: '46%',
-                            left: '8%',
-                            right: '8%',
-                            height: '2px',
-                            background: `linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.1) 20%, ${roleCfg.color}45 50%, rgba(255, 255, 255, 0.1) 80%, transparent 100%)`,
+                            top: '52%',
+                            left: '5%',
+                            right: '5%',
+                            height: '24px',
+                            transform: 'translateY(-50%)',
+                            display: 'flex',
+                            alignItems: 'center',
                             zIndex: 0,
                             pointerEvents: 'none',
                         }}
-                    />
+                    >
+                        {/* Jembatan Tali / Jalan Kiri: Menghubungkan Materi Sebelumnya ke Center */}
+                        <div
+                            style={{
+                                flex: 1,
+                                height: '14px',
+                                borderRadius: '7px',
+                                background: 'linear-gradient(90deg, rgba(34, 197, 94, 0.22) 0%, rgba(34, 197, 94, 0.6) 100%)',
+                                borderTop: '2.5px solid rgba(34, 197, 94, 0.85)',
+                                borderBottom: '2.5px solid rgba(34, 197, 94, 0.85)',
+                                boxShadow: '0 0 16px rgba(34, 197, 94, 0.25)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    height: '2px',
+                                    borderTop: '2px dashed rgba(255, 255, 255, 0.65)',
+                                    position: 'absolute',
+                                }}
+                            />
+                            <div
+                                style={{
+                                    padding: '2px 8px',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: '1px solid rgba(34, 197, 94, 0.5)',
+                                    color: 'var(--accent-green)',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    fontFamily: 'var(--font-heading)',
+                                    position: 'relative',
+                                    zIndex: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                                }}
+                            >
+                                <span>Jalur Selesai</span>
+                                <ArrowRight size={11} />
+                            </div>
+                        </div>
 
-                    {/* Breadcrumb / Step Strip Indikator Materi di Atas Karakter */}
+                        {/* Spacer di bawah pedestal karakter agar platform arena tampak kokoh di atas jalan */}
+                        <div style={{ width: '270px', flexShrink: 0 }} />
+
+                        {/* Jembatan Tali / Jalan Kanan: Menghubungkan Center ke Materi Berikutnya */}
+                        <div
+                            style={{
+                                flex: 1,
+                                height: '14px',
+                                borderRadius: '7px',
+                                background: 'linear-gradient(90deg, rgba(245, 197, 66, 0.45) 0%, rgba(255, 255, 255, 0.08) 100%)',
+                                borderTop: '2.5px dashed rgba(245, 197, 66, 0.8)',
+                                borderBottom: '2.5px dashed rgba(245, 197, 66, 0.8)',
+                                boxShadow: '0 0 16px rgba(245, 197, 66, 0.2)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                position: 'relative',
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    height: '2px',
+                                    borderTop: '2px dashed rgba(255, 255, 255, 0.4)',
+                                    position: 'absolute',
+                                }}
+                            />
+                            <div
+                                style={{
+                                    padding: '2px 8px',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--surface-card)',
+                                    border: '1px solid rgba(245, 197, 66, 0.5)',
+                                    color: 'var(--color-gold-text)',
+                                    fontSize: '10px',
+                                    fontWeight: 700,
+                                    fontFamily: 'var(--font-heading)',
+                                    position: 'relative',
+                                    zIndex: 1,
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                                }}
+                            >
+                                <span>Langkah Selanjutnya</span>
+                                <ArrowRight size={11} />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* PETA JALUR / ROADMAP BAB MATERI DI ATAS KARAKTER */}
                     <div
                         style={{
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '8px',
+                            gap: '4px',
                             marginBottom: '16px',
                             padding: '6px 14px',
                             backgroundColor: 'var(--surface-elevated)',
@@ -658,49 +757,69 @@ export default function GameLobbyStage({
                             justifyContent: 'center',
                         }}
                     >
-                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', marginRight: '4px' }}>
-                            Materi {currentModule.title}:
+                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-heading)', marginRight: '6px' }}>
+                            Jalur Materi {currentModule.title}:
                         </span>
                         {steps.map((st, idx) => {
                             const isDone = isModuleCompleted || idx < completedStepsCount
                             const isCurrent = idx === activeStepIndex
                             return (
-                                <button
-                                    key={st.id || idx}
-                                    onClick={() => setManualStepIndex(idx)}
-                                    style={{
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        gap: '5px',
-                                        padding: '4px 10px',
-                                        borderRadius: '6px',
-                                        backgroundColor: isCurrent
-                                            ? 'var(--accent-gold-bg)'
-                                            : isDone
-                                                ? 'rgba(34, 197, 94, 0.08)'
-                                                : 'transparent',
-                                        border: `1px solid ${isCurrent ? 'var(--accent-gold-border)' : isDone ? 'rgba(34, 197, 94, 0.25)' : 'var(--surface-border)'}`,
-                                        color: isCurrent
-                                            ? 'var(--color-gold-text)'
-                                            : isDone
-                                                ? 'var(--accent-green)'
-                                                : 'var(--text-muted)',
-                                        fontSize: '11px',
-                                        fontWeight: isCurrent ? 700 : 500,
-                                        fontFamily: 'var(--font-heading)',
-                                        cursor: 'pointer',
-                                        transition: 'all 0.2s ease',
-                                    }}
-                                >
-                                    {isDone ? (
-                                        <CheckCircle2 size={12} style={{ color: 'var(--accent-green)' }} />
-                                    ) : (
-                                        <span>{idx + 1}.</span>
+                                <React.Fragment key={st.id || idx}>
+                                    {/* Tali / Garis Penghubung antar langkah di bar */}
+                                    {idx > 0 && (
+                                        <div style={{ display: 'flex', alignItems: 'center', margin: '0 3px' }}>
+                                            <div
+                                                style={{
+                                                    width: '18px',
+                                                    height: '3px',
+                                                    borderRadius: '2px',
+                                                    backgroundColor: idx <= completedStepsCount
+                                                        ? 'var(--accent-green)'
+                                                        : 'var(--surface-border)',
+                                                    transition: 'all 0.3s ease',
+                                                }}
+                                            />
+                                            <span style={{ fontSize: '9px', color: idx <= completedStepsCount ? 'var(--accent-green)' : 'var(--text-muted)', marginLeft: '-2px' }}>
+                                                ▸
+                                            </span>
+                                        </div>
                                     )}
-                                    <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                        {st.title.replace(/^([0-9]+\.\s*|Video Pembelajaran:\s*|Pengenalan:\s*)/i, '')}
-                                    </span>
-                                </button>
+                                    <button
+                                        onClick={() => setManualStepIndex(idx)}
+                                        style={{
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '5px',
+                                            padding: '4px 10px',
+                                            borderRadius: '6px',
+                                            backgroundColor: isCurrent
+                                                ? 'var(--accent-gold-bg)'
+                                                : isDone
+                                                    ? 'rgba(34, 197, 94, 0.08)'
+                                                    : 'transparent',
+                                            border: `1px solid ${isCurrent ? 'var(--accent-gold-border)' : isDone ? 'rgba(34, 197, 94, 0.25)' : 'var(--surface-border)'}`,
+                                            color: isCurrent
+                                                ? 'var(--color-gold-text)'
+                                                : isDone
+                                                    ? 'var(--accent-green)'
+                                                    : 'var(--text-muted)',
+                                            fontSize: '11px',
+                                            fontWeight: isCurrent ? 700 : 500,
+                                            fontFamily: 'var(--font-heading)',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s ease',
+                                        }}
+                                    >
+                                        {isDone ? (
+                                            <CheckCircle2 size={12} style={{ color: 'var(--accent-green)' }} />
+                                        ) : (
+                                            <span>{idx + 1}.</span>
+                                        )}
+                                        <span style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                            {st.title.replace(/^([0-9]+\.\s*|Video Pembelajaran:\s*|Pengenalan:\s*)/i, '')}
+                                        </span>
+                                    </button>
+                                </React.Fragment>
                             )
                         })}
                     </div>

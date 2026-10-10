@@ -812,6 +812,34 @@ input::placeholder, textarea::placeholder {
   max-width: 100% !important;
 }
 
+.profile-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
+}
+
+@media (min-width: 900px) {
+  .profile-layout-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.95fr);
+  }
+}
+
+.profile-header-card {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+@media (min-width: 768px) {
+  .profile-header-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .auth-card {
   padding: 20px 16px !important;
 }
@@ -2410,8 +2438,12 @@ input::placeholder, textarea::placeholder {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
-  .stage-rail-line {
+  .stage-rail-line,
+  .stage-grand-road {
     display: none !important;
+  }
+  .stage-vertical-road-bridge {
+    display: flex !important;
   }
   .stage-side-node {
     width: 100% !important;
@@ -2427,12 +2459,22 @@ input::placeholder, textarea::placeholder {
   }
 }
 
+.stage-vertical-road-bridge {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 6px 0;
+}
+
 @media (max-width: 768px) {
   .game-deck-grid {
     grid-template-columns: 1fr !important;
     gap: 12px !important;
   }
 }
+
 
 
 
