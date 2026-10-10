@@ -1,23 +1,26 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <rect width="512" height="512" rx="120" fill="#111114" />
-  <rect x="10" y="10" width="492" height="492" rx="110" fill="none" stroke="#23232C" stroke-width="16" />
-
-  <radialGradient id="char-glow" cx="50%" cy="45%" r="42%">
-    <stop offset="0%" stop-color="#A855F7" stop-opacity="0.22" />
-    <stop offset="100%" stop-color="#A855F7" stop-opacity="0" />
-  </radialGradient>
-  <rect width="512" height="512" rx="120" fill="url(#char-glow)" />
-
-  <!-- Knight Shield Emblem -->
-  <g transform="translate(256, 256) scale(15)" stroke="#C084FC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <g transform="translate(-12, -12)">
-      <!-- Shield outer -->
-      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="#A855F7" fill-opacity="0.15" />
-      <!-- Inner crest cross -->
-      <line x1="12" y1="6" x2="12" y2="18" stroke="#F5C542" stroke-width="1.8" />
-      <line x1="7" y1="10" x2="17" y2="10" stroke="#F5C542" stroke-width="1.8" />
-      <!-- Central heart gem -->
-      <circle cx="12" cy="10" r="1.5" fill="#FFF" stroke="#F5C542" stroke-width="0.8" />
-    </g>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" fill="none">
+  <!-- Knight Aegis Shield Body -->
+  <path d="M32 58C16 50 10 36 10 18l22-8 22 8c0 18-6 32-22 40z" fill="url(#char-shield-grad)" stroke="#6D28D9" stroke-width="2.5" stroke-linejoin="round" />
+  <!-- Inner Shield Inlay -->
+  <path d="M32 52C20 45 15 34 15 20l17-6 17 6c0 14-5 25-17 32z" fill="#7C3AED" stroke="#A855F7" stroke-width="1.5" />
+  <!-- Golden Cross of Valor -->
+  <path d="M32 14v32M18 26h28" stroke="url(#char-gold-grad)" stroke-width="4" stroke-linecap="round" />
+  <path d="M32 14v32M18 26h28" stroke="#FEF08A" stroke-width="1.8" stroke-linecap="round" />
+  <!-- Center Heart Jewel / Diamond (Ruby) -->
+  <polygon points="32,20 38,26 32,32 26,26" fill="#EF4444" stroke="#FDE047" stroke-width="1.5" />
+  <circle cx="32" cy="26" r="1.5" fill="#FFFFFF" />
+  <!-- Top Crown Spikes -->
+  <path d="M24 10l8-4 8 4" stroke="#FBBF24" stroke-width="2" stroke-linecap="round" />
+  <defs>
+    <linearGradient id="char-shield-grad" x1="10" y1="10" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#C084FC" />
+      <stop offset="40%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#6D28D9" />
+    </linearGradient>
+    <linearGradient id="char-gold-grad" x1="18" y1="14" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="50%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+  </defs>
 </svg>

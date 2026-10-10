@@ -331,22 +331,23 @@ export default function Sidebar() {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        width: '20px',
-                                        height: '20px',
+                                        width: '24px',
+                                        height: '24px',
                                         flexShrink: 0,
                                     }}
                                 >
                                     <img
                                         src={item.favicon}
                                         alt={item.label}
-                                        width={18}
-                                        height={18}
+                                        width={22}
+                                        height={22}
                                         style={{
-                                            width: '18px',
-                                            height: '18px',
+                                            width: '22px',
+                                            height: '22px',
                                             objectFit: 'contain',
-                                            filter: isActive ? 'brightness(1.15) drop-shadow(0 1px 4px rgba(245, 197, 66, 0.35))' : 'grayscale(0.35) opacity(0.75)',
-                                            transition: 'filter 0.15s ease',
+                                            opacity: isActive ? 1 : 0.75,
+                                            filter: isActive ? 'drop-shadow(0 1px 6px rgba(245, 197, 66, 0.4))' : 'none',
+                                            transition: 'all 0.15s ease',
                                         }}
                                     />
                                 </div>

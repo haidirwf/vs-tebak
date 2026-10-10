@@ -82,36 +82,33 @@ export default function Navbar() {
                             }}
                         >
                             <motion.div
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.92 }}
+                                whileHover={{ scale: 1.12 }}
+                                whileTap={{ scale: 0.94 }}
                                 transition={{ type: 'spring', stiffness: 450, damping: 25 }}
                                 style={{
-                                    width: '42px',
-                                    height: '42px',
-                                    borderRadius: '10px',
+                                    width: '46px',
+                                    height: '44px',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
                                     position: 'relative',
-                                    backgroundColor: isActive ? 'var(--accent-gold-bg)' : 'transparent',
-                                    border: `1px solid ${isActive ? 'var(--accent-gold-border)' : 'transparent'}`,
-                                    transition: 'background-color 0.15s ease, border-color 0.15s ease',
                                 }}
                             >
                                 <img
                                     src={item.favicon}
                                     alt={item.label}
-                                    width={26}
-                                    height={26}
+                                    width={34}
+                                    height={34}
                                     style={{
-                                        width: '26px',
-                                        height: '26px',
+                                        width: '34px',
+                                        height: '34px',
                                         objectFit: 'contain',
+                                        opacity: isActive ? 1 : 0.65,
                                         filter: isActive
-                                            ? 'brightness(1.15) drop-shadow(0 2px 6px rgba(245, 197, 66, 0.35))'
-                                            : 'grayscale(0.35) opacity(0.72)',
-                                        transition: 'filter 0.2s ease, transform 0.2s ease',
-                                        transform: isActive ? 'scale(1.06)' : 'scale(1)',
+                                            ? 'drop-shadow(0 2px 8px rgba(245, 197, 66, 0.45))'
+                                            : 'none',
+                                        transition: 'all 0.2s ease',
+                                        transform: isActive ? 'scale(1.1)' : 'scale(1)',
                                     }}
                                 />
 
@@ -121,10 +118,10 @@ export default function Navbar() {
                                         layoutId="bottomNavIndicator"
                                         style={{
                                             position: 'absolute',
-                                            top: '-1px',
-                                            left: '8px',
-                                            right: '8px',
-                                            height: '2px',
+                                            top: '0px',
+                                            left: '10px',
+                                            right: '10px',
+                                            height: '2.5px',
                                             borderRadius: '2px',
                                             backgroundColor: 'var(--brand-primary)',
                                         }}

@@ -1,23 +1,28 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <rect width="512" height="512" rx="120" fill="#111114" />
-  <rect x="10" y="10" width="492" height="492" rx="110" fill="none" stroke="#23232C" stroke-width="16" />
-
-  <radialGradient id="shop-glow" cx="50%" cy="48%" r="42%">
-    <stop offset="0%" stop-color="#F59E0B" stop-opacity="0.25" />
-    <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
-  </radialGradient>
-  <rect width="512" height="512" rx="120" fill="url(#shop-glow)" />
-
-  <!-- Shopping / Treasure Emblem -->
-  <g transform="translate(256, 256) scale(15)" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <g transform="translate(-12, -12)">
-      <!-- Bag Body -->
-      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" fill="#F59E0B" fill-opacity="0.15" />
-      <line x1="3" y1="6" x2="21" y2="6" />
-      <!-- Bag Handles / Crown clasp -->
-      <path d="M16 10a4 4 0 0 1-8 0" stroke="#FBBF24" stroke-width="2" />
-      <!-- Star coin in center -->
-      <polygon points="12 13 12.8 15 15 15.2 13.3 16.6 13.8 18.7 12 17.5 10.2 18.7 10.7 16.6 9 15.2 11.2 15" fill="#F5C542" stroke="none" />
-    </g>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" fill="none">
+  <!-- Adventurer Merchant Bag Body -->
+  <path d="M14 20l-4 8v26a4 4 0 0 0 4 4h36a4 4 0 0 0 4-4V28l-4-8H14z" fill="url(#shop-bag-grad)" stroke="#047857" stroke-width="2.5" stroke-linejoin="round" />
+  <!-- Upper Fold / Flap -->
+  <path d="M10 28h44v4H10z" fill="#047857" stroke="#065F46" stroke-width="1.5" />
+  <!-- Golden Handle -->
+  <path d="M24 20V12a8 8 0 0 1 16 0v8" stroke="url(#shop-gold-grad)" stroke-width="3.5" stroke-linecap="round" />
+  <path d="M24 20V12a8 8 0 0 1 16 0v8" stroke="#FEF08A" stroke-width="1.5" stroke-linecap="round" />
+  <!-- Center Star Emblem / Gold Coin -->
+  <circle cx="32" cy="40" r="9" fill="url(#shop-gold-grad)" stroke="#B45309" stroke-width="2" />
+  <!-- Five-pointed Star inside coin -->
+  <polygon points="32,33 34.5,38 40,38.5 36,42 37.2,47 32,44 26.8,47 28,42 24,38.5 29.5,38" fill="#FFF" />
+  <!-- Leather Straps -->
+  <line x1="20" y1="28" x2="20" y2="58" stroke="#065F46" stroke-width="2" />
+  <line x1="44" y1="28" x2="44" y2="58" stroke="#065F46" stroke-width="2" />
+  <defs>
+    <linearGradient id="shop-bag-grad" x1="10" y1="20" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#34D399" />
+      <stop offset="45%" stop-color="#10B981" />
+      <stop offset="100%" stop-color="#059669" />
+    </linearGradient>
+    <linearGradient id="shop-gold-grad" x1="24" y1="12" x2="40" y2="49" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#FDE047" />
+      <stop offset="60%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#D97706" />
+    </linearGradient>
+  </defs>
 </svg>

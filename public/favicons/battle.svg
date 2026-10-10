@@ -1,31 +1,34 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
-  <rect width="512" height="512" rx="120" fill="#111114" />
-  <rect x="10" y="10" width="492" height="492" rx="110" fill="none" stroke="#23232C" stroke-width="16" />
-
-  <radialGradient id="battle-glow" cx="50%" cy="50%" r="42%">
-    <stop offset="0%" stop-color="#EF4444" stop-opacity="0.22" />
-    <stop offset="60%" stop-color="#F5C542" stop-opacity="0.1" />
-    <stop offset="100%" stop-color="#EF4444" stop-opacity="0" />
-  </radialGradient>
-  <rect width="512" height="512" rx="120" fill="url(#battle-glow)" />
-
-  <!-- Dual Swords Clash Emblem -->
-  <g transform="translate(256, 256) scale(15)" stroke="#F5C542" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" fill="none">
-    <g transform="translate(-12, -12)">
-      <!-- Sword 1 -->
-      <polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5" fill="#EF4444" fill-opacity="0.1" />
-      <line x1="13" y1="19" x2="19" y2="13" />
-      <line x1="16" y1="16" x2="20" y2="20" />
-      <line x1="19" y1="21" x2="21" y2="19" />
-
-      <!-- Sword 2 -->
-      <polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5" fill="#EF4444" fill-opacity="0.1" />
-      <line x1="5" y1="14" x2="9" y2="18" />
-      <line x1="7" y1="17" x2="4" y2="20" />
-      <line x1="3" y1="19" x2="5" y2="21" />
-
-      <!-- Clash spark in center -->
-      <circle cx="12" cy="12" r="1.5" fill="#FFF" stroke="#F5C542" stroke-width="0.8" />
-    </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="100%" height="100%" fill="none">
+  <!-- Sword 1: Fiery Crimson Blade -->
+  <g>
+    <path d="M44 8l12 12L24 48l-6-6L44 8z" fill="url(#sword-fire-grad)" stroke="#DC2626" stroke-width="2" stroke-linejoin="round" />
+    <path d="M44 8l6 6L21 45" stroke="#FEE2E2" stroke-width="1.5" />
+    <path d="M16 40l10 10-3 3-10-10 3-3z" fill="#F59E0B" stroke="#B45309" stroke-width="1.5" />
+    <path d="M19 47l-7 7-3-3 7-7 3 3z" fill="#78350F" stroke="#451A03" stroke-width="1.2" />
+    <circle cx="10" cy="54" r="3" fill="#FBBF24" stroke="#B45309" stroke-width="1.2" />
   </g>
+  <!-- Sword 2: Electric Cyan / Steel Blade -->
+  <g>
+    <path d="M20 8L8 20l28 28 6-6L20 8z" fill="url(#sword-steel-grad)" stroke="#0284C7" stroke-width="2" stroke-linejoin="round" />
+    <path d="M20 8l-6 6 29 29" stroke="#FFFFFF" stroke-width="1.5" />
+    <path d="M48 40l-10 10 3 3 10-10-3-3z" fill="#F59E0B" stroke="#B45309" stroke-width="1.5" />
+    <path d="M45 47l7 7 3-3-7-7-3 3z" fill="#78350F" stroke="#451A03" stroke-width="1.2" />
+    <circle cx="54" cy="54" r="3" fill="#FBBF24" stroke="#B45309" stroke-width="1.2" />
+  </g>
+  <!-- Clash Energy Spark -->
+  <circle cx="32" cy="28" r="4.5" fill="#FEF08A" />
+  <path d="M32 18v20M22 28h20M25 21l14 14M39 21L25 35" stroke="#F97316" stroke-width="2" stroke-linecap="round" />
+  <circle cx="32" cy="28" r="2" fill="#FFFFFF" />
+  <defs>
+    <linearGradient id="sword-fire-grad" x1="18" y1="42" x2="56" y2="8" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#DC2626" />
+      <stop offset="50%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#F97316" />
+    </linearGradient>
+    <linearGradient id="sword-steel-grad" x1="8" y1="20" x2="42" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#0369A1" />
+    </linearGradient>
+  </defs>
 </svg>

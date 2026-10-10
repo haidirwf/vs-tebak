@@ -134,6 +134,79 @@
   --shadow-panel: 0 2px 5px -1px rgba(0, 0, 0, 0.06), 0 1px 3px -1px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04);
   --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.15);
+
+  /* --- EQUIPMENT RARITY TOKENS (LIGHT MODE: CRISP, HARMONIOUS, ZERO-CLASH) --- */
+  --rarity-card-bg-common: linear-gradient(180deg, #f8fafc 0%, #ffffff 100%);
+  --rarity-card-border-common: #e2e8f0;
+  --rarity-card-shadow-common: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --rarity-card-hover-shadow-common: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --rarity-title-common: #0f172a;
+  --rarity-desc-common: #475569;
+  --rarity-pedestal-bg-common: rgba(0, 0, 0, 0.03);
+  --rarity-pedestal-border-common: 1px solid #e2e8f0;
+  --rarity-pedestal-shadow-common: none;
+  --rarity-badge-bg-common: rgba(0, 0, 0, 0.04);
+  --rarity-badge-border-common: #cbd5e1;
+  --rarity-badge-color-common: #475569;
+  --rarity-buff-bg-common: rgba(148, 163, 184, 0.14);
+  --rarity-buff-border-common: #cbd5e1;
+  --rarity-buff-color-common: #334155;
+  --rarity-price-color-common: #475569;
+  --rarity-slot-bg: rgba(0, 0, 0, 0.04);
+  --rarity-slot-border: rgba(0, 0, 0, 0.08);
+  --rarity-slot-color: #475569;
+  --rarity-divider: #e2e8f0;
+
+  --rarity-card-bg-rare: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 30%, #ffffff 100%);
+  --rarity-card-border-rare: #7dd3fc;
+  --rarity-card-shadow-rare: 0 4px 16px rgba(14, 165, 233, 0.1);
+  --rarity-card-hover-shadow-rare: 0 6px 22px rgba(14, 165, 233, 0.2);
+  --rarity-title-rare: #0369a1;
+  --rarity-desc-rare: #475569;
+  --rarity-pedestal-bg-rare: radial-gradient(circle, rgba(56, 189, 248, 0.2) 0%, rgba(186, 230, 253, 0.1) 75%);
+  --rarity-pedestal-border-rare: 1.5px solid #38bdf8;
+  --rarity-pedestal-shadow-rare: 0 0 10px rgba(56, 189, 248, 0.2);
+  --rarity-badge-bg-rare: rgba(56, 189, 248, 0.12);
+  --rarity-badge-border-rare: #7dd3fc;
+  --rarity-badge-color-rare: #0284c7;
+  --rarity-buff-bg-rare: rgba(56, 189, 248, 0.12);
+  --rarity-buff-border-rare: #7dd3fc;
+  --rarity-buff-color-rare: #0284c7;
+  --rarity-price-color-rare: #0284c7;
+
+  --rarity-card-bg-epic: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 30%, #ffffff 100%);
+  --rarity-card-border-epic: #c084fc;
+  --rarity-card-shadow-epic: 0 4px 18px rgba(168, 85, 247, 0.12);
+  --rarity-card-hover-shadow-epic: 0 8px 26px rgba(168, 85, 247, 0.22);
+  --rarity-title-epic: #6b21a8;
+  --rarity-desc-epic: #475569;
+  --rarity-pedestal-bg-epic: radial-gradient(circle, rgba(192, 132, 252, 0.24) 0%, rgba(233, 213, 255, 0.12) 75%);
+  --rarity-pedestal-border-epic: 1.5px solid #c084fc;
+  --rarity-pedestal-shadow-epic: 0 0 12px rgba(192, 132, 252, 0.22);
+  --rarity-badge-bg-epic: rgba(168, 85, 247, 0.12);
+  --rarity-badge-border-epic: #c084fc;
+  --rarity-badge-color-epic: #7e22ce;
+  --rarity-buff-bg-epic: rgba(168, 85, 247, 0.12);
+  --rarity-buff-border-epic: #c084fc;
+  --rarity-buff-color-epic: #7e22ce;
+  --rarity-price-color-epic: #7e22ce;
+
+  --rarity-card-bg-legendary: linear-gradient(180deg, #fffbeb 0%, #fef3c7 35%, #ffffff 100%);
+  --rarity-card-border-legendary: #f59e0b;
+  --rarity-card-shadow-legendary: 0 6px 22px rgba(245, 158, 11, 0.15), inset 0 1px 0 rgba(254, 240, 138, 0.6);
+  --rarity-card-hover-shadow-legendary: 0 10px 32px rgba(245, 158, 11, 0.28), inset 0 1px 0 rgba(254, 240, 138, 0.75);
+  --rarity-title-legendary: #92400e;
+  --rarity-desc-legendary: #475569;
+  --rarity-pedestal-bg-legendary: radial-gradient(circle, rgba(251, 191, 36, 0.32) 0%, rgba(254, 243, 199, 0.15) 75%);
+  --rarity-pedestal-border-legendary: 1.5px solid #f59e0b;
+  --rarity-pedestal-shadow-legendary: 0 0 14px rgba(245, 158, 11, 0.25);
+  --rarity-badge-bg-legendary: linear-gradient(90deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.14));
+  --rarity-badge-border-legendary: #f59e0b;
+  --rarity-badge-color-legendary: #b45309;
+  --rarity-buff-bg-legendary: rgba(245, 158, 11, 0.14);
+  --rarity-buff-border-legendary: #f59e0b;
+  --rarity-buff-color-legendary: #b45309;
+  --rarity-price-color-legendary: #b45309;
 }
 
 /* Optional Dark Mode Inversion */
@@ -217,6 +290,79 @@
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.6);
   --shadow-modal: 0 20px 48px rgba(0, 0, 0, 0.8);
   --focus-ring: 0 0 0 2px rgba(245, 197, 66, 0.4), 0 0 6px rgba(245, 197, 66, 0.25);
+
+  /* --- EQUIPMENT RARITY TOKENS (DARK MODE: GLOWING RPG CONSOLE) --- */
+  --rarity-card-bg-common: linear-gradient(180deg, rgba(30, 41, 59, 0.45) 0%, rgba(15, 23, 42, 0.8) 100%);
+  --rarity-card-border-common: rgba(148, 163, 184, 0.2);
+  --rarity-card-shadow-common: 0 4px 14px rgba(0, 0, 0, 0.25);
+  --rarity-card-hover-shadow-common: 0 6px 20px rgba(0, 0, 0, 0.35);
+  --rarity-title-common: #ffffff;
+  --rarity-desc-common: #94a3b8;
+  --rarity-pedestal-bg-common: rgba(255, 255, 255, 0.04);
+  --rarity-pedestal-border-common: 1px solid rgba(148, 163, 184, 0.2);
+  --rarity-pedestal-shadow-common: none;
+  --rarity-badge-bg-common: rgba(255, 255, 255, 0.05);
+  --rarity-badge-border-common: rgba(148, 163, 184, 0.25);
+  --rarity-badge-color-common: #94a3b8;
+  --rarity-buff-bg-common: rgba(148, 163, 184, 0.1);
+  --rarity-buff-border-common: rgba(148, 163, 184, 0.25);
+  --rarity-buff-color-common: #94a3b8;
+  --rarity-price-color-common: #94a3b8;
+  --rarity-slot-bg: rgba(255, 255, 255, 0.04);
+  --rarity-slot-border: rgba(255, 255, 255, 0.08);
+  --rarity-slot-color: #94a3b8;
+  --rarity-divider: rgba(255, 255, 255, 0.08);
+
+  --rarity-card-bg-rare: linear-gradient(180deg, rgba(8, 51, 68, 0.45) 0%, rgba(12, 74, 110, 0.2) 35%, rgba(15, 23, 42, 0.88) 100%);
+  --rarity-card-border-rare: rgba(56, 189, 248, 0.45);
+  --rarity-card-shadow-rare: 0 6px 20px -2px rgba(14, 165, 233, 0.2);
+  --rarity-card-hover-shadow-rare: 0 8px 28px -2px rgba(14, 165, 233, 0.35);
+  --rarity-title-rare: #ffffff;
+  --rarity-desc-rare: #94a3b8;
+  --rarity-pedestal-bg-rare: radial-gradient(circle, rgba(56, 189, 248, 0.24) 0%, rgba(14, 116, 144, 0.08) 75%);
+  --rarity-pedestal-border-rare: 1.5px solid rgba(56, 189, 248, 0.5);
+  --rarity-pedestal-shadow-rare: 0 0 14px rgba(56, 189, 248, 0.22);
+  --rarity-badge-bg-rare: rgba(56, 189, 248, 0.14);
+  --rarity-badge-border-rare: rgba(56, 189, 248, 0.4);
+  --rarity-badge-color-rare: #38bdf8;
+  --rarity-buff-bg-rare: rgba(56, 189, 248, 0.12);
+  --rarity-buff-border-rare: rgba(56, 189, 248, 0.32);
+  --rarity-buff-color-rare: #38bdf8;
+  --rarity-price-color-rare: #38bdf8;
+
+  --rarity-card-bg-epic: linear-gradient(180deg, rgba(88, 28, 135, 0.45) 0%, rgba(126, 34, 206, 0.18) 35%, rgba(15, 23, 42, 0.9) 100%);
+  --rarity-card-border-epic: rgba(192, 132, 252, 0.55);
+  --rarity-card-shadow-epic: 0 8px 26px -2px rgba(168, 85, 247, 0.28), inset 0 1px 0 rgba(192, 132, 252, 0.25);
+  --rarity-card-hover-shadow-epic: 0 12px 34px -2px rgba(168, 85, 247, 0.45), inset 0 1px 0 rgba(192, 132, 252, 0.4);
+  --rarity-title-epic: #f3e8ff;
+  --rarity-desc-epic: #94a3b8;
+  --rarity-pedestal-bg-epic: radial-gradient(circle, rgba(192, 132, 252, 0.32) 0%, rgba(88, 28, 135, 0.12) 75%);
+  --rarity-pedestal-border-epic: 1.5px solid rgba(192, 132, 252, 0.65);
+  --rarity-pedestal-shadow-epic: 0 0 18px rgba(192, 132, 252, 0.32);
+  --rarity-badge-bg-epic: rgba(168, 85, 247, 0.2);
+  --rarity-badge-border-epic: rgba(192, 132, 252, 0.5);
+  --rarity-badge-color-epic: #c084fc;
+  --rarity-buff-bg-epic: rgba(168, 85, 247, 0.16);
+  --rarity-buff-border-epic: rgba(192, 132, 252, 0.38);
+  --rarity-buff-color-epic: #c084fc;
+  --rarity-price-color-epic: #c084fc;
+
+  --rarity-card-bg-legendary: linear-gradient(180deg, rgba(180, 83, 9, 0.42) 0%, rgba(217, 119, 6, 0.18) 35%, rgba(15, 23, 42, 0.94) 100%);
+  --rarity-card-border-legendary: rgba(251, 191, 36, 0.75);
+  --rarity-card-shadow-legendary: 0 10px 32px -2px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(254, 240, 138, 0.45);
+  --rarity-card-hover-shadow-legendary: 0 14px 42px -2px rgba(245, 158, 11, 0.52), inset 0 1px 0 rgba(254, 240, 138, 0.65);
+  --rarity-title-legendary: #fef3c7;
+  --rarity-desc-legendary: #94a3b8;
+  --rarity-pedestal-bg-legendary: radial-gradient(circle, rgba(251, 191, 36, 0.42) 0%, rgba(180, 83, 9, 0.18) 75%);
+  --rarity-pedestal-border-legendary: 1.5px solid rgba(251, 191, 36, 0.85);
+  --rarity-pedestal-shadow-legendary: 0 0 22px rgba(251, 191, 36, 0.42), inset 0 0 8px rgba(254, 240, 138, 0.25);
+  --rarity-badge-bg-legendary: linear-gradient(90deg, rgba(245, 158, 11, 0.28), rgba(217, 119, 6, 0.2));
+  --rarity-badge-border-legendary: rgba(251, 191, 36, 0.7);
+  --rarity-badge-color-legendary: #fbbf24;
+  --rarity-buff-bg-legendary: rgba(245, 158, 11, 0.18);
+  --rarity-buff-border-legendary: rgba(251, 191, 36, 0.45);
+  --rarity-buff-color-legendary: #fbbf24;
+  --rarity-price-color-legendary: #fbbf24;
 }
 
 /* ===================================================
@@ -2454,68 +2600,23 @@ input::placeholder, textarea::placeholder {
 /* Game Lobby Stage & Action Cards Layout */
 .hero-stage-container {
   width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
-@media (min-width: 1024px) {
-  .hero-stage-container {
-    min-height: calc(100vh - 104px) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: space-between !important;
-  }
-
-  .stage-center-content {
-    flex: 1 1 auto !important;
-    display: flex !important;
-    flex-direction: column !important;
-    justify-content: center !important;
-    min-height: 0 !important;
-  }
-}
-
-@media (max-width: 900px) {
-  .stage-materials-roadway {
-    flex-direction: column !important;
-    gap: 0 !important;
-    width: 100% !important;
-  }
-  .stage-road-bridge {
-    display: none !important;
-  }
-  .stage-road-bridge-vertical {
-    display: flex !important;
-  }
-  .stage-side-station {
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-  .stage-side-station a {
-    max-width: 100% !important;
-  }
-  .prev-station {
-    order: 1;
-  }
-  .bridge-completed-vert {
-    order: 2;
-  }
-  .active-station {
-    order: 3;
-  }
-  .bridge-upcoming-vert {
-    order: 4;
-  }
-  .next-station {
-    order: 5;
-  }
-}
-
-.stage-road-bridge-vertical {
-  display: none;
-  width: 100%;
+.stage-main-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 340px) 1fr;
+  gap: 28px;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 6px 0;
+  width: 100%;
+}
+
+@media (max-width: 960px) {
+  .stage-main-grid {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
 }
 
 @media (max-width: 768px) {
