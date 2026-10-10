@@ -745,38 +745,21 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               }}
             >
               {isLoggedIn ? (
-                <>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link
-                      href="/dashboard"
-                      className="btn-signal-orange"
-                      style={{
-                        padding: '16px 28px',
-                        fontSize: '15px',
-                        textAlign: 'center',
-                        textDecoration: 'none',
-                        width: '100%',
-                      }}
-                    >
-                      <LayoutDashboard size={16} /> Buka Dashboard <ChevronRight size={15} />
-                    </Link>
-                  </motion.div>
-                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link
-                      href="/modules"
-                      className="btn-dark-outline"
-                      style={{
-                        padding: '15px 28px',
-                        fontSize: '14.5px',
-                        textAlign: 'center',
-                        textDecoration: 'none',
-                        width: '100%',
-                      }}
-                    >
-                      Lanjutkan Belajar Modul
-                    </Link>
-                  </motion.div>
-                </>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                  <Link
+                    href="/dashboard"
+                    className="btn-signal-orange"
+                    style={{
+                      padding: '16px 28px',
+                      fontSize: '15px',
+                      textAlign: 'center',
+                      textDecoration: 'none',
+                      width: '100%',
+                    }}
+                  >
+                    <LayoutDashboard size={16} /> Buka Dashboard <ChevronRight size={15} />
+                  </Link>
+                </motion.div>
               ) : (
                 <>
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -864,8 +847,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 whileHover={{ y: -2 }}
                 style={{ flexShrink: 0 }}
               >
-                <Link
-                  href="/modules"
+                <div
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
@@ -875,44 +857,18 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                     backgroundColor: 'var(--surface-card)',
                     border: '1px solid var(--surface-border)',
                     color: 'var(--text-secondary)',
-                    textDecoration: 'none',
                     fontSize: '12px',
                     fontWeight: 500,
                     whiteSpace: 'nowrap',
-                    transition: 'all 0.15s ease',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.color = 'var(--text-primary)'
-                    e.currentTarget.style.borderColor = 'var(--color-signal-orange)'
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.color = 'var(--text-secondary)'
-                    e.currentTarget.style.borderColor = 'var(--surface-border)'
+                    userSelect: 'none',
                   }}
                 >
                   <span>{tech.icon}</span>
                   <span>{tech.name}</span>
-                </Link>
+                </div>
               </motion.div>
             ))}
           </div>
-
-          <Link
-            href="/modules"
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '4px',
-              fontSize: '12px',
-              fontWeight: 600,
-              color: 'var(--color-signal-orange)',
-              textDecoration: 'none',
-              whiteSpace: 'nowrap',
-              flexShrink: 0,
-            }}
-          >
-            Semua Modul <ChevronRight size={13} />
-          </Link>
         </div>
       </section>
 
@@ -1268,20 +1224,11 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 fontSize: '15px',
                 color: 'var(--color-fog)',
                 lineHeight: 1.65,
-                marginBottom: '24px',
+                margin: 0,
               }}
             >
               Uji kecepatan analisis dan refleks analisismu di bawah tekanan waktu. Masuk ke arena matchmaking publik untuk bertanding dengan siswa se-Indonesia, atau buat room private untuk adu pintar bersama kawan satu kelas.
             </p>
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} style={{ display: 'inline-block' }}>
-              <Link
-                href="/battle"
-                className="btn-signal-orange"
-                style={{ padding: '11px 22px', fontSize: '13.5px', textDecoration: 'none' }}
-              >
-                <Swords size={15} /> Masuk Arena Battle 1v1 <ChevronRight size={14} />
-              </Link>
-            </motion.div>
           </div>
         </motion.div>
       </section>
@@ -1820,22 +1767,22 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   <span style={{ fontSize: '12.5px', fontWeight: 600 }}>10,910 XP</span>
                 </div>
               </div>
-            </div>
 
-            <Link
-              href="/leaderboard"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px',
-                fontSize: '13px',
-                fontWeight: 600,
-                color: 'var(--color-signal-orange)',
-                textDecoration: 'none',
-              }}
-            >
-              Lihat Klasemen Lengkap <ChevronRight size={14} />
-            </Link>
+              <div
+                style={{
+                  borderTop: '1px solid var(--surface-border)',
+                  paddingTop: '12px',
+                  fontSize: '11.5px',
+                  color: 'var(--color-steel)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                }}
+              >
+                <span>Peringkat diperbarui otomatis</span>
+                <span style={{ color: 'var(--accent-green)', fontWeight: 600 }}>Musim Aktif</span>
+              </div>
+            </div>
           </motion.div>
 
           {/* Card B: Verified Certificate */}
@@ -1923,16 +1870,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               }}
             >
               <span>ID: SKL-2026-9482X</span>
-              <Link
-                href="/modules"
-                style={{
-                  color: 'var(--color-signal-orange)',
-                  textDecoration: 'none',
-                  fontWeight: 600,
-                }}
-              >
-                Mulai Belajar Modul →
-              </Link>
+              <span>Terbit: Otomatis saat modul selesai</span>
             </div>
           </motion.div>
         </div>
