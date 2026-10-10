@@ -476,13 +476,16 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
         id="hero"
         style={{
           position: 'relative',
-          paddingTop: '124px',
-          paddingBottom: '68px',
+          paddingTop: 'clamp(130px, 15vh, 165px)',
+          paddingBottom: 'clamp(70px, 9vh, 105px)',
           paddingLeft: 'clamp(20px, 4vw, 48px)',
           paddingRight: 'clamp(20px, 4vw, 48px)',
           backgroundColor: 'var(--color-void)',
           borderBottom: '1px solid var(--surface-border)',
           overflow: 'hidden',
+          minHeight: '85vh',
+          display: 'flex',
+          alignItems: 'center',
         }}
       >
         {/* Subtle atmospheric ambient glow */}
@@ -492,18 +495,19 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             inset: 0,
             pointerEvents: 'none',
             background:
-              'radial-gradient(circle at 25% 40%, rgba(245, 197, 66, 0.05) 0%, transparent 60%), radial-gradient(circle at 75% 60%, rgba(56, 189, 248, 0.04) 0%, transparent 55%)',
+              'radial-gradient(circle at 25% 40%, rgba(245, 197, 66, 0.06) 0%, transparent 60%), radial-gradient(circle at 75% 60%, rgba(56, 189, 248, 0.05) 0%, transparent 55%)',
           }}
         />
 
         <div
           style={{
-            maxWidth: '1160px',
+            maxWidth: '1240px',
+            width: '100%',
             margin: '0 auto',
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
             alignItems: 'center',
-            gap: 'clamp(36px, 5vw, 64px)',
+            gap: 'clamp(44px, 6vw, 80px)',
             position: 'relative',
             zIndex: 1,
           }}
@@ -521,9 +525,9 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             <div
               style={{
                 width: '100%',
-                maxWidth: '420px',
+                maxWidth: '470px',
                 aspectRatio: '1 / 1',
-                borderRadius: '16px',
+                borderRadius: '18px',
                 backgroundColor: 'var(--surface-card)',
                 border: '1px solid var(--surface-border)',
                 display: 'flex',
@@ -532,22 +536,22 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 justifyContent: 'center',
                 position: 'relative',
                 boxShadow: 'var(--shadow-card)',
-                padding: '24px',
+                padding: '28px',
                 boxSizing: 'border-box',
               }}
             >
               {/* Floating Badge 1: Daily Streak (Smooth perpetual bobbing animation) */}
               <motion.div
-                animate={{ y: [0, -7, 0] }}
+                animate={{ y: [0, -8, 0] }}
                 transition={{ duration: 3.5, repeat: Infinity, ease: 'easeInOut' }}
                 style={{
                   position: 'absolute',
-                  top: '16px',
-                  left: '16px',
+                  top: '18px',
+                  left: '18px',
                   backgroundColor: 'var(--surface-elevated)',
                   border: '1px solid var(--surface-border)',
                   borderRadius: '10px',
-                  padding: '8px 12px',
+                  padding: '9px 14px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
@@ -557,8 +561,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               >
                 <div
                   style={{
-                    width: '28px',
-                    height: '28px',
+                    width: '30px',
+                    height: '30px',
                     borderRadius: '8px',
                     backgroundColor: 'rgba(239, 68, 68, 0.12)',
                     display: 'flex',
@@ -567,13 +571,13 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                     color: 'var(--accent-red)',
                   }}
                 >
-                  <Flame size={16} />
+                  <Flame size={17} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     7 Hari Streak
                   </div>
-                  <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
+                  <div style={{ fontSize: '10.5px', color: 'var(--color-steel)' }}>
                     Bonus XP Aktif
                   </div>
                 </div>
@@ -581,16 +585,16 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
 
               {/* Floating Badge 2: Level Milestone (Alternating bobbing animation) */}
               <motion.div
-                animate={{ y: [0, 7, 0] }}
+                animate={{ y: [0, 8, 0] }}
                 transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
                 style={{
                   position: 'absolute',
-                  top: '16px',
-                  right: '16px',
+                  top: '18px',
+                  right: '18px',
                   backgroundColor: 'var(--surface-elevated)',
                   border: '1px solid var(--surface-border)',
                   borderRadius: '10px',
-                  padding: '8px 12px',
+                  padding: '9px 14px',
                   display: 'flex',
                   alignItems: 'center',
                   gap: '8px',
@@ -600,8 +604,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               >
                 <div
                   style={{
-                    width: '28px',
-                    height: '28px',
+                    width: '30px',
+                    height: '30px',
                     borderRadius: '8px',
                     backgroundColor: 'rgba(245, 197, 66, 0.12)',
                     display: 'flex',
@@ -610,13 +614,13 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                     color: 'var(--color-signal-orange)',
                   }}
                 >
-                  <Trophy size={16} />
+                  <Trophy size={17} />
                 </div>
                 <div>
-                  <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--text-primary)' }}>
+                  <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-primary)' }}>
                     Level 12
                   </div>
-                  <div style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
+                  <div style={{ fontSize: '10.5px', color: 'var(--color-steel)' }}>
                     Champion Rank
                   </div>
                 </div>
@@ -624,9 +628,9 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
 
               {/* Character Visual with Gentle Idle Floating Motion */}
               <motion.div
-                animate={{ y: [-5, 5, -5] }}
+                animate={{ y: [-6, 6, -6] }}
                 transition={{ duration: 4.5, repeat: Infinity, ease: 'easeInOut' }}
-                style={{ marginTop: '16px', marginBottom: '8px' }}
+                style={{ marginTop: '22px', marginBottom: '12px' }}
               >
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -638,7 +642,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                   >
                     <CharacterVisual
                       role={selectedClass.id}
-                      size={200}
+                      size={230}
                       animationState="idle"
                       showAura={true}
                       showRoleBadge={false}
@@ -651,7 +655,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               <div
                 style={{
                   display: 'flex',
-                  gap: '6px',
+                  gap: '8px',
                   width: '100%',
                   marginTop: 'auto',
                 }}
@@ -666,7 +670,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       onClick={() => setSelectedClass(cls)}
                       style={{
                         flex: 1,
-                        padding: '7px 4px',
+                        padding: '8px 6px',
                         borderRadius: '8px',
                         border: isCurrent
                           ? '1px solid var(--color-signal-orange)'
@@ -676,16 +680,16 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                           : 'var(--surface-elevated)',
                         color: isCurrent ? 'var(--text-primary)' : 'var(--color-steel)',
                         cursor: 'pointer',
-                        fontSize: '11px',
+                        fontSize: '11.5px',
                         fontWeight: 600,
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
-                        gap: '2px',
+                        gap: '3px',
                         transition: 'border-color 0.15s ease, background-color 0.15s ease',
                       }}
                     >
-                      <span style={{ fontSize: '13px' }}>{cls.emoji}</span>
+                      <span style={{ fontSize: '14px' }}>{cls.emoji}</span>
                       <span>{cls.name}</span>
                     </motion.button>
                   )
@@ -702,11 +706,11 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               transition={{ duration: 0.5, delay: 0.1 }}
               style={{
                 fontFamily: 'var(--font-heading)',
-                fontSize: 'clamp(32px, 4.4vw, 52px)',
+                fontSize: 'clamp(36px, 5.2vw, 58px)',
                 fontWeight: 600,
-                lineHeight: 1.18,
-                marginBottom: '18px',
-                letterSpacing: '-0.02em',
+                lineHeight: 1.15,
+                marginBottom: '20px',
+                letterSpacing: '-0.025em',
                 color: 'var(--text-primary)',
               }}
             >
@@ -718,11 +722,11 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               style={{
-                fontSize: '15px',
+                fontSize: '16px',
                 color: 'var(--color-fog)',
-                lineHeight: 1.65,
-                marginBottom: '32px',
-                maxWidth: '560px',
+                lineHeight: 1.7,
+                marginBottom: '36px',
+                maxWidth: '600px',
               }}
             >
               Platform belajar gamifikasi untuk siswa SMK dan SMA. Taklukkan modul pemrograman bite-sized, tantang teman dalam duel kuis 1v1 real-time, dan bawa reputasi sekolahmu ke puncak leaderboard nasional.
@@ -737,7 +741,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '12px',
-                maxWidth: '380px',
+                maxWidth: '400px',
               }}
             >
               {isLoggedIn ? (
@@ -747,14 +751,14 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       href="/dashboard"
                       className="btn-signal-orange"
                       style={{
-                        padding: '14px 24px',
-                        fontSize: '14px',
+                        padding: '16px 28px',
+                        fontSize: '15px',
                         textAlign: 'center',
                         textDecoration: 'none',
                         width: '100%',
                       }}
                     >
-                      <LayoutDashboard size={16} /> Buka Dashboard Studio <ChevronRight size={15} />
+                      <LayoutDashboard size={16} /> Buka Dashboard <ChevronRight size={15} />
                     </Link>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
@@ -762,8 +766,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       href="/modules"
                       className="btn-dark-outline"
                       style={{
-                        padding: '13px 24px',
-                        fontSize: '13.5px',
+                        padding: '15px 28px',
+                        fontSize: '14.5px',
                         textAlign: 'center',
                         textDecoration: 'none',
                         width: '100%',
@@ -780,8 +784,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       href="/register"
                       className="btn-signal-orange"
                       style={{
-                        padding: '14px 24px',
-                        fontSize: '14px',
+                        padding: '16px 28px',
+                        fontSize: '15px',
                         textAlign: 'center',
                         textDecoration: 'none',
                         width: '100%',
@@ -795,8 +799,8 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
                       href="/login"
                       className="btn-dark-outline"
                       style={{
-                        padding: '13px 24px',
-                        fontSize: '13.5px',
+                        padding: '15px 28px',
+                        fontSize: '14.5px',
                         textAlign: 'center',
                         textDecoration: 'none',
                         width: '100%',
@@ -2121,7 +2125,7 @@ export default function LandingClient({ isLoggedIn }: LandingClientProps) {
             >
               {isLoggedIn ? (
                 <>
-                  <LayoutDashboard size={16} /> Buka Dashboard Studio <ChevronRight size={15} />
+                  <LayoutDashboard size={16} /> Buka Dashboard <ChevronRight size={15} />
                 </>
               ) : (
                 <>
