@@ -23,13 +23,13 @@ import { getEffectiveStreak, isStreakPendingToday } from '@/lib/game/streak'
 import ThemeToggle from '@/components/layout/ThemeToggle'
 
 const navItems = [
-    { href: '/dashboard', favicon: '/favicons/dashboard.svg', icon: LayoutDashboard, label: 'Dashboard' },
-    { href: '/modules', favicon: '/favicons/modules.svg', icon: BookOpen, label: 'Modul' },
-    { href: '/battle', favicon: '/favicons/battle.svg', icon: Swords, label: 'Battle' },
-    { href: '/character', favicon: '/favicons/character.svg', icon: Shield, label: 'Karakter' },
-    { href: '/shop', favicon: '/favicons/shop.svg', icon: ShoppingBag, label: 'Toko' },
-    { href: '/leaderboard', favicon: '/favicons/leaderboard.svg', icon: Trophy, label: 'Leaderboard' },
-    { href: '/profile', favicon: '/favicons/profile.svg', icon: User, label: 'Profil' },
+    { href: '/dashboard', iconUrl: '/favicons/dashboard.svg', icon: LayoutDashboard, label: 'Dashboard' },
+    { href: '/modules', iconUrl: '/favicons/modules.svg', icon: BookOpen, label: 'Modul' },
+    { href: '/battle', iconUrl: '/favicons/battle.svg', icon: Swords, label: 'Battle' },
+    { href: '/character', iconUrl: '/favicons/character.svg', icon: Shield, label: 'Karakter' },
+    { href: '/shop', iconUrl: '/favicons/shop.svg', icon: ShoppingBag, label: 'Toko' },
+    { href: '/leaderboard', iconUrl: '/favicons/leaderboard.svg', icon: Trophy, label: 'Leaderboard' },
+    { href: '/profile', iconUrl: '/favicons/profile.svg', icon: User, label: 'Profil' },
 ]
 
 const CLASS_COLORS: Record<string, string> = {
@@ -337,7 +337,7 @@ export default function Sidebar() {
                                     }}
                                 >
                                     <img
-                                        src={item.favicon}
+                                        src={item.iconUrl}
                                         alt={item.label}
                                         width={22}
                                         height={22}

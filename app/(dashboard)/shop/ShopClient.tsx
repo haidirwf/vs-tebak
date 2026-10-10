@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore, VoucherItem, RedemptionItem } from '@/stores/contentStore'
-import { GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, GAME_ITEMS, getItemRarityRank } from '@/lib/game/items'
+import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
 import ItemIcon from '@/components/character/ItemIcon'
 
@@ -105,8 +105,6 @@ export default function ShopClient({
     // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
-    const [selectedRarityFilter, setSelectedRarityFilter] = useState<'all' | ItemRarity>('all')
-    const [selectedSort, setSelectedSort] = useState<'rarity_desc' | 'price_asc' | 'price_desc'>('rarity_desc')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
@@ -114,29 +112,16 @@ export default function ShopClient({
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
     const ownedItemIds = useMemo(() => new Set(inventory.map((item) => item.id)), [inventory])
 
-    // Filtered Shop Items (sorted by rarity rank or price)
+    // Filtered Shop Items (filtered by slot only)
     const filteredShopItems = useMemo(() => {
-        let items = GAME_ITEMS.filter((item) => {
+        return GAME_ITEMS.filter((item) => {
             if (selectedSlotFilter !== 'all' && item.slot !== selectedSlotFilter) return false
-            if (selectedRarityFilter !== 'all' && item.rarity !== selectedRarityFilter) return false
             if (item.class_req !== 'all' && profile?.avatar_class && item.class_req !== profile.avatar_class) {
                 return false
             }
             return true
         })
-
-        return items.sort((a, b) => {
-            if (selectedSort === 'rarity_desc') {
-                const diff = getItemRarityRank(b.rarity) - getItemRarityRank(a.rarity)
-                if (diff !== 0) return diff
-                return b.cost_xp - a.cost_xp
-            }
-            if (selectedSort === 'price_desc') {
-                return b.cost_xp - a.cost_xp
-            }
-            return a.cost_xp - b.cost_xp
-        })
-    }, [selectedSlotFilter, selectedRarityFilter, selectedSort, profile?.avatar_class])
+    }, [selectedSlotFilter, profile?.avatar_class])
 
     // Auto dismiss notification
     useEffect(() => {
@@ -565,156 +550,49 @@ export default function ShopClient({
             {/* TAB 2: TOKO AKSESORIS */}
             {activeTab === 'items' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* Controls: Slot Filters, Rarity Filters & Sorter */}
+                    {/* Controls: Slot Filters Only */}
                     <div
                         style={{
                             display: 'flex',
-                            flexDirection: 'column',
-                            gap: '12px',
-                            padding: '14px 16px',
+                            alignItems: 'center',
+                            gap: '8px',
+                            flexWrap: 'wrap',
+                            padding: '12px 16px',
                             backgroundColor: 'var(--surface-card)',
                             borderRadius: '12px',
                             border: '1px solid var(--surface-border)',
                         }}
                     >
-                        {/* Row 1: Slot Filter Chips & Sort Select */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'space-between',
-                                flexWrap: 'wrap',
-                                gap: '10px',
-                            }}
-                        >
-                            {/* Slot Filter Chips */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, marginRight: '2px' }}>
-                                    Slot:
-                                </span>
-                                {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
-                                    const isSlotActive = selectedSlotFilter === slotKey
-                                    return (
-                                        <motion.button
-                                            key={slotKey}
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            type="button"
-                                            onClick={() => setSelectedSlotFilter(slotKey)}
-                                            style={{
-                                                padding: '5px 11px',
-                                                borderRadius: '7px',
-                                                border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
-                                                backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
-                                                color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
-                                                fontFamily: 'var(--font-heading)',
-                                                fontSize: '11.5px',
-                                                fontWeight: isSlotActive ? 700 : 500,
-                                                cursor: 'pointer',
-                                                transition: 'all 0.15s ease',
-                                                boxShadow: 'none',
-                                            }}
-                                        >
-                                            {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
-                                        </motion.button>
-                                    )
-                                })}
-                            </div>
-
-                            {/* Sort Select */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>
-                                    Urutkan:
-                                </span>
-                                <select
-                                    value={selectedSort}
-                                    onChange={(e) => setSelectedSort(e.target.value as any)}
+                        <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 600, marginRight: '2px' }}>
+                            Slot:
+                        </span>
+                        {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
+                            const isSlotActive = selectedSlotFilter === slotKey
+                            return (
+                                <motion.button
+                                    key={slotKey}
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    type="button"
+                                    onClick={() => setSelectedSlotFilter(slotKey)}
                                     style={{
-                                        padding: '5px 10px',
+                                        padding: '5px 11px',
                                         borderRadius: '7px',
-                                        border: '1px solid var(--surface-border)',
-                                        backgroundColor: 'var(--surface-elevated)',
-                                        color: 'var(--text-primary)',
+                                        border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                        backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                        color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
                                         fontFamily: 'var(--font-heading)',
                                         fontSize: '11.5px',
-                                        fontWeight: 600,
+                                        fontWeight: isSlotActive ? 700 : 500,
                                         cursor: 'pointer',
-                                        outline: 'none',
+                                        transition: 'all 0.15s ease',
+                                        boxShadow: 'none',
                                     }}
                                 >
-                                    <option value="rarity_desc">👑 Rarity Tertinggi</option>
-                                    <option value="price_asc">💸 Harga Termurah</option>
-                                    <option value="price_desc">💎 Harga Termahal</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        {/* Row 2: Rarity Filter Chips */}
-                        <div
-                            style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                flexWrap: 'wrap',
-                                paddingTop: '8px',
-                                borderTop: '1px solid rgba(255, 255, 255, 0.05)',
-                            }}
-                        >
-                            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, marginRight: '2px' }}>
-                                Rarity:
-                            </span>
-                            {(['all', 'common', 'rare', 'epic', 'legendary'] as const).map((rarityKey) => {
-                                const isRarityActive = selectedRarityFilter === rarityKey
-                                const theme = rarityKey !== 'all' ? RARITY_CONFIG[rarityKey] : null
-
-                                return (
-                                    <motion.button
-                                        key={rarityKey}
-                                        whileHover={{ scale: 1.02 }}
-                                        whileTap={{ scale: 0.98 }}
-                                        type="button"
-                                        onClick={() => setSelectedRarityFilter(rarityKey)}
-                                        style={{
-                                            padding: '4px 10px',
-                                            borderRadius: '7px',
-                                            border: `1px solid ${
-                                                isRarityActive
-                                                    ? theme
-                                                        ? theme.badgeBorder
-                                                        : 'var(--accent-gold-border)'
-                                                    : 'var(--surface-border)'
-                                            }`,
-                                            backgroundColor: isRarityActive
-                                                ? theme
-                                                    ? theme.badgeBg
-                                                    : 'var(--accent-gold-bg)'
-                                                : 'var(--surface-elevated)',
-                                            color: isRarityActive
-                                                ? theme
-                                                    ? theme.badgeColor
-                                                    : 'var(--accent-gold-text)'
-                                                : 'var(--text-secondary)',
-                                            fontFamily: 'var(--font-heading)',
-                                            fontSize: '11px',
-                                            fontWeight: isRarityActive ? 700 : 500,
-                                            cursor: 'pointer',
-                                            transition: 'all 0.15s ease',
-                                            display: 'inline-flex',
-                                            alignItems: 'center',
-                                            gap: '4px',
-                                            textShadow:
-                                                isRarityActive && theme && (rarityKey === 'legendary' || rarityKey === 'epic')
-                                                    ? `0 0 8px ${theme.badgeColor}88`
-                                                    : 'none',
-                                        }}
-                                    >
-                                        {rarityKey === 'all'
-                                            ? 'Semua Rarity'
-                                            : `${theme?.stars} ${theme?.label}`}
-                                    </motion.button>
-                                )
-                            })}
-                        </div>
+                                    {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
+                                </motion.button>
+                            )
+                        })}
                     </div>
 
                     {/* Items Grid */}
@@ -739,7 +617,6 @@ export default function ShopClient({
                                 type="button"
                                 onClick={() => {
                                     setSelectedSlotFilter('all')
-                                    setSelectedRarityFilter('all')
                                 }}
                                 className="btn-dark-outline"
                                 style={{

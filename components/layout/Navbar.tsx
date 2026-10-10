@@ -15,12 +15,12 @@ import {
 
 // Navigasi bawah selayaknya Duolingo - icon recognizable bertema game per-halaman
 const NAV_ITEMS = [
-    { href: '/dashboard', favicon: '/favicons/dashboard.svg', icon: Home, label: 'Beranda' },
-    { href: '/modules', favicon: '/favicons/modules.svg', icon: BookOpen, label: 'Modul Belajar' },
-    { href: '/battle', favicon: '/favicons/battle.svg', icon: Swords, label: 'Battle Arena' },
-    { href: '/character', favicon: '/favicons/character.svg', icon: Shield, label: 'Karakter & Kostum' },
-    { href: '/shop', favicon: '/favicons/shop.svg', icon: ShoppingBag, label: 'Toko Petualang' },
-    { href: '/leaderboard', favicon: '/favicons/leaderboard.svg', icon: Trophy, label: 'Papan Peringkat' },
+    { href: '/dashboard', iconUrl: '/favicons/dashboard.svg', icon: Home, label: 'Beranda' },
+    { href: '/modules', iconUrl: '/favicons/modules.svg', icon: BookOpen, label: 'Modul Belajar' },
+    { href: '/battle', iconUrl: '/favicons/battle.svg', icon: Swords, label: 'Battle Arena' },
+    { href: '/character', iconUrl: '/favicons/character.svg', icon: Shield, label: 'Karakter & Kostum' },
+    { href: '/shop', iconUrl: '/favicons/shop.svg', icon: ShoppingBag, label: 'Toko Petualang' },
+    { href: '/leaderboard', iconUrl: '/favicons/leaderboard.svg', icon: Trophy, label: 'Papan Peringkat' },
 ]
 
 export default function Navbar() {
@@ -95,7 +95,7 @@ export default function Navbar() {
                                 }}
                             >
                                 <img
-                                    src={item.favicon}
+                                    src={item.iconUrl}
                                     alt={item.label}
                                     width={34}
                                     height={34}

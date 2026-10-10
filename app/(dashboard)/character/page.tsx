@@ -8,7 +8,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { AvatarClass } from '@/types'
 import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap, resolveEquippedMap } from '@/lib/game/character'
-import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
+import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemRarityRank, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
 import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import ItemIcon from '@/components/character/ItemIcon'
@@ -417,10 +417,17 @@ export default function CharacterPage() {
         }
     }
 
-    // Filter inventory items
+    // Filter inventory items (automatically sorted by rarity: Legendary -> Epic -> Rare -> Common)
     const filteredInventory = useMemo(() => {
-        if (selectedSlotFilter === 'all') return inventory
-        return inventory.filter(it => it.slot === selectedSlotFilter)
+        const items = selectedSlotFilter === 'all'
+            ? [...inventory]
+            : inventory.filter(it => it.slot === selectedSlotFilter)
+
+        return items.sort((a, b) => {
+            const diff = getItemRarityRank(b.rarity) - getItemRarityRank(a.rarity)
+            if (diff !== 0) return diff
+            return a.name.localeCompare(b.name)
+        })
     }, [inventory, selectedSlotFilter])
 
 

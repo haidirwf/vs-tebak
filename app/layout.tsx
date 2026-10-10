@@ -55,8 +55,6 @@ export const metadata: Metadata = {
   },
 }
 
-import DynamicFavicon from '@/components/layout/DynamicFavicon'
-
 export default function RootLayout({
   children,
 }: {
@@ -66,7 +64,6 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={`${inter.variable} ${spaceGrotesk.variable} ${jetbrainsMono.variable}${judgeMode ? ' judge-mode' : ''}`}>
-        <DynamicFavicon />
         {children}
       </body>
     </html>
