@@ -11,6 +11,7 @@ import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap, resolveEqui
 import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
 import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
+import ItemIcon from '@/components/character/ItemIcon'
 import {
     Swords,
     Shield,
@@ -629,22 +630,7 @@ export default function CharacterPage() {
                                         }}
                                     >
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0, flex: 1 }}>
-                                            <div
-                                                style={{
-                                                    width: '30px',
-                                                    height: '30px',
-                                                    borderRadius: '6px',
-                                                    backgroundColor: 'var(--surface-elevated)',
-                                                    border: '1px solid var(--surface-border)',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    justifyContent: 'center',
-                                                    fontSize: '15px',
-                                                    flexShrink: 0,
-                                                }}
-                                            >
-                                                {item ? item.icon : slotMeta.emoji}
-                                            </div>
+                                            <ItemIcon item={item} slot={slotKey} size={30} />
                                             <div style={{ minWidth: 0, flex: 1 }}>
                                                 <div style={{ fontSize: '9.5px', color: 'var(--color-steel)', textTransform: 'uppercase', letterSpacing: '0.02em', lineHeight: 1.1 }}>
                                                     {slotMeta.name}
@@ -911,31 +897,59 @@ export default function CharacterPage() {
                                         return (
                                             <div
                                                 key={item.id}
+                                                className={`rarity-card-tier rarity-card-${item.rarity}`}
                                                 style={{
-                                                    padding: '14px 12px',
-                                                    borderRadius: '12px',
-                                                    backgroundColor: 'var(--surface-card)',
-                                                    border: `1px solid ${isEquipped ? 'var(--accent-gold-border)' : rarity.border}`,
+                                                    padding: '14px 13px',
+                                                    background: rarity.cardBg,
+                                                    border: isEquipped ? '1.5px solid var(--accent-gold-border)' : `1.5px solid ${rarity.cardBorder}`,
                                                     display: 'flex',
                                                     flexDirection: 'column',
                                                     justifyContent: 'space-between',
                                                     gap: '8px',
+                                                    boxShadow: isEquipped ? '0 0 16px rgba(245, 158, 11, 0.25)' : rarity.cardShadow,
                                                     position: 'relative',
                                                     overflow: 'hidden',
                                                 }}
                                             >
+                                                {/* Top Beam Highlight */}
+                                                {rarity.topBeam && (
+                                                    <div
+                                                        style={{
+                                                            position: 'absolute',
+                                                            top: 0,
+                                                            left: 0,
+                                                            right: 0,
+                                                            height: item.rarity === 'legendary' ? '3px' : '2px',
+                                                            background: rarity.topBeam,
+                                                            zIndex: 3,
+                                                        }}
+                                                    />
+                                                )}
 
-                                                <div>
+                                                {/* Sheen Overlay */}
+                                                {rarity.sheenOverlay && (
+                                                    <div
+                                                        style={{
+                                                            position: 'absolute',
+                                                            inset: 0,
+                                                            background: rarity.sheenOverlay,
+                                                            pointerEvents: 'none',
+                                                            zIndex: 1,
+                                                        }}
+                                                    />
+                                                )}
+
+                                                <div style={{ position: 'relative', zIndex: 2 }}>
                                                     {/* Header: Slot Badge & Rarity / Equipped status */}
                                                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
                                                         <span
                                                             style={{
                                                                 fontSize: '10.5px',
                                                                 color: 'var(--text-secondary)',
-                                                                backgroundColor: 'var(--surface-elevated)',
+                                                                backgroundColor: 'rgba(255, 255, 255, 0.04)',
                                                                 padding: '2px 7px',
                                                                 borderRadius: '6px',
-                                                                border: '1px solid var(--surface-border)',
+                                                                border: '1px solid rgba(255, 255, 255, 0.08)',
                                                                 whiteSpace: 'nowrap',
                                                             }}
                                                         >
@@ -961,45 +975,45 @@ export default function CharacterPage() {
                                                             <span
                                                                 style={{
                                                                     fontSize: '10px',
-                                                                    fontWeight: 600,
+                                                                    fontWeight: 700,
                                                                     padding: '2px 7px',
                                                                     borderRadius: '6px',
-                                                                    color: rarity.color,
-                                                                    backgroundColor: rarity.bg,
-                                                                    border: `1px solid ${rarity.border}`,
+                                                                    color: rarity.badgeColor,
+                                                                    backgroundColor: rarity.badgeBg,
+                                                                    border: `1px solid ${rarity.badgeBorder}`,
                                                                     whiteSpace: 'nowrap',
+                                                                    display: 'inline-flex',
+                                                                    alignItems: 'center',
+                                                                    gap: '3px',
+                                                                    textShadow:
+                                                                        item.rarity === 'legendary'
+                                                                            ? '0 0 8px rgba(251, 191, 36, 0.6)'
+                                                                            : item.rarity === 'epic'
+                                                                            ? '0 0 6px rgba(192, 132, 252, 0.5)'
+                                                                            : 'none',
                                                                 }}
                                                             >
-                                                                {rarity.label}
+                                                                <span>{rarity.stars}</span>
+                                                                <span>{rarity.label}</span>
                                                             </span>
                                                         </div>
                                                     </div>
 
                                                     {/* Item Icon & Title */}
                                                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
-                                                        <div
-                                                            style={{
-                                                                width: '42px',
-                                                                height: '42px',
-                                                                borderRadius: '10px',
-                                                                backgroundColor: rarity.bg,
-                                                                border: `1px solid ${rarity.border}`,
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center',
-                                                                fontSize: '22px',
-                                                                flexShrink: 0,
-                                                            }}
-                                                        >
-                                                            {item.icon}
-                                                        </div>
+                                                        <ItemIcon item={item} size={44} />
                                                         <div style={{ minWidth: 0, flex: 1 }}>
                                                             <div
                                                                 style={{
                                                                     fontFamily: 'var(--font-heading)',
                                                                     fontSize: '13.5px',
-                                                                    fontWeight: 600,
-                                                                    color: 'var(--text-primary)',
+                                                                    fontWeight: 700,
+                                                                    color:
+                                                                        item.rarity === 'legendary'
+                                                                            ? '#fef3c7'
+                                                                            : item.rarity === 'epic'
+                                                                            ? '#f3e8ff'
+                                                                            : 'var(--text-primary)',
                                                                     lineHeight: 1.3,
                                                                     display: '-webkit-box',
                                                                     WebkitLineClamp: 2,
@@ -1017,9 +1031,9 @@ export default function CharacterPage() {
                                                                         gap: '3px',
                                                                         fontSize: '10.5px',
                                                                         fontWeight: 600,
-                                                                        color: 'var(--color-vector-green)',
-                                                                        backgroundColor: 'rgba(34, 197, 94, 0.1)',
-                                                                        border: '1px solid rgba(34, 197, 94, 0.28)',
+                                                                        color: rarity.buffColor,
+                                                                        backgroundColor: rarity.buffBg,
+                                                                        border: `1px solid ${rarity.buffBorder}`,
                                                                         padding: '2px 6px',
                                                                         borderRadius: '5px',
                                                                         lineHeight: 1.25,

@@ -18,6 +18,7 @@ import { getXpProgress } from '@/lib/game/xp'
 import { getEffectiveStreak } from '@/lib/game/streak'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import BadgeIcon from '@/components/character/BadgeIcon'
+import ItemIcon from '@/components/character/ItemIcon'
 import { useContentStore } from '@/stores/contentStore'
 import { 
     Swords, 
@@ -1101,22 +1102,7 @@ export default function ProfileHeroStage({
                                             transition: 'all 0.15s ease',
                                         }}
                                     >
-                                        <div
-                                            style={{
-                                                width: '28px',
-                                                height: '28px',
-                                                borderRadius: '7px',
-                                                backgroundColor: 'var(--surface-elevated)',
-                                                border: '1px solid var(--surface-border)',
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                fontSize: '14px',
-                                                flexShrink: 0,
-                                            }}
-                                        >
-                                            {item ? item.icon : slotMeta.emoji}
-                                        </div>
+                                        <ItemIcon item={item} slot={slotKey} size={28} />
                                         <div style={{ minWidth: 0, flex: 1 }}>
                                             <div style={{ fontSize: '9.5px', color: 'var(--text-muted)', textTransform: 'capitalize' }}>
                                                 {slotMeta.name}

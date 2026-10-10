@@ -13,8 +13,9 @@ import {
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore, VoucherItem, RedemptionItem } from '@/stores/contentStore'
-import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
+import { GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, GAME_ITEMS, getItemRarityRank } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
+import ItemIcon from '@/components/character/ItemIcon'
 
 export type ShopTab = 'voucher' | 'items'
 
@@ -104,6 +105,8 @@ export default function ShopClient({
     // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
+    const [selectedRarityFilter, setSelectedRarityFilter] = useState<'all' | ItemRarity>('all')
+    const [selectedSort, setSelectedSort] = useState<'rarity_desc' | 'price_asc' | 'price_desc'>('rarity_desc')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
 
@@ -111,18 +114,29 @@ export default function ShopClient({
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
     const ownedItemIds = useMemo(() => new Set(inventory.map((item) => item.id)), [inventory])
 
-    // Filtered Shop Items (sorted by price ascending)
+    // Filtered Shop Items (sorted by rarity rank or price)
     const filteredShopItems = useMemo(() => {
         let items = GAME_ITEMS.filter((item) => {
             if (selectedSlotFilter !== 'all' && item.slot !== selectedSlotFilter) return false
+            if (selectedRarityFilter !== 'all' && item.rarity !== selectedRarityFilter) return false
             if (item.class_req !== 'all' && profile?.avatar_class && item.class_req !== profile.avatar_class) {
                 return false
             }
             return true
         })
 
-        return items.sort((a, b) => a.cost_xp - b.cost_xp)
-    }, [selectedSlotFilter, profile?.avatar_class])
+        return items.sort((a, b) => {
+            if (selectedSort === 'rarity_desc') {
+                const diff = getItemRarityRank(b.rarity) - getItemRarityRank(a.rarity)
+                if (diff !== 0) return diff
+                return b.cost_xp - a.cost_xp
+            }
+            if (selectedSort === 'price_desc') {
+                return b.cost_xp - a.cost_xp
+            }
+            return a.cost_xp - b.cost_xp
+        })
+    }, [selectedSlotFilter, selectedRarityFilter, selectedSort, profile?.avatar_class])
 
     // Auto dismiss notification
     useEffect(() => {
@@ -551,46 +565,152 @@ export default function ShopClient({
             {/* TAB 2: TOKO AKSESORIS */}
             {activeTab === 'items' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* Controls: Slot Filters & Sorter */}
+                    {/* Controls: Slot Filters, Rarity Filters & Sorter */}
                     <div
                         style={{
                             display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'space-between',
-                            flexWrap: 'wrap',
+                            flexDirection: 'column',
                             gap: '12px',
-                            padding: '12px 16px',
+                            padding: '14px 16px',
                             backgroundColor: 'var(--surface-card)',
                             borderRadius: '12px',
                             border: '1px solid var(--surface-border)',
                         }}
                     >
-                        {/* Slot Filter Chips */}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
-                            {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
-                                const isSlotActive = selectedSlotFilter === slotKey
+                        {/* Row 1: Slot Filter Chips & Sort Select */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: '10px',
+                            }}
+                        >
+                            {/* Slot Filter Chips */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexWrap: 'wrap' }}>
+                                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, marginRight: '2px' }}>
+                                    Slot:
+                                </span>
+                                {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
+                                    const isSlotActive = selectedSlotFilter === slotKey
+                                    return (
+                                        <motion.button
+                                            key={slotKey}
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
+                                            type="button"
+                                            onClick={() => setSelectedSlotFilter(slotKey)}
+                                            style={{
+                                                padding: '5px 11px',
+                                                borderRadius: '7px',
+                                                border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                                backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                                color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                                fontFamily: 'var(--font-heading)',
+                                                fontSize: '11.5px',
+                                                fontWeight: isSlotActive ? 700 : 500,
+                                                cursor: 'pointer',
+                                                transition: 'all 0.15s ease',
+                                                boxShadow: 'none',
+                                            }}
+                                        >
+                                            {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
+                                        </motion.button>
+                                    )
+                                })}
+                            </div>
+
+                            {/* Sort Select */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                                <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600 }}>
+                                    Urutkan:
+                                </span>
+                                <select
+                                    value={selectedSort}
+                                    onChange={(e) => setSelectedSort(e.target.value as any)}
+                                    style={{
+                                        padding: '5px 10px',
+                                        borderRadius: '7px',
+                                        border: '1px solid var(--surface-border)',
+                                        backgroundColor: 'var(--surface-elevated)',
+                                        color: 'var(--text-primary)',
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '11.5px',
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                        outline: 'none',
+                                    }}
+                                >
+                                    <option value="rarity_desc">👑 Rarity Tertinggi</option>
+                                    <option value="price_asc">💸 Harga Termurah</option>
+                                    <option value="price_desc">💎 Harga Termahal</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        {/* Row 2: Rarity Filter Chips */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px',
+                                flexWrap: 'wrap',
+                                paddingTop: '8px',
+                                borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+                            }}
+                        >
+                            <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontWeight: 600, marginRight: '2px' }}>
+                                Rarity:
+                            </span>
+                            {(['all', 'common', 'rare', 'epic', 'legendary'] as const).map((rarityKey) => {
+                                const isRarityActive = selectedRarityFilter === rarityKey
+                                const theme = rarityKey !== 'all' ? RARITY_CONFIG[rarityKey] : null
+
                                 return (
                                     <motion.button
-                                        key={slotKey}
+                                        key={rarityKey}
                                         whileHover={{ scale: 1.02 }}
                                         whileTap={{ scale: 0.98 }}
                                         type="button"
-                                        onClick={() => setSelectedSlotFilter(slotKey)}
+                                        onClick={() => setSelectedRarityFilter(rarityKey)}
                                         style={{
-                                            padding: '6px 12px',
-                                            borderRadius: '8px',
-                                            border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
-                                            backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
-                                            color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                            padding: '4px 10px',
+                                            borderRadius: '7px',
+                                            border: `1px solid ${
+                                                isRarityActive
+                                                    ? theme
+                                                        ? theme.badgeBorder
+                                                        : 'var(--accent-gold-border)'
+                                                    : 'var(--surface-border)'
+                                            }`,
+                                            backgroundColor: isRarityActive
+                                                ? theme
+                                                    ? theme.badgeBg
+                                                    : 'var(--accent-gold-bg)'
+                                                : 'var(--surface-elevated)',
+                                            color: isRarityActive
+                                                ? theme
+                                                    ? theme.badgeColor
+                                                    : 'var(--accent-gold-text)'
+                                                : 'var(--text-secondary)',
                                             fontFamily: 'var(--font-heading)',
-                                            fontSize: '12px',
-                                            fontWeight: isSlotActive ? 700 : 500,
+                                            fontSize: '11px',
+                                            fontWeight: isRarityActive ? 700 : 500,
                                             cursor: 'pointer',
                                             transition: 'all 0.15s ease',
-                                            boxShadow: 'none',
+                                            display: 'inline-flex',
+                                            alignItems: 'center',
+                                            gap: '4px',
+                                            textShadow:
+                                                isRarityActive && theme && (rarityKey === 'legendary' || rarityKey === 'epic')
+                                                    ? `0 0 8px ${theme.badgeColor}88`
+                                                    : 'none',
                                         }}
                                     >
-                                        {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
+                                        {rarityKey === 'all'
+                                            ? 'Semua Rarity'
+                                            : `${theme?.stars} ${theme?.label}`}
                                     </motion.button>
                                 )
                             })}
@@ -611,20 +731,23 @@ export default function ShopClient({
                         >
                             <ShoppingBag size={32} style={{ margin: '0 auto 10px', opacity: 0.5 }} />
                             <p style={{ margin: '0 0 12px 0', fontSize: '13px' }}>
-                                Tidak ada item toko yang cocok dengan filter slot ini.
+                                Tidak ada item toko yang cocok dengan filter yang dipilih.
                             </p>
                             <motion.button
                                 whileHover={{ scale: 1.02 }}
                                 whileTap={{ scale: 0.98 }}
                                 type="button"
-                                onClick={() => setSelectedSlotFilter('all')}
+                                onClick={() => {
+                                    setSelectedSlotFilter('all')
+                                    setSelectedRarityFilter('all')
+                                }}
                                 className="btn-dark-outline"
                                 style={{
                                     padding: '7px 16px',
                                     fontSize: '12px',
                                 }}
                             >
-                                Tampilkan Semua Slot
+                                Reset Filter
                             </motion.button>
                         </div>
                     ) : (
@@ -639,84 +762,134 @@ export default function ShopClient({
                                 return (
                                     <div
                                         key={item.id}
+                                        className={`rarity-card-tier rarity-card-${item.rarity}`}
                                         style={{
-                                            padding: '14px 12px',
-                                            borderRadius: '12px',
-                                            backgroundColor: 'var(--surface-card)',
-                                            border: `1px solid ${rarity.border}`,
+                                            padding: '14px 13px',
+                                            background: rarity.cardBg,
+                                            border: `1.5px solid ${rarity.cardBorder}`,
                                             display: 'flex',
                                             flexDirection: 'column',
                                             justifyContent: 'space-between',
-                                            gap: '8px',
-                                            opacity: isOwned ? 0.82 : 1,
-                                            boxShadow: 'var(--shadow-card)',
-                                            position: 'relative',
-                                            overflow: 'hidden',
+                                            gap: '10px',
+                                            opacity: isOwned ? 0.85 : 1,
+                                            boxShadow: rarity.cardShadow,
                                         }}
                                     >
+                                        {/* Top Beam Highlight for rare / epic / legendary */}
+                                        {rarity.topBeam && (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    top: 0,
+                                                    left: 0,
+                                                    right: 0,
+                                                    height: item.rarity === 'legendary' ? '3px' : '2px',
+                                                    background: rarity.topBeam,
+                                                    zIndex: 3,
+                                                }}
+                                            />
+                                        )}
 
-                                        <div>
-                                            {/* Top badges */}
-                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '8px' }}>
+                                        {/* Corner Sheen / Ambient Light Overlay for epic / legendary */}
+                                        {rarity.sheenOverlay && (
+                                            <div
+                                                style={{
+                                                    position: 'absolute',
+                                                    inset: 0,
+                                                    background: rarity.sheenOverlay,
+                                                    pointerEvents: 'none',
+                                                    zIndex: 1,
+                                                }}
+                                            />
+                                        )}
+
+                                        <div style={{ position: 'relative', zIndex: 2 }}>
+                                            {/* Top badges: Slot on left, Rarity on right */}
+                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px', marginBottom: '10px' }}>
                                                 <span
                                                     style={{
-                                                        fontSize: '10.5px',
+                                                        fontSize: '11px',
                                                         color: 'var(--text-secondary)',
-                                                        backgroundColor: 'var(--surface-elevated)',
-                                                        padding: '2px 7px',
+                                                        backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                                        padding: '3px 8px',
                                                         borderRadius: '6px',
-                                                        border: '1px solid var(--surface-border)',
+                                                        border: '1px solid rgba(255, 255, 255, 0.08)',
                                                         whiteSpace: 'nowrap',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
                                                     }}
                                                 >
                                                     {slotMeta?.emoji} {slotMeta?.name}
                                                 </span>
-                                                <span
-                                                    style={{
-                                                        fontSize: '10px',
-                                                        fontWeight: 600,
-                                                        padding: '2px 7px',
-                                                        borderRadius: '6px',
-                                                        color: rarity.color,
-                                                        backgroundColor: rarity.bg,
-                                                        border: `1px solid ${rarity.border}`,
-                                                        whiteSpace: 'nowrap',
-                                                    }}
-                                                >
-                                                    {rarity.label}
-                                                </span>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                                    {item.rarity === 'legendary' && (
+                                                        <span
+                                                            style={{
+                                                                fontSize: '9.5px',
+                                                                fontWeight: 700,
+                                                                color: '#fbbf24',
+                                                                backgroundColor: 'rgba(245, 158, 11, 0.25)',
+                                                                border: '1px solid rgba(251, 191, 36, 0.65)',
+                                                                padding: '2px 6px',
+                                                                borderRadius: '5px',
+                                                                lineHeight: 1.2,
+                                                            }}
+                                                        >
+                                                            👑 Pusaka
+                                                        </span>
+                                                    )}
+                                                    <span
+                                                        style={{
+                                                            fontSize: '10.5px',
+                                                            fontWeight: 700,
+                                                            padding: '2.5px 8px',
+                                                            borderRadius: '6px',
+                                                            color: rarity.badgeColor,
+                                                            backgroundColor: rarity.badgeBg,
+                                                            border: `1px solid ${rarity.badgeBorder}`,
+                                                            whiteSpace: 'nowrap',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: '3px',
+                                                            textShadow:
+                                                                item.rarity === 'legendary'
+                                                                    ? '0 0 10px rgba(251, 191, 36, 0.65)'
+                                                                    : item.rarity === 'epic'
+                                                                    ? '0 0 8px rgba(192, 132, 252, 0.5)'
+                                                                    : 'none',
+                                                        }}
+                                                    >
+                                                        <span>{rarity.stars}</span>
+                                                        <span>{rarity.label}</span>
+                                                    </span>
+                                                </div>
                                             </div>
 
-                                            {/* Item Identity: Prominent Icon + Two-line Title & Buff */}
+                                            {/* Item Identity: Prominent Pedestal Icon + Name & Rarity-themed Buff */}
                                             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '10px', marginBottom: '8px' }}>
-                                                <div
-                                                    style={{
-                                                        width: '42px',
-                                                        height: '42px',
-                                                        borderRadius: '10px',
-                                                        backgroundColor: rarity.bg,
-                                                        border: `1px solid ${rarity.border}`,
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        justifyContent: 'center',
-                                                        fontSize: '22px',
-                                                        flexShrink: 0,
-                                                    }}
-                                                >
-                                                    {item.icon}
-                                                </div>
+                                                <ItemIcon item={item} size={46} />
                                                 <div style={{ minWidth: 0, flex: 1 }}>
                                                     <div
                                                         style={{
                                                             fontFamily: 'var(--font-heading)',
                                                             fontSize: '13.5px',
-                                                            fontWeight: 600,
-                                                            color: 'var(--text-primary)',
+                                                            fontWeight: 700,
+                                                            color:
+                                                                item.rarity === 'legendary'
+                                                                    ? '#fef3c7'
+                                                                    : item.rarity === 'epic'
+                                                                    ? '#f3e8ff'
+                                                                    : 'var(--text-primary)',
                                                             lineHeight: 1.3,
                                                             display: '-webkit-box',
                                                             WebkitLineClamp: 2,
                                                             WebkitBoxOrient: 'vertical',
                                                             overflow: 'hidden',
+                                                            textShadow:
+                                                                item.rarity === 'legendary'
+                                                                    ? '0 1px 8px rgba(245, 158, 11, 0.3)'
+                                                                    : 'none',
                                                         }}
                                                     >
                                                         {item.name}
@@ -729,9 +902,9 @@ export default function ShopClient({
                                                                 gap: '3px',
                                                                 fontSize: '10.5px',
                                                                 fontWeight: 600,
-                                                                color: '#38bdf8',
-                                                                backgroundColor: 'rgba(56, 189, 248, 0.1)',
-                                                                border: '1px solid rgba(56, 189, 248, 0.28)',
+                                                                color: rarity.buffColor,
+                                                                backgroundColor: rarity.buffBg,
+                                                                border: `1px solid ${rarity.buffBorder}`,
                                                                 padding: '2px 6px',
                                                                 borderRadius: '5px',
                                                                 lineHeight: 1.25,
@@ -743,6 +916,7 @@ export default function ShopClient({
                                                 </div>
                                             </div>
 
+                                            {/* Description */}
                                             <p
                                                 style={{
                                                     fontSize: '11.5px',
@@ -758,9 +932,30 @@ export default function ShopClient({
                                             >
                                                 {item.description}
                                             </p>
+
+                                            {/* Class requirement notice if applicable */}
+                                            {item.class_req !== 'all' && (
+                                                <div style={{ marginTop: '2px', marginBottom: '4px' }}>
+                                                    <span
+                                                        style={{
+                                                            fontSize: '10px',
+                                                            color: 'var(--text-secondary)',
+                                                            backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                                                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                                                            padding: '1.5px 6px',
+                                                            borderRadius: '4px',
+                                                            display: 'inline-flex',
+                                                            alignItems: 'center',
+                                                            gap: '3px',
+                                                        }}
+                                                    >
+                                                        🛡️ Khusus {item.class_req.toUpperCase()}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
 
-                                        {/* Bottom Action */}
+                                        {/* Bottom Action / Price & CTA */}
                                         <div
                                             style={{
                                                 display: 'flex',
@@ -768,18 +963,28 @@ export default function ShopClient({
                                                 justifyContent: 'space-between',
                                                 gap: '6px',
                                                 paddingTop: '10px',
-                                                borderTop: '1px solid var(--surface-border)',
+                                                borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+                                                position: 'relative',
+                                                zIndex: 2,
                                             }}
                                         >
                                             <span
                                                 style={{
                                                     fontSize: '12.5px',
-                                                    color: 'var(--color-gold-text)',
+                                                    color: rarity.priceColor,
                                                     fontWeight: 700,
                                                     fontFamily: 'var(--font-heading)',
                                                     whiteSpace: 'nowrap',
+                                                    display: 'flex',
+                                                    alignItems: 'center',
+                                                    gap: '4px',
+                                                    textShadow:
+                                                        item.rarity === 'legendary'
+                                                            ? '0 0 8px rgba(251, 191, 36, 0.45)'
+                                                            : 'none',
                                                 }}
                                             >
+                                                <Zap size={13} style={{ opacity: 0.85 }} />
                                                 {item.cost_xp === 0 ? 'Gratis' : `${item.cost_xp.toLocaleString()} XP`}
                                             </span>
 
@@ -788,8 +993,8 @@ export default function ShopClient({
                                                     style={{
                                                         fontSize: '10.5px',
                                                         color: '#08c380',
-                                                        backgroundColor: 'rgba(8, 195, 128, 0.1)',
-                                                        border: '1px solid rgba(8, 195, 128, 0.25)',
+                                                        backgroundColor: 'rgba(8, 195, 128, 0.12)',
+                                                        border: '1px solid rgba(8, 195, 128, 0.28)',
                                                         padding: '4px 8px',
                                                         borderRadius: '6px',
                                                         fontWeight: 600,
@@ -808,16 +1013,50 @@ export default function ShopClient({
                                                     type="button"
                                                     onClick={() => handleBuyItem(item)}
                                                     disabled={!canAfford || isLoading}
-                                                    className={canAfford ? 'btn-signal-orange' : 'btn-dark-outline'}
-                                                    style={{
-                                                        padding: '6px 14px',
-                                                        fontSize: '12px',
-                                                        fontWeight: 700,
-                                                        borderRadius: '8px',
-                                                        cursor: canAfford ? 'pointer' : 'not-allowed',
-                                                        opacity: canAfford ? (isLoading ? 0.75 : 1) : 0.6,
-                                                        whiteSpace: 'nowrap',
-                                                    }}
+                                                    style={
+                                                        item.rarity === 'legendary' && canAfford
+                                                            ? {
+                                                                  padding: '6px 14px',
+                                                                  fontSize: '12px',
+                                                                  fontWeight: 700,
+                                                                  borderRadius: '8px',
+                                                                  cursor: 'pointer',
+                                                                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                                                                  color: '#111827',
+                                                                  border: '1px solid #fef08a',
+                                                                  boxShadow: '0 4px 14px rgba(245, 158, 11, 0.45)',
+                                                                  whiteSpace: 'nowrap',
+                                                              }
+                                                            : item.rarity === 'epic' && canAfford
+                                                            ? {
+                                                                  padding: '6px 14px',
+                                                                  fontSize: '12px',
+                                                                  fontWeight: 700,
+                                                                  borderRadius: '8px',
+                                                                  cursor: 'pointer',
+                                                                  background: 'linear-gradient(135deg, #9333ea 0%, #7e22ce 100%)',
+                                                                  color: '#ffffff',
+                                                                  border: '1px solid #c084fc',
+                                                                  boxShadow: '0 4px 14px rgba(147, 51, 234, 0.4)',
+                                                                  whiteSpace: 'nowrap',
+                                                              }
+                                                            : {
+                                                                  padding: '6px 14px',
+                                                                  fontSize: '12px',
+                                                                  fontWeight: 700,
+                                                                  borderRadius: '8px',
+                                                                  cursor: canAfford ? 'pointer' : 'not-allowed',
+                                                                  opacity: canAfford ? (isLoading ? 0.75 : 1) : 0.6,
+                                                                  whiteSpace: 'nowrap',
+                                                              }
+                                                    }
+                                                    className={
+                                                        (item.rarity === 'legendary' || item.rarity === 'epic') && canAfford
+                                                            ? ''
+                                                            : canAfford
+                                                            ? 'btn-signal-orange'
+                                                            : 'btn-dark-outline'
+                                                    }
                                                 >
                                                     {isLoading ? '...' : canAfford ? 'Beli' : 'XP Kurang'}
                                                 </motion.button>
