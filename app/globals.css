@@ -42,9 +42,9 @@
   --color-electric-yellow: #FACC15;   /* Bright sunny yellow */
   --color-vector-green: #219653;      /* Skilvul green */
   --accent-gold: var(--color-gold);
-  --accent-gold-bg: #FFFBEB;          /* Fresh warm honey tint (Amber-50) */
-  --accent-gold-border: #FDE68A;      /* Clean golden stroke (Amber-200) */
-  --accent-gold-text: #B45309;        /* Deep readable golden amber (Amber-700, 5.8:1 contrast) */
+  --accent-gold-bg: #FEF3C7;          /* Rich warm honey tint (Amber-100) */
+  --accent-gold-border: #FCD34D;      /* Saturated golden stroke (Amber-300) */
+  --accent-gold-text: #92400E;        /* Deep readable golden amber (Amber-800, 5.8:1 contrast) */
   --color-spark: var(--color-gold);
 
   --gradient-vector-green: linear-gradient(to right, #219653 0%, #F5C542 50%, #38BDF8 100%);
@@ -175,14 +175,14 @@
   --color-gold-fill: #F5C542;
   --color-gold-hover: #EAB308;
   --accent-gold: #F5C542;
-  --accent-gold-bg: rgba(245, 197, 66, 0.12);
-  --accent-gold-border: rgba(245, 197, 66, 0.40);
-  --accent-gold-text: #F5C542;
+  --accent-gold-bg: rgba(245, 197, 66, 0.16);
+  --accent-gold-border: rgba(245, 197, 66, 0.50);
+  --accent-gold-text: #FDE047;
   --color-signal-orange: #F5C542;
   --brand-primary: #F5C542;
   --brand-primary-hover: #EAB308;
-  --brand-primary-text: #1d1d1d;
-  --brand-primary-border: transparent;
+  --brand-primary-text: #18181b;
+  --brand-primary-border: #EAB308;
 
   /* --- FUNCTIONAL RPG STATUS TOKENS (DARK MODE) --- */
   --accent-red: #EF4444;
