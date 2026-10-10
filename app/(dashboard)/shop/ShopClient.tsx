@@ -16,6 +16,7 @@ import { useContentStore, VoucherItem, RedemptionItem } from '@/stores/contentSt
 import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
 import ItemIcon from '@/components/character/ItemIcon'
+import ItemCelebrationModal from '@/components/character/ItemCelebrationModal'
 
 export type ShopTab = 'voucher' | 'items'
 
@@ -107,6 +108,7 @@ export default function ShopClient({
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
+    const [celebrationItem, setCelebrationItem] = useState<GameItem | null>(null)
 
     const displayXp = useMemo(() => profile?.xp ?? xp, [profile?.xp, xp])
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
@@ -225,7 +227,8 @@ export default function ShopClient({
             if (!res.ok || data.error) {
                 setNotification({ type: 'error', message: data.error || 'Gagal membuka item.' })
             } else {
-                const updatedInventory = [...inventory, data.item]
+                const purchasedItem = data.item || item
+                const updatedInventory = [...inventory, purchasedItem]
                 setInventory(updatedInventory)
                 setCharacterInventoryData({
                     equipped: (profile?.equipped_items || characterEquipped || {}) as EquippedItemsMap,
@@ -235,12 +238,40 @@ export default function ShopClient({
                     setXp(data.currentXp)
                     updateXP(data.currentXp)
                 }
-                setNotification({ type: 'success', message: data.message || `${item.name} berhasil dibeli!` })
+                // Trigger celebratory rarity-tailored showcase modal (no green toast)
+                setCelebrationItem(purchasedItem)
             }
         } catch (e: any) {
             setNotification({ type: 'error', message: e.message || 'Terjadi kesalahan jaringan.' })
         } finally {
             setItemActionLoadingId(null)
+        }
+    }
+
+    // Direct equip handler from celebration modal
+    async function handleEquipFromCelebration(itemToEquip: GameItem) {
+        const currentEquipped = { ...(profile?.equipped_items || characterEquipped || {}) }
+        const newEquipped = { ...currentEquipped, [itemToEquip.slot]: itemToEquip.id }
+
+        if (profile) {
+            useUserStore.getState().setProfile({
+                ...profile,
+                equipped_items: newEquipped,
+            })
+        }
+        setCharacterInventoryData({
+            equipped: newEquipped,
+            inventory,
+        })
+
+        try {
+            await fetch('/api/character/equip', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ itemId: itemToEquip.id, slot: itemToEquip.slot, action: 'equip' }),
+            })
+        } catch (err) {
+            console.error('Failed to equip item directly from modal:', err)
         }
     }
 
@@ -342,8 +373,8 @@ export default function ShopClient({
                 </motion.button>
             </div>
 
-            {/* Notification Toast */}
-            {notification && (
+            {/* Error Notification Toast (Green success toaster removed) */}
+            {notification && notification.type === 'error' && (
                 <motion.div
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -354,15 +385,15 @@ export default function ShopClient({
                         borderRadius: '10px',
                         fontSize: '13px',
                         fontWeight: 500,
-                        backgroundColor: notification.type === 'success' ? 'rgba(8, 195, 128, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                        border: `1px solid ${notification.type === 'success' ? 'rgba(8, 195, 128, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
-                        color: notification.type === 'success' ? '#08c380' : '#ef4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.12)',
+                        border: '1px solid rgba(239, 68, 68, 0.3)',
+                        color: '#ef4444',
                         display: 'flex',
                         alignItems: 'center',
                         gap: '8px',
                     }}
                 >
-                    {notification.type === 'success' ? <CheckCircle size={16} /> : <Zap size={16} />}
+                    <Zap size={16} />
                     <span>{notification.message}</span>
                 </motion.div>
             )}
@@ -1058,6 +1089,18 @@ export default function ShopClient({
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Exclusive Item Unlock Celebration Showcase Modal */}
+            <ItemCelebrationModal
+                item={celebrationItem}
+                onClose={() => setCelebrationItem(null)}
+                onEquip={handleEquipFromCelebration}
+                isCurrentlyEquipped={Boolean(
+                    celebrationItem &&
+                    (profile?.equipped_items?.[celebrationItem.slot] === celebrationItem.id ||
+                     characterEquipped?.[celebrationItem.slot] === celebrationItem.id)
+                )}
+            />
         </div>
     )
 }

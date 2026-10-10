@@ -19,7 +19,7 @@ import {
     ExternalLink,
     Copy,
     CheckCheck,
-    Sparkles,
+    ThumbsUp,
     ArrowLeft,
     Clock,
     Zap,
@@ -1945,7 +1945,7 @@ export default function ModuleDetail({
                                         gap: '8px',
                                     }}
                                 >
-                                    <Sparkles size={16} /> Level Up! Kamu sekarang Level {completionFeedback.newLevel}
+                                    <ThumbsUp size={16} /> Level Up! Kamu sekarang Level {completionFeedback.newLevel}
                                 </div>
                             )}
 

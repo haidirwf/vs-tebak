@@ -285,7 +285,7 @@ export const GAME_ITEMS: GameItem[] = [
         rarity: 'legendary',
         cost_xp: 1500,
         icon: '🌌',
-        image_url: '/images/items/wpn_crystal_staff.webp',
+        image_url: '/images/items/wpn_archmage_orb.webp',
         description: 'Inti energi primordial alam semesta untuk ledakan serangan puncak.',
         buff: { type: 'crit_rate', value: 28, label: '+28% Peluang Serangan Kritis' },
     },

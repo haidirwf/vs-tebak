@@ -10,7 +10,7 @@ import {
     Eye,
     Code2,
     FileCode,
-    Sparkles,
+    ThumbsUp,
     HelpCircle,
     ChevronDown,
     ChevronUp,
@@ -666,7 +666,7 @@ export default function CodeChallengeWorkspace({
                         }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Sparkles size={16} style={{ color: 'var(--accent-green, #16a34a)' }} />
+                            <ThumbsUp size={16} style={{ color: 'var(--accent-green, #16a34a)' }} />
                             <div>
                                 <span style={{ fontWeight: 700, fontSize: '13.5px', color: 'var(--accent-green, #16a34a)' }}>
                                     Tantangan Selesai!

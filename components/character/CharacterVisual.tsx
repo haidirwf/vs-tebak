@@ -173,6 +173,22 @@ function CharacterVisual({
                             <stop offset="100%" stopColor="#d97706" />
                         </linearGradient>
 
+                        {/* Archmage Genesis Core Celestial Gradients */}
+                        <radialGradient id="archmageCoreRadial" cx="50%" cy="50%" r="50%">
+                            <stop offset="0%" stopColor="#ffffff" />
+                            <stop offset="25%" stopColor="#f0abfc" />
+                            <stop offset="55%" stopColor="#c084fc" />
+                            <stop offset="85%" stopColor="#581c87" />
+                            <stop offset="100%" stopColor="#1e1b4b" />
+                        </radialGradient>
+
+                        <linearGradient id="archmageRingsGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fde047" />
+                            <stop offset="35%" stopColor="#c084fc" />
+                            <stop offset="70%" stopColor="#38bdf8" />
+                            <stop offset="100%" stopColor="#facc15" />
+                        </linearGradient>
+
                         <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
                             <feGaussianBlur stdDeviation="5" result="blur" />
                             <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -755,6 +771,45 @@ function CharacterVisual({
                                         {/* Grip & Pommel */}
                                         <rect x="-2" y="16.5" width="4" height="10" rx="1" fill="#451a03" />
                                         <circle cx="0" cy="28" r="2.8" fill="#92400e" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_archmage_orb' ? (
+                                    /* ARCHMAGE GENESIS CORE - PRIMORDIAL CELESTIAL ORB MATCHING wpn_archmage_orb.webp */
+                                    <g transform="translate(0, -22)" style={{ filter: 'drop-shadow(0 0 14px #c084fc) drop-shadow(0 0 22px #38bdf8)' }}>
+                                        {/* Arcane Energy Tether Spire connecting from hand grip */}
+                                        <path d="M 0 0 Q 3 11 0 22" fill="none" stroke="#c084fc" strokeWidth="2" strokeDasharray="3 2" opacity="0.85" />
+                                        <path d="M -1 0 Q -4 10 0 22" fill="none" stroke="#38bdf8" strokeWidth="1.5" opacity="0.75" />
+
+                                        {/* Outer Cosmic Halo Ring */}
+                                        <circle cx="0" cy="0" r="22" fill="none" stroke="#a855f7" strokeWidth="0.8" strokeDasharray="4 3" opacity="0.4" />
+
+                                        {/* Gyroscopic Orbital Celestial Rings (Rotated with runes) */}
+                                        <ellipse cx="0" cy="0" rx="20" ry="7.5" fill="none" stroke="url(#archmageRingsGrad)" strokeWidth="2.2" transform="rotate(-25)" opacity="0.95" />
+                                        <ellipse cx="0" cy="0" rx="19" ry="6.5" fill="none" stroke="url(#archmageRingsGrad)" strokeWidth="1.6" transform="rotate(40)" opacity="0.9" />
+                                        <ellipse cx="0" cy="0" rx="16" ry="16" fill="none" stroke="#38bdf8" strokeWidth="1.2" strokeDasharray="5 3" opacity="0.8" />
+
+                                        {/* Orbiting Celestial Glyphs & Star Runes */}
+                                        <circle cx="-16" cy="-7" r="2.2" fill="#facc15" style={{ filter: 'drop-shadow(0 0 4px #facc15)' }} />
+                                        <circle cx="16" cy="7" r="2.2" fill="#38bdf8" style={{ filter: 'drop-shadow(0 0 4px #38bdf8)' }} />
+                                        <circle cx="7" cy="-15" r="1.8" fill="#e879f9" />
+                                        <circle cx="-7" cy="15" r="1.8" fill="#ffffff" />
+                                        <polygon points="0,-18 2,-15 -2,-15" fill="#fde047" />
+                                        <polygon points="0,18 2,15 -2,15" fill="#fde047" />
+
+                                        {/* Primordial Cosmic Swirling Nexus Core */}
+                                        <circle cx="0" cy="0" r="12" fill="url(#archmageCoreRadial)" stroke="#e879f9" strokeWidth="1" />
+                                        {/* Inner Galaxy Swirl Arc */}
+                                        <path d="M -6 -4 A 8 8 0 0 1 6 4" fill="none" stroke="#38bdf8" strokeWidth="1.8" strokeLinecap="round" opacity="0.9" />
+                                        <path d="M 4 -6 A 8 8 0 0 1 -4 6" fill="none" stroke="#f0abfc" strokeWidth="1.5" strokeLinecap="round" opacity="0.85" />
+
+                                        {/* Central Blinding Singularity Core */}
+                                        <circle cx="0" cy="0" r="4.5" fill="#ffffff" style={{ filter: 'drop-shadow(0 0 6px #ffffff)' }} />
+                                        <circle cx="-1" cy="-1" r="2" fill="#fef08a" />
+
+                                        {/* Stellar Cross Starlight Flares */}
+                                        <line x1="-16" y1="0" x2="16" y2="0" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                                        <line x1="0" y1="-16" x2="0" y2="16" stroke="#ffffff" strokeWidth="1.5" strokeLinecap="round" opacity="0.9" />
+                                        <line x1="-8" y1="-8" x2="8" y2="8" stroke="#facc15" strokeWidth="0.9" opacity="0.75" />
+                                        <line x1="8" y1="-8" x2="-8" y2="8" stroke="#38bdf8" strokeWidth="0.9" opacity="0.75" />
                                     </g>
                                 ) : weaponItem?.id === 'wpn_crystal_staff' || weaponItem?.id === 'wpn_astral_wand' || weaponItem?.id === 'wpn_mage_starter' ? (
                                     /* ARCANE CRYSTAL STAFF / MAGE WEAPON matching wpn_crystal_staff.jpg */
