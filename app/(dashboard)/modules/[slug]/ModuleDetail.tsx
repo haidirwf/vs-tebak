@@ -276,9 +276,228 @@ function CodeBlock({ code, language }: { code: string; language?: string }) {
 }
 
 // --- Lightweight Safe Markdown Renderer ---
+type MarkdownBlock =
+    | { type: 'h1'; text: string }
+    | { type: 'h2'; text: string }
+    | { type: 'h3'; text: string }
+    | { type: 'h4'; text: string }
+    | { type: 'blockquote'; lines: string[] }
+    | { type: 'ul'; items: string[] }
+    | { type: 'ol'; items: string[] }
+    | { type: 'hr' }
+    | { type: 'p'; text: string }
+
+function formatInline(text: string): React.ReactNode {
+    if (!text) return null
+
+    // Pattern matches:
+    // 1. Bold: **...** or __...__ (placed first to capture bold with inner code/italics)
+    // 2. Inline code: `...`
+    // 3. Links: [text](url)
+    // 4. Italic: *...* or _..._
+    const regex = /(\*\*[\s\S]*?\*\*|__[\s\S]*?__|`[^`]+`|\[[^\]]+\]\([^)]+\)|\*[^*]+?\*|_[^_]+?_)/g
+    const parts = text.split(regex)
+
+    return parts.map((part, index) => {
+        if (!part) return null
+
+        // Bold: **text** or __text__
+        if (
+            (part.startsWith('**') && part.endsWith('**') && part.length >= 4) ||
+            (part.startsWith('__') && part.endsWith('__') && part.length >= 4)
+        ) {
+            const inner = part.slice(2, -2)
+            return (
+                <strong key={index} style={{ color: 'var(--text-primary)', fontWeight: 700 }}>
+                    {formatInline(inner)}
+                </strong>
+            )
+        }
+
+        // Code: `code`
+        if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+            return (
+                <code
+                    key={index}
+                    style={{
+                        padding: '2px 6px',
+                        margin: '0 2px',
+                        borderRadius: '4px',
+                        backgroundColor: 'var(--surface-elevated, #f4f4f5)',
+                        border: '1px solid var(--surface-border, #e4e4e7)',
+                        fontSize: '13px',
+                        fontFamily: 'var(--font-mono)',
+                        color: 'var(--text-primary)',
+                    }}
+                >
+                    {part.slice(1, -1)}
+                </code>
+            )
+        }
+
+        // Link: [text](url)
+        const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/)
+        if (linkMatch) {
+            const [, linkText, linkUrl] = linkMatch
+            const isExternal = linkUrl.startsWith('http://') || linkUrl.startsWith('https://')
+            return (
+                <a
+                    key={index}
+                    href={linkUrl}
+                    target={isExternal ? '_blank' : undefined}
+                    rel={isExternal ? 'noopener noreferrer' : undefined}
+                    style={{
+                        color: 'var(--accent-gold-text, #f59e0b)',
+                        textDecoration: 'underline',
+                        textUnderlineOffset: '3px',
+                    }}
+                >
+                    {formatInline(linkText)}
+                </a>
+            )
+        }
+
+        // Italic: *text* or _text_
+        if (
+            (part.startsWith('*') && part.endsWith('*') && part.length >= 2 && !part.startsWith('**')) ||
+            (part.startsWith('_') && part.endsWith('_') && part.length >= 2 && !part.startsWith('__'))
+        ) {
+            return (
+                <em key={index} style={{ fontStyle: 'italic' }}>
+                    {formatInline(part.slice(1, -1))}
+                </em>
+            )
+        }
+
+        return part
+    })
+}
+
+function parseMarkdownBlocks(rawText: string): MarkdownBlock[] {
+    const rawLines = rawText.split(/\r?\n/)
+    const blocks: MarkdownBlock[] = []
+    let currentUl: string[] | null = null
+    let currentOl: string[] | null = null
+    let currentQuote: string[] | null = null
+    let currentP: string[] = []
+
+    const flushP = () => {
+        if (currentP.length > 0) {
+            blocks.push({ type: 'p', text: currentP.join(' ') })
+            currentP = []
+        }
+    }
+
+    const flushUl = () => {
+        if (currentUl && currentUl.length > 0) {
+            blocks.push({ type: 'ul', items: currentUl })
+            currentUl = null
+        }
+    }
+
+    const flushOl = () => {
+        if (currentOl && currentOl.length > 0) {
+            blocks.push({ type: 'ol', items: currentOl })
+            currentOl = null
+        }
+    }
+
+    const flushQuote = () => {
+        if (currentQuote && currentQuote.length > 0) {
+            blocks.push({ type: 'blockquote', lines: currentQuote })
+            currentQuote = null
+        }
+    }
+
+    const flushAll = () => {
+        flushP()
+        flushUl()
+        flushOl()
+        flushQuote()
+    }
+
+    for (let i = 0; i < rawLines.length; i++) {
+        const line = rawLines[i]
+        const trimmed = line.trim()
+
+        // 1. Empty line: closes any running block
+        if (trimmed === '') {
+            flushAll()
+            continue
+        }
+
+        // 2. Horizontal divider
+        if (/^([-*_])\1\1+$/.test(trimmed)) {
+            flushAll()
+            blocks.push({ type: 'hr' })
+            continue
+        }
+
+        // 3. Headings (# to ######)
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)$/)
+        if (headingMatch) {
+            flushAll()
+            const level = headingMatch[1].length
+            const headingText = headingMatch[2].trim()
+            if (level === 1) {
+                blocks.push({ type: 'h1', text: headingText })
+            } else if (level === 2) {
+                blocks.push({ type: 'h2', text: headingText })
+            } else if (level === 3) {
+                blocks.push({ type: 'h3', text: headingText })
+            } else {
+                blocks.push({ type: 'h4', text: headingText })
+            }
+            continue
+        }
+
+        // 4. Blockquote (> ...)
+        if (trimmed.startsWith('>')) {
+            flushP()
+            flushUl()
+            flushOl()
+            const quoteContent = trimmed.replace(/^>\s*/, '').trim()
+            if (!currentQuote) currentQuote = []
+            if (quoteContent) currentQuote.push(quoteContent)
+            continue
+        }
+
+        // 5. Unordered List item (- ... or * ... or + ...)
+        const ulMatch = trimmed.match(/^[-*+]\s+(.*)$/)
+        if (ulMatch) {
+            flushP()
+            flushOl()
+            flushQuote()
+            if (!currentUl) currentUl = []
+            currentUl.push(ulMatch[1].trim())
+            continue
+        }
+
+        // 6. Ordered List item (1. ... or 1) ...)
+        const olMatch = trimmed.match(/^\d+[.)]\s+(.*)$/)
+        if (olMatch) {
+            flushP()
+            flushUl()
+            flushQuote()
+            if (!currentOl) currentOl = []
+            currentOl.push(olMatch[1].trim())
+            continue
+        }
+
+        // 7. Regular paragraph text
+        if (currentUl) flushUl()
+        if (currentOl) flushOl()
+        if (currentQuote) flushQuote()
+        currentP.push(trimmed)
+    }
+
+    flushAll()
+    return blocks
+}
+
 function RichContentRenderer({ content }: { content: string }) {
     const parts = useMemo(() => {
-        const regex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g
+        const regex = /```([a-zA-Z0-9_#-]*)\r?\n([\s\S]*?)```/g
         const segments: Array<{ type: 'text' | 'code'; text: string; lang?: string }> = []
         let lastIndex = 0
         let match: RegExpExecArray | null
@@ -315,14 +534,30 @@ function RichContentRenderer({ content }: { content: string }) {
                     return <CodeBlock key={segIdx} code={segment.text} language={segment.lang} />
                 }
 
-                const lines = segment.text.split('\n\n')
+                const blocks = parseMarkdownBlocks(segment.text)
                 return (
                     <div key={segIdx}>
-                        {lines.map((block, bIdx) => {
-                            const trimmed = block.trim()
-                            if (!trimmed) return null
+                        {blocks.map((block, bIdx) => {
+                            if (block.type === 'h1') {
+                                return (
+                                    <h1
+                                        key={bIdx}
+                                        style={{
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '24px',
+                                            fontWeight: 700,
+                                            color: 'var(--text-primary)',
+                                            marginTop: '32px',
+                                            marginBottom: '14px',
+                                            letterSpacing: '-0.02em',
+                                        }}
+                                    >
+                                        {formatInline(block.text)}
+                                    </h1>
+                                )
+                            }
 
-                            if (trimmed.startsWith('## ')) {
+                            if (block.type === 'h2') {
                                 return (
                                     <h2
                                         key={bIdx}
@@ -334,14 +569,16 @@ function RichContentRenderer({ content }: { content: string }) {
                                             marginTop: '28px',
                                             marginBottom: '12px',
                                             letterSpacing: '-0.01em',
+                                            borderBottom: '1px solid var(--surface-border, rgba(255,255,255,0.08))',
+                                            paddingBottom: '8px',
                                         }}
                                     >
-                                        {trimmed.slice(3)}
+                                        {formatInline(block.text)}
                                     </h2>
                                 )
                             }
 
-                            if (trimmed.startsWith('### ')) {
+                            if (block.type === 'h3') {
                                 return (
                                     <h3
                                         key={bIdx}
@@ -350,50 +587,129 @@ function RichContentRenderer({ content }: { content: string }) {
                                             fontSize: '17px',
                                             fontWeight: 600,
                                             color: 'var(--text-primary)',
-                                            marginTop: '20px',
+                                            marginTop: '22px',
                                             marginBottom: '10px',
                                         }}
                                     >
-                                        {trimmed.slice(4)}
+                                        {formatInline(block.text)}
                                     </h3>
                                 )
                             }
 
-                            const formatInline = (text: string) => {
-                                const tokens = text.split(/(`[^`]+`|\*\*[^*]+\*\*|\*[^*]+\*)/g)
-                                return tokens.map((tok, tIdx) => {
-                                    if (tok.startsWith('`') && tok.endsWith('`')) {
-                                        return (
-                                            <code
-                                                key={tIdx}
+                            if (block.type === 'h4') {
+                                return (
+                                    <h4
+                                        key={bIdx}
+                                        style={{
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '15px',
+                                            fontWeight: 600,
+                                            color: 'var(--text-primary)',
+                                            marginTop: '16px',
+                                            marginBottom: '8px',
+                                        }}
+                                    >
+                                        {formatInline(block.text)}
+                                    </h4>
+                                )
+                            }
+
+                            if (block.type === 'ul') {
+                                return (
+                                    <ul
+                                        key={bIdx}
+                                        style={{
+                                            margin: '12px 0 18px 0',
+                                            paddingLeft: '22px',
+                                            listStyleType: 'disc',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                        }}
+                                    >
+                                        {block.items.map((item, itemIdx) => (
+                                            <li
+                                                key={itemIdx}
                                                 style={{
-                                                    padding: '2px 6px',
-                                                    margin: '0 2px',
-                                                    borderRadius: '4px',
-                                                    backgroundColor: 'var(--surface-elevated, #f4f4f5)',
-                                                    border: '1px solid var(--surface-border, #e4e4e7)',
-                                                    fontSize: '13px',
-                                                    fontFamily: 'var(--font-mono)',
-                                                    color: 'var(--text-primary)',
+                                                    lineHeight: 1.65,
+                                                    color: 'var(--text-secondary)',
                                                 }}
                                             >
-                                                {tok.slice(1, -1)}
-                                            </code>
-                                        )
-                                    }
-                                    if (tok.startsWith('**') && tok.endsWith('**')) {
-                                        return <strong key={tIdx} style={{ color: 'var(--text-primary)' }}>{tok.slice(2, -2)}</strong>
-                                    }
-                                    if (tok.startsWith('*') && tok.endsWith('*')) {
-                                        return <em key={tIdx}>{tok.slice(1, -1)}</em>
-                                    }
-                                    return tok
-                                })
+                                                {formatInline(item)}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                )
+                            }
+
+                            if (block.type === 'ol') {
+                                return (
+                                    <ol
+                                        key={bIdx}
+                                        style={{
+                                            margin: '12px 0 18px 0',
+                                            paddingLeft: '22px',
+                                            listStyleType: 'decimal',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '8px',
+                                        }}
+                                    >
+                                        {block.items.map((item, itemIdx) => (
+                                            <li
+                                                key={itemIdx}
+                                                style={{
+                                                    lineHeight: 1.65,
+                                                    color: 'var(--text-secondary)',
+                                                }}
+                                            >
+                                                {formatInline(item)}
+                                            </li>
+                                        ))}
+                                    </ol>
+                                )
+                            }
+
+                            if (block.type === 'blockquote') {
+                                return (
+                                    <div
+                                        key={bIdx}
+                                        style={{
+                                            margin: '16px 0',
+                                            padding: '12px 16px',
+                                            borderRadius: '8px',
+                                            borderLeft: '4px solid var(--accent-gold, #f59e0b)',
+                                            backgroundColor: 'rgba(245, 197, 66, 0.08)',
+                                            color: 'var(--text-primary)',
+                                            fontSize: '14px',
+                                            lineHeight: 1.6,
+                                        }}
+                                    >
+                                        {block.lines.map((qLine, qIdx) => (
+                                            <p key={qIdx} style={{ margin: qIdx > 0 ? '6px 0 0 0' : 0 }}>
+                                                {formatInline(qLine)}
+                                            </p>
+                                        ))}
+                                    </div>
+                                )
+                            }
+
+                            if (block.type === 'hr') {
+                                return (
+                                    <hr
+                                        key={bIdx}
+                                        style={{
+                                            margin: '24px 0',
+                                            border: 'none',
+                                            borderTop: '1px solid var(--surface-border, rgba(255,255,255,0.08))',
+                                        }}
+                                    />
+                                )
                             }
 
                             return (
-                                <p key={bIdx} style={{ marginBottom: '16px' }}>
-                                    {formatInline(trimmed)}
+                                <p key={bIdx} style={{ marginBottom: '14px', lineHeight: 1.7, color: 'var(--text-secondary)' }}>
+                                    {formatInline(block.text)}
                                 </p>
                             )
                         })}
