@@ -688,90 +688,106 @@ export default function CharacterPage() {
                     }}
                 />
 
-                {/* Header: Slot Emoji + Slot Name · Anatomical Label */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <span style={{ fontSize: '13px' }}>{slotMeta.emoji}</span>
-                    <span
-                        style={{
-                            fontFamily: 'var(--font-heading)',
-                            fontSize: '12px',
-                            fontWeight: 700,
-                            color: 'var(--text-primary)',
-                        }}
-                    >
-                        {slotMeta.name}
-                    </span>
-                    <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 500 }}>
-                        · {anatomicalLabel}
-                    </span>
+                {/* Header: Slot Emoji + Slot Name · Anatomical Label + Status Terpasang */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                        <span style={{ fontSize: '13px' }}>{slotMeta.emoji}</span>
+                        <span
+                            style={{
+                                fontFamily: 'var(--font-heading)',
+                                fontSize: '12px',
+                                fontWeight: 700,
+                                color: 'var(--text-primary)',
+                            }}
+                        >
+                            {slotMeta.name}
+                        </span>
+                        <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 500 }}>
+                            · {anatomicalLabel}
+                        </span>
+                    </div>
+                    {item && (
+                        <span
+                            style={{
+                                fontSize: '9.5px',
+                                fontWeight: 700,
+                                color: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                padding: '1px 5px',
+                                borderRadius: '4px',
+                            }}
+                        >
+                            Terpasang
+                        </span>
+                    )}
                 </div>
 
                 {/* Body */}
                 {item ? (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                        <ItemIcon item={item} slot={slot} size={46} />
-                        <div style={{ minWidth: 0, flex: 1 }}>
-                            <div
-                                style={{
-                                    fontFamily: 'var(--font-heading)',
-                                    fontSize: '13px',
-                                    fontWeight: 700,
-                                    color: `var(--rarity-title-${item.rarity})`,
-                                    lineHeight: 1.25,
-                                    whiteSpace: 'nowrap',
-                                    overflow: 'hidden',
-                                    textOverflow: 'ellipsis',
-                                }}
-                                title={item.name}
-                            >
-                                {item.name}
-                            </div>
-                            <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                <span
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
+                            <ItemIcon item={item} slot={slot} size={44} />
+                            <div style={{ minWidth: 0, flex: 1 }}>
+                                <div
                                     style={{
-                                        display: 'inline-flex',
-                                        alignItems: 'center',
-                                        gap: '3px',
-                                        fontSize: '10.5px',
+                                        fontFamily: 'var(--font-heading)',
+                                        fontSize: '13px',
                                         fontWeight: 700,
-                                        color: rarity?.buffColor || '#f59e0b',
-                                        backgroundColor: rarity?.buffBg || 'rgba(245, 158, 11, 0.1)',
-                                        border: `1.5px solid ${rarity?.buffBorder || 'rgba(245, 158, 11, 0.4)'}`,
-                                        padding: '2px 7px',
-                                        borderRadius: '5px',
+                                        color: `var(--rarity-title-${item.rarity})`,
+                                        lineHeight: 1.25,
                                         whiteSpace: 'nowrap',
-                                        maxWidth: '100%',
                                         overflow: 'hidden',
                                         textOverflow: 'ellipsis',
                                     }}
+                                    title={item.name}
                                 >
+                                    {item.name}
+                                </div>
+                                <div style={{ fontSize: '11px', color: rarity?.buffColor || '#f59e0b', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     ⚡ {item.buff.label}
-                                </span>
-                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
-                                    {formatItemStatBadges(item).map((badge) => (
-                                        <span
-                                            key={badge.key}
-                                            style={{
-                                                display: 'inline-flex',
-                                                alignItems: 'center',
-                                                gap: '2px',
-                                                fontSize: '9.5px',
-                                                fontWeight: 800,
-                                                color: '#10b981',
-                                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
-                                                border: '1px solid rgba(16, 185, 129, 0.3)',
-                                                padding: '1px 5px',
-                                                borderRadius: '4px',
-                                                fontFamily: 'var(--font-mono)',
-                                            }}
-                                            title={`Bonus stat item: ${badge.label} ${badge.display}`}
-                                        >
-                                            <span>{badge.label}</span>
-                                            <span>{badge.display}</span>
-                                        </span>
-                                    ))}
                                 </div>
                             </div>
+                        </div>
+
+                        {/* Dedicated Stat Bonus Row: "Nambah Stat: +X HP, +Y ATK" */}
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                flexWrap: 'wrap',
+                                gap: '4px',
+                                padding: '5px 8px',
+                                borderRadius: '7px',
+                                backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                                border: '1px solid rgba(16, 185, 129, 0.25)',
+                            }}
+                        >
+                            <span style={{ fontSize: '10px', color: '#10b981', fontWeight: 700 }}>
+                                Nambah:
+                            </span>
+                            {formatItemStatBadges(item).map((badge) => (
+                                <span
+                                    key={badge.key}
+                                    style={{
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '2px',
+                                        fontSize: '10.5px',
+                                        fontWeight: 800,
+                                        color: '#34d399',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.16)',
+                                        border: '1px solid rgba(16, 185, 129, 0.35)',
+                                        padding: '1px 5px',
+                                        borderRadius: '4px',
+                                        fontFamily: 'var(--font-mono)',
+                                    }}
+                                >
+                                    <span>{badge.icon}</span>
+                                    <span>{badge.label}</span>
+                                    <span style={{ color: '#10b981', fontWeight: 900 }}>{badge.display}</span>
+                                </span>
+                            ))}
                         </div>
                     </div>
                 ) : (
@@ -1194,6 +1210,55 @@ export default function CharacterPage() {
                         </span>
                     </div>
 
+                    {/* Total Bonus Perlengkapan Terpasang Banner */}
+                    {Object.values(characterStats.equipmentBonuses || {}).some(v => v > 0) && (
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                flexWrap: 'wrap',
+                                gap: '8px',
+                                padding: '8px 12px',
+                                borderRadius: '10px',
+                                backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                                border: '1px solid rgba(16, 185, 129, 0.25)',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11.5px', fontWeight: 700, color: '#10b981' }}>
+                                <Shield size={14} />
+                                <span>Total Tambahan Stat dari Perlengkapan Terpasang:</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
+                                {characterStats.equipmentBonuses.hp > 0 && (
+                                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
+                                        ❤️ HP +{characterStats.equipmentBonuses.hp}
+                                    </span>
+                                )}
+                                {characterStats.equipmentBonuses.atk > 0 && (
+                                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
+                                        ⚔️ ATK +{characterStats.equipmentBonuses.atk}
+                                    </span>
+                                )}
+                                {characterStats.equipmentBonuses.def > 0 && (
+                                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
+                                        🛡️ DEF +{characterStats.equipmentBonuses.def}
+                                    </span>
+                                )}
+                                {characterStats.equipmentBonuses.crit > 0 && (
+                                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
+                                        💥 CRIT +{characterStats.equipmentBonuses.crit}%
+                                    </span>
+                                )}
+                                {characterStats.equipmentBonuses.xp > 0 && (
+                                    <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
+                                        ⭐ XP +{characterStats.equipmentBonuses.xp}%
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                    )}
+
                     {/* 6 Combat Attribute Chips */}
                     <div className="character-attributes-grid">
                         {combatAttributes.map((attr) => (
@@ -1541,13 +1606,13 @@ export default function CharacterPage() {
                                                                         fontWeight: 700,
                                                                         padding: '2px 6px',
                                                                         borderRadius: '5px',
-                                                                        color: 'var(--accent-gold-text)',
-                                                                        backgroundColor: 'var(--accent-gold-bg)',
-                                                                        border: '1px solid var(--accent-gold-border)',
+                                                                        color: '#10b981',
+                                                                        backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                                                                        border: '1px solid rgba(16, 185, 129, 0.35)',
                                                                         whiteSpace: 'nowrap',
                                                                     }}
                                                                 >
-                                                                    Aktif
+                                                                    Terpasang
                                                                 </span>
                                                             )}
                                                             <span
@@ -1600,7 +1665,7 @@ export default function CharacterPage() {
                                                             >
                                                                 {item.name}
                                                             </div>
-                                                            <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
+                                                            <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                                                 <span
                                                                     style={{
                                                                         display: 'inline-flex',
@@ -1618,7 +1683,21 @@ export default function CharacterPage() {
                                                                 >
                                                                     ⚡ {item.buff.label}
                                                                 </span>
-                                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
+                                                                <div
+                                                                    style={{
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        flexWrap: 'wrap',
+                                                                        gap: '4px',
+                                                                        padding: '3px 6px',
+                                                                        borderRadius: '5px',
+                                                                        backgroundColor: isEquipped ? 'rgba(16, 185, 129, 0.12)' : 'rgba(16, 185, 129, 0.06)',
+                                                                        border: isEquipped ? '1px solid rgba(16, 185, 129, 0.35)' : '1px solid rgba(16, 185, 129, 0.2)',
+                                                                    }}
+                                                                >
+                                                                    <span style={{ fontSize: '9.5px', fontWeight: 700, color: isEquipped ? '#10b981' : 'var(--text-secondary)' }}>
+                                                                        {isEquipped ? 'Nambah:' : 'Stat:'}
+                                                                    </span>
                                                                     {formatItemStatBadges(item).map((badge) => (
                                                                         <span
                                                                             key={badge.key}
@@ -1626,18 +1705,15 @@ export default function CharacterPage() {
                                                                                 display: 'inline-flex',
                                                                                 alignItems: 'center',
                                                                                 gap: '2px',
-                                                                                fontSize: '9.5px',
+                                                                                fontSize: '10px',
                                                                                 fontWeight: 800,
-                                                                                color: '#10b981',
-                                                                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
-                                                                                border: '1px solid rgba(16, 185, 129, 0.3)',
-                                                                                padding: '1px 5px',
-                                                                                borderRadius: '4px',
+                                                                                color: '#34d399',
                                                                                 fontFamily: 'var(--font-mono)',
                                                                             }}
                                                                         >
+                                                                            <span>{badge.icon}</span>
                                                                             <span>{badge.label}</span>
-                                                                            <span>{badge.display}</span>
+                                                                            <span style={{ color: '#10b981', fontWeight: 900 }}>{badge.display}</span>
                                                                         </span>
                                                                     ))}
                                                                 </div>
