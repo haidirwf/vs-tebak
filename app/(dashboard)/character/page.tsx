@@ -175,7 +175,7 @@ export default function CharacterPage() {
     }, [])
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 880)
+        const checkMobile = () => setIsMobile(window.innerWidth < 768)
         checkMobile()
         window.addEventListener('resize', checkMobile)
         return () => window.removeEventListener('resize', checkMobile)
@@ -658,10 +658,10 @@ export default function CharacterPage() {
                     background: item
                         ? 'var(--surface-card)'
                         : 'rgba(255, 255, 255, 0.02)',
-                    padding: '10px 11px',
+                    padding: '9px 10px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '7px',
+                    gap: '6px',
                     cursor: 'pointer',
                     position: 'relative',
                     boxSizing: 'border-box',
@@ -685,34 +685,36 @@ export default function CharacterPage() {
                 />
 
                 {/* Header: Slot Emoji + Slot Name · Anatomical Label + Status Terpasang & Tombol Ganti */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                        <span style={{ fontSize: '13px' }}>{slotMeta.emoji}</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px', minWidth: 0, overflow: 'hidden' }}>
+                        <span style={{ fontSize: '12px' }}>{slotMeta.emoji}</span>
                         <span
                             style={{
                                 fontFamily: 'var(--font-heading)',
-                                fontSize: '12px',
+                                fontSize: '11.5px',
                                 fontWeight: 700,
                                 color: 'var(--text-primary)',
+                                whiteSpace: 'nowrap',
                             }}
                         >
                             {slotMeta.name}
                         </span>
-                        <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 500 }}>
+                        <span style={{ fontSize: '10.5px', color: 'var(--color-steel)', fontWeight: 500, whiteSpace: 'nowrap' }}>
                             · {anatomicalLabel}
                         </span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '3px', flexShrink: 0 }}>
                         {item && (
                             <span
                                 style={{
-                                    fontSize: '9.5px',
+                                    fontSize: '9px',
                                     fontWeight: 700,
                                     color: '#10b981',
                                     backgroundColor: 'rgba(16, 185, 129, 0.12)',
                                     border: '1px solid rgba(16, 185, 129, 0.3)',
-                                    padding: '1px 5px',
+                                    padding: '1px 4px',
                                     borderRadius: '4px',
+                                    whiteSpace: 'nowrap',
                                 }}
                             >
                                 Terpasang
@@ -720,13 +722,14 @@ export default function CharacterPage() {
                         )}
                         <span
                             style={{
-                                fontSize: '9.5px',
+                                fontSize: '9px',
                                 fontWeight: 700,
                                 color: 'var(--color-gold-text)',
                                 backgroundColor: 'rgba(245, 158, 11, 0.1)',
                                 border: '1px solid rgba(245, 158, 11, 0.28)',
-                                padding: '1px 5px',
+                                padding: '1px 4px',
                                 borderRadius: '4px',
+                                whiteSpace: 'nowrap',
                             }}
                         >
                             Ganti ⇄
@@ -736,14 +739,14 @@ export default function CharacterPage() {
 
                 {/* Body */}
                 {item ? (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                            <ItemIcon item={item} slot={slot} size={44} />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                            <ItemIcon item={item} slot={slot} size={38} />
                             <div style={{ minWidth: 0, flex: 1 }}>
                                 <div
                                     style={{
                                         fontFamily: 'var(--font-heading)',
-                                        fontSize: '13px',
+                                        fontSize: '12.5px',
                                         fontWeight: 700,
                                         color: `var(--rarity-title-${item.rarity})`,
                                         lineHeight: 1.25,
@@ -755,7 +758,7 @@ export default function CharacterPage() {
                                 >
                                     {item.name}
                                 </div>
-                                <div style={{ fontSize: '11px', color: rarity?.buffColor || '#f59e0b', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                <div style={{ fontSize: '10.5px', color: rarity?.buffColor || '#f59e0b', fontWeight: 600, marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     ⚡ {item.buff.label}
                                 </div>
                             </div>
@@ -767,14 +770,14 @@ export default function CharacterPage() {
                                 display: 'flex',
                                 alignItems: 'center',
                                 flexWrap: 'wrap',
-                                gap: '4px',
-                                padding: '4px 7px',
-                                borderRadius: '7px',
+                                gap: '3px',
+                                padding: '3px 6px',
+                                borderRadius: '6px',
                                 backgroundColor: 'rgba(16, 185, 129, 0.08)',
                                 border: '1px solid rgba(16, 185, 129, 0.25)',
                             }}
                         >
-                            <span style={{ fontSize: '10px', color: '#10b981', fontWeight: 700 }}>
+                            <span style={{ fontSize: '9.5px', color: '#10b981', fontWeight: 700 }}>
                                 Nambah:
                             </span>
                             {formatItemStatBadges(item).map((badge) => (
@@ -784,12 +787,12 @@ export default function CharacterPage() {
                                         display: 'inline-flex',
                                         alignItems: 'center',
                                         gap: '2px',
-                                        fontSize: '10.5px',
+                                        fontSize: '9.5px',
                                         fontWeight: 800,
                                         color: '#34d399',
                                         backgroundColor: 'rgba(16, 185, 129, 0.16)',
                                         border: '1px solid rgba(16, 185, 129, 0.35)',
-                                        padding: '1px 5px',
+                                        padding: '1px 4px',
                                         borderRadius: '4px',
                                         fontFamily: 'var(--font-mono)',
                                     }}
@@ -1070,8 +1073,8 @@ export default function CharacterPage() {
                             style={{
                                 position: 'absolute',
                                 top: '12px',
-                                left: 'calc(50% + 105px)',
-                                width: '235px',
+                                left: 'calc(50% + 72px)',
+                                width: '215px',
                                 zIndex: 20,
                             }}
                         >
@@ -1097,7 +1100,7 @@ export default function CharacterPage() {
                             <CharacterVisual
                                 role={avatarClass}
                                 equipped={equipped}
-                                size={290}
+                                size={260}
                                 showAura={true}
                                 interactive={true}
                                 showRoleBadge={false}
@@ -1106,12 +1109,12 @@ export default function CharacterPage() {
                             {/* Blue Dashed Elliptical Pedestal Ring from user sketch */}
                             <div
                                 style={{
-                                    width: '175px',
-                                    height: '32px',
+                                    width: '160px',
+                                    height: '30px',
                                     borderRadius: '50%',
                                     border: '2px dashed #38bdf8',
                                     backgroundColor: 'rgba(56, 189, 248, 0.04)',
-                                    marginTop: '-22px',
+                                    marginTop: '-20px',
                                     pointerEvents: 'none',
                                 }}
                             />
@@ -1123,8 +1126,8 @@ export default function CharacterPage() {
                                 position: 'absolute',
                                 top: '44%',
                                 transform: 'translateY(-50%)',
-                                left: '12px',
-                                width: '235px',
+                                left: 'max(8px, calc(50% - 355px))',
+                                width: '215px',
                                 zIndex: 20,
                             }}
                         >
@@ -1137,8 +1140,8 @@ export default function CharacterPage() {
                                 position: 'absolute',
                                 top: '48%',
                                 transform: 'translateY(-50%)',
-                                right: '12px',
-                                width: '235px',
+                                right: 'max(8px, calc(50% - 355px))',
+                                width: '215px',
                                 zIndex: 20,
                             }}
                         >
@@ -1149,10 +1152,10 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 position: 'absolute',
-                                bottom: '12px',
+                                bottom: '10px',
                                 left: '50%',
                                 transform: 'translateX(-50%)',
-                                width: '245px',
+                                width: '225px',
                                 zIndex: 20,
                             }}
                         >
@@ -1242,27 +1245,27 @@ export default function CharacterPage() {
                             <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '6px' }}>
                                 {characterStats.equipmentBonuses.hp > 0 && (
                                     <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
-                                        ❤️ HP +{characterStats.equipmentBonuses.hp}
+                                        ❤️ +{characterStats.equipmentBonuses.hp} HP
                                     </span>
                                 )}
                                 {characterStats.equipmentBonuses.atk > 0 && (
                                     <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
-                                        ⚔️ ATK +{characterStats.equipmentBonuses.atk}
+                                        ⚔️ +{characterStats.equipmentBonuses.atk} ATK
                                     </span>
                                 )}
                                 {characterStats.equipmentBonuses.def > 0 && (
                                     <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
-                                        🛡️ DEF +{characterStats.equipmentBonuses.def}
+                                        🛡️ +{characterStats.equipmentBonuses.def} DEF
                                     </span>
                                 )}
                                 {characterStats.equipmentBonuses.crit > 0 && (
                                     <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
-                                        💥 CRIT +{characterStats.equipmentBonuses.crit}%
+                                        💥 +{characterStats.equipmentBonuses.crit}% CRIT
                                     </span>
                                 )}
                                 {characterStats.equipmentBonuses.xp > 0 && (
                                     <span style={{ fontSize: '11px', fontWeight: 800, color: '#34d399', fontFamily: 'var(--font-mono)', backgroundColor: 'rgba(16, 185, 129, 0.15)', padding: '2px 6px', borderRadius: '5px' }}>
-                                        ⭐ XP +{characterStats.equipmentBonuses.xp}%
+                                        ⭐ +{characterStats.equipmentBonuses.xp}% XP
                                     </span>
                                 )}
                             </div>

@@ -1156,7 +1156,7 @@ input::placeholder, textarea::placeholder {
   box-shadow: var(--shadow-card);
   overflow: hidden;
   box-sizing: border-box;
-  padding: 20px 16px;
+  padding: 16px 10px;
   margin-bottom: 24px;
 }
 
@@ -1166,7 +1166,7 @@ input::placeholder, textarea::placeholder {
 
 @media (max-width: 640px) {
   .character-blueprint-canvas {
-    padding: 16px 12px;
+    padding: 14px 8px;
     border-radius: 16px;
     margin-bottom: 20px;
   }
