@@ -13,6 +13,7 @@ import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import ItemIcon from '@/components/character/ItemIcon'
 import ItemDetailModal from '@/components/character/ItemDetailModal'
+import SlotPickerModal from '@/components/character/SlotPickerModal'
 import {
     Swords,
     Shield,
@@ -96,6 +97,7 @@ export default function CharacterPage() {
     const [mounted, setMounted] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
     const [previewItem, setPreviewItem] = useState<GameItem | null>(null)
+    const [activePickerSlot, setActivePickerSlot] = useState<ItemSlot | null>(null)
 
     const navTabsRef = useRef<HTMLDivElement>(null)
     const filterTabsRef = useRef<HTMLDivElement>(null)
@@ -644,16 +646,10 @@ export default function CharacterPage() {
                 key={slot}
                 ref={cardRef}
                 onClick={() => {
-                    if (!item) {
-                        setSelectedSlotFilter(slot)
-                        const el = document.getElementById('inventory-vault')
-                        if (el) el.scrollIntoView({ behavior: 'smooth' })
-                    } else {
-                        handleOpenPreview(item)
-                    }
+                    setActivePickerSlot(slot)
                 }}
                 className="character-callout-card"
-                title={item ? `${item.name} — Klik untuk penjelasan lengkap` : `Slot ${slotMeta.name} kosong — Klik untuk memilih item`}
+                title={item ? `${item.name} — Klik untuk mengganti atau memilih item ${slotMeta.name}` : `Slot ${slotMeta.name} kosong — Klik untuk memilih item`}
                 style={{
                     borderRadius: '12px',
                     border: item
@@ -688,7 +684,7 @@ export default function CharacterPage() {
                     }}
                 />
 
-                {/* Header: Slot Emoji + Slot Name · Anatomical Label + Status Terpasang */}
+                {/* Header: Slot Emoji + Slot Name · Anatomical Label + Status Terpasang & Tombol Ganti */}
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '5px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <span style={{ fontSize: '13px' }}>{slotMeta.emoji}</span>
@@ -706,21 +702,36 @@ export default function CharacterPage() {
                             · {anatomicalLabel}
                         </span>
                     </div>
-                    {item && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        {item && (
+                            <span
+                                style={{
+                                    fontSize: '9.5px',
+                                    fontWeight: 700,
+                                    color: '#10b981',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                                    border: '1px solid rgba(16, 185, 129, 0.3)',
+                                    padding: '1px 5px',
+                                    borderRadius: '4px',
+                                }}
+                            >
+                                Terpasang
+                            </span>
+                        )}
                         <span
                             style={{
                                 fontSize: '9.5px',
                                 fontWeight: 700,
-                                color: '#10b981',
-                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
-                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                color: 'var(--color-gold-text)',
+                                backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                                border: '1px solid rgba(245, 158, 11, 0.28)',
                                 padding: '1px 5px',
                                 borderRadius: '4px',
                             }}
                         >
-                            Terpasang
+                            Ganti ⇄
                         </span>
-                    )}
+                    </div>
                 </div>
 
                 {/* Body */}
@@ -1875,6 +1886,22 @@ export default function CharacterPage() {
                     playerRole={avatarClass}
                     userXp={profile?.xp || 0}
                     isInInventory={inventory.some((it) => it.id === previewItem.id)}
+                />,
+                document.body
+            )}
+
+            {/* SLOT QUICK SWITCHER MODAL */}
+            {mounted && typeof document !== 'undefined' && activePickerSlot && createPortal(
+                <SlotPickerModal
+                    slot={activePickerSlot}
+                    isOpen={Boolean(activePickerSlot)}
+                    onClose={() => setActivePickerSlot(null)}
+                    equippedItemId={equipped[activePickerSlot] || null}
+                    inventory={inventory}
+                    playerRole={avatarClass}
+                    actionLoadingId={actionLoadingId}
+                    onEquipToggle={handleEquipToggle}
+                    onOpenItemDetail={(item) => handleOpenPreview(item)}
                 />,
                 document.body
             )}
