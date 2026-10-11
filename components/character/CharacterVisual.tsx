@@ -287,6 +287,27 @@ function CharacterVisual({
                             <stop offset="100%" stopColor="#78716c" />
                         </linearGradient>
 
+                        <linearGradient id="voidBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#e879f9" />
+                            <stop offset="40%" stopColor="#9333ea" />
+                            <stop offset="80%" stopColor="#3b0764" />
+                            <stop offset="100%" stopColor="#09090b" />
+                        </linearGradient>
+
+                        <linearGradient id="plasmaEnergyGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#ffffff" />
+                            <stop offset="30%" stopColor="#67e8f9" />
+                            <stop offset="70%" stopColor="#06b6d4" />
+                            <stop offset="100%" stopColor="#0369a1" />
+                        </linearGradient>
+
+                        <linearGradient id="chronoGoldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fef08a" />
+                            <stop offset="40%" stopColor="#f59e0b" />
+                            <stop offset="75%" stopColor="#0284c7" />
+                            <stop offset="100%" stopColor="#0f172a" />
+                        </linearGradient>
+
                         <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
                             <feGaussianBlur stdDeviation="5" result="blur" />
                             <feComposite in="SourceGraphic" in2="blur" operator="over" />
@@ -561,18 +582,145 @@ function CharacterVisual({
                             <path d="M 100 92 L 107 104 L 100 112 L 93 104 Z" fill="#fef08a" stroke="#ca8a04" strokeWidth="1" />
                         </g>
                     ) : armorItem?.id === 'arm_guardian_coat' ? (
-                        /* Aegis Guardian Mantle — Gold plate with aegis cross */
+                        /* Aegis Guardian Mantle — Polished plate with heraldic royal blue surcoat */
                         <g>
                             <path
                                 d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z"
-                                fill="url(#bodyGrad-${role})"
-                                stroke="#f59e0b"
-                                strokeWidth="2.5"
+                                fill="url(#steelPlateGrad)"
+                                stroke="#475569"
+                                strokeWidth="2"
                             />
-                            {/* Golden Aegis Breastplate */}
-                            <path d="M 78 86 L 100 80 L 122 86 L 118 132 L 100 142 L 82 132 Z" fill="url(#goldTrimGrad)" stroke="#78350f" strokeWidth="1.2" />
-                            <path d="M 100 88 L 100 134" stroke="#fef08a" strokeWidth="2" />
-                            <path d="M 88 104 L 112 104" stroke="#fef08a" strokeWidth="2" />
+                            {/* Royal blue heraldic surcoat inlay */}
+                            <path d="M 80 80 L 100 146 L 120 80 Z" fill="#1e3a8a" opacity="0.85" />
+                            {/* Gold Aegis Guardian Cross */}
+                            <path d="M 100 90 L 100 132" stroke="url(#goldTrimGrad)" strokeWidth="2.5" />
+                            <path d="M 88 104 L 112 104" stroke="url(#goldTrimGrad)" strokeWidth="2.5" />
+                            <circle cx="100" cy="104" r="2.8" fill="#fef08a" />
+                        </g>
+                    ) : armorItem?.id === 'arm_phoenix_robes' ? (
+                        /* Phoenix Robes — Radiant Fire Plumage */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#phoenixPlumeGrad)" stroke="#b91c1c" strokeWidth="2" />
+                            {/* Phoenix golden wing lapels */}
+                            <path d="M 82 82 L 100 98 L 118 82 L 114 116 L 100 128 L 86 116 Z" fill="#fef08a" opacity="0.85" />
+                            <path d="M 100 92 L 100 126" stroke="#ea580c" strokeWidth="2" />
+                            {/* Phoenix Heart Emblem */}
+                            <circle cx="100" cy="104" r="4" fill="#ef4444" stroke="#fef08a" strokeWidth="1" />
+                        </g>
+                    ) : armorItem?.id === 'arm_quantum_suit' ? (
+                        /* Quantum Nano-Weave Suit — Cyberpunk Nano-circuits */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#quantumSuitGrad)" stroke="#06b6d4" strokeWidth="2" style={{ filter: 'drop-shadow(0 0 6px #06b6d4)' }} />
+                            {/* Hexagonal power core & circuits */}
+                            <polygon points="100,92 108,97 108,107 100,112 92,107 92,97" fill="#0f172a" stroke="#22d3ee" strokeWidth="1.8" />
+                            <circle cx="100" cy="102" r="3" fill="#67e8f9" />
+                            <line x1="100" y1="112" x2="100" y2="140" stroke="#06b6d4" strokeWidth="1.5" />
+                            <line x1="84" y1="118" x2="116" y2="118" stroke="#06b6d4" strokeWidth="1.2" />
+                        </g>
+                    ) : armorItem?.id === 'arm_cosmic_robes' ? (
+                        /* Cosmic Robes — Void Sovereignty Nebula */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#cosmicVoidGrad)" stroke="#c084fc" strokeWidth="2" />
+                            {/* Starfield speckles */}
+                            <circle cx="88" cy="98" r="1.5" fill="#ffffff" />
+                            <circle cx="112" cy="104" r="1.5" fill="#ffffff" />
+                            <circle cx="94" cy="128" r="1.2" fill="#ffffff" />
+                            <circle cx="106" cy="132" r="1.2" fill="#ffffff" />
+                            {/* Starlight belt & crescent */}
+                            <path d="M 78 126 Q 100 134 122 126" stroke="#fef08a" strokeWidth="2.5" fill="none" />
+                            <circle cx="100" cy="130" r="3" fill="#fef08a" />
+                        </g>
+                    ) : armorItem?.id === 'arm_solar_chitin' ? (
+                        /* Solar Flare Carapace — Blazing Paladin Armor */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#solarChitinGrad)" stroke="#f59e0b" strokeWidth="2.5" style={{ filter: 'drop-shadow(0 0 8px #f59e0b)' }} />
+                            {/* Radiant Sunburst Crest */}
+                            <circle cx="100" cy="106" r="7" fill="#fef08a" stroke="#ca8a04" strokeWidth="1.5" />
+                            <line x1="100" y1="92" x2="100" y2="120" stroke="#f59e0b" strokeWidth="2" />
+                            <line x1="86" y1="106" x2="114" y2="106" stroke="#f59e0b" strokeWidth="2" />
+                        </g>
+                    ) : armorItem?.id === 'arm_valkyrie_cuirass' ? (
+                        /* Valkyrie Platinum Aegisplate */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#valkyrieAegisGrad)" stroke="#ca8a04" strokeWidth="2" />
+                            {/* Platinum Winged Ribs */}
+                            <path d="M 80 88 Q 100 100 120 88" stroke="#f59e0b" strokeWidth="2" fill="none" />
+                            <polygon points="100,94 107,104 100,114 93,104" fill="#38bdf8" stroke="#ffffff" strokeWidth="1" />
+                        </g>
+                    ) : armorItem?.id === 'arm_shadow_trench' ? (
+                        /* Shadow Trenchcoat — Gothic Assassin */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#shadowTrenchGrad)" stroke="#4338ca" strokeWidth="2" />
+                            {/* High Lapels & Buckles */}
+                            <path d="M 80 80 L 100 110 L 120 80" stroke="#a855f7" strokeWidth="2" fill="none" />
+                            <line x1="84" y1="120" x2="116" y2="120" stroke="#94a3b8" strokeWidth="2" />
+                            <line x1="84" y1="134" x2="116" y2="134" stroke="#94a3b8" strokeWidth="2" />
+                        </g>
+                    ) : armorItem?.id === 'arm_chainmail_hauberk' ? (
+                        /* Chainmail Hauberk */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#chainmailGrad)" stroke="#475569" strokeWidth="2" />
+                            {/* Chainmail Grid Mesh Texture */}
+                            <path d="M 78 96 Q 100 102 122 96 M 76 112 Q 100 118 124 112 M 76 128 Q 100 134 124 128" stroke="#94a3b8" strokeWidth="1.2" strokeDasharray="3 3" fill="none" />
+                            <path d="M 84 82 Q 100 90 116 82" stroke="#451a03" strokeWidth="3" fill="none" />
+                        </g>
+                    ) : armorItem?.id === 'arm_silk_robe' ? (
+                        /* Mystic Silk Robe */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#silkRobeGrad)" stroke="#7c3aed" strokeWidth="2" />
+                            {/* Arcane Cyan Stole / Runes */}
+                            <path d="M 82 82 L 96 144 M 118 82 L 104 144" stroke="#38bdf8" strokeWidth="2.5" />
+                            <circle cx="100" cy="100" r="3" fill="#fef08a" />
+                        </g>
+                    ) : armorItem?.id === 'arm_cleric_vestment' ? (
+                        /* Cleric Holy Vestment */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#clericRobeGrad)" stroke="#ca8a04" strokeWidth="2" />
+                            {/* Radiant Cross Stole */}
+                            <path d="M 84 82 L 100 112 L 116 82" stroke="#f59e0b" strokeWidth="3" fill="none" />
+                            <line x1="100" y1="112" x2="100" y2="142" stroke="#f59e0b" strokeWidth="3" />
+                            <line x1="92" y1="124" x2="108" y2="124" stroke="#f59e0b" strokeWidth="2.5" />
+                        </g>
+                    ) : armorItem?.id === 'arm_leather_tunic' ? (
+                        /* Ranger Leather Tunic */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#rangerLeatherGrad)" stroke="#14532d" strokeWidth="2" />
+                            {/* Quiver Baldric Bandolier Strap */}
+                            <line x1="78" y1="84" x2="122" y2="142" stroke="#78350f" strokeWidth="4" />
+                            <circle cx="100" cy="113" r="3.5" fill="#facc15" stroke="#451a03" strokeWidth="1" />
+                        </g>
+                    ) : armorItem?.id === 'arm_padded_jacket' ? (
+                        /* Padded Gambeson Jacket */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#paddedGambesonGrad)" stroke="#b45309" strokeWidth="1.8" />
+                            {/* Diamond Quilt Stitching */}
+                            <path d="M 76 92 L 124 136 M 76 112 L 114 146 M 124 92 L 76 136 M 124 112 L 86 146" stroke="#92400e" strokeWidth="1" opacity="0.6" fill="none" />
+                            <line x1="100" y1="82" x2="100" y2="146" stroke="#78350f" strokeWidth="2" />
+                        </g>
+                    ) : armorItem?.id === 'arm_linen_vest' ? (
+                        /* Explorer Linen Vest */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="url(#explorerLinenGrad)" stroke="#78716c" strokeWidth="1.8" />
+                            {/* Vest Open Lapels & Pockets */}
+                            <path d="M 86 82 L 86 146 M 114 82 L 114 146" stroke="#57534e" strokeWidth="2" />
+                            <rect x="74" y="112" width="10" height="8" rx="1.5" fill="#a8a29e" stroke="#57534e" strokeWidth="1" />
+                            <rect x="116" y="112" width="10" height="8" rx="1.5" fill="#a8a29e" stroke="#57534e" strokeWidth="1" />
+                        </g>
+                    ) : armorItem?.id === 'arm_apprentice_robe' ? (
+                        /* Apprentice Black Robe */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="#0f172a" stroke="#475569" strokeWidth="2" />
+                            {/* Silver Embroidered Collar */}
+                            <path d="M 84 82 Q 100 94 116 82" stroke="#cbd5e1" strokeWidth="2" fill="none" />
+                            <line x1="100" y1="92" x2="100" y2="144" stroke="#94a3b8" strokeWidth="1.8" />
+                        </g>
+                    ) : armorItem?.id === 'arm_novice_tunic' ? (
+                        /* Novice Tunic */
+                        <g>
+                            <path d="M 70 80 Q 64 125 74 146 L 126 146 Q 136 125 130 80 Z" fill="#fef3c7" stroke="#b45309" strokeWidth="1.8" />
+                            <path d="M 94 82 L 100 92 L 106 82" stroke="#78350f" strokeWidth="1.5" fill="none" />
+                            <line x1="74" y1="130" x2="126" y2="130" stroke="#78350f" strokeWidth="3" />
+                            <rect x="96" y="127" width="8" height="6" fill="#f59e0b" stroke="#78350f" strokeWidth="1" />
                         </g>
                     ) : (
                         /* Default / Novice Tunic Body */
@@ -593,7 +741,7 @@ function CharacterVisual({
                     )}
 
                     {/* Shoulders / Pauldrons */}
-                    {armorItem?.id === 'arm_plate_cuirass' ? (
+                    {armorItem?.id === 'arm_plate_cuirass' || armorItem?.id === 'arm_chainmail_hauberk' ? (
                         <g>
                             {/* Left steel pauldron */}
                             <circle cx="64" cy="86" r="15" fill="url(#steelPlateGrad)" stroke="#475569" strokeWidth="1.5" />
@@ -610,6 +758,16 @@ function CharacterVisual({
                             {/* Right spiked dragon pauldron */}
                             <circle cx="136" cy="86" r="15" fill="url(#dragonArmorGrad)" stroke="#f59e0b" strokeWidth="1.8" />
                             <path d="M 148 82 L 154 72 L 142 78 Z" fill="#f59e0b" />
+                        </g>
+                    ) : armorItem?.id === 'arm_solar_chitin' ? (
+                        <g>
+                            <circle cx="64" cy="86" r="15" fill="url(#solarChitinGrad)" stroke="#f59e0b" strokeWidth="1.8" />
+                            <circle cx="136" cy="86" r="15" fill="url(#solarChitinGrad)" stroke="#f59e0b" strokeWidth="1.8" />
+                        </g>
+                    ) : armorItem?.id === 'arm_quantum_suit' ? (
+                        <g>
+                            <rect x="52" y="76" width="22" height="18" rx="4" fill="#0891b2" stroke="#67e8f9" strokeWidth="1.5" />
+                            <rect x="126" y="76" width="22" height="18" rx="4" fill="#0891b2" stroke="#67e8f9" strokeWidth="1.5" />
                         </g>
                     ) : (
                         <g>
@@ -719,6 +877,113 @@ function CharacterVisual({
                                 <rect x="-20" y="-7" width="40" height="14" rx="4" fill="#0284c7" stroke="#38bdf8" strokeWidth="1.8" opacity="0.85" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }} />
                                 <line x1="-16" y1="0" x2="16" y2="0" stroke="#ffffff" strokeWidth="1.5" />
                             </g>
+                        ) : headItem.id === 'hd_dragon_crest' ? (
+                            /* Dragon Crest — Horned Dragon King Helmet */
+                            <g transform="translate(100, 36)" style={{ filter: 'drop-shadow(0 0 8px #ef4444)' }}>
+                                <path d="M -22 6 C -22 -16 22 -16 22 6 Z" fill="url(#dragonArmorGrad)" stroke="#f59e0b" strokeWidth="1.8" />
+                                {/* Sweeping Dragon Horns */}
+                                <path d="M -18 -4 C -28 -18 -32 -32 -26 -38 C -22 -30 -14 -18 -10 -8 Z" fill="#991b1b" stroke="#f59e0b" strokeWidth="1.2" />
+                                <path d="M 18 -4 C 28 -18 32 -32 26 -38 C 22 -30 14 -18 10 -8 Z" fill="#991b1b" stroke="#f59e0b" strokeWidth="1.2" />
+                                <polygon points="0,-12 4,-4 0,0 -4,-4" fill="#fef08a" stroke="#ca8a04" strokeWidth="1" />
+                            </g>
+                        ) : headItem.id === 'hd_emperor_crown' ? (
+                            /* Imperial Emperor Crown */
+                            <g transform="translate(100, 24)" style={{ filter: 'drop-shadow(0 0 8px #f59e0b)' }}>
+                                <path d="M -18 10 C -18 -2 18 -2 18 10 Z" fill="#7f1d1d" />
+                                <path d="M -22 10 L -18 -8 L -6 0 L 0 -14 L 6 0 L 18 -8 L 22 10 Z" fill="url(#goldTrimGrad)" stroke="#78350f" strokeWidth="1.5" />
+                                <circle cx="0" cy="-14" r="2.5" fill="#ffffff" />
+                                <circle cx="0" cy="0" r="2.5" fill="#ef4444" />
+                                <circle cx="-12" cy="2" r="1.8" fill="#38bdf8" />
+                                <circle cx="12" cy="2" r="1.8" fill="#38bdf8" />
+                            </g>
+                        ) : headItem.id === 'hd_celestial_halo' ? (
+                            /* Ascended Seraph Halo */
+                            <g transform="translate(100, 20)" style={{ filter: 'drop-shadow(0 0 10px #fde047)' }}>
+                                <ellipse cx="0" cy="0" rx="26" ry="7.5" fill="none" stroke="#fef08a" strokeWidth="3" />
+                                <ellipse cx="0" cy="0" rx="20" ry="5.5" fill="none" stroke="#ffffff" strokeWidth="1.5" />
+                            </g>
+                        ) : headItem.id === 'hd_valkyrie_helm' ? (
+                            /* Valkyrie Winged Diadem */
+                            <g transform="translate(100, 42)" style={{ filter: 'drop-shadow(0 0 8px #38bdf8)' }}>
+                                <path d="M -22 -2 Q 0 4 22 -2 L 18 -8 Q 0 -2 -18 -8 Z" fill="url(#steelPlateGrad)" stroke="#64748b" strokeWidth="1.2" />
+                                {/* Winged plumes curving back */}
+                                <path d="M -18 -4 C -28 -14 -32 -26 -24 -28 C -22 -20 -16 -12 -12 -6 Z" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
+                                <path d="M 18 -4 C 28 -14 32 -26 24 -28 C 22 -20 16 -12 12 -6 Z" fill="#ffffff" stroke="#94a3b8" strokeWidth="1" />
+                                <polygon points="0,-1 4,4 0,9 -4,4" fill="#38bdf8" stroke="#ffffff" strokeWidth="0.8" />
+                            </g>
+                        ) : headItem.id === 'hd_shadow_mask' ? (
+                            /* Phantom Veil of Anubis Jackal Mask */
+                            <g transform="translate(100, 50)" style={{ filter: 'drop-shadow(0 0 8px #a855f7)' }}>
+                                <path d="M -20 -16 L -16 -32 L -10 -16 L 10 -16 L 16 -32 L 20 -16 L 16 12 L 0 18 L -16 12 Z" fill="#0f172a" stroke="#ca8a04" strokeWidth="1.5" />
+                                {/* Glowing yellow eyes */}
+                                <ellipse cx="-8" cy="-2" rx="4" ry="2" fill="#facc15" />
+                                <ellipse cx="8" cy="-2" rx="4" ry="2" fill="#facc15" />
+                            </g>
+                        ) : headItem.id === 'hd_chrono_monocle' ? (
+                            /* Steampunk Chrono Monocle */
+                            <g transform="translate(91, 51)" style={{ filter: 'drop-shadow(0 0 5px #f59e0b)' }}>
+                                <circle cx="0" cy="0" r="7.5" fill="rgba(56, 189, 248, 0.35)" stroke="#f59e0b" strokeWidth="2" />
+                                <circle cx="0" cy="0" r="2" fill="#38bdf8" />
+                                <path d="M 6 5 Q 12 14 16 26" fill="none" stroke="#f59e0b" strokeWidth="1.2" />
+                            </g>
+                        ) : headItem.id === 'hd_silver_laurel' ? (
+                            /* Silver Laurel Leaf Crown */
+                            <g transform="translate(100, 36)">
+                                <path d="M -22 4 C -18 -8 -8 -14 0 -14 C 8 -14 18 -8 22 4" fill="none" stroke="#cbd5e1" strokeWidth="2" />
+                                <ellipse cx="-16" cy="-4" rx="4" ry="2.2" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="0.8" transform="rotate(-25, -16, -4)" />
+                                <ellipse cx="-8" cy="-12" rx="4" ry="2.2" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="0.8" transform="rotate(-10, -8, -12)" />
+                                <ellipse cx="8" cy="-12" rx="4" ry="2.2" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="0.8" transform="rotate(10, 8, -12)" />
+                                <ellipse cx="16" cy="-4" rx="4" ry="2.2" fill="#f1f5f9" stroke="#94a3b8" strokeWidth="0.8" transform="rotate(25, 16, -4)" />
+                            </g>
+                        ) : headItem.id === 'hd_tactical_beret' ? (
+                            /* Tactical Military Beret */
+                            <g transform="translate(100, 32)">
+                                <path d="M -24 4 C -28 -12 4 -22 24 -10 C 26 2 8 8 -24 4 Z" fill="#166534" stroke="#052e16" strokeWidth="1.5" />
+                                <line x1="-24" y1="4" x2="16" y2="6" stroke="#0f172a" strokeWidth="2" />
+                                <polygon points="-12,-2 -9,-6 -6,-2 -7,1 -11,1" fill="#fef08a" stroke="#ca8a04" strokeWidth="0.8" />
+                            </g>
+                        ) : headItem.id === 'hd_scout_hood' ? (
+                            /* Ranger Scout Hood */
+                            <g transform="translate(100, 48)">
+                                <path d="M -28 -12 C -28 -38 28 -38 28 -12 L 24 16 L 0 20 L -24 16 Z" fill="#1e293b" stroke="#0f172a" strokeWidth="2" opacity="0.9" />
+                                <path d="M -20 -10 C -20 -28 20 -28 20 -10 L 16 12 L 0 14 L -16 12 Z" fill="#0f172a" />
+                            </g>
+                        ) : headItem.id === 'hd_wizard_hat' ? (
+                            /* Starfall Wizard Hat */
+                            <g transform="translate(100, 30)">
+                                <ellipse cx="0" cy="8" rx="26" ry="6" fill="#1e1b4b" stroke="#4338ca" strokeWidth="1.5" />
+                                <path d="M -16 6 L -6 -24 Q -2 -34 10 -38 Q 6 -28 6 -16 L 16 6 Z" fill="#312e81" stroke="#4338ca" strokeWidth="1.5" />
+                                <line x1="-16" y1="6" x2="16" y2="6" stroke="#f59e0b" strokeWidth="2.5" />
+                                <polygon points="0,-10 2,-6 6,-6 3,-3 4,1 0,-2 -4,1 -3,-3 -6,-6 -2,-6" fill="#fef08a" />
+                            </g>
+                        ) : headItem.id === 'hd_leather_eyepatch' ? (
+                            /* Combat Leather Eyepatch */
+                            <g transform="translate(91, 51)">
+                                <line x1="-24" y1="-8" x2="28" y2="6" stroke="#451a03" strokeWidth="1.8" />
+                                <polygon points="-6,-6 6,-6 4,6 -4,6" fill="#1c1917" stroke="#44403c" strokeWidth="1.2" />
+                                <circle cx="0" cy="0" r="1.5" fill="#a8a29e" />
+                            </g>
+                        ) : headItem.id === 'hd_scholar_cap' ? (
+                            /* Scholar Mortarboard Cap */
+                            <g transform="translate(100, 26)">
+                                <polygon points="0,-14 26,-4 0,6 -26,-4" fill="#0f172a" stroke="#334155" strokeWidth="1.5" />
+                                <rect x="-10" y="2" width="20" height="10" rx="3" fill="#1e293b" />
+                                <circle cx="0" cy="-4" r="2" fill="#f59e0b" />
+                                <path d="M 0 -4 Q 14 -4 18 8" fill="none" stroke="#f59e0b" strokeWidth="1.5" />
+                                <circle cx="18" cy="10" r="2" fill="#fef08a" />
+                            </g>
+                        ) : headItem.id === 'hd_straw_hat' ? (
+                            /* Explorer Straw Hat */
+                            <g transform="translate(100, 34)">
+                                <ellipse cx="0" cy="6" rx="28" ry="7" fill="#fef3c7" stroke="#b45309" strokeWidth="1.5" />
+                                <path d="M -16 4 C -16 -12 16 -12 16 4 Z" fill="#fde68a" stroke="#b45309" strokeWidth="1.5" />
+                                <path d="M -16 4 Q 0 8 16 4" stroke="#78350f" strokeWidth="3" fill="none" />
+                            </g>
+                        ) : headItem.image_url ? (
+                            /* Custom Illustration Badge Overlay */
+                            <g transform="translate(100, 22)">
+                                <image href={headItem.image_url} x="-18" y="-18" width="36" height="36" preserveAspectRatio="xMidYMid meet" style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.45))' }} />
+                            </g>
                         ) : (
                             /* Default Emoji / Icon Fallback naturally atop head */
                             <g transform="translate(100, 24)">
@@ -741,6 +1006,74 @@ function CharacterVisual({
                                 <circle cx="0" cy="0" r="8" fill="#0f172a" stroke="#f59e0b" strokeWidth="1.5" />
                                 <path d="M -4 -4 L 4 -4 L -4 4 L 4 4 Z" fill="#38bdf8" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }} />
                                 <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
+                            </g>
+                        </g>
+                    )}
+
+                    {isDraconicHeart && (
+                        <g transform="translate(100, 78)">
+                            <path d="M -16 -6 Q 0 9 16 -6" fill="none" stroke="#7f1d1d" strokeWidth="2" />
+                            <motion.g
+                                animate={{ scale: [1, 1.15, 1] }}
+                                transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
+                                transform="translate(0, 11)"
+                                style={{ filter: 'drop-shadow(0 0 8px #ef4444)' }}
+                            >
+                                <polygon points="0,9 -9,-2 -5,-8 0,-4 5,-8 9,-2" fill="#ef4444" stroke="#fde047" strokeWidth="1.2" />
+                                <polygon points="0,6 -6,-1 -3,-5 0,-2 3,-5 6,-1" fill="#fef08a" opacity="0.6" />
+                                <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+                            </motion.g>
+                        </g>
+                    )}
+
+                    {isCelestialHourglass && (
+                        <g transform="translate(100, 78)">
+                            <path d="M -16 -6 Q 0 8 16 -6" fill="none" stroke="#facc15" strokeWidth="1.6" />
+                            <g transform="translate(0, 10)">
+                                <path d="M -6 -6 L 6 -6 L 1 1 L 6 8 L -6 8 L -1 1 Z" fill="#0f172a" stroke="#f59e0b" strokeWidth="1.4" />
+                                <path d="M -4 -5 L 4 -5 L 0 0 Z" fill="#38bdf8" style={{ filter: 'drop-shadow(0 0 4px #38bdf8)' }} />
+                                <path d="M -4 7 L 4 7 L 0 3 Z" fill="#38bdf8" />
+                                <line x1="0" y1="0" x2="0" y2="4" stroke="#ffffff" strokeWidth="1" />
+                            </g>
+                        </g>
+                    )}
+
+                    {isVoidAmulet && (
+                        <g transform="translate(100, 78)">
+                            <path d="M -16 -6 Q 0 8 16 -6" fill="none" stroke="#475569" strokeWidth="1.5" />
+                            <g transform="translate(0, 10)" style={{ filter: 'drop-shadow(0 0 6px #a855f7)' }}>
+                                <circle cx="0" cy="0" r="7.5" fill="#09090b" stroke="#8b5cf6" strokeWidth="1.5" />
+                                <ellipse cx="0" cy="0" rx="4.5" ry="2.2" fill="#c084fc" />
+                                <circle cx="0" cy="0" r="1.5" fill="#ffffff" />
+                            </g>
+                        </g>
+                    )}
+
+                    {isIcePendant && (
+                        <g transform="translate(100, 78)">
+                            <path d="M -16 -6 Q 0 8 16 -6" fill="none" stroke="#94a3b8" strokeWidth="1.5" />
+                            <g transform="translate(0, 10)" style={{ filter: 'drop-shadow(0 0 6px #38bdf8)' }}>
+                                <polygon points="0,-7 6,0 0,7 -6,0" fill="#bae6fd" stroke="#0284c7" strokeWidth="1.2" />
+                                <line x1="0" y1="-5" x2="0" y2="5" stroke="#ffffff" strokeWidth="1.2" />
+                                <line x1="-5" y1="0" x2="5" y2="0" stroke="#ffffff" strokeWidth="1.2" />
+                            </g>
+                        </g>
+                    )}
+
+                    {isEmeraldBrooch && (
+                        <g transform="translate(100, 84)">
+                            <rect x="-8" y="-5" width="16" height="10" rx="4" fill="#78350f" stroke="#ca8a04" strokeWidth="1.2" />
+                            <polygon points="-5,-3 5,-3 6,0 5,3 -5,3 -6,0" fill="#10b981" stroke="#059669" strokeWidth="1" style={{ filter: 'drop-shadow(0 0 5px #10b981)' }} />
+                            <circle cx="0" cy="0" r="1.5" fill="#a7f3d0" />
+                        </g>
+                    )}
+
+                    {isWoodenTalisman && (
+                        <g transform="translate(100, 78)">
+                            <path d="M -16 -6 Q 0 8 16 -6" fill="none" stroke="#78350f" strokeWidth="1.6" />
+                            <g transform="translate(0, 10)">
+                                <rect x="-5" y="-5" width="10" height="13" rx="2.5" fill="#854d0e" stroke="#451a03" strokeWidth="1.2" />
+                                <path d="M 0 -2 L 0 6 M -2 0 L 0 3 M 2 0 L 0 3" stroke="#84cc16" strokeWidth="1.4" strokeLinecap="round" style={{ filter: 'drop-shadow(0 0 3px #84cc16)' }} />
                             </g>
                         </g>
                     )}
@@ -797,6 +1130,36 @@ function CharacterVisual({
                                 >
                                     <polygon points="0,-6 1,-4 3,-3.5 1,-3 0,-1 -1,-3 -3,-3.5 -1,-4" fill="#ffffff" />
                                 </motion.g>
+                            </g>
+                        )}
+
+                        {/* Thunder Bangle Accessory (acc_thunder_bangle) */}
+                        {isThunderBangle && (
+                            <g transform="translate(0, -3)">
+                                <ellipse cx="0" cy="0" rx="7.5" ry="4" fill="none" stroke="#eab308" strokeWidth="2.2" style={{ filter: 'drop-shadow(0 0 5px #facc15)' }} />
+                                <path d="M -4 -2 L -1 1 L -3 2 L 1 4" fill="none" stroke="#67e8f9" strokeWidth="1.4" />
+                                <circle cx="3" cy="-1" r="1" fill="#ffffff" />
+                            </g>
+                        )}
+
+                        {/* Leather Combat Bracelet (acc_leather_bracelet) */}
+                        {isLeatherBracelet && (
+                            <g transform="translate(0, -3)">
+                                <rect x="-6.5" y="-3.5" width="13" height="7" rx="2" fill="#78350f" stroke="#451a03" strokeWidth="1.2" />
+                                <circle cx="-3" cy="0" r="1.1" fill="#cbd5e1" />
+                                <circle cx="0" cy="0" r="1.1" fill="#cbd5e1" />
+                                <circle cx="3" cy="0" r="1.1" fill="#cbd5e1" />
+                            </g>
+                        )}
+
+                        {/* Bronze Pocket Compass (acc_bronze_compass) */}
+                        {isBronzeCompass && (
+                            <g transform="translate(-10, 6)">
+                                <path d="M 10 -6 Q 6 -1 0 0" fill="none" stroke="#b45309" strokeWidth="1.2" strokeDasharray="1.5 1.5" />
+                                <circle cx="0" cy="4" r="6.5" fill="#92400e" stroke="#f59e0b" strokeWidth="1.4" />
+                                <circle cx="0" cy="4" r="4.5" fill="#fef3c7" />
+                                <polygon points="0,1 1.5,4 0,3 -1.5,4" fill="#dc2626" />
+                                <polygon points="0,7 1.5,4 0,5 -1.5,4" fill="#2563eb" />
                             </g>
                         )}
                     </g>
@@ -991,6 +1354,165 @@ function CharacterVisual({
                                         <polygon points="0,-36 3,-28 10,-24 3,-20 0,-12 -3,-20 -10,-24 -3,-28" fill="#f59e0b" />
                                         <circle cx="0" cy="-24" r="3.5" fill="#ffffff" />
                                     </g>
+                                ) : weaponItem?.id === 'wpn_novice_dagger' ? (
+                                    /* NOVICE DAGGER — Sleek Iron Dirk */
+                                    <g transform="translate(0, -14)" style={{ filter: 'drop-shadow(0 2px 5px rgba(0,0,0,0.4))' }}>
+                                        <path d="M -3 12 L -3 -12 L 0 -24 L 3 -12 L 3 12 Z" fill="url(#steelPlateGrad)" stroke="#475569" strokeWidth="1" />
+                                        <line x1="0" y1="10" x2="0" y2="-18" stroke="#94a3b8" strokeWidth="1" />
+                                        <rect x="-8" y="10" width="16" height="3" rx="1.5" fill="#334155" />
+                                        <rect x="-1.8" y="13" width="3.6" height="8" rx="1" fill="#78350f" />
+                                        <circle cx="0" cy="22" r="2.2" fill="#64748b" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_scholars_quill' ? (
+                                    /* SCHOLAR'S ENCHANTED QUILL — Giant Sapphire Feather Pen */
+                                    <g transform="translate(0, -16)" style={{ filter: 'drop-shadow(0 0 8px #38bdf8)' }}>
+                                        <path d="M 0 16 Q 8 -10 -3 -36" fill="none" stroke="#38bdf8" strokeWidth="2" />
+                                        <path d="M 0 14 Q 14 -12 -2 -34 Q -10 -14 0 14 Z" fill="url(#silkRobeGrad)" opacity="0.9" />
+                                        <polygon points="0,16 -2.5,22 0,26 2.5,22" fill="#facc15" stroke="#b45309" strokeWidth="0.8" />
+                                        <circle cx="0" cy="28" r="1.8" fill="#38bdf8" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_apprentice_wand' ? (
+                                    /* APPRENTICE WAND — Carved Birch Wand with Sparking Topaz Core */
+                                    <g transform="translate(0, -16)" style={{ filter: 'drop-shadow(0 0 6px #f59e0b)' }}>
+                                        <polygon points="-1.8,18 1.8,18 1.2,-22 -1.2,-22" fill="url(#woodBladeGrad)" stroke="#451a03" strokeWidth="0.8" />
+                                        <path d="M -1.5 10 Q 1.5 6 -1.5 2 Q 1.5 -2 -1.5 -6 Q 1.5 -10 -1.5 -14" fill="none" stroke="#f59e0b" strokeWidth="0.8" />
+                                        <polygon points="0,-30 3.5,-26 0,-22 -3.5,-26" fill="#fde047" stroke="#ca8a04" strokeWidth="0.8" />
+                                        <circle cx="0" cy="-26" r="1.5" fill="#ffffff" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_runic_blade' ? (
+                                    /* RUNIC SHORT BLADE — Mystic Inscribed Broad Blade */
+                                    <g transform="translate(0, -20)" style={{ filter: 'drop-shadow(0 0 8px #38bdf8)' }}>
+                                        <path d="M -5 14 L -5 -28 L 0 -38 L 5 -28 L 5 14 Z" fill="url(#steelPlateGrad)" stroke="#334155" strokeWidth="1.2" />
+                                        <line x1="0" y1="10" x2="0" y2="-28" stroke="#38bdf8" strokeWidth="1.8" />
+                                        <circle cx="0" cy="-6" r="1.5" fill="#ffffff" />
+                                        <circle cx="0" cy="-18" r="1.5" fill="#ffffff" />
+                                        <path d="M -14 12 Q 0 8 14 12 L 10 16 Q 0 14 -10 16 Z" fill="#1e293b" stroke="#38bdf8" strokeWidth="1" />
+                                        <rect x="-2" y="15" width="4" height="12" rx="1" fill="#0f172a" />
+                                        <circle cx="0" cy="28" r="2.8" fill="#38bdf8" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_storm_bow' ? (
+                                    /* STORM TEMPEST BOW — Crackling Lightning Arc Bow */
+                                    <g transform="translate(0, -10)" style={{ filter: 'drop-shadow(0 0 8px #0284c7)' }}>
+                                        <path d="M 6 -34 Q -18 0 6 34" fill="none" stroke="#0284c7" strokeWidth="3.5" strokeLinecap="round" />
+                                        <path d="M 4 -30 L -3 -20 L 1 -12 L -5 0 L 1 12 L -3 20 L 4 30" fill="none" stroke="#67e8f9" strokeWidth="1.6" />
+                                        <line x1="6" y1="-33" x2="6" y2="33" stroke="#67e8f9" strokeWidth="1.2" />
+                                        <line x1="-12" y1="0" x2="16" y2="0" stroke="#ffffff" strokeWidth="2" />
+                                        <polygon points="16,0 12,-3.5 12,3.5" fill="#38bdf8" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_frost_codex' ? (
+                                    /* FROST CODEX — Floating Arctic Grimoire */
+                                    <g transform="translate(0, -14)" style={{ filter: 'drop-shadow(0 0 10px #38bdf8)' }}>
+                                        <path d="M 0 6 L -16 -4 L -16 -24 L 0 -14 Z" fill="#0369a1" stroke="#38bdf8" strokeWidth="1" />
+                                        <path d="M 0 6 L 16 -4 L 16 -24 L 0 -14 Z" fill="#0284c7" stroke="#38bdf8" strokeWidth="1" />
+                                        <path d="M -1 -13 L -14 -22 L -14 -6 L -1 3 Z" fill="#e0f2fe" />
+                                        <path d="M 1 -13 L 14 -22 L 14 -6 L 1 3 Z" fill="#f0f9ff" />
+                                        <polygon points="0,-28 3,-25 0,-22 -3,-25" fill="#ffffff" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_blessed_mace' ? (
+                                    /* BLESSED CRUSADER MACE — Holy Flanged Morningstar */
+                                    <g transform="translate(0, -16)" style={{ filter: 'drop-shadow(0 0 8px #f59e0b)' }}>
+                                        <rect x="-2" y="-10" width="4" height="38" rx="1.5" fill="#475569" stroke="#1e293b" strokeWidth="1" />
+                                        <line x1="-2" y1="8" x2="2" y2="10" stroke="#f59e0b" strokeWidth="1.2" />
+                                        <line x1="-2" y1="14" x2="2" y2="16" stroke="#f59e0b" strokeWidth="1.2" />
+                                        <circle cx="0" cy="-20" r="8" fill="url(#goldTrimGrad)" stroke="#ca8a04" strokeWidth="1.2" />
+                                        <polygon points="0,-29 3,-24 -3,-24" fill="#fde047" />
+                                        <polygon points="0,-11 3,-16 -3,-16" fill="#fde047" />
+                                        <polygon points="-9,-20 -5,-17 -5,-23" fill="#fde047" />
+                                        <polygon points="9,-20 5,-17 5,-23" fill="#fde047" />
+                                        <line x1="-3" y1="-20" x2="3" y2="-20" stroke="#ffffff" strokeWidth="1.5" />
+                                        <line x1="0" y1="-23" x2="0" y2="-17" stroke="#ffffff" strokeWidth="1.5" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_shadow_cross' ? (
+                                    /* SHADOW CROSS — Obsidian Void Dagger */
+                                    <g transform="translate(0, -18)" style={{ filter: 'drop-shadow(0 0 8px #7c3aed)' }}>
+                                        <path d="M -3.5 14 L -3.5 -24 L 0 -34 L 3.5 -24 L 3.5 14 Z" fill="url(#voidBladeGrad)" stroke="#a855f7" strokeWidth="1.2" />
+                                        <path d="M -14 0 L -4 -2 L -4 2 Z" fill="#4c1d95" stroke="#a78bfa" strokeWidth="1" />
+                                        <path d="M 14 0 L 4 -2 L 4 2 Z" fill="#4c1d95" stroke="#a78bfa" strokeWidth="1" />
+                                        <rect x="-2" y="14" width="4" height="12" rx="1" fill="#09090b" />
+                                        <circle cx="0" cy="27" r="2.5" fill="#7c3aed" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_divine_censer' ? (
+                                    /* SACRED DIVINE CENSER — Golden Chained Thurible */
+                                    <g transform="translate(0, -16)" style={{ filter: 'drop-shadow(0 0 8px #f59e0b)' }}>
+                                        <path d="M 0 16 Q 10 -4 0 -20" fill="none" stroke="#f59e0b" strokeWidth="1.4" strokeDasharray="2 2" />
+                                        <path d="M -7 -20 L 7 -20 L 5 -32 L 0 -36 L -5 -32 Z" fill="url(#goldTrimGrad)" stroke="#ca8a04" strokeWidth="1.2" />
+                                        <circle cx="0" cy="-38" r="2" fill="#fef08a" />
+                                        <circle cx="-4" cy="-42" r="1.5" fill="#fbbf24" opacity="0.8" />
+                                        <circle cx="3" cy="-46" r="1.2" fill="#f59e0b" opacity="0.6" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_void_scythe' ? (
+                                    /* REAPER VOID SCYTHE — Eldritch Crescent War Scythe */
+                                    <g transform="translate(0, -18)" style={{ filter: 'drop-shadow(0 0 10px #a855f7)' }}>
+                                        <rect x="-2" y="-34" width="4" height="64" rx="2" fill="#09090b" stroke="#6b21a8" strokeWidth="1" />
+                                        <path d="M 0 -32 Q 26 -36 36 -18 Q 30 -28 14 -28 L 0 -26 Z" fill="url(#voidBladeGrad)" stroke="#c084fc" strokeWidth="1.2" />
+                                        <circle cx="0" cy="-30" r="3" fill="#0f172a" stroke="#c084fc" strokeWidth="1" />
+                                        <circle cx="0" cy="-30" r="1.2" fill="#ec4899" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_plasma_crossbow' ? (
+                                    /* PLASMA CYBER CROSSBOW — Neon Energy Quarrel */
+                                    <g transform="translate(0, -12)" style={{ filter: 'drop-shadow(0 0 8px #06b6d4)' }}>
+                                        <rect x="-18" y="-4" width="28" height="8" rx="2" fill="#0f172a" stroke="#06b6d4" strokeWidth="1.2" />
+                                        <path d="M 6 -22 L 8 -4 L 6 14" fill="none" stroke="#0891b2" strokeWidth="2.5" />
+                                        <line x1="6" y1="-20" x2="-8" y2="-1" stroke="#22d3ee" strokeWidth="1.2" />
+                                        <line x1="6" y1="12" x2="-8" y2="-1" stroke="#22d3ee" strokeWidth="1.2" />
+                                        <line x1="-12" y1="-1" x2="16" y2="-1" stroke="#67e8f9" strokeWidth="2.5" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_celestial_prism' ? (
+                                    /* CELESTIAL PRISM — Orbiting Starlight Gem */
+                                    <g transform="translate(0, -18)" style={{ filter: 'drop-shadow(0 0 8px #a855f7)' }}>
+                                        <polygon points="0,-36 10,-24 0,-12 -10,-24" fill="#38bdf8" opacity="0.85" stroke="#f0abfc" strokeWidth="1" />
+                                        <polygon points="0,-36 0,-12 10,-24" fill="#c084fc" opacity="0.7" />
+                                        <circle cx="-12" cy="-28" r="2" fill="#fde047" />
+                                        <circle cx="12" cy="-18" r="2" fill="#38bdf8" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_aegis_flail' ? (
+                                    /* AEGIS SPIKED FLAIL — Heavy Armored Iron Morningstar */
+                                    <g transform="translate(0, -14)" style={{ filter: 'drop-shadow(0 2px 6px rgba(0,0,0,0.5))' }}>
+                                        <rect x="-2" y="4" width="4" height="24" rx="1.5" fill="#334155" stroke="#1e293b" strokeWidth="1" />
+                                        <path d="M 0 4 Q 8 -6 4 -16" fill="none" stroke="#64748b" strokeWidth="2" strokeDasharray="2.5 1.5" />
+                                        <circle cx="4" cy="-20" r="8" fill="url(#steelPlateGrad)" stroke="#334155" strokeWidth="1.2" />
+                                        <polygon points="4,-31 6,-27 2,-27" fill="#94a3b8" />
+                                        <polygon points="15,-20 11,-22 11,-18" fill="#94a3b8" />
+                                        <polygon points="-7,-20 -3,-18 -3,-22" fill="#94a3b8" />
+                                        <polygon points="4,-9 2,-13 6,-13" fill="#94a3b8" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_chronos_blade' ? (
+                                    /* CHRONOS RAPIER — Time-Bending Temporal Blade */
+                                    <g transform="translate(0, -20)" style={{ filter: 'drop-shadow(0 0 8px #f59e0b)' }}>
+                                        <polygon points="-2,12 2,12 0.5,-44 -0.5,-44" fill="url(#chronoGoldGrad)" stroke="#ca8a04" strokeWidth="1" />
+                                        <circle cx="0" cy="12" r="9" fill="none" stroke="#f59e0b" strokeWidth="2" />
+                                        <circle cx="0" cy="12" r="5" fill="#0f172a" stroke="#38bdf8" strokeWidth="1.2" />
+                                        <polygon points="-2,24 2,24 -2,30 2,30" fill="#38bdf8" stroke="#f59e0b" strokeWidth="0.8" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_supernova_cannon' ? (
+                                    /* SUPERNOVA ARM CANNON — Solar Fusion Plasma Blaster */
+                                    <g transform="translate(0, -18)" style={{ filter: 'drop-shadow(0 0 10px #f97316)' }}>
+                                        <path d="M -10 16 L 10 16 L 8 -26 L -8 -26 Z" fill="url(#quantumSuitGrad)" stroke="#f59e0b" strokeWidth="1.5" />
+                                        <line x1="-5" y1="4" x2="-5" y2="-14" stroke="#f97316" strokeWidth="1.5" />
+                                        <line x1="5" y1="4" x2="5" y2="-14" stroke="#f97316" strokeWidth="1.5" />
+                                        <ellipse cx="0" cy="-26" rx="8" ry="4" fill="#fef08a" stroke="#ea580c" strokeWidth="1.2" />
+                                    </g>
+                                ) : weaponItem?.id === 'wpn_astral_staff_eternity' ? (
+                                    /* ASTRAL STAFF OF ETERNITY — Twin Galaxy Cosmic Arch-Staff */
+                                    <g transform="translate(0, -22)" style={{ filter: 'drop-shadow(0 0 12px #c084fc)' }}>
+                                        <rect x="-2.5" y="-22" width="5" height="52" rx="2" fill="#09090b" stroke="#8b5cf6" strokeWidth="1.2" />
+                                        <path d="M -2 -24 Q -16 -32 -14 -42 Q -6 -38 -2 -30 Z" fill="url(#archmageRingsGrad)" stroke="#c084fc" strokeWidth="1" />
+                                        <path d="M 2 -24 Q 16 -32 14 -42 Q 6 -38 2 -30 Z" fill="url(#archmageRingsGrad)" stroke="#c084fc" strokeWidth="1" />
+                                        <circle cx="0" cy="-35" r="7" fill="url(#archmageCoreRadial)" stroke="#ffffff" strokeWidth="1.5" />
+                                    </g>
+                                ) : weaponItem?.image_url ? (
+                                    /* High-Definition Illustrated Weapon Asset Fallback */
+                                    <g transform="translate(0, -20) rotate(-10)">
+                                        <image
+                                            href={weaponItem.image_url}
+                                            x="-18"
+                                            y="-18"
+                                            width="36"
+                                            height="36"
+                                            preserveAspectRatio="xMidYMid meet"
+                                            style={{ filter: `drop-shadow(0 2px 8px rgba(0,0,0,0.5)) drop-shadow(0 0 6px ${primary}88)` }}
+                                        />
+                                    </g>
                                 ) : (
                                     /* Standard Emoji Fallback (Held naturally in weapon hand) */
                                     <g transform="translate(4, -8) rotate(-10)">
@@ -1080,7 +1602,7 @@ function CharacterVisual({
                                                 transition={{ duration: 0.38 }}
                                             />
                                         </g>
-                                    ) : weaponItem?.id === 'wpn_crystal_staff' || weaponItem?.id === 'wpn_astral_wand' || weaponItem?.id === 'wpn_mage_starter' ? (
+                                    ) : weaponItem?.id === 'wpn_crystal_staff' || weaponItem?.id === 'wpn_astral_wand' || weaponItem?.id === 'wpn_mage_starter' || weaponItem?.id === 'wpn_frost_codex' || weaponItem?.id === 'wpn_scholars_quill' || weaponItem?.id === 'wpn_apprentice_wand' || weaponItem?.id === 'wpn_celestial_prism' || weaponItem?.id === 'wpn_astral_staff_eternity' ? (
                                         /* ARCANE CRYSTAL MAGIC SURGE */
                                         <g transform="translate(0, -22)">
                                             <motion.path
@@ -1103,6 +1625,43 @@ function CharacterVisual({
                                                 fill="#f0abfc"
                                                 animate={{ scale: [0, 1.4, 0], opacity: [0, 1, 0], x: [0, 14], y: [0, -8] }}
                                                 transition={{ duration: 0.4 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_void_scythe' || weaponItem?.id === 'wpn_shadow_cross' ? (
+                                        /* ELDRITCH VOID CLEAVE */
+                                        <g transform="translate(4, -16)">
+                                            <motion.path
+                                                d="M -4 -28 L 32 14"
+                                                fill="none"
+                                                stroke="#a855f7"
+                                                strokeWidth="5"
+                                                strokeLinecap="round"
+                                                animate={{ pathLength: [0, 1, 0.2], opacity: [0, 1, 0], scale: [0.8, 1.3, 1.5] }}
+                                                transition={{ duration: 0.42 }}
+                                                style={{ filter: 'drop-shadow(0 0 12px #9333ea)' }}
+                                            />
+                                            <motion.circle
+                                                cx="28" cy="4" r="4" fill="#c084fc"
+                                                animate={{ x: [0, 16], y: [0, 6], scale: [1, 0], opacity: [1, 0] }}
+                                                transition={{ duration: 0.36 }}
+                                            />
+                                        </g>
+                                    ) : weaponItem?.id === 'wpn_plasma_crossbow' || weaponItem?.id === 'wpn_supernova_cannon' ? (
+                                        /* HIGH-ENERGY PLASMA LASER BLAST */
+                                        <g transform="translate(6, -10)">
+                                            <motion.line
+                                                x1="-8" y1="0" x2="36" y2="0"
+                                                stroke="#67e8f9"
+                                                strokeWidth="5"
+                                                strokeLinecap="round"
+                                                animate={{ scaleX: [0, 1.6, 0.4], opacity: [0, 1, 0], x: [0, 22] }}
+                                                transition={{ duration: 0.38 }}
+                                                style={{ filter: 'drop-shadow(0 0 10px #06b6d4)' }}
+                                            />
+                                            <motion.circle
+                                                cx="26" cy="0" r="4.5" fill="#ffffff"
+                                                animate={{ scale: [0.5, 2, 0], opacity: [1, 0], x: [0, 16] }}
+                                                transition={{ duration: 0.35 }}
                                             />
                                         </g>
                                     ) : weaponItem?.id === 'wpn_dragon_slayer' ? (
@@ -1183,7 +1742,7 @@ function CharacterVisual({
                                                 transition={{ duration: 0.35 }}
                                             />
                                         </g>
-                                    ) : weaponItem?.id === 'wpn_archer_starter' || weaponItem?.id === 'wpn_recurve_bow' ? (
+                                    ) : weaponItem?.id === 'wpn_archer_starter' || weaponItem?.id === 'wpn_recurve_bow' || weaponItem?.id === 'wpn_storm_bow' ? (
                                         /* ARCHER GALE WIND ARROW */
                                         <g transform="translate(4, -10)">
                                             <motion.line
@@ -1204,7 +1763,7 @@ function CharacterVisual({
                                                 transition={{ duration: 0.35 }}
                                             />
                                         </g>
-                                    ) : weaponItem?.id === 'wpn_radiant_scepter' || weaponItem?.id === 'wpn_healer_starter' || weaponItem?.id === 'wpn_seraph_staff' ? (
+                                    ) : weaponItem?.id === 'wpn_radiant_scepter' || weaponItem?.id === 'wpn_healer_starter' || weaponItem?.id === 'wpn_seraph_staff' || weaponItem?.id === 'wpn_blessed_mace' || weaponItem?.id === 'wpn_divine_censer' ? (
                                         /* SACRED RADIANT SUNBURST */
                                         <g transform="translate(0, -20)">
                                             <motion.circle
