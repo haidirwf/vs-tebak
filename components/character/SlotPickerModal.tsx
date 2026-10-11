@@ -311,7 +311,7 @@ export default function SlotPickerModal({
                                                 borderRadius: '4px',
                                             }}
                                         >
-                                            {b.icon} {b.label} {b.display}
+                                            {b.icon} {b.display}
                                         </span>
                                     ))}
                                 </div>
@@ -514,7 +514,6 @@ export default function SlotPickerModal({
                                                         }}
                                                     >
                                                         <span>{badge.icon}</span>
-                                                        <span>{badge.label}</span>
                                                         <span style={{ color: '#10b981', fontWeight: 900 }}>{badge.display}</span>
                                                     </span>
                                                 ))}

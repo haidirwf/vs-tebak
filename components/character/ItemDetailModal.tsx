@@ -457,7 +457,7 @@ export default function ItemDetailModal({
                                             <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Nambah:</span>
                                             {itemStatBadges.map((badge) => (
                                                 <span key={badge.key} style={{ color: '#34d399', backgroundColor: 'rgba(16, 185, 129, 0.2)', padding: '1px 5px', borderRadius: '4px' }}>
-                                                    {badge.label} {badge.display}
+                                                    {badge.icon} {badge.display}
                                                 </span>
                                             ))}
                                         </div>
@@ -536,7 +536,6 @@ export default function ItemDetailModal({
                                             }}
                                         >
                                             <span style={{ fontSize: '12px' }}>{badge.icon}</span>
-                                            <span style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '11px' }}>{badge.label}</span>
                                             <span style={{ color: '#34d399', fontWeight: 900 }}>{badge.display}</span>
                                         </div>
                                     ))}

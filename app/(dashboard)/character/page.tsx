@@ -175,7 +175,7 @@ export default function CharacterPage() {
     }, [])
 
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 860)
+        const checkMobile = () => setIsMobile(window.innerWidth < 880)
         checkMobile()
         window.addEventListener('resize', checkMobile)
         return () => window.removeEventListener('resize', checkMobile)
@@ -658,10 +658,10 @@ export default function CharacterPage() {
                     background: item
                         ? 'var(--surface-card)'
                         : 'rgba(255, 255, 255, 0.02)',
-                    padding: '11px 13px',
+                    padding: '10px 11px',
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: '8px',
+                    gap: '7px',
                     cursor: 'pointer',
                     position: 'relative',
                     boxSizing: 'border-box',
@@ -768,7 +768,7 @@ export default function CharacterPage() {
                                 alignItems: 'center',
                                 flexWrap: 'wrap',
                                 gap: '4px',
-                                padding: '5px 8px',
+                                padding: '4px 7px',
                                 borderRadius: '7px',
                                 backgroundColor: 'rgba(16, 185, 129, 0.08)',
                                 border: '1px solid rgba(16, 185, 129, 0.25)',
@@ -795,7 +795,6 @@ export default function CharacterPage() {
                                     }}
                                 >
                                     <span>{badge.icon}</span>
-                                    <span>{badge.label}</span>
                                     <span style={{ color: '#10b981', fontWeight: 900 }}>{badge.display}</span>
                                 </span>
                             ))}
@@ -984,7 +983,7 @@ export default function CharacterPage() {
                         style={{
                             position: 'relative',
                             width: '100%',
-                            minHeight: '600px',
+                            minHeight: '620px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
@@ -1070,9 +1069,9 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 position: 'absolute',
-                                top: '18px',
-                                left: 'calc(50% + 85px)',
-                                width: '255px',
+                                top: '12px',
+                                left: 'calc(50% + 105px)',
+                                width: '235px',
                                 zIndex: 20,
                             }}
                         >
@@ -1085,7 +1084,7 @@ export default function CharacterPage() {
                             style={{
                                 position: 'absolute',
                                 left: '50%',
-                                top: '41%',
+                                top: '42%',
                                 transform: 'translate(-50%, -50%)',
                                 display: 'flex',
                                 flexDirection: 'column',
@@ -1098,7 +1097,7 @@ export default function CharacterPage() {
                             <CharacterVisual
                                 role={avatarClass}
                                 equipped={equipped}
-                                size={320}
+                                size={290}
                                 showAura={true}
                                 interactive={true}
                                 showRoleBadge={false}
@@ -1107,12 +1106,12 @@ export default function CharacterPage() {
                             {/* Blue Dashed Elliptical Pedestal Ring from user sketch */}
                             <div
                                 style={{
-                                    width: '185px',
-                                    height: '36px',
+                                    width: '175px',
+                                    height: '32px',
                                     borderRadius: '50%',
                                     border: '2px dashed #38bdf8',
                                     backgroundColor: 'rgba(56, 189, 248, 0.04)',
-                                    marginTop: '-24px',
+                                    marginTop: '-22px',
                                     pointerEvents: 'none',
                                 }}
                             />
@@ -1122,10 +1121,10 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 position: 'absolute',
-                                top: '43%',
+                                top: '44%',
                                 transform: 'translateY(-50%)',
-                                left: '20px',
-                                width: '250px',
+                                left: '12px',
+                                width: '235px',
                                 zIndex: 20,
                             }}
                         >
@@ -1136,10 +1135,10 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 position: 'absolute',
-                                top: '45%',
+                                top: '48%',
                                 transform: 'translateY(-50%)',
-                                right: '20px',
-                                width: '250px',
+                                right: '12px',
+                                width: '235px',
                                 zIndex: 20,
                             }}
                         >
@@ -1150,10 +1149,10 @@ export default function CharacterPage() {
                         <div
                             style={{
                                 position: 'absolute',
-                                bottom: '18px',
+                                bottom: '12px',
                                 left: '50%',
                                 transform: 'translateX(-50%)',
-                                width: '265px',
+                                width: '245px',
                                 zIndex: 20,
                             }}
                         >
@@ -1723,7 +1722,6 @@ export default function CharacterPage() {
                                                                             }}
                                                                         >
                                                                             <span>{badge.icon}</span>
-                                                                            <span>{badge.label}</span>
                                                                             <span style={{ color: '#10b981', fontWeight: 900 }}>{badge.display}</span>
                                                                         </span>
                                                                     ))}
