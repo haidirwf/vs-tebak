@@ -1924,9 +1924,6 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             justifyContent: 'center',
                             zIndex: 1000,
                             padding: '16px',
-                            overflow: 'hidden',
-                            touchAction: 'none',
-                            overscrollBehavior: 'none',
                         }}
                         onClick={() => setShowSurrenderConfirm(false)}
                     >

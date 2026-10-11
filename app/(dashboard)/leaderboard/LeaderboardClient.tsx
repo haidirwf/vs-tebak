@@ -330,27 +330,20 @@ export default function LeaderboardClient({ allTime, weekly, schoolRanking, curr
                 if (myIndex < 0 || myIndex < 10) return null
                 const me = list[myIndex]
                 return (
-                    <div style={{
-                        position: 'fixed',
-                        bottom: '20px',
-                        left: 0,
-                        right: 0,
-                        zIndex: 40,
-                        padding: '0 16px',
-                        pointerEvents: 'none',
-                    }}>
+                    <div className="leaderboard-my-rank-dock">
                         <div style={{
                             maxWidth: '800px',
                             margin: '0 auto',
                             backgroundColor: 'var(--surface-card)',
                             border: '1px solid var(--accent-gold)',
                             borderRadius: '12px',
-                            padding: '10px 16px',
+                            padding: '9px 14px',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'space-between',
                             boxShadow: 'var(--shadow-modal)',
                             pointerEvents: 'auto',
+                            gap: '8px',
                         }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', minWidth: 0, flex: 1 }}>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '15px', fontWeight: 800, color: 'var(--accent-gold)', flexShrink: 0 }}>

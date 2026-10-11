@@ -986,7 +986,10 @@ export default function ShopClient({
                             alignItems: 'center',
                             justifyContent: 'center',
                             zIndex: 9999,
-                            padding: '20px',
+                            padding: '16px',
+                            overflowX: 'hidden',
+                            overflowY: 'auto',
+                            touchAction: 'pan-y',
                         }}
                     >
                         <motion.div
@@ -996,12 +999,16 @@ export default function ShopClient({
                             style={{
                                 width: '100%',
                                 maxWidth: '420px',
+                                maxHeight: 'min(92dvh, 580px)',
+                                overflowX: 'hidden',
+                                overflowY: 'auto',
                                 backgroundColor: 'var(--surface-card)',
                                 border: '1px solid var(--surface-border)',
                                 borderRadius: '16px',
-                                padding: '24px',
+                                padding: '22px 18px',
                                 textAlign: 'center',
                                 boxShadow: 'var(--shadow-modal)',
+                                boxSizing: 'border-box',
                             }}
                         >
                             <div

@@ -486,9 +486,6 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     justifyContent: 'center',
                     zIndex: 1000,
                     padding: '16px',
-                    overflow: 'hidden',
-                    touchAction: 'none',
-                    overscrollBehavior: 'none',
                 }}
                 onClick={() => router.push('/battle')}
             >
@@ -1064,9 +1061,6 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                         justifyContent: 'center',
                         zIndex: 1000,
                         padding: '16px',
-                        overflow: 'hidden',
-                        touchAction: 'none',
-                        overscrollBehavior: 'none',
                     }}
                     onClick={() => setShowSurrenderConfirm(false)}
                 >

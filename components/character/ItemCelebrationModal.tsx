@@ -122,8 +122,10 @@ export default function ItemCelebrationModal({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    padding: '20px',
-                    overflow: 'hidden',
+                    padding: '16px',
+                    overflowX: 'hidden',
+                    overflowY: 'auto',
+                    touchAction: 'pan-y',
                 }}
                 onClick={onClose}
             >
@@ -152,16 +154,19 @@ export default function ItemCelebrationModal({
                         position: 'relative',
                         width: '100%',
                         maxWidth: '440px',
+                        maxHeight: 'min(92dvh, 600px)',
                         backgroundColor: 'var(--surface-card)',
                         borderRadius: '20px',
                         border: `1.5px solid ${theme.border}`,
                         boxShadow: `0 0 40px ${theme.glow}, 0 20px 48px rgba(0, 0, 0, 0.65)`,
-                        overflow: 'hidden',
-                        padding: '32px 24px 28px',
+                        overflowX: 'hidden',
+                        overflowY: 'auto',
+                        padding: '24px 18px 20px',
                         textAlign: 'center',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'center',
+                        boxSizing: 'border-box',
                     }}
                 >
                     {/* Top Close Button */}

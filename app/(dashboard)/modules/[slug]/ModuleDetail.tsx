@@ -2103,11 +2103,14 @@ export default function ModuleDetail({
                             style={{
                                 width: '100%',
                                 maxWidth: '480px',
+                                maxHeight: 'min(90dvh, 600px)',
+                                overflowY: 'auto',
                                 backgroundColor: 'var(--surface-card, #ffffff)',
                                 border: '1px solid var(--surface-border, #e4e4e7)',
                                 borderRadius: '12px',
-                                padding: '24px',
+                                padding: '24px 20px',
                                 boxShadow: '0 10px 30px rgba(0, 0, 0, 0.15)',
+                                boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >
@@ -2207,11 +2210,14 @@ export default function ModuleDetail({
                             style={{
                                 width: '100%',
                                 maxWidth: '420px',
-                                padding: '24px',
+                                maxHeight: 'min(90dvh, 560px)',
+                                overflowY: 'auto',
+                                padding: '22px 18px',
                                 backgroundColor: 'var(--surface-card, #ffffff)',
                                 borderRadius: '12px',
                                 border: '1px solid var(--surface-border, #e4e4e7)',
                                 boxShadow: '0 20px 40px rgba(0, 0, 0, 0.2)',
+                                boxSizing: 'border-box',
                             }}
                             onClick={(e) => e.stopPropagation()}
                         >

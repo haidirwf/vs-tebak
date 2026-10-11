@@ -1351,13 +1351,13 @@ function BattleArenaStage({
                 borderRadius: '16px',
                 background: 'linear-gradient(180deg, rgba(15, 23, 42, 0.88) 0%, rgba(10, 15, 30, 0.96) 100%)',
                 border: comboTier ? `1px solid ${comboTier.borderColor}` : '1px solid rgba(255, 255, 255, 0.1)',
-                padding: '16px 14px 12px',
+                padding: isMobile ? '12px 10px 8px' : '16px 14px 12px',
                 overflow: 'hidden',
                 boxShadow: comboTier
                     ? `0 12px 32px -8px rgba(0, 0, 0, 0.6), 0 0 20px -6px ${comboTier.shadowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.1)`
                     : '0 12px 32px -8px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08)',
                 boxSizing: 'border-box',
-                marginBottom: '16px',
+                marginBottom: isMobile ? '10px' : '16px',
                 transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
             }}
         >
@@ -1383,36 +1383,38 @@ function BattleArenaStage({
                     display: 'grid',
                     gridTemplateColumns: 'minmax(0, 1fr) auto minmax(0, 1fr)',
                     alignItems: 'center',
-                    gap: '10px',
-                    marginBottom: '10px',
+                    gap: isMobile ? '6px' : '10px',
+                    marginBottom: isMobile ? '6px' : '10px',
                 }}
             >
                 {/* Player HUD (Left) */}
                 <div style={{ minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginBottom: '3px' }}>
                         <span
                             style={{
                                 fontFamily: 'var(--font-heading)',
-                                fontSize: '13px',
+                                fontSize: isMobile ? '12px' : '13px',
                                 fontWeight: 700,
                                 color: 'var(--text-primary)',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
+                                maxWidth: isMobile ? '72px' : '130px',
                             }}
                         >
                             {player.name}
                         </span>
                         <span
                             style={{
-                                fontSize: '10px',
-                                padding: '1px 6px',
-                                borderRadius: '6px',
+                                fontSize: '9.5px',
+                                padding: '1px 5px',
+                                borderRadius: '5px',
                                 backgroundColor: 'rgba(245, 197, 66, 0.15)',
                                 color: 'var(--color-signal-orange)',
                                 border: '1px solid rgba(245, 197, 66, 0.35)',
                                 fontWeight: 700,
                                 fontFamily: 'var(--font-mono)',
+                                flexShrink: 0,
                             }}
                         >
                             Lv.{player.level || 1}
@@ -1420,13 +1422,13 @@ function BattleArenaStage({
                     </div>
 
                     {/* HP Bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
                         <div
                             style={{
                                 flex: 1,
-                                height: '7px',
+                                height: '6px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                borderRadius: '4px',
+                                borderRadius: '3px',
                                 overflow: 'hidden',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
                             }}
@@ -1447,11 +1449,12 @@ function BattleArenaStage({
                         </div>
                         <span
                             style={{
-                                fontSize: '11px',
+                                fontSize: isMobile ? '10px' : '11px',
                                 fontFamily: 'var(--font-mono)',
                                 fontWeight: 700,
                                 color: playerHpPercent > 25 ? '#e2e8f0' : 'var(--accent-red)',
-                                minWidth: '38px',
+                                minWidth: isMobile ? '32px' : '38px',
+                                flexShrink: 0,
                             }}
                         >
                             {Math.round(player.hp)} HP
@@ -1459,7 +1462,7 @@ function BattleArenaStage({
                     </div>
 
                     {/* MP Bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', marginTop: '2px' }}>
                         <div
                             style={{
                                 flex: 1,
@@ -1483,54 +1486,56 @@ function BattleArenaStage({
                         </div>
                         <span
                             style={{
-                                fontSize: '9px',
+                                fontSize: isMobile ? '8.5px' : '9px',
                                 fontFamily: 'var(--font-mono)',
                                 fontWeight: 600,
                                 color: player.mp >= 100 ? '#f59e0b' : '#94a3b8',
+                                flexShrink: 0,
                             }}
                         >
-                            {player.mp >= 100 ? 'BURST 🔥' : `MP ${player.mp}%`}
+                            {player.mp >= 100 ? (isMobile ? 'MAX 🔥' : 'BURST 🔥') : (isMobile ? `${player.mp}%` : `MP ${player.mp}%`)}
                         </span>
                     </div>
                 </div>
 
                 {/* Center Clash VS Indicator */}
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', padding: '0 4px' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px', padding: '0 2px' }}>
                     <div
                         style={{
-                            padding: '3px 10px',
+                            padding: isMobile ? '2px 7px' : '3px 10px',
                             borderRadius: '8px',
                             backgroundColor: comboTier ? comboTier.bgGradient : 'rgba(245, 197, 66, 0.1)',
                             border: comboTier ? `1px solid ${comboTier.borderColor}` : '1px solid rgba(245, 197, 66, 0.3)',
                             color: comboTier ? comboTier.color : 'var(--color-signal-orange)',
-                            fontSize: '11px',
+                            fontSize: isMobile ? '10px' : '11px',
                             fontFamily: 'var(--font-heading)',
                             fontWeight: 800,
                             letterSpacing: '0.04em',
                             display: 'flex',
                             alignItems: 'center',
-                            gap: '4px',
+                            gap: '3px',
                             transition: 'all 0.3s ease',
                         }}
                     >
-                        <Swords size={12} />
+                        <Swords size={isMobile ? 10 : 12} />
                         <span>VS</span>
                     </div>
                 </div>
 
                 {/* Opponent HUD (Right) */}
                 <div style={{ minWidth: 0, textAlign: 'right' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', marginBottom: '4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px', marginBottom: '3px' }}>
                         <span
                             style={{
-                                fontSize: '10px',
-                                padding: '1px 6px',
-                                borderRadius: '6px',
+                                fontSize: '9.5px',
+                                padding: '1px 5px',
+                                borderRadius: '5px',
                                 backgroundColor: 'rgba(0, 212, 255, 0.15)',
                                 color: '#00d4ff',
                                 border: '1px solid rgba(0, 212, 255, 0.35)',
                                 fontWeight: 700,
                                 fontFamily: 'var(--font-mono)',
+                                flexShrink: 0,
                             }}
                         >
                             Lv.{opponent.level || 1}
@@ -1538,12 +1543,13 @@ function BattleArenaStage({
                         <span
                             style={{
                                 fontFamily: 'var(--font-heading)',
-                                fontSize: '13px',
+                                fontSize: isMobile ? '12px' : '13px',
                                 fontWeight: 700,
                                 color: 'var(--text-primary)',
                                 whiteSpace: 'nowrap',
                                 overflow: 'hidden',
                                 textOverflow: 'ellipsis',
+                                maxWidth: isMobile ? '72px' : '130px',
                             }}
                         >
                             {opponent.name}
@@ -1551,14 +1557,15 @@ function BattleArenaStage({
                     </div>
 
                     {/* Opponent HP Bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px' }}>
                         <span
                             style={{
-                                fontSize: '11px',
+                                fontSize: isMobile ? '10px' : '11px',
                                 fontFamily: 'var(--font-mono)',
                                 fontWeight: 700,
                                 color: opponentHpPercent > 25 ? '#e2e8f0' : 'var(--accent-red)',
-                                minWidth: '38px',
+                                minWidth: isMobile ? '32px' : '38px',
+                                flexShrink: 0,
                             }}
                         >
                             {Math.round(opponent.hp)} HP
@@ -1566,9 +1573,9 @@ function BattleArenaStage({
                         <div
                             style={{
                                 flex: 1,
-                                height: '7px',
+                                height: '6px',
                                 backgroundColor: 'rgba(255, 255, 255, 0.08)',
-                                borderRadius: '4px',
+                                borderRadius: '3px',
                                 overflow: 'hidden',
                                 border: '1px solid rgba(255, 255, 255, 0.1)',
                             }}
@@ -1591,16 +1598,17 @@ function BattleArenaStage({
                     </div>
 
                     {/* Opponent MP Bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '6px', marginTop: '3px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '5px', marginTop: '2px' }}>
                         <span
                             style={{
-                                fontSize: '9px',
+                                fontSize: isMobile ? '8.5px' : '9px',
                                 fontFamily: 'var(--font-mono)',
                                 fontWeight: 600,
                                 color: opponent.mp >= 100 ? '#00d4ff' : '#94a3b8',
+                                flexShrink: 0,
                             }}
                         >
-                            {opponent.mp >= 100 ? 'BURST 🔥' : `MP ${opponent.mp}%`}
+                            {opponent.mp >= 100 ? (isMobile ? 'MAX 🔥' : 'BURST 🔥') : (isMobile ? `${opponent.mp}%` : `MP ${opponent.mp}%`)}
                         </span>
                         <div
                             style={{
@@ -1633,11 +1641,11 @@ function BattleArenaStage({
                 style={{
                     position: 'relative',
                     zIndex: 1,
-                    height: '144px',
+                    height: isMobile ? '122px' : '144px',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    padding: '0 24px',
+                    padding: isMobile ? '0 8px' : '0 24px',
                 }}
             >
                 {/* --- CENTER STAGE: FLOATING ARCADE COMBO SURGE --- */}
@@ -1652,19 +1660,21 @@ function BattleArenaStage({
                             style={{
                                 position: 'absolute',
                                 left: '50%',
-                                top: '6px',
+                                top: isMobile ? '2px' : '6px',
                                 transform: 'translateX(-50%)',
                                 display: 'flex',
                                 flexDirection: 'column',
                                 alignItems: 'center',
                                 pointerEvents: 'none',
                                 zIndex: 14,
-                                padding: '6px 14px 7px',
+                                padding: isMobile ? '4px 8px 5px' : '6px 14px 7px',
                                 borderRadius: '12px',
                                 background: 'rgba(10, 15, 30, 0.92)',
                                 border: `1.5px solid ${comboTier.borderColor}`,
                                 boxShadow: `0 8px 24px -4px rgba(0, 0, 0, 0.7), 0 0 16px -2px ${comboTier.shadowColor}, inset 0 1px 0 rgba(255, 255, 255, 0.12)`,
                                 backdropFilter: 'blur(8px)',
+                                maxWidth: isMobile ? 'calc(100% - 130px)' : 'none',
+                                boxSizing: 'border-box',
                             }}
                         >
                             {/* Tier Indonesian Title Tag */}
@@ -1672,17 +1682,17 @@ function BattleArenaStage({
                                 style={{
                                     display: 'flex',
                                     alignItems: 'center',
-                                    gap: '5px',
-                                    marginBottom: '3px',
+                                    gap: '4px',
+                                    marginBottom: '2px',
                                 }}
                             >
-                                <span style={{ fontSize: '13px', filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.5))' }}>
+                                <span style={{ fontSize: isMobile ? '11px' : '13px', filter: 'drop-shadow(0 0 4px rgba(255, 255, 255, 0.5))' }}>
                                     {comboTier.icon}
                                 </span>
                                 <span
                                     style={{
                                         fontFamily: 'var(--font-heading)',
-                                        fontSize: '10px',
+                                        fontSize: isMobile ? '9px' : '10px',
                                         fontWeight: 800,
                                         color: comboTier.color,
                                         letterSpacing: '0.02em',
@@ -1693,12 +1703,12 @@ function BattleArenaStage({
                             </div>
 
                             {/* Arcade Streak Counter */}
-                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '4px', marginBottom: '4px' }}>
+                            <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px', marginBottom: isMobile ? '2px' : '4px' }}>
                                 <span
                                     style={{
                                         fontFamily: 'var(--font-heading)',
                                         fontWeight: 900,
-                                        fontSize: comboCount >= 6 ? '26px' : '22px',
+                                        fontSize: isMobile ? (comboCount >= 6 ? '19px' : '17px') : (comboCount >= 6 ? '26px' : '22px'),
                                         lineHeight: 1,
                                         background:
                                             comboCount >= 8
@@ -1719,7 +1729,7 @@ function BattleArenaStage({
                                 <span
                                     style={{
                                         fontFamily: 'var(--font-heading)',
-                                        fontSize: '11px',
+                                        fontSize: isMobile ? '9.5px' : '11px',
                                         fontWeight: 800,
                                         color: '#e2e8f0',
                                         letterSpacing: '0.05em',
@@ -1730,14 +1740,14 @@ function BattleArenaStage({
                             </div>
 
                             {/* 4-Segment Streak Momentum Gauge & Bonus Multiplier Tag */}
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                                <div style={{ display: 'flex', gap: '3px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: isMobile ? '4px' : '6px' }}>
+                                <div style={{ display: 'flex', gap: '2px' }}>
                                     {[1, 2, 3, 4].map((seg) => (
                                         <div
                                             key={seg}
                                             style={{
-                                                width: '13px',
-                                                height: '3.5px',
+                                                width: isMobile ? '9px' : '13px',
+                                                height: '3px',
                                                 borderRadius: '2px',
                                                 background: seg <= comboTier.gaugeSegments
                                                     ? comboTier.accent
@@ -1752,7 +1762,7 @@ function BattleArenaStage({
                                 </div>
                                 <span
                                     style={{
-                                        fontSize: '9px',
+                                        fontSize: isMobile ? '8px' : '9px',
                                         fontWeight: 700,
                                         fontFamily: 'var(--font-mono)',
                                         color: comboTier.color,
@@ -1778,50 +1788,59 @@ function BattleArenaStage({
                             style={{
                                 position: 'absolute',
                                 left: '50%',
-                                bottom: '8px',
+                                bottom: isMobile ? '3px' : '8px',
                                 transform: 'translateX(-50%)',
                                 display: 'flex',
                                 alignItems: 'center',
-                                gap: '8px',
-                                padding: '5px 12px',
+                                gap: isMobile ? '6px' : '8px',
+                                padding: isMobile ? '4px 8px' : '5px 12px',
                                 borderRadius: '10px',
                                 background: 'rgba(10, 15, 30, 0.94)',
                                 border: `1px solid ${attackConfig.color}`,
                                 boxShadow: `0 4px 16px -2px ${attackConfig.impactGlow}`,
                                 pointerEvents: 'none',
                                 zIndex: 13,
-                                whiteSpace: 'nowrap',
+                                maxWidth: isMobile ? 'calc(100% - 130px)' : '340px',
                                 backdropFilter: 'blur(8px)',
+                                boxSizing: 'border-box',
                             }}
                         >
-                            <span style={{ fontSize: '15px' }}>{attackConfig.icon}</span>
-                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+                            <span style={{ fontSize: isMobile ? '13px' : '15px', flexShrink: 0 }}>{attackConfig.icon}</span>
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', minWidth: 0, overflow: 'hidden' }}>
                                 <span
                                     style={{
                                         fontFamily: 'var(--font-heading)',
-                                        fontSize: '11px',
+                                        fontSize: isMobile ? '10px' : '11px',
                                         fontWeight: 800,
                                         color: attackConfig.color,
                                         lineHeight: 1.2,
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        maxWidth: '100%',
                                     }}
                                 >
                                     {attackConfig.attackName}
                                 </span>
                                 <span
                                     style={{
-                                        fontSize: '9px',
+                                        fontSize: isMobile ? '8.5px' : '9px',
                                         fontFamily: 'var(--font-mono)',
                                         fontWeight: 600,
                                         color: '#cbd5e1',
                                         lineHeight: 1.1,
+                                        whiteSpace: 'nowrap',
+                                        overflow: 'hidden',
+                                        textOverflow: 'ellipsis',
+                                        maxWidth: '100%',
                                     }}
                                 >
                                     {activeAttack.isUltimate
-                                        ? '🔥 Serangan Pamungkas Ultimate'
+                                        ? '🔥 Pamungkas'
                                         : activeAttack.isCrit
-                                        ? `💥 Serangan Kritis${comboTier ? ` • ${comboTier.indonesianTitle}` : ''}`
+                                        ? `💥 Kritis${comboTier ? ` • ${comboTier.indonesianTitle}` : ''}`
                                         : comboTier
-                                        ? `${attackConfig.name} • ${comboTier.indonesianTitle} (${comboTier.multiplierText})`
+                                        ? (isMobile ? comboTier.indonesianTitle : `${attackConfig.name} • ${comboTier.indonesianTitle}`)
                                         : attackConfig.name}
                                 </span>
                             </div>
@@ -1904,12 +1923,12 @@ function BattleArenaStage({
                     </motion.div>
 
                     {/* Pedestal Base Ring with Dynamic Combo Flame Surge */}
-                    <div style={{ position: 'relative', marginTop: '-12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div style={{ position: 'relative', marginTop: isMobile ? '-8px' : '-12px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {/* Base Ring */}
                         <div
                             style={{
-                                width: '84px',
-                                height: '14px',
+                                width: `${pedestalWidth}px`,
+                                height: isMobile ? '11px' : '14px',
                                 borderRadius: '50%',
                                 background: comboTier
                                     ? `radial-gradient(circle, ${comboTier.shadowColor} 0%, transparent 75%)`
@@ -1926,8 +1945,8 @@ function BattleArenaStage({
                                 transition={{ repeat: Infinity, duration: 1.1, ease: 'easeInOut' }}
                                 style={{
                                     position: 'absolute',
-                                    width: '94px',
-                                    height: '18px',
+                                    width: `${pedestalWidth + 10}px`,
+                                    height: isMobile ? '14px' : '18px',
                                     borderRadius: '50%',
                                     background: `radial-gradient(circle, ${comboTier.shadowColor} 0%, transparent 75%)`,
                                     border: `1.5px solid ${comboTier.borderColor}`,
@@ -1943,8 +1962,8 @@ function BattleArenaStage({
                                 transition={{ rotate: { repeat: Infinity, duration: 3, ease: 'linear' }, scale: { repeat: Infinity, duration: 1.5, ease: 'easeInOut' } }}
                                 style={{
                                     position: 'absolute',
-                                    width: '102px',
-                                    height: '22px',
+                                    width: `${pedestalWidth + 18}px`,
+                                    height: isMobile ? '17px' : '22px',
                                     borderRadius: '50%',
                                     border: `1.5px dashed ${comboTier?.color || '#ef4444'}`,
                                     boxShadow: `0 0 12px ${comboTier?.shadowColor || 'rgba(239, 68, 68, 0.5)'}`,
@@ -2169,12 +2188,12 @@ function BattleArenaStage({
                     {/* Pedestal Base Ring */}
                     <div
                         style={{
-                            width: '84px',
-                            height: '14px',
+                            width: `${pedestalWidth}px`,
+                            height: isMobile ? '11px' : '14px',
                             borderRadius: '50%',
                             background: 'radial-gradient(circle, rgba(0, 212, 255, 0.35) 0%, transparent 75%)',
                             border: '1px solid rgba(0, 212, 255, 0.3)',
-                            marginTop: '-12px',
+                            marginTop: isMobile ? '-8px' : '-12px',
                         }}
                     />
                 </div>

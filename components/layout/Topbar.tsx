@@ -128,7 +128,7 @@ export default function Topbar() {
                             }}
                         >
                             <Zap size={14} style={{ color: 'var(--accent-gold-text)' }} />
-                            <span>{profile.xp.toLocaleString()} XP</span>
+                            <span>{profile.xp.toLocaleString()} <span className="topbar-xp-badge-text">XP</span></span>
                         </div>
                     )}
                 </div>
@@ -172,6 +172,7 @@ export default function Topbar() {
                             </div>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                                 <span
+                                    className="topbar-user-name"
                                     style={{
                                         fontFamily: 'var(--font-inter)',
                                         fontSize: '13px',

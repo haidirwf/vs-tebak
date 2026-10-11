@@ -409,7 +409,7 @@ body {
   }
 }
 
-/* Modal containment and scroll protection - completely non-scrollable */
+/* Modal containment and responsive touch-friendly scroll protection */
 .modal-overlay {
   position: fixed !important;
   inset: 0 !important;
@@ -417,10 +417,10 @@ body {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  overflow: hidden !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
-  -webkit-overflow-scrolling: auto !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
   padding: 16px !important;
   box-sizing: border-box !important;
 }
@@ -428,10 +428,10 @@ body {
 .modal-overlay > *,
 [role="dialog"],
 [data-slot="dialog-content"] {
-  touch-action: none !important;
-  overscroll-behavior: none !important;
-  overflow: hidden !important;
-  max-height: 94dvh !important;
+  touch-action: pan-y !important;
+  max-height: min(92dvh, 720px) !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
   box-sizing: border-box !important;
 }
 

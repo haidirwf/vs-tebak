@@ -953,10 +953,10 @@ export default function CharacterPage() {
                                                             style={{
                                                                 fontSize: '10.5px',
                                                                 color: 'var(--text-secondary)',
-                                                                backgroundColor: 'rgba(255, 255, 255, 0.04)',
+                                                                backgroundColor: 'var(--surface-elevated)',
                                                                 padding: '2px 7px',
                                                                 borderRadius: '6px',
-                                                                border: '1px solid rgba(255, 255, 255, 0.08)',
+                                                                border: '1px solid var(--surface-border)',
                                                                 whiteSpace: 'nowrap',
                                                             }}
                                                         >
@@ -994,9 +994,9 @@ export default function CharacterPage() {
                                                                     gap: '3px',
                                                                     textShadow:
                                                                         item.rarity === 'legendary'
-                                                                            ? '0 0 8px rgba(251, 191, 36, 0.6)'
+                                                                            ? '0 0 8px rgba(251, 191, 36, 0.45)'
                                                                             : item.rarity === 'epic'
-                                                                            ? '0 0 6px rgba(192, 132, 252, 0.5)'
+                                                                            ? '0 0 6px rgba(192, 132, 252, 0.35)'
                                                                             : 'none',
                                                                 }}
                                                             >
@@ -1015,17 +1015,16 @@ export default function CharacterPage() {
                                                                     fontFamily: 'var(--font-heading)',
                                                                     fontSize: '13.5px',
                                                                     fontWeight: 700,
-                                                                    color:
-                                                                        item.rarity === 'legendary'
-                                                                            ? '#fef3c7'
-                                                                            : item.rarity === 'epic'
-                                                                            ? '#f3e8ff'
-                                                                            : 'var(--text-primary)',
+                                                                    color: `var(--rarity-title-${item.rarity})`,
                                                                     lineHeight: 1.3,
                                                                     display: '-webkit-box',
                                                                     WebkitLineClamp: 2,
                                                                     WebkitBoxOrient: 'vertical',
                                                                     overflow: 'hidden',
+                                                                    textShadow:
+                                                                        item.rarity === 'legendary'
+                                                                            ? '0 1px 8px rgba(245, 158, 11, 0.25)'
+                                                                            : 'none',
                                                                 }}
                                                             >
                                                                 {item.name}
