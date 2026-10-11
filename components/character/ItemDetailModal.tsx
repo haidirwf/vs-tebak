@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
 import {
@@ -158,23 +158,33 @@ export default function ItemDetailModal({
         return () => window.removeEventListener('keydown', handleKeyDown)
     }, [isOpen, onClose])
 
+    if (!isOpen || !item) return null
+
+    const rarity = RARITY_CONFIG[item.rarity]
+    const slotInfo = ANATOMICAL_INFO[item.slot]
+    const buffDetails = getBuffDetails(item.buff)
+
+    // Role eligibility
+    const isUniversal = item.class_req === 'all'
+    const isRoleMatch = isUniversal || item.class_req === playerRole
+    const requiredRoleInfo = !isUniversal && item.class_req !== 'all' ? CHARACTER_ROLES[item.class_req] : null
+
     // Comparison calculation
     const hasDifferentEquipped = Boolean(
-        item && currentlyEquippedInSlot && currentlyEquippedInSlot.id !== item.id
+        currentlyEquippedInSlot && currentlyEquippedInSlot.id !== item.id
     )
     const isThisEquipped = Boolean(
-        item && (isEquipped || (currentlyEquippedInSlot && currentlyEquippedInSlot.id === item.id))
+        isEquipped || (currentlyEquippedInSlot && currentlyEquippedInSlot.id === item.id)
     )
 
-    const statComparison = useMemo(() => {
-        if (!item || !hasDifferentEquipped || !currentlyEquippedInSlot) return null
-
+    let statComparison: { sameType: boolean; diff: number; label: string; isUpgrade: boolean } | null = null
+    if (hasDifferentEquipped && currentlyEquippedInSlot) {
         const currentBuff = currentlyEquippedInSlot.buff
         const newBuff = item.buff
 
         if (currentBuff.type === newBuff.type) {
             const diff = newBuff.value - currentBuff.value
-            return {
+            statComparison = {
                 sameType: true,
                 diff,
                 label: diff > 0
@@ -184,22 +194,20 @@ export default function ItemDetailModal({
                     : 'Setara dengan item aktif saat ini',
                 isUpgrade: diff > 0,
             }
+        } else {
+            statComparison = {
+                sameType: false,
+                diff: 0,
+                label: `Menggantikan efek [${currentBuff.label}] dengan [${newBuff.label}]`,
+                isUpgrade: true,
+            }
         }
+    }
 
-        return {
-            sameType: false,
-            diff: 0,
-            label: `Menggantikan efek [${currentBuff.label}] dengan [${newBuff.label}]`,
-            isUpgrade: true,
-        }
-    }, [hasDifferentEquipped, currentlyEquippedInSlot, item])
-
-    const statDiffs = useMemo(() => {
-        if (!item || !hasDifferentEquipped || !currentlyEquippedInSlot) return []
+    const statDiffs: { key: string; label: string; diff: number; icon: string; isPct?: boolean }[] = []
+    if (hasDifferentEquipped && currentlyEquippedInSlot) {
         const currentStats = getItemStats(currentlyEquippedInSlot)
         const newStats = getItemStats(item)
-        const diffs: { key: string; label: string; diff: number; icon: string; isPct?: boolean }[] = []
-
         const keys: { key: keyof ItemStats; label: string; icon: string; isPct?: boolean }[] = [
             { key: 'hp', label: 'HP', icon: '❤️' },
             { key: 'atk', label: 'ATK', icon: '⚔️' },
@@ -213,7 +221,7 @@ export default function ItemDetailModal({
             const vOld = currentStats[k.key] || 0
             const diff = vNew - vOld
             if (diff !== 0) {
-                diffs.push({
+                statDiffs.push({
                     key: k.key,
                     label: k.label,
                     diff,
@@ -222,33 +230,18 @@ export default function ItemDetailModal({
                 })
             }
         }
-        return diffs
-    }, [hasDifferentEquipped, currentlyEquippedInSlot, item])
+    }
 
-    const itemStatBadges = useMemo(() => {
-        if (!item) return []
-        return formatItemStatBadges(item)
-    }, [item])
+    const itemStatBadges = formatItemStatBadges(item)
 
     const handleShare = () => {
-        if (typeof window === 'undefined' || !item) return
+        if (typeof window === 'undefined') return
         const url = `${window.location.origin}/character?item=${item.id}`
         navigator.clipboard?.writeText(url).then(() => {
             setCopiedLink(true)
             setTimeout(() => setCopiedLink(false), 2000)
         })
     }
-
-    if (!isOpen || !item) return null
-
-    const rarity = RARITY_CONFIG[item.rarity]
-    const slotInfo = ANATOMICAL_INFO[item.slot]
-    const buffDetails = getBuffDetails(item.buff)
-
-    // Role eligibility
-    const isUniversal = item.class_req === 'all'
-    const isRoleMatch = isUniversal || item.class_req === playerRole
-    const requiredRoleInfo = !isUniversal && item.class_req !== 'all' ? CHARACTER_ROLES[item.class_req] : null
 
     return (
         <AnimatePresence>
