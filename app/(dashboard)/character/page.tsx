@@ -8,7 +8,7 @@ import { useUserStore } from '@/stores/userStore'
 import { useContentStore } from '@/stores/contentStore'
 import { AvatarClass } from '@/types'
 import { CHARACTER_ROLES, calculateCharacterStats, EquippedItemsMap, resolveEquippedMap } from '@/lib/game/character'
-import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemRarityRank, getItemsBySlot, getStarterItemsForClass } from '@/lib/game/items'
+import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemRarityRank, getItemsBySlot, getStarterItemsForClass, formatItemStatBadges } from '@/lib/game/items'
 import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import ItemIcon from '@/components/character/ItemIcon'
@@ -578,12 +578,56 @@ export default function CharacterPage() {
     const accessoryItem = equipped.accessory ? GAME_ITEMS.find(it => it.id === equipped.accessory) || null : null
 
     const combatAttributes = useMemo(() => [
-        { label: 'HP Darah', value: characterStats.hp, color: '#ef4444', icon: '❤️' },
-        { label: 'ATK Serang', value: `+${characterStats.atk}`, color: '#f59e0b', icon: '⚔️' },
-        { label: 'DEF Bertahan', value: characterStats.def, color: '#10b981', icon: '🛡️' },
-        { label: 'CRIT Kritis', value: `${characterStats.crit}%`, color: '#a855f7', icon: '💥' },
-        { label: 'Timer Ronde', value: `+${characterStats.battleBuffs.extraTimerSec}s`, color: '#38bdf8', icon: '⏱️' },
-        { label: 'Bonus XP', value: `+${characterStats.battleBuffs.extraXpPct}%`, color: 'var(--color-gold-text)', icon: '⭐' },
+        {
+            label: 'HP Darah',
+            value: characterStats.hp,
+            bonus: characterStats.equipmentBonuses?.hp || 0,
+            bonusDisplay: characterStats.equipmentBonuses?.hp ? `+${characterStats.equipmentBonuses.hp}` : null,
+            color: '#ef4444',
+            icon: '❤️'
+        },
+        {
+            label: 'ATK Serang',
+            value: `+${characterStats.atk}`,
+            bonus: characterStats.equipmentBonuses?.atk || 0,
+            bonusDisplay: characterStats.equipmentBonuses?.atk ? `+${characterStats.equipmentBonuses.atk}` : null,
+            color: '#f59e0b',
+            icon: '⚔️'
+        },
+        {
+            label: 'DEF Bertahan',
+            value: characterStats.def,
+            bonus: characterStats.equipmentBonuses?.def || 0,
+            bonusDisplay: characterStats.equipmentBonuses?.def ? `+${characterStats.equipmentBonuses.def}` : null,
+            color: '#10b981',
+            icon: '🛡️'
+        },
+        {
+            label: 'CRIT Kritis',
+            value: `${characterStats.crit}%`,
+            bonus: characterStats.equipmentBonuses?.crit || 0,
+            bonusDisplay: characterStats.equipmentBonuses?.crit ? `+${characterStats.equipmentBonuses.crit}%` : null,
+            color: '#a855f7',
+            icon: '💥'
+        },
+        {
+            label: 'Timer Ronde',
+            value: `+${characterStats.battleBuffs.extraTimerSec}s`,
+            bonus: characterStats.battleBuffs.extraTimerSec || 0,
+            bonusDisplay: characterStats.battleBuffs.extraTimerSec > 0 ? `+${characterStats.battleBuffs.extraTimerSec}s` : null,
+            color: '#38bdf8',
+            icon: '⏱️'
+        },
+        {
+            label: 'Bonus XP',
+            value: `+${characterStats.battleBuffs.extraXpPct}%`,
+            bonus: (characterStats.equipmentBonuses?.xp || 0) + (characterStats.battleBuffs.extraXpPct || 0),
+            bonusDisplay: ((characterStats.equipmentBonuses?.xp || 0) + (characterStats.battleBuffs.extraXpPct || 0)) > 0
+                ? `+${(characterStats.equipmentBonuses?.xp || 0) + (characterStats.battleBuffs.extraXpPct || 0)}%`
+                : null,
+            color: 'var(--color-gold-text)',
+            icon: '⭐'
+        },
     ], [characterStats])
 
     function renderSocketCard(
@@ -682,7 +726,7 @@ export default function CharacterPage() {
                             >
                                 {item.name}
                             </div>
-                            <div style={{ marginTop: '4px' }}>
+                            <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                 <span
                                     style={{
                                         display: 'inline-flex',
@@ -703,6 +747,30 @@ export default function CharacterPage() {
                                 >
                                     ⚡ {item.buff.label}
                                 </span>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
+                                    {formatItemStatBadges(item).map((badge) => (
+                                        <span
+                                            key={badge.key}
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '2px',
+                                                fontSize: '9.5px',
+                                                fontWeight: 800,
+                                                color: '#10b981',
+                                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                padding: '1px 5px',
+                                                borderRadius: '4px',
+                                                fontFamily: 'var(--font-mono)',
+                                            }}
+                                            title={`Bonus stat item: ${badge.label} ${badge.display}`}
+                                        >
+                                            <span>{badge.label}</span>
+                                            <span>{badge.display}</span>
+                                        </span>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1145,8 +1213,29 @@ export default function CharacterPage() {
                                     <span>{attr.icon}</span>
                                     <span>{attr.label}</span>
                                 </div>
-                                <div style={{ fontSize: '14px', fontWeight: 700, color: attr.color, fontFamily: 'var(--font-mono)' }}>
-                                    {attr.value}
+                                <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: '6px' }}>
+                                    <div style={{ fontSize: '14px', fontWeight: 700, color: attr.color, fontFamily: 'var(--font-mono)' }}>
+                                        {attr.value}
+                                    </div>
+                                    {attr.bonus > 0 && attr.bonusDisplay && (
+                                        <span
+                                            style={{
+                                                fontSize: '10.5px',
+                                                fontWeight: 800,
+                                                color: '#10b981',
+                                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                borderRadius: '5px',
+                                                padding: '1px 5px',
+                                                lineHeight: 1.2,
+                                                fontFamily: 'var(--font-mono)',
+                                                letterSpacing: '0.02em',
+                                            }}
+                                            title={`Termasuk bonus perlengkapan (${attr.bonusDisplay})`}
+                                        >
+                                            {attr.bonusDisplay}
+                                        </span>
+                                    )}
                                 </div>
                             </div>
                         ))}
@@ -1511,7 +1600,7 @@ export default function CharacterPage() {
                                                             >
                                                                 {item.name}
                                                             </div>
-                                                            <div style={{ marginTop: '4px' }}>
+                                                            <div style={{ marginTop: '4px', display: 'flex', flexDirection: 'column', gap: '3px' }}>
                                                                 <span
                                                                     style={{
                                                                         display: 'inline-flex',
@@ -1529,6 +1618,29 @@ export default function CharacterPage() {
                                                                 >
                                                                     ⚡ {item.buff.label}
                                                                 </span>
+                                                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '3px' }}>
+                                                                    {formatItemStatBadges(item).map((badge) => (
+                                                                        <span
+                                                                            key={badge.key}
+                                                                            style={{
+                                                                                display: 'inline-flex',
+                                                                                alignItems: 'center',
+                                                                                gap: '2px',
+                                                                                fontSize: '9.5px',
+                                                                                fontWeight: 800,
+                                                                                color: '#10b981',
+                                                                                backgroundColor: 'rgba(16, 185, 129, 0.12)',
+                                                                                border: '1px solid rgba(16, 185, 129, 0.3)',
+                                                                                padding: '1px 5px',
+                                                                                borderRadius: '4px',
+                                                                                fontFamily: 'var(--font-mono)',
+                                                                            }}
+                                                                        >
+                                                                            <span>{badge.label}</span>
+                                                                            <span>{badge.display}</span>
+                                                                        </span>
+                                                                    ))}
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>

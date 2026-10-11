@@ -28,8 +28,11 @@ import {
     ItemSlot,
     ItemRarity,
     ItemBuff,
+    ItemStats,
     RARITY_CONFIG,
     GAME_ITEMS,
+    getItemStats,
+    formatItemStatBadges,
 } from '@/lib/game/items'
 import { AvatarClass } from '@/types'
 import { CHARACTER_ROLES } from '@/lib/game/character'
@@ -199,6 +202,39 @@ export default function ItemDetailModal({
             isUpgrade: true,
         }
     }, [hasDifferentEquipped, currentlyEquippedInSlot, item])
+
+    const statDiffs = useMemo(() => {
+        if (!hasDifferentEquipped || !currentlyEquippedInSlot) return []
+        const currentStats = getItemStats(currentlyEquippedInSlot)
+        const newStats = getItemStats(item)
+        const diffs: { key: string; label: string; diff: number; icon: string; isPct?: boolean }[] = []
+
+        const keys: { key: keyof ItemStats; label: string; icon: string; isPct?: boolean }[] = [
+            { key: 'hp', label: 'HP', icon: '❤️' },
+            { key: 'atk', label: 'ATK', icon: '⚔️' },
+            { key: 'def', label: 'DEF', icon: '🛡️' },
+            { key: 'crit', label: 'CRIT', icon: '💥', isPct: true },
+            { key: 'xp', label: 'XP', icon: '⭐', isPct: true },
+        ]
+
+        for (const k of keys) {
+            const vNew = newStats[k.key] || 0
+            const vOld = currentStats[k.key] || 0
+            const diff = vNew - vOld
+            if (diff !== 0) {
+                diffs.push({
+                    key: k.key,
+                    label: k.label,
+                    diff,
+                    icon: k.icon,
+                    isPct: k.isPct,
+                })
+            }
+        }
+        return diffs
+    }, [hasDifferentEquipped, currentlyEquippedInSlot, item])
+
+    const itemStatBadges = useMemo(() => formatItemStatBadges(item), [item])
 
     const handleShare = () => {
         if (typeof window === 'undefined') return
@@ -437,6 +473,67 @@ export default function ItemDetailModal({
                             </p>
                         </div>
 
+                        {/* Bonus Stat Tempur / Pahlawan (Green "+X" badges) */}
+                        {itemStatBadges.length > 0 && (
+                            <div
+                                style={{
+                                    padding: '12px 14px',
+                                    borderRadius: '12px',
+                                    backgroundColor: 'rgba(16, 185, 129, 0.08)',
+                                    border: '1.5px solid rgba(16, 185, 129, 0.3)',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    gap: '8px',
+                                }}
+                            >
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                                        <span>⚡</span>
+                                        <span>Bonus Atribut Stat {isThisEquipped ? '(Aktif)' : '(Jika Dipasang)'}</span>
+                                    </div>
+                                    <span
+                                        style={{
+                                            fontSize: '10px',
+                                            fontWeight: 700,
+                                            color: '#34d399',
+                                            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                                            padding: '2px 7px',
+                                            borderRadius: '5px',
+                                            border: '1px solid rgba(16, 185, 129, 0.35)',
+                                            fontFamily: 'var(--font-mono)',
+                                        }}
+                                    >
+                                        {isThisEquipped ? 'Sedang Aktif' : '+ Peningkatan Stat'}
+                                    </span>
+                                </div>
+                                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                                    {itemStatBadges.map((badge) => (
+                                        <div
+                                            key={badge.key}
+                                            style={{
+                                                display: 'inline-flex',
+                                                alignItems: 'center',
+                                                gap: '5px',
+                                                padding: '4px 10px',
+                                                borderRadius: '8px',
+                                                backgroundColor: 'rgba(16, 185, 129, 0.14)',
+                                                border: '1px solid rgba(16, 185, 129, 0.4)',
+                                                color: '#10b981',
+                                                fontSize: '12px',
+                                                fontWeight: 800,
+                                                fontFamily: 'var(--font-mono)',
+                                                letterSpacing: '0.01em',
+                                            }}
+                                        >
+                                            <span style={{ fontSize: '12px' }}>{badge.icon}</span>
+                                            <span style={{ color: 'var(--text-secondary)', fontWeight: 600, fontSize: '11px' }}>{badge.label}</span>
+                                            <span style={{ color: '#34d399', fontWeight: 900 }}>{badge.display}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
                         {/* Combat Mechanics & Buff Deep-Dive */}
                         <div
                             style={{
@@ -506,7 +603,7 @@ export default function ItemDetailModal({
                                 <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--text-secondary)', marginBottom: '8px' }}>
                                     Perbandingan dengan Perlengkapan Terpasang:
                                 </div>
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px', marginBottom: statDiffs.length > 0 ? '10px' : 0 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
                                         <ItemIcon item={currentlyEquippedInSlot} size={32} />
                                         <div style={{ minWidth: 0 }}>
@@ -537,6 +634,37 @@ export default function ItemDetailModal({
                                         </div>
                                     )}
                                 </div>
+
+                                {/* Stat Diffs Details */}
+                                {statDiffs.length > 0 && (
+                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', paddingTop: '8px', borderTop: '1px solid var(--surface-border)' }}>
+                                        {statDiffs.map((sd) => {
+                                            const isPlus = sd.diff > 0
+                                            return (
+                                                <div
+                                                    key={sd.key}
+                                                    style={{
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '4px',
+                                                        padding: '3px 8px',
+                                                        borderRadius: '6px',
+                                                        fontSize: '11px',
+                                                        fontWeight: 700,
+                                                        backgroundColor: isPlus ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.1)',
+                                                        border: `1px solid ${isPlus ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.25)'}`,
+                                                        color: isPlus ? '#10b981' : 'var(--accent-red)',
+                                                        fontFamily: 'var(--font-mono)',
+                                                    }}
+                                                >
+                                                    <span>{sd.icon}</span>
+                                                    <span>{sd.label}</span>
+                                                    <span>{isPlus ? `+${sd.diff}${sd.isPct ? '%' : ''}` : `${sd.diff}${sd.isPct ? '%' : ''}`}</span>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )}
                             </div>
                         )}
 

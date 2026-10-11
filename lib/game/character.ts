@@ -1,6 +1,6 @@
 // lib/game/character.ts — Character Roles, Stats & Calculation Engine
 import { AvatarClass } from '@/types'
-import { getItemById, getStarterItemsForClass, GameItem, ItemSlot } from './items'
+import { getItemById, getStarterItemsForClass, GameItem, ItemSlot, getItemStats } from './items'
 
 export interface CharacterRoleInfo {
     id: AvatarClass
@@ -165,7 +165,15 @@ export interface TotalCharacterStats {
     speed: number
     levelBonus: number
     equippedItemsList: GameItem[]
+    equipmentBonuses: {
+        hp: number
+        atk: number
+        def: number
+        crit: number
+        xp: number
+    }
     battleBuffs: {
+        extraHpPoints: number
         extraAtkPoints: number      // e.g. +35 points
         damageReductionPct: number  // e.g. 20%
         critChancePct: number       // e.g. 25%
@@ -192,6 +200,14 @@ export function calculateCharacterStats(
     let extraXpPct = 0
     let shieldRegenPoints = 0
 
+    const equipmentBonuses = {
+        hp: 0,
+        atk: 0,
+        def: 0,
+        crit: 0,
+        xp: 0,
+    }
+
     // Role inherent baseline buffs
     if (roleKey === 'warrior') {
         extraAtkPoints += 5
@@ -214,44 +230,44 @@ export function calculateCharacterStats(
         if (!item) continue
         equippedList.push(item)
 
+        const itemStats = getItemStats(item)
+        if (itemStats.hp) equipmentBonuses.hp += itemStats.hp
+        if (itemStats.atk) equipmentBonuses.atk += itemStats.atk
+        if (itemStats.def) equipmentBonuses.def += itemStats.def
+        if (itemStats.crit) equipmentBonuses.crit += itemStats.crit
+        if (itemStats.xp) equipmentBonuses.xp += itemStats.xp
+
         const buff = item.buff
-        switch (buff.type) {
-            case 'atk_bonus':
-                extraAtkPoints += buff.value
-                break
-            case 'def_bonus':
-                damageReductionPct += buff.value
-                break
-            case 'crit_rate':
-                critChancePct += buff.value
-                break
-            case 'time_bonus':
-                extraTimerSec += buff.value
-                break
-            case 'xp_bonus':
-                extraXpPct += buff.value
-                break
-            case 'shield_regen':
-                shieldRegenPoints += buff.value
-                break
-        }
+        if (buff.type === 'time_bonus') extraTimerSec += buff.value
+        if (buff.type === 'shield_regen') shieldRegenPoints += buff.value
+        if (buff.type === 'def_bonus') damageReductionPct += buff.value
     }
 
+    // Combine equipment bonuses into character combat attributes
+    const totalExtraAtk = extraAtkPoints + equipmentBonuses.atk
+    const totalCrit = Math.min(75, critChancePct + equipmentBonuses.crit)
+    const totalDamageReduction = Math.min(60, damageReductionPct + Math.floor(equipmentBonuses.def / 2))
+    const totalDef = role.baseStats.def + levelBonus + equipmentBonuses.def + Math.floor(damageReductionPct / 3)
+    const totalHp = role.baseStats.hp + levelBonus * 5 + equipmentBonuses.hp
+    const totalXp = extraXpPct + equipmentBonuses.xp
+
     return {
-        hp: role.baseStats.hp + levelBonus * 5,
+        hp: totalHp,
         mp: role.baseStats.mp + levelBonus * 3,
-        atk: role.baseStats.atk + levelBonus + extraAtkPoints,
-        def: role.baseStats.def + levelBonus + Math.floor(damageReductionPct / 3),
-        crit: Math.min(75, critChancePct),
+        atk: role.baseStats.atk + levelBonus + totalExtraAtk,
+        def: totalDef,
+        crit: totalCrit,
         speed: role.baseStats.speed + Math.floor(levelBonus / 2),
         levelBonus,
         equippedItemsList: equippedList,
+        equipmentBonuses,
         battleBuffs: {
-            extraAtkPoints,
-            damageReductionPct: Math.min(60, damageReductionPct),
-            critChancePct: Math.min(75, critChancePct),
+            extraHpPoints: equipmentBonuses.hp,
+            extraAtkPoints: totalExtraAtk,
+            damageReductionPct: totalDamageReduction,
+            critChancePct: totalCrit,
             extraTimerSec,
-            extraXpPct,
+            extraXpPct: totalXp,
             shieldRegenPoints,
         },
     }
