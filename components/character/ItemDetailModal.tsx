@@ -158,25 +158,16 @@ export default function ItemDetailModal({
         return () => window.removeEventListener('keydown', handleKeyDown)
     }, [isOpen, onClose])
 
-    if (!isOpen || !item) return null
-
-    const rarity = RARITY_CONFIG[item.rarity]
-    const slotInfo = ANATOMICAL_INFO[item.slot]
-    const buffDetails = getBuffDetails(item.buff)
-
-    // Role eligibility
-    const isUniversal = item.class_req === 'all'
-    const isRoleMatch = isUniversal || item.class_req === playerRole
-    const requiredRoleInfo = !isUniversal && item.class_req !== 'all' ? CHARACTER_ROLES[item.class_req] : null
-
     // Comparison calculation
     const hasDifferentEquipped = Boolean(
-        currentlyEquippedInSlot && currentlyEquippedInSlot.id !== item.id
+        item && currentlyEquippedInSlot && currentlyEquippedInSlot.id !== item.id
     )
-    const isThisEquipped = Boolean(isEquipped || (currentlyEquippedInSlot && currentlyEquippedInSlot.id === item.id))
+    const isThisEquipped = Boolean(
+        item && (isEquipped || (currentlyEquippedInSlot && currentlyEquippedInSlot.id === item.id))
+    )
 
     const statComparison = useMemo(() => {
-        if (!hasDifferentEquipped || !currentlyEquippedInSlot) return null
+        if (!item || !hasDifferentEquipped || !currentlyEquippedInSlot) return null
 
         const currentBuff = currentlyEquippedInSlot.buff
         const newBuff = item.buff
@@ -204,7 +195,7 @@ export default function ItemDetailModal({
     }, [hasDifferentEquipped, currentlyEquippedInSlot, item])
 
     const statDiffs = useMemo(() => {
-        if (!hasDifferentEquipped || !currentlyEquippedInSlot) return []
+        if (!item || !hasDifferentEquipped || !currentlyEquippedInSlot) return []
         const currentStats = getItemStats(currentlyEquippedInSlot)
         const newStats = getItemStats(item)
         const diffs: { key: string; label: string; diff: number; icon: string; isPct?: boolean }[] = []
@@ -234,16 +225,30 @@ export default function ItemDetailModal({
         return diffs
     }, [hasDifferentEquipped, currentlyEquippedInSlot, item])
 
-    const itemStatBadges = useMemo(() => formatItemStatBadges(item), [item])
+    const itemStatBadges = useMemo(() => {
+        if (!item) return []
+        return formatItemStatBadges(item)
+    }, [item])
 
     const handleShare = () => {
-        if (typeof window === 'undefined') return
+        if (typeof window === 'undefined' || !item) return
         const url = `${window.location.origin}/character?item=${item.id}`
         navigator.clipboard?.writeText(url).then(() => {
             setCopiedLink(true)
             setTimeout(() => setCopiedLink(false), 2000)
         })
     }
+
+    if (!isOpen || !item) return null
+
+    const rarity = RARITY_CONFIG[item.rarity]
+    const slotInfo = ANATOMICAL_INFO[item.slot]
+    const buffDetails = getBuffDetails(item.buff)
+
+    // Role eligibility
+    const isUniversal = item.class_req === 'all'
+    const isRoleMatch = isUniversal || item.class_req === playerRole
+    const requiredRoleInfo = !isUniversal && item.class_req !== 'all' ? CHARACTER_ROLES[item.class_req] : null
 
     return (
         <AnimatePresence>

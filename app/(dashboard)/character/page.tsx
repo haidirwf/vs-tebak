@@ -1859,24 +1859,22 @@ export default function CharacterPage() {
             </div>
 
             {/* ITEM DETAIL & PREVIEW MODAL */}
-            {mounted && typeof document !== 'undefined' && createPortal(
+            {mounted && typeof document !== 'undefined' && previewItem && createPortal(
                 <ItemDetailModal
                     item={previewItem}
                     isOpen={Boolean(previewItem)}
                     onClose={handleClosePreview}
-                    isEquipped={previewItem ? equipped[previewItem.slot] === previewItem.id : false}
+                    isEquipped={equipped[previewItem.slot] === previewItem.id}
                     onEquipToggle={(item, action) => handleEquipToggle(item, action)}
-                    actionLoading={actionLoadingId === previewItem?.id}
+                    actionLoading={actionLoadingId === previewItem.id}
                     currentlyEquippedInSlot={
-                        previewItem
-                            ? (equipped[previewItem.slot]
-                                ? GAME_ITEMS.find((it) => it.id === equipped[previewItem.slot]) || null
-                                : null)
+                        equipped[previewItem.slot]
+                            ? GAME_ITEMS.find((it) => it.id === equipped[previewItem.slot]) || null
                             : null
                     }
                     playerRole={avatarClass}
                     userXp={profile?.xp || 0}
-                    isInInventory={previewItem ? inventory.some((it) => it.id === previewItem.id) : false}
+                    isInInventory={inventory.some((it) => it.id === previewItem.id)}
                 />,
                 document.body
             )}
