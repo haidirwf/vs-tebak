@@ -13,7 +13,7 @@ import {
 } from 'lucide-react'
 import { useUserStore } from '@/stores/userStore'
 import { useContentStore, VoucherItem, RedemptionItem } from '@/stores/contentStore'
-import { GameItem, ItemSlot, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
+import { GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, GAME_ITEMS } from '@/lib/game/items'
 import { EquippedItemsMap } from '@/lib/game/character'
 import ItemIcon from '@/components/character/ItemIcon'
 import ItemCelebrationModal from '@/components/character/ItemCelebrationModal'
@@ -106,6 +106,7 @@ export default function ShopClient({
     // State: Items
     const [inventory, setInventory] = useState<GameItem[]>(initialInventory)
     const [selectedSlotFilter, setSelectedSlotFilter] = useState<'all' | ItemSlot>('all')
+    const [selectedRarityFilter, setSelectedRarityFilter] = useState<'all' | ItemRarity>('all')
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [celebrationItem, setCelebrationItem] = useState<GameItem | null>(null)
@@ -114,16 +115,17 @@ export default function ShopClient({
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
     const ownedItemIds = useMemo(() => new Set(inventory.map((item) => item.id)), [inventory])
 
-    // Filtered Shop Items (filtered by slot only)
+    // Filtered Shop Items (filtered by slot and rarity)
     const filteredShopItems = useMemo(() => {
         return GAME_ITEMS.filter((item) => {
             if (selectedSlotFilter !== 'all' && item.slot !== selectedSlotFilter) return false
+            if (selectedRarityFilter !== 'all' && item.rarity !== selectedRarityFilter) return false
             if (item.class_req !== 'all' && profile?.avatar_class && item.class_req !== profile.avatar_class) {
                 return false
             }
             return true
         })
-    }, [selectedSlotFilter, profile?.avatar_class])
+    }, [selectedSlotFilter, selectedRarityFilter, profile?.avatar_class])
 
     // Auto dismiss notification
     useEffect(() => {
@@ -581,49 +583,86 @@ export default function ShopClient({
             {/* TAB 2: TOKO AKSESORIS */}
             {activeTab === 'items' && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                    {/* Controls: Slot Filters Only */}
+                    {/* Controls: Slot and Rarity Filters */}
                     <div
                         style={{
                             display: 'flex',
-                            alignItems: 'center',
-                            gap: '8px',
-                            flexWrap: 'wrap',
+                            flexDirection: 'column',
+                            gap: '10px',
                             padding: '12px 16px',
                             backgroundColor: 'var(--surface-card)',
                             borderRadius: '12px',
                             border: '1px solid var(--surface-border)',
                         }}
                     >
-                        <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 600, marginRight: '2px' }}>
-                            Slot:
-                        </span>
-                        {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
-                            const isSlotActive = selectedSlotFilter === slotKey
-                            return (
-                                <motion.button
-                                    key={slotKey}
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    type="button"
-                                    onClick={() => setSelectedSlotFilter(slotKey)}
-                                    style={{
-                                        padding: '5px 11px',
-                                        borderRadius: '7px',
-                                        border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
-                                        backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
-                                        color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
-                                        fontFamily: 'var(--font-heading)',
-                                        fontSize: '11.5px',
-                                        fontWeight: isSlotActive ? 700 : 500,
-                                        cursor: 'pointer',
-                                        transition: 'all 0.15s ease',
-                                        boxShadow: 'none',
-                                    }}
-                                >
-                                    {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
-                                </motion.button>
-                            )
-                        })}
+                        {/* Slot Row */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                            <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 600, minWidth: '44px' }}>
+                                Slot:
+                            </span>
+                            {(['all', 'weapon', 'head', 'armor', 'accessory'] as const).map((slotKey) => {
+                                const isSlotActive = selectedSlotFilter === slotKey
+                                return (
+                                    <motion.button
+                                        key={slotKey}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        type="button"
+                                        onClick={() => setSelectedSlotFilter(slotKey)}
+                                        style={{
+                                            padding: '5px 11px',
+                                            borderRadius: '7px',
+                                            border: `1px solid ${isSlotActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                            backgroundColor: isSlotActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                            color: isSlotActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '11.5px',
+                                            fontWeight: isSlotActive ? 700 : 500,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease',
+                                            boxShadow: 'none',
+                                        }}
+                                    >
+                                        {slotKey === 'all' ? 'Semua Slot' : `${SLOT_LABELS[slotKey].emoji} ${SLOT_LABELS[slotKey].name}`}
+                                    </motion.button>
+                                )
+                            })}
+                        </div>
+
+                        {/* Rarity Row */}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap', borderTop: '1px solid var(--surface-border)', paddingTop: '10px' }}>
+                            <span style={{ fontSize: '11.5px', color: 'var(--text-secondary)', fontWeight: 600, minWidth: '44px' }}>
+                                Rarity:
+                            </span>
+                            {(['all', 'common', 'rare', 'epic', 'legendary'] as const).map((rarityKey) => {
+                                const isRarityActive = selectedRarityFilter === rarityKey
+                                const config = rarityKey !== 'all' ? RARITY_CONFIG[rarityKey] : null
+                                return (
+                                    <motion.button
+                                        key={rarityKey}
+                                        whileHover={{ scale: 1.02 }}
+                                        whileTap={{ scale: 0.98 }}
+                                        type="button"
+                                        onClick={() => setSelectedRarityFilter(rarityKey)}
+                                        style={{
+                                            padding: '5px 11px',
+                                            borderRadius: '7px',
+                                            border: `1px solid ${isRarityActive ? 'var(--accent-gold-border)' : 'var(--surface-border)'}`,
+                                            backgroundColor: isRarityActive ? 'var(--accent-gold-bg)' : 'var(--surface-elevated)',
+                                            color: isRarityActive ? 'var(--accent-gold-text)' : 'var(--text-secondary)',
+                                            fontFamily: 'var(--font-heading)',
+                                            fontSize: '11.5px',
+                                            fontWeight: isRarityActive ? 700 : 500,
+                                            cursor: 'pointer',
+                                            transition: 'all 0.15s ease',
+                                            boxShadow: 'none',
+                                        }}
+                                    >
+                                        {rarityKey === 'all' ? 'Semua Rarity' : `${config?.stars} ${config?.label}`}
+                                    </motion.button>
+                                )
+                            })}
+                        </div>
                     </div>
 
                     {/* Items Grid */}
@@ -648,6 +687,7 @@ export default function ShopClient({
                                 type="button"
                                 onClick={() => {
                                     setSelectedSlotFilter('all')
+                                    setSelectedRarityFilter('all')
                                 }}
                                 className="btn-dark-outline"
                                 style={{

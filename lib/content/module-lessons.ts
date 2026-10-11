@@ -687,51 +687,652 @@ Dengan menerapkan Box Model, Flexbox, dan Media Queries Mobile-First, kamu siap 
     // =========================================================================
     'javascript-pemula': [
         {
-            id: 'js-variabel',
-            title: 'Variabel Modern (let & const)',
+            id: 'js-fondasi-runtime',
+            title: 'Fondasi JavaScript & Cara Kerja Engine Peramban',
             type: 'text',
-            content: `JavaScript modern (ES6+) memperkenalkan kata kunci \`let\` dan \`const\` untuk mendeklarasikan variabel dengan cakupan blok (*block scope*).
+            content: `JavaScript adalah bahasa pemrograman dinamis tingkat tinggi (*high-level*) yang menjadi motor penggerak interaktivitas di seluruh situs web modern. Jika HTML adalah kerangka dan CSS adalah busana visual, maka JavaScript adalah sistem saraf yang memberikan kehidupan dan logika reaksi.
 
-## Menentukan Deklarasi yang Tepat
-Gunakan \`const\` secara bawaan untuk nilai yang tidak akan di-reassign, dan gunakan \`let\` jika nilai variabel perlu diperbarui di kemudian waktu.
+## Peran JavaScript dalam Ekosistem Web
+Di masa awal web (1995), JavaScript diciptakan oleh Brendan Eich hanya untuk validasi formulir sederhana. Kini, JavaScript telah berkembang menjadi bahasa paling populer di dunia:
+1. **Front-End Interaktif**: Memanipulasi dokumen halaman (DOM), merespons klik tombol, animasi, dan komunikasi data real-time.
+2. **Back-End Server**: Ditenagai oleh runtime **Node.js** dan **Deno**, JavaScript menjalankan API mikro, koneksi database, dan websocket.
+3. **Aplikasi Mobile & Desktop**: Framework seperti React Native dan Electron memungkinkan satu basis kode jalan di Android, iOS, Windows, dan macOS.
 
-Contoh deklarasi variabel:
+## Bagaimana Kode JavaScript Dijalankan?
+Peramban seperti Google Chrome memuat mesin eksekusi bernama **V8 Engine**. Alur eksekusi internal JavaScript:
+- **Parser**: Membaca teks kode sumber dan mengubahnya menjadi *Abstract Syntax Tree* (AST).
+- **Just-In-Time (JIT) Compiler**: Menerjemahkan AST secara instan menjadi kode mesin (*bytecode*) super cepat saat aplikasi berjalan.
+- **Call Stack**: Struktur tumpukan memori eksekusi fungsi yang menerapkan prinsip LIFO (*Last In, First Out*).
+- **Memory Heap**: Area memori dinamis tempat objek dan variabel dialokasikan.
+
 \`\`\`javascript
-const kursus = "JavaScript Pemula";
-let skorLatihan = 85;
-
-// Memperbarui skor
-skorLatihan = skorLatihan + 15;
-
-console.log(\`Selamat! Kursus \${kursus} meraih skor: \${skorLatihan}\`);
+// Menampilkan pesan ke konsol pengembang peramban
+console.log("Selamat datang di Akademi JavaScript Petualang!");
+console.info("Status mesin: V8 Engine Siap Mengeksekusi Kode.");
 \`\`\`
 
-Hindari penggunaan kata kunci \`var\` warisan lama untuk mencegah ketidaksengajaan *variable hoisting*.`,
+## Cara Menyematkan JavaScript ke Dokumen Web
+Terdapat tiga cara menghubungkan kode JavaScript ke halaman HTML:
+1. **Eksternal (Sangat Direkomendasikan)**:
+\`\`\`html
+<!-- Letakkan di akhir elemen <body> atau gunakan atribut defer di <head> -->
+<script src="app.js" defer></script>
+\`\`\`
+2. **Internal**: Menuliskan skrip di antara tag \`<script>...</script>\` di berkas HTML.
+3. **Inline (Hindari)**: Menaruh event handler langsung pada atribut HTML seperti \`onclick="..."\`.`,
         },
         {
-            id: 'js-video',
-            title: 'Video Pembelajaran: JavaScript Pemula',
+            id: 'js-variabel-scope',
+            title: 'Sistem Variabel Modern (let vs const vs var) & Block Scope',
+            type: 'text',
+            content: `Variabel adalah wadah penyimpanan nilai data di memori komputer. Sejak standardisasi ECMAScript 2015 (ES6), cara kita mendeklarasikan variabel telah mengalami transformasi mendasar.
+
+## Tiga Kata Kunci Deklarasi
+1. **\`const\` (Constant)**:
+   - Digunakan untuk nilai yang **tidak boleh di-reassign** (diubah referensi nilainya).
+   - *Best Practice*: Gunakan \`const\` sebagai pilihan utama secara bawaan!
+2. **\`let\`**:
+   - Digunakan ketika nilai variabel memang direncanakan untuk diperbarui di kemudian waktu (seperti penghitung loop atau skor game).
+3. **\`var\` (Legacy / Tinggalkan)**:
+   - Variabel gaya lama pra-ES6 yang memiliki sifat *function scoped* dan rentan bug karena *hoisting* yang membingungkan.
+
+\`\`\`javascript
+// Nilai konstanta yang tidak berubah
+const namaPetualang = "Ksatria Arya";
+const KELAS_PETUALANG = "Warrior";
+
+// Variabel nilai dinamis yang dapat berubah
+let levelKarakter = 1;
+let sisaDarah = 100;
+
+// Re-assignment valid pada let:
+levelKarakter = levelKarakter + 1; // Sekarang bernilai 2
+sisaDarah -= 25;                  // Sekarang bernilai 75
+
+// Eror TypeError jika mencoba mengubah const:
+// namaPetualang = "Budi"; // ERROR!
+\`\`\`
+
+## Pemahaman Penting: Block Scope (\`{ ... }\`)
+Variabel \`let\` dan \`const\` menganut prinsip **Block Scope**, artinya variabel tersebut hanya hidup dan dapat diakses di dalam kurung kurawal tempat ia dideklarasikan:
+
+\`\`\`javascript
+if (true) {
+  const senjataRahasia = "Pedang Api Excalibur";
+  let kekuatan = 95;
+  var racunLama = "Bisa Ular"; // var bocor keluar blok!
+}
+
+// console.log(senjataRahasia); // ReferenceError: senjataRahasia is not defined
+// console.log(kekuatan);       // ReferenceError: kekuatan is not defined
+console.log(racunLama);        // Output: "Bisa Ular" (Bahaya kebocoran memori var!)
+\`\`\`
+
+## Hoisting & Temporal Dead Zone (TDZ)
+Pada \`var\`, deklarasi ditarik ke paling atas (*hoisted*) dengan nilai awal \`undefined\`. Sebaliknya, variabel \`let\` dan \`const\` berada di dalam **Temporal Dead Zone (TDZ)** sampai baris kode inisialisasinya dieksekusi secara nyata oleh peramban. Mengakses variabel \`let\`/\`const\` sebelum baris deklarasi akan melempar eror tegas \`ReferenceError\`.`,
+        },
+        {
+            id: 'js-tipe-data-operator',
+            title: 'Tipe Data Primitif, Equality (=== vs ==), & Operator Logika',
+            type: 'text',
+            content: `JavaScript adalah bahasa bertipe dinamis (*dynamically typed*), yang berarti kamu tidak perlu mendeklarasikan tipe data variabel secara eksplisit karena tipe ditentukan otomatis saat nilai dimasukkan (*runtime*).
+
+## 7 Tipe Data Primitif Utama
+Nilai primitif bersifat kekal (*immutable*) dan disimpan langsung di stack memory:
+1. **\`string\`**: Teks karakter berurutan, ditulis dengan kutip tunggal (\`'...\`), kutip ganda (\`"...\`), atau template literal (\`\`...\`\`).
+2. **\`number\`**: Angka bulat maupun desimal (contoh: \`42\`, \`3.14\`, \`-10\`, \`Infinity\`, \`NaN\`).
+3. **\`boolean\`**: Nilai logika kebenaran: hanya \`true\` atau \`false\`.
+4. **\`null\`**: Representasi sengaja dari ketiadaan nilai (*intentional absence of value*).
+5. **\`undefined\`**: Nilai bawaan bagi variabel yang sudah dideklarasikan namun belum pernah diisi nilai.
+6. **\`bigint\`**: Menampung bilangan bulat super besar melampaui limit safe integer JavaScript (\`2^53 - 1\`).
+7. **\`symbol\`**: Identifier unik yang dijamin tidak akan pernah bentrok.
+
+\`\`\`javascript
+const nama = "Arjuna";           // string
+const level = 25;               // number
+const isKetuaGuild = true;      // boolean
+let senjataCadangan = null;     // null (sengaja kosong)
+let misiBerikutnya;             // undefined (belum diisi)
+\`\`\`
+
+## Perbedaan Krusial: \`null\` vs \`undefined\`
+- \`undefined\` = Sistem peramban memberi tahu: *"Wadah ini ada, tapi belum pernah kamu isi apa-apa."*
+- \`null\` = Pengembang secara sadar menetapkan: *"Wadah ini sengaja saya kosongkan sekarang."*
+
+## Strict Equality (\`===\`) vs Loose Equality (\`==\`)
+Hindari penggunaan dua tanda sama dengan (\`==\`) karena JavaScript akan melakukan konversi tipe implisit (*type coercion*) yang sering memicu bug tersembunyi:
+
+\`\`\`javascript
+// Loose equality (==) melakukan type coercion otomatis:
+console.log(5 == "5");           // true (Angka 5 disamakan dengan teks "5"!)
+console.log(0 == false);         // true (Membingungkan!)
+console.log("" == 0);            // true
+
+// Strict equality (===) membandingkan nilai DAN tipe data sekaligus:
+console.log(5 === "5");          // false (Number != String)
+console.log(0 === false);        // false (Number != Boolean)
+console.log(5 === 5);            // true (Identik!)
+\`\`\`
+*Aturan Baku*: **Selalu gunakan operator \`===\` (dan \`!==\`) dalam semua kondisi kode modern!**
+
+## Operator Logika Modern
+- **AND (\`&&\`)**: Mengembalikan true jika kedua sisi bernilai true.
+- **OR (\`||\`)**: Mengembalikan true jika salah satu sisi bernilai true.
+- **Nullish Coalescing (\`??\`)**: Memberikan nilai fallback HANYA jika sisi kiri bernilai \`null\` atau \`undefined\` (tidak mengabaikan angka 0 atau string kosong).
+- **Template Literals**: Menggabungkan teks dan ekspresi variabel secara elegan:
+\`\`\`javascript
+const petualang = "Ksatria Danu";
+const koinEmas = 1500;
+console.log(\`Petualang \${petualang} memiliki saldo \${koinEmas.toLocaleString('id-ID')} Gold.\`);
+\`\`\``,
+        },
+        {
+            id: 'js-array-transformasi',
+            title: 'Struktur Data Array & Higher-Order Methods (map, filter, reduce)',
+            type: 'text',
+            content: `Array adalah daftar terurut dari kumpulan data yang dapat menampung elemen bertipe apapun, diakses menggunakan indeks berbasis angka yang dimulai dari angka nol (\`0\`).
+
+\`\`\`javascript
+const perlengkapan = ["Pedang Besi", "Perisai Kayu", "Ramuan HP", "Batu Teleport"];
+
+console.log(perlengkapan[0]); // "Pedang Besi"
+console.log(perlengkapan.length); // 4
+\`\`\`
+
+## Tiga Metode Transformasi Modern Wajib Kuasai
+Pengembang modern jarang menggunakan loop konvensional \`for (let i = 0...)\` untuk memanipulasi data. Kita mengutamakan metode fungsional non-mutatif:
+
+### 1. \`.map()\`: Transformasi Setiap Elemen
+Membuat **array baru** dengan hasil pemrosesan fungsi pada setiap elemen tanpa mengubah array sumber asli:
+\`\`\`javascript
+const daftarXP = [100, 250, 400];
+// Gandakan setiap XP dengan bonus event 2x
+const xpGanda = daftarXP.map((xp) => xp * 2);
+console.log(xpGanda); // [200, 500, 800]
+console.log(daftarXP); // [100, 250, 400] (Array asli tetap aman!)
+\`\`\`
+
+### 2. \`.filter()\`: Menyaring Elemen Berdasarkan Kriteria
+Membuat array baru yang hanya berisi elemen-elemen yang menghasilkan nilai \`true\` pada kondisi pengujian:
+\`\`\`javascript
+const skorPemain = [45, 80, 92, 60, 35, 99];
+// Ambil pemain yang lulus kriteria nilai minimal 75
+const pemainUnggul = skorPemain.filter((skor) => skor >= 75);
+console.log(pemainUnggul); // [80, 92, 99]
+\`\`\`
+
+### 3. \`.reduce()\`: Mengakumulasi Seluruh Elemen Menjadi Satu Nilai
+Menggabungkan seluruh elemen array menjadi sebuah nilai tunggal (misalnya menghitung total penjumlahan, rata-rata, atau kalkulasi skor):
+\`\`\`javascript
+const hadiahKoin = [50, 120, 80, 150];
+
+// Parameter 1: akumulator, Parameter 2: elemen saat ini, Parameter 3: nilai awal (0)
+const totalKoin = hadiahKoin.reduce((akumulator, koinSaatIni) => {
+  return akumulator + koinSaatIni;
+}, 0);
+
+console.log("Total Koin Didapat:", totalKoin); // 400
+\`\`\`
+
+## Metode Pencarian Esensial Lainnya
+- **\`.find((item) => ...)\`**: Mengembalikan elemen **pertama** yang cocok dengan kriteria pencarian.
+- **\`.includes(item)\`**: Mengembalikan \`true\` jika suatu nilai ada di dalam array.
+- **\`.some((item) => ...)\`**: Mengembalikan \`true\` jika minimal ada satu elemen yang lolos uji.
+- **\`.every((item) => ...)\`**: Mengembalikan \`true\` jika seluruh elemen tanpa kecuali lolos uji.`,
+        },
+        {
+            id: 'js-objek-destruktur',
+            title: 'Struktur Objek, Destructuring, & Spread Operator',
+            type: 'text',
+            content: `Objek (*Object*) adalah struktur data terpenting di JavaScript yang menyimpan data dalam pasangan kunci-nilai (*key-value pairs*). Objek merepresentasikan entitas nyata seperti profil pengguna, status hero, atau payload respon API.
+
+\`\`\`javascript
+const hero = {
+  nama: "Gusion",
+  role: "Assassin",
+  level: 15,
+  skills: ["Sword Spike", "Shadowblade Slaughter"],
+  status: {
+    hp: 2450,
+    mana: 450,
+  },
+};
+
+// Mengakses properti:
+console.log(hero.nama);         // Dot notation: "Gusion"
+console.log(hero["role"]);      // Bracket notation: "Assassin"
+console.log(hero.status.hp);    // Bersarang: 2450
+\`\`\`
+
+## Object Destructuring (Pembongkaran Properti)
+Fitur ES6 yang sangat populer di ekosistem React dan JavaScript modern untuk mengekstrak properti langsung ke dalam variabel mandiri:
+
+\`\`\`javascript
+// Cara konvensional lama:
+// const nama = hero.nama;
+// const role = hero.role;
+
+// Cara modern destructuring:
+const { nama, role, level } = hero;
+console.log(\`Hero \${nama} adalah seorang \${role} berlevel \${level}.\`);
+
+// Destructuring dengan nilai default:
+const { senjataUtama = "Belati Magis" } = hero;
+\`\`\`
+
+## Spread Operator (\`...\`) untuk Immutabilitas
+Spread operator (\`...\`) digunakan untuk menyalin (*shallow copy*) atau menggabungkan objek dan array tanpa mengubah data aslinya:
+
+\`\`\`javascript
+const statistikDasar = { kekuatan: 80, kelincahan: 90 };
+const buffKekuatan = { stamina: 70, kelincahan: 110 }; // kelincahan ditimpa
+
+// Menggabungkan dua objek secara aman:
+const statistikAkhir = {
+  ...statistikDasar,
+  ...buffKekuatan,
+  bonusGelar: "Penembak Jitu",
+};
+
+console.log(statistikAkhir);
+// { kekuatan: 80, kelincahan: 110, stamina: 70, bonusGelar: "Penembak Jitu" }
+\`\`\`
+
+## Utilitas Objek Bawaan
+- **\`Object.keys(obj)\`**: Mengambil seluruh nama properti (*keys*) dalam bentuk array string.
+- **\`Object.values(obj)\`**: Mengambil seluruh nilai properti (*values*) dalam bentuk array.
+- **\`Object.entries(obj)\`**: Mengambil pasangan \`[key, value]\` dalam bentuk array dua dimensi.`,
+        },
+        {
+            id: 'js-fungsi-arrow',
+            title: 'Fungsi Modern: Parameter Default, Rest Operator, & Arrow Functions',
+            type: 'text',
+            content: `Fungsi adalah blok bangunan fundamental dalam pemrograman terstruktur. Di JavaScript, fungsi berstatus sebagai *First-Class Citizens*, yang artinya fungsi dapat disimpan dalam variabel, dioper sebagai argumen fungsi lain (*callback*), dan dikembalikan sebagai hasil eksekusi.
+
+## Tiga Gaya Penulisan Fungsi
+
+### 1. Function Declaration
+Gaya deklarasi klasik yang otomatis terangkat (*hoisted*):
+\`\`\`javascript
+function hitungPajak(harga, persen = 11) {
+  return harga * (persen / 100);
+}
+\`\`\`
+
+### 2. Function Expression
+Menyimpan fungsi anonim ke dalam variabel konstanta:
+\`\`\`javascript
+const hitungDiskon = function(harga, potongan) {
+  return harga - potongan;
+};
+\`\`\`
+
+### 3. Arrow Function (\`=>\`) (Standar Modern)
+Memperkenalkan sintaks yang sangat ringkas, leksikal binding untuk \`this\`, dan return implisit:
+\`\`\`javascript
+// Format standar dengan blok kurung kurawal
+const kalikanDua = (angka) => {
+  return angka * 2;
+};
+
+// Format satu baris (Implicit Return) tanpa kata kunci 'return':
+const sapaPetualang = (nama) => \`Salam hormat, Yang Mulia \${nama}!\`;
+const kuadrat = (x) => x * x;
+
+console.log(sapaPetualang("Raden")); // "Salam hormat, Yang Mulia Raden!"
+console.log(kuadrat(9));             // 81
+\`\`\`
+
+## Parameter Default & Rest Operator (\`...\`)
+Kamu dapat menetapkan nilai cadangan jika pengguna lupa memasukkan argumen, serta menerima argumen tak terbatas dengan Rest Parameter:
+
+\`\`\`javascript
+// Parameter default
+const serangMonster = (damage = 10, elemen = "Fisik") => {
+  return \`Menyerang dengan daya \${damage} bertipe elemen \${elemen}\`;
+};
+
+// Rest Parameter untuk menjaring banyak argumen ke dalam array
+const hitungTotalSkor = (...semuaSkor) => {
+  return semuaSkor.reduce((total, skor) => total + skor, 0);
+};
+
+console.log(hitungTotalSkor(10, 20, 30, 40)); // 100
+\`\`\`
+
+## Fungsi Callback & Higher-Order Functions
+Higher-order function adalah fungsi yang menerima fungsi lain sebagai parameter:
+\`\`\`javascript
+const jalankanOperasi = (angkaA, angkaB, fungsiAksi) => {
+  return fungsiAksi(angkaA, angkaB);
+};
+
+const tambah = (a, b) => a + b;
+const kali = (a, b) => a * b;
+
+console.log(jalankanOperasi(5, 4, tambah)); // 9
+console.log(jalankanOperasi(5, 4, kali));   // 20
+\`\`\``,
+        },
+        {
+            id: 'js-logika-kontrol',
+            title: 'Kontrol Alur Logika: Percabangan, Ternary, & Truthy/Falsy',
+            type: 'text',
+            content: `Program komputer menjadi cerdas ketika ia mampu mengambil keputusan bercabang berdasarkan kondisi data input yang diterimanya.
+
+## Percabangan Standar (\`if\`, \`else if\`, \`else\`)
+\`\`\`javascript
+const nilaiUjian = 88;
+
+if (nilaiUjian >= 90) {
+  console.log("Peringkat: Grade A (Sangat Memuaskan)");
+} else if (nilaiUjian >= 75) {
+  console.log("Peringkat: Grade B (Lulus Berhasil)");
+} else if (nilaiUjian >= 60) {
+  console.log("Peringkat: Grade C (Cukup)");
+} else {
+  console.log("Peringkat: Grade D (Wajib Remedial)");
+}
+\`\`\`
+
+## Operator Ternary (\`kondisi ? nilaiBenar : nilaiSalah\`)
+Pilihan elegan untuk menggantikan blok \`if-else\` sederhana menjadi satu baris ekspresi:
+\`\`\`javascript
+const umur = 20;
+// Menentukan izin akses petualangan
+const statusAkses = umur >= 17 ? "Diizinkan Masuk Dungeon" : "Ditolak, Belum Cukup Umur";
+console.log(statusAkses);
+\`\`\`
+
+## Konsep Vital: Truthy vs Falsy di JavaScript
+Dalam evaluasi kondisi logika, setiap nilai di JavaScript secara alami diperlakukan sebagai **Truthy** (dianggap \`true\`) KECUALI 6 nilai bawaan yang berstatus **Falsy**:
+
+Daftar 6 Nilai **Falsy**:
+1. \`false\` (boolean false)
+2. \`0\` dan \`-0\` (angka nol)
+3. \`""\` atau \`''\` (string kosong tanpa spasi)
+4. \`null\`
+5. \`undefined\`
+6. \`NaN\` (*Not a Number*)
+
+Semua nilai selain daftar di atas (termasuk string non-kosong \`"0"\`, array kosong \`[]\`, dan objek kosong \`{}\`) adalah **Truthy**!
+
+\`\`\`javascript
+const daftarGuild = []; // Array kosong
+
+if (daftarGuild) {
+  console.log("Array kosong tetap dievaluasi sebagai TRUTHY!");
+}
+
+// Cara memeriksa apakah array benar-benar memiliki isi:
+if (daftarGuild.length > 0) {
+  console.log("Ada anggota guild");
+} else {
+  console.log("Guild masih belum memiliki anggota");
+}
+\`\`\`
+
+## Percabangan Terstruktur (\`switch - case\`)
+Ideal jika kamu membandingkan satu nilai terhadap banyak kemungkinan diskrit yang tetap:
+\`\`\`javascript
+const cuacaDungeon = "hujan_badai";
+
+switch (cuacaDungeon) {
+  case "cerah":
+    console.log("Kecepatan jalan normal.");
+    break;
+  case "kabut":
+    console.log("Jarak pandang terbatas 5 meter.");
+    break;
+  case "hujan_badai":
+    console.log("Peringatan: Sambaran petir mengurangi pertahanan!");
+    break;
+  default:
+    console.log("Kondisi cuaca standar.");
+}
+\`\`\``,
+        },
+        {
+            id: 'js-dom-interaktif',
+            title: 'Manipulasi DOM & Menangani Event Listener Interaktif',
+            type: 'text',
+            content: `**Document Object Model (DOM)** adalah representasi pohon objek terstruktur dari dokumen HTML yang dibentuk peramban di memori. Melalui antarmuka DOM inilah JavaScript dapat membaca elemen, mengubah teks, memodifikasi gaya CSS, dan mendengarkan aksi interaksi pengguna.
+
+## Memilih Elemen HTML dengan Selektor Modern
+Gunakan metode standar W3C:
+- **\`document.querySelector('selektor-css')\`**: Memilih elemen **pertama** yang cocok dengan selektor CSS.
+- **\`document.querySelectorAll('selektor-css')\`**: Memilih **seluruh elemen** yang cocok, dikembalikan dalam bentuk \`NodeList\` (dapat di-loop dengan \`.forEach()\`).
+
+\`\`\`javascript
+// Menyeleksi elemen berdasarkan ID, Class, atau Tag:
+const tombolAksi = document.querySelector("#btn-serang");
+const kartuPemain = document.querySelector(".player-card");
+const semuaBadge = document.querySelectorAll(".badge-item");
+\`\`\`
+
+## Memodifikasi Konten & Atribut
+\`\`\`javascript
+const judulLobby = document.querySelector("#lobby-title");
+
+// Mengubah teks secara aman (mencegah serangan XSS):
+judulLobby.textContent = "Arena Pertarungan Guild Terbuka!";
+
+// Memanipulasi kelas CSS (sangat dianjurkan daripada inline style):
+judulLobby.classList.add("text-gold");
+judulLobby.classList.remove("text-muted");
+judulLobby.classList.toggle("active"); // Nyalakan jika mati, matikan jika nyala
+
+// Mengubah atribut:
+const avatarImg = document.querySelector("#avatar-hero");
+avatarImg.setAttribute("src", "/avatars/warrior-gold.png");
+avatarImg.setAttribute("alt", "Avatar Ksatria Emas");
+\`\`\`
+
+## Mendengarkan Interaksi Pengguna (\`addEventListener\`)
+Gunakan \`.addEventListener('namaEvent', callbackFunction)\` untuk merespons interaksi:
+
+\`\`\`javascript
+const tombolPicu = document.querySelector("#btn-klaim-hadiah");
+
+tombolPicu.addEventListener("click", (event) => {
+  // Mencegah perilaku bawaan (misal submit form reload halaman):
+  event.preventDefault();
+
+  console.log("Tombol klaim hadiah berhasil diklik!");
+  tombolPicu.textContent = "Hadiah Berhasil Diklaim!";
+  tombolPicu.disabled = true;
+});
+\`\`\`
+
+## Event Umum dalam Aplikasi Web
+- **\`click\`**: Ketika elemen diklik tetikus atau disentuh layar sentuh.
+- **\`input\`** / **\`change\`**: Ketika kolom formulir sedang atau selesai diketik pengguna.
+- **\`submit\`**: Ketika formulir dikirimkan.
+- **\`keydown\`** / **\`keyup\`**: Ketika tombol keyboard ditekan atau dilepas.`,
+        },
+        {
+            id: 'js-async-promise',
+            title: 'Asynchronous JavaScript: Event Loop, Promise, & Async/Await',
+            type: 'text',
+            content: `JavaScript berjalan pada satu jalur pemrosesan utama (*Single-Threaded*). Artinya, ia hanya dapat mengeksekusi satu instruksi kode dalam satu satuan waktu. 
+
+Lalu, bagaimana web dapat mengambil data dari internet selama 2 detik tanpa membuat seluruh tampilan layar membeku (*freeze*)? Jawabannya adalah arsitektur **Asynchronous Non-Blocking** yang digerakkan oleh **Event Loop**!
+
+## Anatomi Event Loop
+Operasi berat seperti pengambilan data jaringan (\`fetch\`) atau jeda waktu (\`setTimeout\`) didelegasikan ke Web APIs peramban di latar belakang. Ketika tugas selesai, respon dikirim ke *Callback Queue / Microtask Queue*. Saat *Call Stack* kosong, Event Loop mendorong tugas tersebut kembali untuk dieksekusi.
+
+\`\`\`javascript
+console.log("1. Mulai petualangan");
+
+// Operasi asinkronus (dijalankan di latar belakang)
+setTimeout(() => {
+  console.log("2. Harta karun ditemukan dari peti!");
+}, 1000);
+
+console.log("3. Ksatria terus melangkah menyusuri lorong");
+
+// Output di konsol:
+// "1. Mulai petualangan"
+// "3. Ksatria terus melangkah menyusuri lorong"
+// (Jeda 1 detik...)
+// "2. Harta karun ditemukan dari peti!"
+\`\`\`
+
+## Evolusi: Dari Callback Hell ke Promise
+Untuk menangani data asinkronus bersambung, JavaScript memperkenalkan objek **\`Promise\`** yang memiliki 3 fase siklus hidup:
+1. **\`Pending\`**: Operasi masih berjalan dan belum selesai.
+2. **\`Fulfilled\`**: Operasi sukses diselesaikan dengan hasil data.
+3. **\`Rejected\`**: Operasi gagal dan mengembalikan alasan eror.
+
+## Sintaks Modern: \`async\` / \`await\` & \`try...catch\`
+\`async\` / \`await\` adalah cara terbaik menulis kode asinkronus karena dibaca dari atas ke bawah layaknya kode sinkronus biasa:
+
+\`\`\`javascript
+// Menandai fungsi dengan kata kunci async
+const muatDataPemain = async (userId) => {
+  try {
+    console.log("Memulai koneksi ke server...");
+    
+    // await menghentikan sementara fungsi hingga promise selesai
+    const response = await fetch(\`https://api.skillungo.id/players/\${userId}\`);
+    
+    // Periksa status respon HTTP
+    if (!response.ok) {
+      throw new Error(\`Gagal mengambil data, status HTTP: \${response.status}\`);
+    }
+
+    const data = await response.json();
+    console.log("Data Pemain Berhasil Diterima:", data.nama);
+    return data;
+  } catch (error) {
+    // Tangani seluruh kemungkinan error jaringan atau server
+    console.error("Terjadi kegagalan koneksi:", error.message);
+    return null;
+  }
+};
+\`\`\`
+
+*Kaidah Emas*: **Selalu bungkus blok \`await\` di dalam blok \`try { ... } catch (err) { ... }\` agar aplikasimu tidak crash saat jaringan pengguna offline!**`,
+        },
+        {
+            id: 'js-video-pilihan',
+            title: 'Video Pembelajaran Pilihan: Kuasai Fundamental JavaScript',
             type: 'video',
             content: 'https://www.youtube.com/watch?v=mD6uSGSjgr4',
         },
         {
-            id: 'js-fungsi',
-            title: 'Fungsi & Arrow Function',
-            type: 'text',
-            content: `Fungsi adalah blok kode terstruktur yang dapat dipanggil berulang kali untuk mengeksekusi logika tertentu.
+            id: 'js-pemula-challenge',
+            title: 'Tantangan Koding: Sistem Kalkulator Quest & Manajemen XP Petualang',
+            type: 'code',
+            content: 'Latihan praktik koding interaktif: Tuliskan logika fungsi kalkulator akumulasi XP petualang, penentuan rank tier, dan filtering quest selesai menggunakan JavaScript modern.',
+            codeChallenge: {
+                language: 'javascript',
+                instructions: `Selamat datang di Tantangan Koding JavaScript Pemula! Pada tantangan ini, kamu bertugas melengkapi 3 fungsi logika utama dalam script.js untuk sistem Guild Petualang Skillungo:
 
-Contoh fungsi konvensional dan arrow function:
-\`\`\`javascript
-// Arrow function ringkas untuk kalkulasi XP
-const hitungBonusXP = (baseXP, persentase) => {
-  return baseXP + (baseXP * persentase / 100);
-};
+1. hitungTotalXP(questRewards, bonusMultiplier):
+   Menerima array angka questRewards dan angka bonusMultiplier (default bernilai 1).
+   Hitung total perolehan XP menggunakan method bawaan .reduce(), kemudian kalikan dengan bonusMultiplier. Kembalikan total hasil perhitungannya.
 
-const totalXP = hitungBonusXP(50, 15);
-console.log("Total XP Didapat:", totalXP); // 57.5
-\`\`\`
+2. tentukanRankPetualang(totalXP):
+   Menerima angka totalXP dan mengembalikan nama tier petualang:
+   - Jika totalXP >= 1000 -> kembalikan "Legend"
+   - Jika totalXP >= 500  -> kembalikan "Gold"
+   - Jika totalXP >= 200  -> kembalikan "Silver"
+   - Jika kurang dari 200 -> kembalikan "Bronze"
 
-Arrow function memberikan sintaks yang lebih padat dan menjaga konteks \`this\` secara leksikal.`,
+3. filterQuestSelesai(quests):
+   Menerima array objek quests di mana setiap objek memiliki properti { id, title, completed: boolean, xp: number }.
+   Gunakan method .filter() untuk mengembalikan array yang hanya berisi quest dengan completed bernilai true.
+
+Tuliskan kodemu, lalu klik "Jalankan & Uji Kode" di bawah untuk melihat hasil eksekusi di konsol dan memvalidasi kriteria!`,
+                starterJs: `// =========================================================================
+// TANTANGAN KODING: SISTEM KALKULATOR QUEST & MANAJEMEN XP PETUALANG
+// Lengkapi ketiga fungsi di bawah ini sesuai kriteria petunjuk
+// =========================================================================
+
+/**
+ * 1. Hitung total XP dari array hadiah quest dikalikan multiplier bonus
+ * @param {number[]} questRewards - Daftar perolehan XP (contoh: [100, 150, 50])
+ * @param {number} bonusMultiplier - Pengali bonus (default: 1)
+ * @returns {number}
+ */
+function hitungTotalXP(questRewards, bonusMultiplier = 1) {
+  // TODO: Gunakan .reduce() untuk menjumlahkan isi array lalu kalikan bonusMultiplier
+  return questRewards.reduce((acc, curr) => acc + curr, 0) * bonusMultiplier;
+}
+
+/**
+ * 2. Tentukan rank tier petualang berdasarkan akumulasi total XP
+ * @param {number} totalXP - Nilai total XP petualang
+ * @returns {string} 'Legend' | 'Gold' | 'Silver' | 'Bronze'
+ */
+function tentukanRankPetualang(totalXP) {
+  // TODO: Kembalikan 'Legend' (>=1000), 'Gold' (>=500), 'Silver' (>=200), atau 'Bronze' (<200)
+  if (totalXP >= 1000) return 'Legend';
+  if (totalXP >= 500) return 'Gold';
+  if (totalXP >= 200) return 'Silver';
+  return 'Bronze';
+}
+
+/**
+ * 3. Saring hanya quest yang sudah selesai (completed === true)
+ * @param {Array<{ id: number, title: string, completed: boolean, xp: number }>} quests
+ * @returns {Array}
+ */
+function filterQuestSelesai(quests) {
+  // TODO: Gunakan method .filter() untuk mengambil quest dengan completed === true
+  return quests.filter((q) => q.completed === true);
+}
+
+// --- Area Uji Coba Mandiri di Konsol ---
+const contohHadiah = [100, 150, 50];
+console.log("Total XP Didapat:", hitungTotalXP(contohHadiah, 1.5));
+console.log("Rank Tier Petualang:", tentukanRankPetualang(650));
+`,
+                testCases: [
+                    {
+                        id: 'tc-calc-basic',
+                        description: 'Fungsi hitungTotalXP([100, 150, 50], 1) mengembalikan nilai angka 300',
+                        type: 'eval',
+                        evalFnBody: 'typeof hitungTotalXP === "function" && hitungTotalXP([100, 150, 50], 1) === 300',
+                        hint: 'Pastikan hitungTotalXP menjumlahkan seluruh isi array questRewards menggunakan .reduce() dengan nilai awal 0.',
+                    },
+                    {
+                        id: 'tc-calc-multiplier',
+                        description: 'Fungsi hitungTotalXP menangani bonusMultiplier pecahan (misal: 1.5) dan default parameter 1',
+                        type: 'eval',
+                        evalFnBody: 'typeof hitungTotalXP === "function" && hitungTotalXP([100, 200], 1.5) === 450 && hitungTotalXP([40, 60]) === 100',
+                        hint: 'Pastikan mengalikan akumulasi total dengan bonusMultiplier dan memberikan parameter default = 1.',
+                    },
+                    {
+                        id: 'tc-rank-tier',
+                        description: 'Fungsi tentukanRankPetualang mengembalikan nama tier yang tepat ("Bronze", "Silver", "Gold", "Legend")',
+                        type: 'eval',
+                        evalFnBody: 'typeof tentukanRankPetualang === "function" && tentukanRankPetualang(1200) === "Legend" && tentukanRankPetualang(750) === "Gold" && tentukanRankPetualang(350) === "Silver" && tentukanRankPetualang(80) === "Bronze"',
+                        hint: 'Periksa urutan percabangan if/else if mulai dari ambang batas terbesar (>=1000) ke yang lebih kecil.',
+                    },
+                    {
+                        id: 'tc-filter-quests',
+                        description: 'Fungsi filterQuestSelesai berhasil memfilter quest yang memiliki completed: true',
+                        type: 'eval',
+                        evalFnBody: '(() => { if (typeof filterQuestSelesai !== "function") return false; const data = [{ id: 1, title: "Quest A", completed: true, xp: 50 }, { id: 2, title: "Quest B", completed: false, xp: 100 }, { id: 3, title: "Quest C", completed: true, xp: 80 }]; const res = filterQuestSelesai(data); return Array.isArray(res) && res.length === 2 && res[0].id === 1 && res[1].id === 3; })()',
+                        hint: 'Gunakan method quests.filter((q) => q.completed === true).',
+                    },
+                    {
+                        id: 'tc-syntax-methods',
+                        description: 'Kode menerapkan pemanggilan method array fungsional (.reduce atau .filter)',
+                        type: 'regex',
+                        regex: '\\.(reduce|filter)\\s*\\(',
+                        hint: 'Gunakan method bawaan array modern seperti .reduce() dan .filter().',
+                    },
+                ],
+                hints: [
+                    'Gunakan method .reduce((acc, curr) => acc + curr, 0) untuk menjumlahkan seluruh isi array angka.',
+                    'Gunakan parameter default pada fungsi: function hitungTotalXP(questRewards, bonusMultiplier = 1).',
+                    'Untuk menyaring array objek, gunakan method .filter((item) => item.completed === true).',
+                    'Periksa output console.log() pada jendela terminal di sebelah kanan untuk memverifikasi kalkulasi.',
+                ],
+            },
         },
     ],
 
@@ -1614,6 +2215,112 @@ export const MODULE_QUESTIONS_MAP: Record<string, Question[]> = {
             correct_option: 0,
             difficulty: 'intermediate',
             explanation: 'Filosofi Mobile-First menuliskan gaya dasar ponsel pintar secara alami, kemudian memperkaya tata letak dengan aturan aditif @media (min-width: ...) saat layar melebar ke ukuran tablet dan desktop.',
+        },
+    ],
+    'javascript-pemula': [
+        {
+            id: 'q-js-1',
+            question_text: 'Manakah pernyataan yang paling akurat mengenai perbedaan mendasar antara kata kunci "const" dan "let" di JavaScript modern?',
+            options: [
+                'const tidak mengizinkan re-assignment referensi nilai variabel, sedangkan let mengizinkan pembaruan nilai',
+                'const hanya dapat digunakan di luar fungsi, sedangkan let hanya hidup di dalam blok perulangan',
+                'const otomatis membekukan isi objek secara permanen (deep freeze), sedangkan let tidak',
+                'let mengalami hoisting ke memori global sedangkan const tidak di-hoist sama sekali',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'const mencegah re-assignment terhadap identifier variabel. Namun perlu diingat jika nilai berupa objek atau array, mutasi isi properti di dalamnya masih diperbolehkan.',
+        },
+        {
+            id: 'q-js-2',
+            question_text: 'Mengapa pengembang sangat dianjurkan menggunakan operator perbandingan identik (===) dibandingkan operator kesetaraan longgar (==)?',
+            options: [
+                'Operator === memeriksa kesamaan nilai sekaligus tipe data tanpa melakukan konversi tipe implisit (type coercion)',
+                'Operator === bekerja lebih cepat di mesin V8 karena hanya memeriksa tipe data string',
+                'Operator == melempar TypeError jika kedua operan memiliki tipe data yang berbeda',
+                'Operator === secara otomatis mengonversi angka string menjadi tipe data boolean',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'Operator === (strict equality) tidak melakukan type coercion implisit, sehingga perbandingan seperti 5 === "5" menghasilkan false secara aman.',
+        },
+        {
+            id: 'q-js-3',
+            question_text: 'Manakah di antara nilai berikut yang dievaluasi sebagai FALSY dalam pernyataan kondisi logika if di JavaScript?',
+            options: [
+                '0, "", null, undefined, NaN, dan false',
+                '[], {}, "0", "false", dan null',
+                'Hanya false dan null, sisanya selalu dievaluasi sebagai truthy',
+                'Angka 0, array kosong [], dan string kosong ""',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'JavaScript hanya memiliki 6 nilai falsy bawaan: false, 0, -0, "" (string kosong), null, undefined, dan NaN. Objek {} dan array [] bernilai truthy.',
+        },
+        {
+            id: 'q-js-4',
+            question_text: 'Apa perbedaan paling mendasar antara method array .map() dan .forEach()?',
+            options: [
+                '.map() mengembalikan array baru berisi hasil pemrosesan, sedangkan .forEach() selalu mengembalikan undefined dan dipakai untuk efek samping',
+                '.forEach() hanya dapat berjalan pada array string sedangkan .map() hanya untuk array angka',
+                '.map() mengubah (memutasi) array asli secara langsung sedangkan .forEach() menyalinnya',
+                '.forEach() dapat dihentikan di tengah jalan menggunakan break sedangkan .map() tidak bisa',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: '.map() adalah metode non-mutatif yang memetakan setiap elemen ke array baru. Sebaliknya, .forEach() hanya mengiterasi untuk mengeksekusi side-effect dan mengembalikan undefined.',
+        },
+        {
+            id: 'q-js-5',
+            question_text: 'Diberikan kode berikut: const total = [10, 20, 30].reduce((acc, curr) => acc + curr, 5); Berapakah nilai akhir dari variabel total?',
+            options: [
+                '65',
+                '60',
+                '55',
+                'NaN',
+            ],
+            correct_option: 0,
+            difficulty: 'intermediate',
+            explanation: 'Method reduce diawali dengan nilai awal akumulator acc = 5, kemudian secara berurutan ditambahkan 10, 20, dan 30, sehingga hasil akhirnya adalah 5 + 10 + 20 + 30 = 65.',
+        },
+        {
+            id: 'q-js-6',
+            question_text: 'Sintaks modern apakah yang digunakan untuk mengekstrak properti objek secara langsung ke dalam variabel mandiri seperti: const { nama, level } = petualang;?',
+            options: [
+                'Object Destructuring',
+                'Spread Operator',
+                'Rest Parameter',
+                'Prototype Chaining',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'Object Destructuring adalah sintaks ES6 yang memudahkan ekstraksi nilai properti objek ke variabel terpisah berdasarkan nama kuncinya.',
+        },
+        {
+            id: 'q-js-7',
+            question_text: 'Apa fungsi utama dari kata kunci "await" di dalam fungsi yang dideklarasikan dengan "async"?',
+            options: [
+                'Menghentikan sementara eksekusi fungsi hingga Promise selesai (resolved/rejected) dan mengembalikan hasil nilainya',
+                'Membuat proses JavaScript berjalan di multi-thread CPU yang berbeda',
+                'Mengubah fungsi asinkronus menjadi fungsi sinkronus yang memblokir seluruh render peramban',
+                'Mengulangi pemanggilan fetch secara otomatis jika terjadi kegagalan jaringan',
+            ],
+            correct_option: 0,
+            difficulty: 'intermediate',
+            explanation: 'await menunda eksekusi baris selanjutnya di dalam async function sampai Promise tersebut selesai menghasilkan nilai atau melempar eror, tanpa memblokir thread utama browser.',
+        },
+        {
+            id: 'q-js-8',
+            question_text: 'Metode standar W3C manakah yang digunakan untuk mendaftarkan pendengar aksi interaksi klik pada elemen tombol HTML?',
+            options: [
+                'tombol.addEventListener("click", callback)',
+                'tombol.attachEvent("onclick", callback)',
+                'tombol.listen("mouse_click", callback)',
+                'tombol.onEvent("click", callback)',
+            ],
+            correct_option: 0,
+            difficulty: 'beginner',
+            explanation: 'addEventListener adalah metode standar DOM modern untuk meregistrasikan fungsi penangan event tanpa menimpa listener lain yang sudah ada pada elemen tersebut.',
         },
     ],
 }

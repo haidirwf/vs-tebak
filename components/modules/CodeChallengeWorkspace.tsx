@@ -15,6 +15,8 @@ import {
     ChevronDown,
     ChevronUp,
     ExternalLink,
+    Terminal,
+    Trash2,
 } from 'lucide-react'
 import { CodeChallenge, CodeTestCase } from '@/types'
 
@@ -29,6 +31,11 @@ interface TestResult {
     description: string
     passed: boolean
     hint?: string
+}
+
+interface ConsoleLog {
+    type: 'log' | 'info' | 'warn' | 'error'
+    text: string
 }
 
 export default function CodeChallengeWorkspace({
@@ -53,6 +60,8 @@ export default function CodeChallengeWorkspace({
     const [showHints, setShowHints] = useState(false)
     const [showSolution, setShowSolution] = useState(false)
     const [previewKey, setPreviewKey] = useState(0)
+    const [logs, setLogs] = useState<ConsoleLog[]>([])
+    const [runtimeError, setRuntimeError] = useState<string | null>(null)
 
     const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -73,6 +82,8 @@ export default function CodeChallengeWorkspace({
             setTestResults([])
             setHasTested(false)
             setAllPassed(false)
+            setLogs([])
+            setRuntimeError(null)
             setPreviewKey((k) => k + 1)
         }
     }
@@ -176,19 +187,84 @@ export default function CodeChallengeWorkspace({
             }
         } else {
             // Logic validation (JS)
+            const capturedLogs: ConsoleLog[] = []
+            let scriptRuntimeError: string | null = null
+
+            const formatArg = (arg: any): string => {
+                if (arg === null) return 'null'
+                if (arg === undefined) return 'undefined'
+                if (typeof arg === 'object') {
+                    try {
+                        return JSON.stringify(arg)
+                    } catch {
+                        return String(arg)
+                    }
+                }
+                return String(arg)
+            }
+
+            const customConsole = {
+                log: (...args: any[]) => capturedLogs.push({ type: 'log', text: args.map(formatArg).join(' ') }),
+                info: (...args: any[]) => capturedLogs.push({ type: 'info', text: args.map(formatArg).join(' ') }),
+                warn: (...args: any[]) => capturedLogs.push({ type: 'warn', text: args.map(formatArg).join(' ') }),
+                error: (...args: any[]) => capturedLogs.push({ type: 'error', text: args.map(formatArg).join(' ') }),
+            }
+
+            // 1. Eksekusi awal kode untuk mendeteksi runtime error dan menangkap console log
+            try {
+                const userRunner = new Function('console', jsCode)
+                userRunner(customConsole)
+            } catch (err: any) {
+                scriptRuntimeError = err?.message || 'Error saat mengeksekusi kode'
+                capturedLogs.push({
+                    type: 'error',
+                    text: `Runtime Error: ${scriptRuntimeError}`,
+                })
+            }
+
+            // 2. Evaluasi seluruh test case
             for (const test of challenge.testCases) {
                 let passed = false
-                if (test.regex) {
+                let failureDetail: string | undefined = undefined
+
+                if (test.type === 'regex' && test.regex) {
                     const re = new RegExp(test.regex, 'i')
                     passed = re.test(jsCode)
+                } else if (test.type === 'eval' || test.evalFnBody) {
+                    if (!scriptRuntimeError) {
+                        try {
+                            const evalRunner = new Function('console', `
+                                ${jsCode}
+                                try {
+                                    return Boolean(${test.evalFnBody});
+                                } catch (e) {
+                                    throw e;
+                                }
+                            `)
+                            passed = Boolean(evalRunner(customConsole))
+                        } catch (err: any) {
+                            passed = false
+                            failureDetail = err?.message || 'Nilai yang dikembalikan belum sesuai kriteria'
+                        }
+                    } else {
+                        passed = false
+                        failureDetail = `Kode mengalami error: ${scriptRuntimeError}`
+                    }
+                } else if (test.type === 'text' && test.expectedText) {
+                    const combinedLogs = capturedLogs.map((l) => l.text).join('\n').toLowerCase()
+                    passed = combinedLogs.includes(test.expectedText.toLowerCase())
                 }
+
                 results.push({
                     id: test.id,
                     description: test.description,
                     passed,
-                    hint: test.hint,
+                    hint: failureDetail ? `${test.hint || ''} (${failureDetail})` : test.hint,
                 })
             }
+
+            setLogs(capturedLogs)
+            setRuntimeError(scriptRuntimeError)
         }
 
         setTestResults(results)
@@ -338,11 +414,11 @@ export default function CodeChallengeWorkspace({
                 )}
             </div>
 
-            {/* Main Area: Split Editor & Preview */}
+            {/* Main Area: Split Editor & Preview / Terminal */}
             <div
                 style={{
                     display: 'grid',
-                    gridTemplateColumns: isWeb ? 'repeat(auto-fit, minmax(320px, 1fr))' : '1fr',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
                     minHeight: '380px',
                     backgroundColor: 'var(--surface-canvas)',
                 }}
@@ -352,7 +428,7 @@ export default function CodeChallengeWorkspace({
                     style={{
                         display: 'flex',
                         flexDirection: 'column',
-                        borderRight: isWeb ? '1px solid var(--surface-border)' : 'none',
+                        borderRight: '1px solid var(--surface-border)',
                     }}
                 >
                     {/* Editor Tabs Header */}
@@ -482,7 +558,7 @@ export default function CodeChallengeWorkspace({
                 </div>
 
                 {/* Preview / Output Column */}
-                {isWeb && (
+                {isWeb ? (
                     <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--surface-canvas)' }}>
                         <div
                             style={{
@@ -518,6 +594,107 @@ export default function CodeChallengeWorkspace({
                                     backgroundColor: '#0f172a',
                                 }}
                             />
+                        </div>
+                    </div>
+                ) : (
+                    <div style={{ display: 'flex', flexDirection: 'column', backgroundColor: 'var(--surface-canvas)' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '0 12px',
+                                backgroundColor: 'var(--surface-elevated)',
+                                borderBottom: '1px solid var(--surface-border)',
+                                height: '38px',
+                            }}
+                        >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                                <Terminal size={13} style={{ color: 'var(--accent-gold-text)' }} />
+                                <span>Konsol & Eksekusi Output</span>
+                            </div>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setLogs([])
+                                        setRuntimeError(null)
+                                    }}
+                                    title="Bersihkan konsol output"
+                                    style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '4px',
+                                        padding: '3px 8px',
+                                        borderRadius: '6px',
+                                        border: '1px solid var(--surface-border)',
+                                        backgroundColor: 'var(--surface-card)',
+                                        color: 'var(--text-muted)',
+                                        fontSize: '11px',
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    <Trash2 size={11} />
+                                    <span>Bersihkan</span>
+                                </button>
+                                <span style={{ fontSize: '11px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                                    Node / JS Runtime
+                                </span>
+                            </div>
+                        </div>
+
+                        <div
+                            style={{
+                                flex: 1,
+                                minHeight: '260px',
+                                padding: '14px',
+                                backgroundColor: '#090d13',
+                                fontFamily: 'var(--font-mono)',
+                                fontSize: '12.5px',
+                                lineHeight: '1.6',
+                                overflowY: 'auto',
+                                maxHeight: '420px',
+                            }}
+                        >
+                            {logs.length === 0 ? (
+                                <div style={{ color: '#4b5563', fontStyle: 'italic' }}>
+                                    <div>// Konsol interaktif JavaScript</div>
+                                    <div style={{ marginTop: '4px' }}>
+                                        // Output console.log() dan status pengujian logika akan tampil di sini.
+                                    </div>
+                                    <div style={{ marginTop: '4px' }}>
+                                        // Klik &quot;Jalankan &amp; Uji Kode&quot; untuk mengevaluasi script.
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    {logs.map((log, idx) => {
+                                        const color =
+                                            log.type === 'error'
+                                                ? '#f87171'
+                                                : log.type === 'warn'
+                                                ? '#fbbf24'
+                                                : log.type === 'info'
+                                                ? '#38bdf8'
+                                                : '#e2e8f0'
+                                        return (
+                                            <div
+                                                key={idx}
+                                                style={{
+                                                    display: 'flex',
+                                                    gap: '8px',
+                                                    color,
+                                                    whiteSpace: 'pre-wrap',
+                                                    wordBreak: 'break-word',
+                                                }}
+                                            >
+                                                <span style={{ color: '#4b5563', userSelect: 'none' }}>&gt;</span>
+                                                <span>{log.text}</span>
+                                            </div>
+                                        )
+                                    })}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
