@@ -442,27 +442,35 @@ body {
   box-sizing: border-box !important;
 }
 
-/* Fullscreen centered non-scrollable stage (waiting room, lobby, outcome) */
+/* Fullscreen battle stage (waiting room, lobby, outcome) with smooth overflow protection */
 .battle-fullscreen-stage {
   display: flex !important;
   flex-direction: column !important;
   align-items: center !important;
   justify-content: center !important;
-  height: 100% !important;
   min-height: 100dvh !important;
-  max-height: 100dvh !important;
   width: 100% !important;
-  padding: clamp(10px, 2.5vh, 20px) 16px !important;
+  padding: clamp(12px, 2.5vh, 24px) 14px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
   box-sizing: border-box !important;
-  overflow: hidden !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y !important;
 }
 
 .battle-fullscreen-stage > * {
-  overflow: hidden !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
+  max-height: calc(100dvh - 28px);
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-width: 639px) {
+  .battle-fullscreen-stage {
+    justify-content: flex-start !important;
+    padding-top: 16px !important;
+  }
 }
 
 /* Blueprint Grid: Subtle dot/hairline on Canvas */
@@ -1046,7 +1054,19 @@ input::placeholder, textarea::placeholder {
 }
 
 .topbar-inner-content {
-  padding: 0 12px;
+  padding: 0 10px;
+}
+
+@media (max-width: 420px) {
+  .topbar-inner-content {
+    padding: 0 8px;
+  }
+  .topbar-user-name {
+    max-width: 68px !important;
+  }
+  .topbar-xp-badge-text {
+    display: none !important;
+  }
 }
 
 @media (min-width: 640px) {
@@ -1923,13 +1943,24 @@ input::placeholder, textarea::placeholder {
 
 .character-toast-notification {
   position: fixed !important;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 24px) !important;
-  left: 16px !important;
-  right: 16px !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 76px) !important;
+  left: 14px !important;
+  right: 14px !important;
   margin: 0 auto !important;
   max-width: 420px !important;
   z-index: 99999 !important;
   pointer-events: auto !important;
+}
+
+/* Floating Leaderboard Rank Dock for Mobile and Desktop */
+.leaderboard-my-rank-dock {
+  position: fixed !important;
+  bottom: calc(env(safe-area-inset-bottom, 0px) + 72px) !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 40 !important;
+  padding: 0 12px !important;
+  pointer-events: none !important;
 }
 
 @keyframes battle-spin {
@@ -1958,6 +1989,11 @@ input::placeholder, textarea::placeholder {
     right: 28px !important;
     margin: 0 !important;
     max-width: 440px !important;
+  }
+
+  .leaderboard-my-rank-dock {
+    bottom: 24px !important;
+    padding: 0 24px !important;
   }
 }
 
@@ -2124,10 +2160,17 @@ input::placeholder, textarea::placeholder {
 .battle-options-grid {
   display: grid !important;
   grid-template-columns: 1fr !important;
-  gap: 8px !important;
-  margin-bottom: 12px !important;
+  gap: 7px !important;
+  margin-bottom: 10px !important;
   width: 100% !important;
   box-sizing: border-box !important;
+}
+
+@media (min-width: 480px) and (max-width: 639px) {
+  .battle-options-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
 }
 
 @media (min-width: 640px) {
@@ -2141,10 +2184,10 @@ input::placeholder, textarea::placeholder {
 .battle-option-btn {
   display: flex !important;
   align-items: center !important;
-  gap: 10px !important;
-  padding: 10px 12px !important;
-  min-height: 44px !important;
-  border-radius: 10px !important;
+  gap: 8px !important;
+  padding: 8px 10px !important;
+  min-height: 40px !important;
+  border-radius: 9px !important;
   width: 100% !important;
   box-sizing: border-box !important;
   word-break: break-word !important;
@@ -2157,6 +2200,7 @@ input::placeholder, textarea::placeholder {
   .battle-option-btn {
     padding: 14px 16px !important;
     gap: 12px !important;
+    min-height: 46px !important;
     border-radius: 12px !important;
   }
 }
@@ -2436,16 +2480,18 @@ input::placeholder, textarea::placeholder {
 
 /* ===================================================
    LIVE BATTLE & STAGE FULL-FOCUS STYLES
-   Saat battle di layar room, kunci scrollbar dan layar
-   agar tidak bisa di-scroll atau memantul.
+   Saat battle di layar room, sembunyikan navigasi default
+   namun biarkan konten dapat di-scroll vertikal secara halus
+   jika tinggi layar perangkat terbatas.
    =================================================== */
 .dashboard-shell.in-live-battle .dashboard-content {
   padding: 0 !important;
   padding-bottom: 0 !important;
-  overflow: hidden !important;
-  overflow-y: hidden !important;
-  touch-action: none !important;
-  overscroll-behavior: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y !important;
+  overscroll-behavior-y: contain;
 }
 
 .dashboard-shell.in-live-battle .dashboard-topbar,
@@ -2464,33 +2510,34 @@ input::placeholder, textarea::placeholder {
   }
 
   .dashboard-shell.in-live-battle .dashboard-main {
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    overflow: hidden !important;
-    touch-action: none !important;
-    overscroll-behavior: none !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    touch-action: pan-y !important;
   }
 
   .dashboard-shell.in-live-battle .dashboard-content {
     padding: 0 !important;
     padding-bottom: 0 !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
-    overflow: hidden !important;
-    overflow-y: hidden !important;
-    touch-action: none !important;
-    overscroll-behavior: none !important;
+    min-height: 100dvh !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-y !important;
   }
 
   .battle-active-page {
-    padding: 8px !important;
+    padding: 8px 6px calc(24px + env(safe-area-inset-bottom, 0px)) !important;
     min-height: 100dvh !important;
-    height: 100dvh !important;
-    max-height: 100dvh !important;
+    height: auto !important;
+    max-height: none !important;
     justify-content: flex-start !important;
-    overflow: hidden !important;
-    touch-action: none !important;
-    overscroll-behavior: none !important;
+    overflow-x: hidden !important;
+    overflow-y: visible !important;
+    touch-action: pan-y !important;
   }
 }
 

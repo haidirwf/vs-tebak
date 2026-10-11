@@ -101,17 +101,149 @@ class SoundSynthesizer {
     // SOUND EFFECTS (SFX)
     // ==========================================
 
-    // Play attack whoosh / swing
-    playAttackSwing() {
+    // Play weapon-tailored attack whoosh / swing
+    playAttackSwing(weaponId?: string) {
         if (this.isMuted) return
         try {
             const ctx = this.getContext()
             if (!ctx) return
+            const now = ctx.currentTime
+
+            // 1. Blade / Sword weapons (Sharp metallic whoosh)
+            if (weaponId && (weaponId.includes('sword') || weaponId.includes('claymore') || weaponId.includes('slayer') || weaponId.includes('warrior'))) {
+                const isHeavy = weaponId.includes('dragon') || weaponId.includes('claymore')
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = isHeavy ? 'sawtooth' : 'triangle'
+                osc.frequency.setValueAtTime(isHeavy ? 280 : 420, now)
+                osc.frequency.exponentialRampToValueAtTime(isHeavy ? 45 : 85, now + (isHeavy ? 0.22 : 0.16))
+
+                gain.gain.setValueAtTime(0.16, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + (isHeavy ? 0.22 : 0.16))
+
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + (isHeavy ? 0.22 : 0.16))
+
+                // Metallic gleam transient
+                const metal = ctx.createOscillator()
+                const metalGain = ctx.createGain()
+                metal.type = 'sine'
+                metal.frequency.setValueAtTime(isHeavy ? 880 : 1240, now)
+                metal.frequency.exponentialRampToValueAtTime(320, now + 0.1)
+                metalGain.gain.setValueAtTime(0.08, now)
+                metalGain.gain.exponentialRampToValueAtTime(0.001, now + 0.1)
+                metal.connect(metalGain)
+                metalGain.connect(ctx.destination)
+                metal.start(now)
+                metal.stop(now + 0.1)
+                return
+            }
+
+            // 2. Magic Staff / Orb / Wand (Arcane glide & resonant hum)
+            if (weaponId && (weaponId.includes('staff') || weaponId.includes('wand') || weaponId.includes('orb') || weaponId.includes('mage'))) {
+                const isCosmic = weaponId.includes('archmage') || weaponId.includes('astral')
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = 'sine'
+                osc.frequency.setValueAtTime(isCosmic ? 180 : 320, now)
+                osc.frequency.exponentialRampToValueAtTime(isCosmic ? 640 : 540, now + 0.18)
+
+                gain.gain.setValueAtTime(0.15, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22)
+
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + 0.22)
+
+                // Shimmering magic harmonic
+                const shimmer = ctx.createOscillator()
+                const shimmerGain = ctx.createGain()
+                shimmer.type = 'triangle'
+                shimmer.frequency.setValueAtTime(isCosmic ? 960 : 780, now + 0.04)
+                shimmer.frequency.exponentialRampToValueAtTime(1200, now + 0.2)
+                shimmerGain.gain.setValueAtTime(0.07, now + 0.04)
+                shimmerGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22)
+                shimmer.connect(shimmerGain)
+                shimmerGain.connect(ctx.destination)
+                shimmer.start(now + 0.04)
+                shimmer.stop(now + 0.22)
+                return
+            }
+
+            // 3. Bow / Crossbow (Bowstring twang & supersonic arrow whoosh)
+            if (weaponId && (weaponId.includes('bow') || weaponId.includes('cross') || weaponId.includes('archer'))) {
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = 'triangle'
+                osc.frequency.setValueAtTime(650, now)
+                osc.frequency.exponentialRampToValueAtTime(180, now + 0.14)
+
+                gain.gain.setValueAtTime(0.18, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14)
+
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + 0.14)
+
+                // Bowstring release snap
+                const snap = ctx.createOscillator()
+                const snapGain = ctx.createGain()
+                snap.type = 'sawtooth'
+                snap.frequency.setValueAtTime(140, now)
+                snap.frequency.exponentialRampToValueAtTime(40, now + 0.05)
+                snapGain.gain.setValueAtTime(0.12, now)
+                snapGain.gain.exponentialRampToValueAtTime(0.001, now + 0.05)
+                snap.connect(snapGain)
+                snapGain.connect(ctx.destination)
+                snap.start(now)
+                snap.stop(now + 0.05)
+                return
+            }
+
+            // 4. Holy Scepter / Bell / Healer (Harmonic sacred tone)
+            if (weaponId && (weaponId.includes('healer') || weaponId.includes('scepter') || weaponId.includes('censer') || weaponId.includes('seraph'))) {
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = 'sine'
+                osc.frequency.setValueAtTime(523.25, now)
+                osc.frequency.exponentialRampToValueAtTime(784, now + 0.2)
+
+                gain.gain.setValueAtTime(0.15, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24)
+
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + 0.24)
+                return
+            }
+
+            // 5. Bot Sentinel (Cyber synthesizer pulse)
+            if (weaponId === 'bot') {
+                const osc = ctx.createOscillator()
+                const gain = ctx.createGain()
+                osc.type = 'sawtooth'
+                osc.frequency.setValueAtTime(580, now)
+                osc.frequency.exponentialRampToValueAtTime(160, now + 0.16)
+
+                gain.gain.setValueAtTime(0.14, now)
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.16)
+
+                osc.connect(gain)
+                gain.connect(ctx.destination)
+                osc.start(now)
+                osc.stop(now + 0.16)
+                return
+            }
+
+            // Default whoosh
             const osc = ctx.createOscillator()
             const gain = ctx.createGain()
-
             osc.type = 'triangle'
-            const now = ctx.currentTime
             osc.frequency.setValueAtTime(340, now)
             osc.frequency.exponentialRampToValueAtTime(70, now + 0.18)
 
@@ -128,28 +260,77 @@ class SoundSynthesizer {
         }
     }
 
-    // Play hit impact
-    playHitImpact(isCrit = false) {
+    // Play hit impact with weapon and streak scaling
+    playHitImpact(isCrit = false, combo = 0, weaponId?: string) {
         if (this.isMuted) return
         try {
             const ctx = this.getContext()
             if (!ctx) return
             const now = ctx.currentTime
 
-            // Low frequency thump
+            // Low frequency visceral thump (escalates with streak)
             const osc = ctx.createOscillator()
             const gain = ctx.createGain()
             osc.type = 'sine'
-            osc.frequency.setValueAtTime(isCrit ? 240 : 160, now)
-            osc.frequency.exponentialRampToValueAtTime(28, now + 0.22)
+            const baseFreq = isCrit ? 240 : 160
+            osc.frequency.setValueAtTime(baseFreq, now)
+            osc.frequency.exponentialRampToValueAtTime(26, now + 0.24)
 
-            gain.gain.setValueAtTime(isCrit ? 0.24 : 0.16, now)
-            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22)
+            const baseGain = isCrit ? 0.24 : 0.16
+            const streakBoost = Math.min(0.12, combo * 0.02)
+            gain.gain.setValueAtTime(baseGain + streakBoost, now)
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.24)
 
             osc.connect(gain)
             gain.connect(ctx.destination)
             osc.start(now)
-            osc.stop(now + 0.22)
+            osc.stop(now + 0.24)
+
+            // High streak sub-bass boom (combo >= 4)
+            if (combo >= 4) {
+                const sub = ctx.createOscillator()
+                const subGain = ctx.createGain()
+                sub.type = 'sine'
+                sub.frequency.setValueAtTime(80, now)
+                sub.frequency.exponentialRampToValueAtTime(22, now + 0.3)
+                subGain.gain.setValueAtTime(0.18, now)
+                subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3)
+                sub.connect(subGain)
+                subGain.connect(ctx.destination)
+                sub.start(now)
+                sub.stop(now + 0.3)
+            }
+
+            // Weapon-specific impact texture
+            if (weaponId) {
+                if (weaponId.includes('sword') || weaponId.includes('claymore') || weaponId.includes('slayer') || weaponId.includes('warrior')) {
+                    // Steel blade clash
+                    const clang = ctx.createOscillator()
+                    const clangGain = ctx.createGain()
+                    clang.type = 'triangle'
+                    clang.frequency.setValueAtTime(1100, now + 0.02)
+                    clang.frequency.exponentialRampToValueAtTime(440, now + 0.16)
+                    clangGain.gain.setValueAtTime(0.11, now + 0.02)
+                    clangGain.gain.exponentialRampToValueAtTime(0.001, now + 0.16)
+                    clang.connect(clangGain)
+                    clangGain.connect(ctx.destination)
+                    clang.start(now + 0.02)
+                    clang.stop(now + 0.16)
+                } else if (weaponId.includes('crystal') || weaponId.includes('wand') || weaponId.includes('orb')) {
+                    // Prismatic crystal shatter / mana burst
+                    const shatter = ctx.createOscillator()
+                    const shatterGain = ctx.createGain()
+                    shatter.type = 'triangle'
+                    shatter.frequency.setValueAtTime(1400, now + 0.03)
+                    shatter.frequency.exponentialRampToValueAtTime(1900, now + 0.2)
+                    shatterGain.gain.setValueAtTime(0.09, now + 0.03)
+                    shatterGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22)
+                    shatter.connect(shatterGain)
+                    shatterGain.connect(ctx.destination)
+                    shatter.start(now + 0.03)
+                    shatter.stop(now + 0.22)
+                }
+            }
 
             // Crit chime sparkle
             if (isCrit) {
@@ -157,15 +338,15 @@ class SoundSynthesizer {
                 const chimeGain = ctx.createGain()
                 chime.type = 'triangle'
                 chime.frequency.setValueAtTime(880, now + 0.04)
-                chime.frequency.exponentialRampToValueAtTime(1400, now + 0.24)
+                chime.frequency.exponentialRampToValueAtTime(1550, now + 0.26)
 
-                chimeGain.gain.setValueAtTime(0.12, now + 0.04)
-                chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.28)
+                chimeGain.gain.setValueAtTime(0.14, now + 0.04)
+                chimeGain.gain.exponentialRampToValueAtTime(0.001, now + 0.3)
 
                 chime.connect(chimeGain)
                 chimeGain.connect(ctx.destination)
                 chime.start(now + 0.04)
-                chime.stop(now + 0.28)
+                chime.stop(now + 0.3)
             }
         } catch {
             // Audio context blocked
@@ -246,29 +427,62 @@ class SoundSynthesizer {
         } catch {}
     }
 
-    // Play combo streak sparkle
+    // Play escalating arcade combo streak fanfare
     playComboStreak(combo: number) {
         if (this.isMuted) return
         try {
             const ctx = this.getContext()
             if (!ctx) return
             const now = ctx.currentTime
-            const baseFreq = 523.25 * Math.min(2.0, 1 + combo * 0.15) // Scales with streak
-            const notes = [baseFreq, baseFreq * 1.25, baseFreq * 1.5]
 
+            // Escalating melodic notes based on streak tier
+            let notes: number[] = []
+            if (combo <= 2) {
+                // Tier 1 (Combo 2): Bright dual chime (C5 -> E5)
+                notes = [523.25, 659.25]
+            } else if (combo <= 3) {
+                // Tier 1 (Combo 3): Major triad (C5 -> E5 -> G5)
+                notes = [523.25, 659.25, 783.99]
+            } else if (combo <= 5) {
+                // Tier 2 (Combo 4-5): Quad arpeggio (C5 -> E5 -> G5 -> C6)
+                notes = [523.25, 659.25, 783.99, 1046.50]
+            } else if (combo <= 7) {
+                // Tier 3 (Combo 6-7): Blazing pentatonic fanfare (C5 -> E5 -> G5 -> A5 -> C6)
+                notes = [523.25, 659.25, 783.99, 880.00, 1046.50]
+            } else {
+                // Tier 4 (Combo 8+): Godlike triumphant fanfare (C5 -> G5 -> C6 -> E6 -> G6)
+                notes = [523.25, 783.99, 1046.50, 1318.51, 1567.98]
+            }
+
+            const step = Math.min(0.065, 0.28 / notes.length)
             notes.forEach((freq, idx) => {
                 const osc = ctx.createOscillator()
                 const gain = ctx.createGain()
-                const startTime = now + idx * 0.07
-                osc.type = 'triangle'
+                const startTime = now + idx * step
+                osc.type = combo >= 6 ? 'triangle' : 'sine'
                 osc.frequency.setValueAtTime(freq, startTime)
-                gain.gain.setValueAtTime(0.1, startTime)
-                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.22)
+                gain.gain.setValueAtTime(combo >= 6 ? 0.14 : 0.11, startTime)
+                gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.26)
                 osc.connect(gain)
                 gain.connect(ctx.destination)
                 osc.start(startTime)
-                osc.stop(startTime + 0.22)
+                osc.stop(startTime + 0.26)
             })
+
+            // Extra sub-bass impact for high streak (combo >= 4)
+            if (combo >= 4) {
+                const sub = ctx.createOscillator()
+                const subGain = ctx.createGain()
+                sub.type = 'triangle'
+                sub.frequency.setValueAtTime(130, now)
+                sub.frequency.exponentialRampToValueAtTime(45, now + 0.26)
+                subGain.gain.setValueAtTime(0.15, now)
+                subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.26)
+                sub.connect(subGain)
+                subGain.connect(ctx.destination)
+                sub.start(now)
+                sub.stop(now + 0.26)
+            }
         } catch {}
     }
 

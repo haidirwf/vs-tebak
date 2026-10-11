@@ -7,7 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { Question, Battle, Profile, AvatarClass } from '@/types'
 import { Sword, Shield, CheckCircle, Flame, Zap, Trophy, ChevronRight, XCircle, AlertCircle, Copy, Check, Swords, Volume2, VolumeX, Music, Share2 } from 'lucide-react'
 import { getClassBonusDescription, AVATAR_CLASS_STATS } from '@/lib/game/xp'
-import { calculateCharacterStats } from '@/lib/game/character'
+import { calculateCharacterStats, resolveEquippedMap } from '@/lib/game/character'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
 import { battleSounds } from '@/lib/game/battle-sounds'
@@ -504,9 +504,14 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     }
                     setOpponentAnsweredThisRound(true)
                     setOppAnimation('attack')
-                    battleSounds.playAttackSwing()
 
                     const attackType = (payload.attacker_class || 'mage').toLowerCase() as any
+                    const oppResolvedEquipped = resolveEquippedMap(attackType as AvatarClass, opponent?.equipped_items as any, true)
+                    const oppWeaponId = payload.attacker_weapon || oppResolvedEquipped?.weapon || 'wpn_warrior_starter'
+                    const oppCombo = payload.combo || 1
+
+                    battleSounds.playAttackSwing(oppWeaponId)
+
                     setActiveAttack({
                         id: String(Date.now()),
                         direction: 'right-to-left',
@@ -514,11 +519,12 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                         isCrit: payload.is_crit,
                         isUltimate: payload.is_ultimate,
                         damage: payload.damage || 15,
-                        weaponId: payload.attacker_weapon || (opponent?.equipped_items as any)?.weapon,
+                        weaponId: oppWeaponId,
+                        comboCount: oppCombo,
                     })
 
                     setTimeout(() => {
-                        battleSounds.playHitImpact(payload.is_crit || payload.is_ultimate)
+                        battleSounds.playHitImpact(payload.is_crit || payload.is_ultimate, oppCombo, oppWeaponId)
                         setMeAnimation('hurt')
                         const dmg = payload.damage || 15
                         const newHp = Math.max(0, myHpRef.current - dmg)
@@ -878,6 +884,9 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         setMyScore(newScore)
 
         const baseHpDamage = Math.max(14, Math.floor(100 / Math.max(questions.length, 1)))
+        const resolvedEquipped = resolveEquippedMap(myClassKey as AvatarClass, currentUser?.equipped_items as any, true)
+        const playerWeaponId = resolvedEquipped?.weapon || 'wpn_warrior_starter'
+
         if (isCorrect) {
             const nextCombo = comboCount + 1
             setComboCount(nextCombo)
@@ -894,7 +903,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             }
 
             // Play attack sound and trigger lunge/hand animation
-            battleSounds.playAttackSwing()
+            battleSounds.playAttackSwing(playerWeaponId)
             setMeAnimation('attack')
             setActiveAttack({
                 id: String(Date.now()),
@@ -903,12 +912,13 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 isCrit,
                 isUltimate,
                 damage: effectiveDamage,
-                weaponId: (currentUser?.equipped_items as any)?.weapon,
+                weaponId: playerWeaponId,
+                comboCount: nextCombo,
             })
 
             // Projectile arrives at opponent
             setTimeout(() => {
-                battleSounds.playHitImpact(isCrit || isUltimate)
+                battleSounds.playHitImpact(isCrit || isUltimate, nextCombo, playerWeaponId)
                 setOppAnimation('hurt')
                 const newOppHp = Math.max(0, oppHpRef.current - effectiveDamage)
                 setOppHp(newOppHp)
@@ -957,6 +967,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     is_crit: isCrit,
                     is_ultimate: isUltimate,
                     attacker_class: myClassKey,
+                    attacker_weapon: playerWeaponId,
+                    combo: nextCombo,
                     log: `⚡ Lawan melancarkan serangan ${myClassInfo.label} (-${effectiveDamage} HP)!`,
                 }
             })
@@ -1690,13 +1702,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                                         style={{
                                             fontSize: '12px',
                                             color: 'var(--color-signal-orange)',
-                                            fontWeight: 700,
+                                            fontWeight: 600,
                                             display: 'flex',
                                             alignItems: 'center',
-                                            gap: '4px',
+                                            gap: '5px',
+                                            padding: '3px 8px',
+                                            borderRadius: '8px',
+                                            background: 'rgba(255, 107, 0, 0.1)',
+                                            border: '1px solid rgba(255, 107, 0, 0.25)',
                                         }}
                                     >
-                                        <Flame size={14} /> x{comboCount} COMBO!
+                                        <Flame size={13} /> {comboCount}x Streak
                                     </span>
                                 )}
                             <span

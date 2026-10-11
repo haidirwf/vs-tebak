@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Sword, CheckCircle, XCircle, Flame, Swords, Volume2, VolumeX, Music, Play, ChevronRight, Bot, X } from 'lucide-react'
 import { Question, Profile, AvatarClass } from '@/types'
-import { calculateCharacterStats } from '@/lib/game/character'
+import { calculateCharacterStats, resolveEquippedMap } from '@/lib/game/character'
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
 import { battleSounds } from '@/lib/game/battle-sounds'
 import PostBattleReviewModal, { QuizReviewItem } from '@/components/battle/PostBattleReviewModal'
@@ -163,7 +163,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             setBotMp(mp => Math.min(100, mp + 25))
 
             // Bot attack visual & sound
-            battleSounds.playAttackSwing()
+            battleSounds.playAttackSwing('bot')
             setBotAnimation('attack')
             setActiveAttack({
                 id: String(Date.now()),
@@ -171,10 +171,11 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 type: 'bot',
                 damage: 12,
                 weaponId: 'bot',
+                comboCount: 1,
             })
 
             setTimeout(() => {
-                battleSounds.playHitImpact(false)
+                battleSounds.playHitImpact(false, 1, 'bot')
                 setMeAnimation('hurt')
                 const reduction = myStats.battleBuffs.damageReductionPct || 0
                 const incomingDamage = Math.max(1, Math.round(12 * (1 - reduction / 100)))
@@ -358,6 +359,9 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
 
         const hpDamage = 14
         const playerClass = ((currentUser?.avatar_class as AvatarClass) || 'warrior')
+        const resolvedEquipped = resolveEquippedMap(playerClass, currentUser?.equipped_items as any, true)
+        const playerWeaponId = resolvedEquipped?.weapon || 'wpn_warrior_starter'
+
         if (isCorrect) {
             const nextCombo = comboCount + 1
             setComboCount(nextCombo)
@@ -376,7 +380,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
             }
 
             // Attacker whoosh sound & lunge/hand animation
-            battleSounds.playAttackSwing()
+            battleSounds.playAttackSwing(playerWeaponId)
             setMeAnimation('attack')
             setActiveAttack({
                 id: String(Date.now()),
@@ -385,12 +389,13 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 isCrit,
                 isUltimate,
                 damage: effectiveDamage,
-                weaponId: (currentUser?.equipped_items as any)?.weapon,
+                weaponId: playerWeaponId,
+                comboCount: nextCombo,
             })
 
             // Projectile impact
             setTimeout(() => {
-                battleSounds.playHitImpact(isCrit || isUltimate)
+                battleSounds.playHitImpact(isCrit || isUltimate, nextCombo, playerWeaponId)
                 setBotAnimation('hurt')
                 const newBotHp = Math.max(0, botHp - effectiveDamage)
                 setBotHp(newBotHp)
@@ -853,13 +858,17 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                         style={{
                                             fontSize: '12px',
                                             color: 'var(--color-signal-orange)',
-                                            fontWeight: 700,
+                                            fontWeight: 600,
                                             display: 'flex',
                                             alignItems: 'center',
-                                            gap: '4px',
+                                            gap: '5px',
+                                            padding: '3px 8px',
+                                            borderRadius: '8px',
+                                            background: 'rgba(255, 107, 0, 0.1)',
+                                            border: '1px solid rgba(255, 107, 0, 0.25)',
                                         }}
                                     >
-                                        <Flame size={14} /> x{comboCount} COMBO!
+                                        <Flame size={13} /> {comboCount}x Streak
                                     </span>
                                 )}
                             <span
