@@ -12,6 +12,7 @@ import { GAME_ITEMS, GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, getItemRarit
 import { createClient } from '@/lib/supabase/client'
 import CharacterVisual from '@/components/character/CharacterVisual'
 import ItemIcon from '@/components/character/ItemIcon'
+import ItemDetailModal from '@/components/character/ItemDetailModal'
 import {
     Swords,
     Shield,
@@ -94,6 +95,7 @@ export default function CharacterPage() {
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [mounted, setMounted] = useState(false)
     const [isMobile, setIsMobile] = useState(false)
+    const [previewItem, setPreviewItem] = useState<GameItem | null>(null)
 
     const navTabsRef = useRef<HTMLDivElement>(null)
     const filterTabsRef = useRef<HTMLDivElement>(null)
@@ -103,6 +105,38 @@ export default function CharacterPage() {
         checkMobile()
         window.addEventListener('resize', checkMobile)
         return () => window.removeEventListener('resize', checkMobile)
+    }, [])
+
+    // Open preview item if specified in URL query (?item=id)
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const params = new URLSearchParams(window.location.search)
+            const targetItemId = params.get('item')
+            if (targetItemId) {
+                const found = GAME_ITEMS.find((it) => it.id === targetItemId)
+                if (found) {
+                    setPreviewItem(found)
+                }
+            }
+        }
+    }, [])
+
+    const handleOpenPreview = useCallback((item: GameItem) => {
+        setPreviewItem(item)
+        if (typeof window !== 'undefined' && window.history.replaceState) {
+            const url = new URL(window.location.href)
+            url.searchParams.set('item', item.id)
+            window.history.replaceState({}, '', url.toString())
+        }
+    }, [])
+
+    const handleClosePreview = useCallback(() => {
+        setPreviewItem(null)
+        if (typeof window !== 'undefined' && window.history.replaceState) {
+            const url = new URL(window.location.href)
+            url.searchParams.delete('item')
+            window.history.replaceState({}, '', url.toString())
+        }
     }, [])
 
     // Smooth drag-scroll support for touch & mouse
@@ -479,8 +513,11 @@ export default function CharacterPage() {
                         setSelectedSlotFilter(slot)
                         const el = document.getElementById('inventory-vault')
                         if (el) el.scrollIntoView({ behavior: 'smooth' })
+                    } else {
+                        handleOpenPreview(item)
                     }
                 }}
+                title={item ? `${item.name} — Klik untuk penjelasan lengkap` : `Slot ${slotMeta.name} kosong — Klik untuk memilih item`}
                 style={{
                     borderRadius: '12px',
                     border: item
@@ -496,7 +533,7 @@ export default function CharacterPage() {
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
-                    cursor: item ? 'default' : 'pointer',
+                    cursor: 'pointer',
                     transition: 'all 0.2s ease',
                     position: 'relative',
                     boxSizing: 'border-box',
@@ -626,9 +663,12 @@ export default function CharacterPage() {
                     </div>
                 )}
 
-                {/* Socket Footer: Quick Action */}
+                {/* Socket Footer: Quick Action & Inspect Hint */}
                 {item && (
-                    <div style={{ display: 'flex', justifyContent: 'flex-end', paddingTop: '2px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '2px' }}>
+                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
+                            Lihat detail ↗
+                        </span>
                         <button
                             type="button"
                             disabled={actionLoadingId === item.id}
@@ -1136,7 +1176,9 @@ export default function CharacterPage() {
                                         return (
                                             <div
                                                 key={item.id}
+                                                onClick={() => handleOpenPreview(item)}
                                                 className={`rarity-card-tier rarity-card-${item.rarity}`}
+                                                title={`${item.name} — Klik untuk penjelasan lengkap`}
                                                 style={{
                                                     padding: '14px 13px',
                                                     background: rarity.cardBg,
@@ -1148,6 +1190,8 @@ export default function CharacterPage() {
                                                     boxShadow: isEquipped ? '0 0 16px rgba(245, 158, 11, 0.25)' : rarity.cardShadow,
                                                     position: 'relative',
                                                     overflow: 'hidden',
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.15s ease',
                                                 }}
                                             >
                                                 {/* Top Beam Highlight */}
@@ -1306,7 +1350,10 @@ export default function CharacterPage() {
                                                         <button
                                                             type="button"
                                                             disabled={actionLoadingId === item.id}
-                                                            onClick={() => handleEquipToggle(item, 'unequip')}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                handleEquipToggle(item, 'unequip')
+                                                            }}
                                                             style={{
                                                                 width: '100%',
                                                                 padding: '6px 10px',
@@ -1326,7 +1373,10 @@ export default function CharacterPage() {
                                                         <button
                                                             type="button"
                                                             disabled={actionLoadingId === item.id}
-                                                            onClick={() => handleEquipToggle(item, 'equip')}
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                handleEquipToggle(item, 'equip')
+                                                            }}
                                                             style={{
                                                                 width: '100%',
                                                                 padding: '6px 10px',
@@ -1413,6 +1463,29 @@ export default function CharacterPage() {
                         </div>
                     )}
             </div>
+
+            {/* ITEM DETAIL & PREVIEW MODAL */}
+            {mounted && typeof document !== 'undefined' && createPortal(
+                <ItemDetailModal
+                    item={previewItem}
+                    isOpen={Boolean(previewItem)}
+                    onClose={handleClosePreview}
+                    isEquipped={previewItem ? equipped[previewItem.slot] === previewItem.id : false}
+                    onEquipToggle={(item, action) => handleEquipToggle(item, action)}
+                    actionLoading={actionLoadingId === previewItem?.id}
+                    currentlyEquippedInSlot={
+                        previewItem
+                            ? (equipped[previewItem.slot]
+                                ? GAME_ITEMS.find((it) => it.id === equipped[previewItem.slot]) || null
+                                : null)
+                            : null
+                    }
+                    playerRole={avatarClass}
+                    userXp={profile?.xp || 0}
+                    isInInventory={previewItem ? inventory.some((it) => it.id === previewItem.id) : false}
+                />,
+                document.body
+            )}
         </div>
     )
 }

@@ -17,6 +17,7 @@ import { GameItem, ItemSlot, ItemRarity, RARITY_CONFIG, GAME_ITEMS } from '@/lib
 import { EquippedItemsMap } from '@/lib/game/character'
 import ItemIcon from '@/components/character/ItemIcon'
 import ItemCelebrationModal from '@/components/character/ItemCelebrationModal'
+import ItemDetailModal from '@/components/character/ItemDetailModal'
 
 export type ShopTab = 'voucher' | 'items'
 
@@ -110,6 +111,7 @@ export default function ShopClient({
     const [itemActionLoadingId, setItemActionLoadingId] = useState<string | null>(null)
     const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null)
     const [celebrationItem, setCelebrationItem] = useState<GameItem | null>(null)
+    const [previewItem, setPreviewItem] = useState<GameItem | null>(null)
 
     const displayXp = useMemo(() => profile?.xp ?? xp, [profile?.xp, xp])
     const claimedVoucherIds = useMemo(() => new Set(history.map((item) => item.voucher_id)), [history])
@@ -710,7 +712,9 @@ export default function ShopClient({
                                 return (
                                     <div
                                         key={item.id}
+                                        onClick={() => setPreviewItem(item)}
                                         className={`rarity-card-tier rarity-card-${item.rarity}`}
+                                        title={`${item.name} — Klik untuk penjelasan lengkap`}
                                         style={{
                                             padding: '14px 13px',
                                             background: rarity.cardBg,
@@ -721,6 +725,8 @@ export default function ShopClient({
                                             gap: '10px',
                                             opacity: isOwned ? 0.85 : 1,
                                             boxShadow: rarity.cardShadow,
+                                            cursor: 'pointer',
+                                            transition: 'transform 0.15s ease, box-shadow 0.15s ease',
                                         }}
                                     >
                                         {/* Top Beam Highlight for rare / epic / legendary */}
@@ -954,7 +960,10 @@ export default function ShopClient({
                                                     whileHover={canAfford && !isLoading ? { scale: 1.02 } : {}}
                                                     whileTap={canAfford && !isLoading ? { scale: 0.98 } : {}}
                                                     type="button"
-                                                    onClick={() => handleBuyItem(item)}
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        handleBuyItem(item)
+                                                    }}
                                                     disabled={!canAfford || isLoading}
                                                     style={
                                                         item.rarity === 'legendary' && canAfford
@@ -1147,6 +1156,36 @@ export default function ShopClient({
                     (profile?.equipped_items?.[celebrationItem.slot] === celebrationItem.id ||
                      characterEquipped?.[celebrationItem.slot] === celebrationItem.id)
                 )}
+            />
+
+            {/* Item Detailed Inspection Modal */}
+            <ItemDetailModal
+                item={previewItem}
+                isOpen={Boolean(previewItem)}
+                onClose={() => setPreviewItem(null)}
+                isEquipped={Boolean(
+                    previewItem &&
+                    (profile?.equipped_items?.[previewItem.slot] === previewItem.id ||
+                     characterEquipped?.[previewItem.slot] === previewItem.id)
+                )}
+                onEquipToggle={async (item, action) => {
+                    if (action === 'equip') {
+                        await handleEquipFromCelebration(item)
+                    }
+                }}
+                actionLoading={itemActionLoadingId === previewItem?.id}
+                currentlyEquippedInSlot={
+                    previewItem && profile?.equipped_items?.[previewItem.slot]
+                        ? GAME_ITEMS.find((it) => it.id === profile.equipped_items?.[previewItem.slot]) || null
+                        : null
+                }
+                playerRole={profile?.avatar_class || 'warrior'}
+                userXp={displayXp}
+                isInInventory={Boolean(previewItem && ownedItemIds.has(previewItem.id))}
+                onBuy={async (item) => {
+                    await handleBuyItem(item)
+                    setPreviewItem(null)
+                }}
             />
         </div>
     )
