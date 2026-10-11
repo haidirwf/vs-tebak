@@ -46,12 +46,27 @@ function CharacterVisual({
 
     const isValkyrieWings = accessoryItem?.id === 'acc_valkyrie_wings' || accessoryItem?.icon === '🪽'
     const isFlameAura = accessoryItem?.id === 'acc_flame_aura' || accessoryItem?.icon === '🔥'
+    const isArchangelHalo = accessoryItem?.id === 'acc_archangel_halo'
+    const isInfinityPrism = accessoryItem?.id === 'acc_infinity_prism'
+    const isPhoenixFeather = accessoryItem?.id === 'acc_phoenix_feather'
+    const isDraconicHeart = accessoryItem?.id === 'acc_draconic_heart'
     const isChronoPendant = accessoryItem?.id === 'acc_chrono_pendant' || accessoryItem?.icon === '⏳'
+    const isCelestialHourglass = accessoryItem?.id === 'acc_celestial_hourglass'
+    const isVoidAmulet = accessoryItem?.id === 'acc_void_amulet'
+    const isIcePendant = accessoryItem?.id === 'acc_ice_pendant'
+    const isEmeraldBrooch = accessoryItem?.id === 'acc_emerald_brooch'
+    const isWoodenTalisman = accessoryItem?.id === 'acc_wooden_talisman'
     const isLuckRing = accessoryItem?.id === 'acc_luck_ring' || accessoryItem?.icon === '💍'
+    const isThunderBangle = accessoryItem?.id === 'acc_thunder_bangle'
+    const isLeatherBracelet = accessoryItem?.id === 'acc_leather_bracelet'
+    const isBronzeCompass = accessoryItem?.id === 'acc_bronze_compass'
 
     const hasShield = armorItem && (
         armorItem.id === 'arm_plate_cuirass' ||
         armorItem.id === 'arm_guardian_coat' ||
+        armorItem.id === 'arm_chainmail_hauberk' ||
+        armorItem.id === 'arm_valkyrie_cuirass' ||
+        armorItem.id === 'arm_solar_chitin' ||
         armorItem.icon === '🛡️'
     )
 
@@ -187,6 +202,89 @@ function CharacterVisual({
                             <stop offset="35%" stopColor="#c084fc" />
                             <stop offset="70%" stopColor="#38bdf8" />
                             <stop offset="100%" stopColor="#facc15" />
+                        </linearGradient>
+
+                        {/* Rich RPG Equipment Gradients */}
+                        <linearGradient id="phoenixPlumeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fef08a" />
+                            <stop offset="30%" stopColor="#f97316" />
+                            <stop offset="70%" stopColor="#ef4444" />
+                            <stop offset="100%" stopColor="#7f1d1d" />
+                        </linearGradient>
+
+                        <linearGradient id="quantumSuitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#0891b2" />
+                            <stop offset="45%" stopColor="#06b6d4" />
+                            <stop offset="80%" stopColor="#0f172a" />
+                            <stop offset="100%" stopColor="#020617" />
+                        </linearGradient>
+
+                        <linearGradient id="cosmicVoidGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#c084fc" />
+                            <stop offset="35%" stopColor="#7e22ce" />
+                            <stop offset="70%" stopColor="#3b0764" />
+                            <stop offset="100%" stopColor="#0f172a" />
+                        </linearGradient>
+
+                        <linearGradient id="solarChitinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fef08a" />
+                            <stop offset="35%" stopColor="#f59e0b" />
+                            <stop offset="75%" stopColor="#d97706" />
+                            <stop offset="100%" stopColor="#78350f" />
+                        </linearGradient>
+
+                        <linearGradient id="valkyrieAegisGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#ffffff" />
+                            <stop offset="40%" stopColor="#e0f2fe" />
+                            <stop offset="75%" stopColor="#94a3b8" />
+                            <stop offset="100%" stopColor="#334155" />
+                        </linearGradient>
+
+                        <linearGradient id="chainmailGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#f1f5f9" />
+                            <stop offset="40%" stopColor="#94a3b8" />
+                            <stop offset="80%" stopColor="#475569" />
+                            <stop offset="100%" stopColor="#1e293b" />
+                        </linearGradient>
+
+                        <linearGradient id="shadowTrenchGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#312e81" />
+                            <stop offset="50%" stopColor="#0f172a" />
+                            <stop offset="100%" stopColor="#020617" />
+                        </linearGradient>
+
+                        <linearGradient id="silkRobeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#d8b4fe" />
+                            <stop offset="40%" stopColor="#a855f7" />
+                            <stop offset="80%" stopColor="#6b21a8" />
+                            <stop offset="100%" stopColor="#3b0764" />
+                        </linearGradient>
+
+                        <linearGradient id="clericRobeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#ffffff" />
+                            <stop offset="40%" stopColor="#f8fafc" />
+                            <stop offset="75%" stopColor="#fde047" />
+                            <stop offset="100%" stopColor="#f59e0b" />
+                        </linearGradient>
+
+                        <linearGradient id="rangerLeatherGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#22c55e" />
+                            <stop offset="40%" stopColor="#166534" />
+                            <stop offset="80%" stopColor="#14532d" />
+                            <stop offset="100%" stopColor="#052e16" />
+                        </linearGradient>
+
+                        <linearGradient id="paddedGambesonGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#fef3c7" />
+                            <stop offset="40%" stopColor="#fde68a" />
+                            <stop offset="80%" stopColor="#d97706" />
+                            <stop offset="100%" stopColor="#78350f" />
+                        </linearGradient>
+
+                        <linearGradient id="explorerLinenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stopColor="#f5f5f4" />
+                            <stop offset="50%" stopColor="#d6d3d1" />
+                            <stop offset="100%" stopColor="#78716c" />
                         </linearGradient>
 
                         <filter id="glowFilter" x="-20%" y="-20%" width="140%" height="140%">
@@ -326,6 +424,50 @@ function CharacterVisual({
                             <circle cx="48" cy="52" r="2" fill="#f97316" />
                             <circle cx="166" cy="72" r="3" fill="#fef08a" />
                             <circle cx="152" cy="52" r="2" fill="#f97316" />
+                        </motion.g>
+                    )}
+
+                    {/* RADIANT ARCHANGEL AURORA HALO — Floating Radiant Ring of Light */}
+                    {isArchangelHalo && (
+                        <motion.g
+                            animate={{ scale: [0.98, 1.05, 0.98], opacity: [0.85, 1, 0.85] }}
+                            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                            transform="translate(100, 16)"
+                            style={{ filter: 'drop-shadow(0 0 14px #facc15) drop-shadow(0 0 24px #38bdf8)' }}
+                        >
+                            <ellipse cx="0" cy="0" rx="30" ry="8" fill="none" stroke="#fef08a" strokeWidth="3.2" />
+                            <ellipse cx="0" cy="0" rx="38" ry="10" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.8" />
+                            <line x1="0" y1="-12" x2="0" y2="12" stroke="#ffffff" strokeWidth="2.5" />
+                            <line x1="-18" y1="-6" x2="-18" y2="6" stroke="#fef08a" strokeWidth="1.5" opacity="0.75" />
+                            <line x1="18" y1="-6" x2="18" y2="6" stroke="#fef08a" strokeWidth="1.5" opacity="0.75" />
+                        </motion.g>
+                    )}
+
+                    {/* PRISM OF INFINITE TIMELINES — Orbiting Spacetime Crystal */}
+                    {isInfinityPrism && (
+                        <motion.g
+                            animate={{ y: [-4, 4, -4], rotate: [0, 8, 0] }}
+                            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                            transform="translate(158, 68)"
+                            style={{ filter: 'drop-shadow(0 0 12px #c084fc)' }}
+                        >
+                            <polygon points="0,-16 12,0 0,16 -12,0" fill="url(#archmageRingsGrad)" stroke="#ffffff" strokeWidth="1.2" opacity="0.9" />
+                            <polygon points="0,-16 0,16 6,0" fill="#ffffff" opacity="0.5" />
+                            <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                        </motion.g>
+                    )}
+
+                    {/* SACRED PHOENIX FEATHER — Fiery Trailing Feather Plume on Flank */}
+                    {isPhoenixFeather && (
+                        <motion.g
+                            animate={{ rotate: [-4, 6, -4], scale: [0.98, 1.04, 0.98] }}
+                            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+                            transform="translate(42, 88)"
+                            style={{ filter: 'drop-shadow(0 0 10px #f97316)' }}
+                        >
+                            <path d="M 0 0 C -12 -18 -18 -32 0 -44 C 6 -30 12 -18 0 0 Z" fill="url(#phoenixPlumeGrad)" stroke="#fef08a" strokeWidth="1.2" />
+                            <path d="M 0 0 C -4 -16 -6 -28 0 -38" stroke="#ffffff" strokeWidth="1.5" />
+                            <circle cx="-6" cy="-24" r="2.2" fill="#fef08a" />
                         </motion.g>
                     )}
 

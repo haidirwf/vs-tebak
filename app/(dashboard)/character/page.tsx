@@ -100,12 +100,101 @@ export default function CharacterPage() {
     const navTabsRef = useRef<HTMLDivElement>(null)
     const filterTabsRef = useRef<HTMLDivElement>(null)
 
+    const stageRef = useRef<HTMLDivElement>(null)
+    const avatarRef = useRef<HTMLDivElement>(null)
+    const headCardRef = useRef<HTMLDivElement>(null)
+    const accessoryCardRef = useRef<HTMLDivElement>(null)
+    const weaponCardRef = useRef<HTMLDivElement>(null)
+    const armorCardRef = useRef<HTMLDivElement>(null)
+
+    const [linePoints, setLinePoints] = useState<{
+        head?: { x1: number; y1: number; x2: number; y2: number }
+        accessory?: { x1: number; y1: number; x2: number; y2: number }
+        weapon?: { x1: number; y1: number; x2: number; y2: number }
+        armor?: { x1: number; y1: number; x2: number; y2: number }
+    }>({})
+
+    const updateLines = useCallback(() => {
+        if (!stageRef.current || !avatarRef.current) return
+        const stage = stageRef.current.getBoundingClientRect()
+        const avatar = avatarRef.current.getBoundingClientRect()
+
+        const avatarCenterX = avatar.left + avatar.width / 2 - stage.left
+        const headTargetY = avatar.top + avatar.height * 0.16 - stage.top
+        const accTargetX = avatar.left + avatar.width * 0.30 - stage.left
+        const accTargetY = avatar.top + avatar.height * 0.42 - stage.top
+        const wpnTargetX = avatar.left + avatar.width * 0.70 - stage.left
+        const wpnTargetY = avatar.top + avatar.height * 0.42 - stage.top
+        const armorTargetY = avatar.top + avatar.height * 0.54 - stage.top
+
+        const nextPoints: typeof linePoints = {}
+
+        if (headCardRef.current) {
+            const c = headCardRef.current.getBoundingClientRect()
+            nextPoints.head = {
+                x1: c.left - stage.left,
+                y1: c.top + c.height * 0.65 - stage.top,
+                x2: avatarCenterX + 6,
+                y2: headTargetY,
+            }
+        }
+
+        if (accessoryCardRef.current) {
+            const c = accessoryCardRef.current.getBoundingClientRect()
+            nextPoints.accessory = {
+                x1: c.right - stage.left,
+                y1: c.top + c.height * 0.5 - stage.top,
+                x2: accTargetX,
+                y2: accTargetY,
+            }
+        }
+
+        if (weaponCardRef.current) {
+            const c = weaponCardRef.current.getBoundingClientRect()
+            nextPoints.weapon = {
+                x1: c.left - stage.left,
+                y1: c.top + c.height * 0.5 - stage.top,
+                x2: wpnTargetX,
+                y2: wpnTargetY,
+            }
+        }
+
+        if (armorCardRef.current) {
+            const c = armorCardRef.current.getBoundingClientRect()
+            nextPoints.armor = {
+                x1: c.left + c.width / 2 - stage.left,
+                y1: c.top - stage.top,
+                x2: avatarCenterX,
+                y2: armorTargetY,
+            }
+        }
+
+        setLinePoints(nextPoints)
+    }, [])
+
     useEffect(() => {
-        const checkMobile = () => setIsMobile(window.innerWidth < 768)
+        const checkMobile = () => setIsMobile(window.innerWidth < 860)
         checkMobile()
         window.addEventListener('resize', checkMobile)
         return () => window.removeEventListener('resize', checkMobile)
     }, [])
+
+    useEffect(() => {
+        updateLines()
+        const handleResize = () => updateLines()
+        window.addEventListener('resize', handleResize)
+
+        let observer: ResizeObserver | null = null
+        if (stageRef.current && typeof ResizeObserver !== 'undefined') {
+            observer = new ResizeObserver(() => updateLines())
+            observer.observe(stageRef.current)
+        }
+
+        return () => {
+            window.removeEventListener('resize', handleResize)
+            if (observer) observer.disconnect()
+        }
+    }, [updateLines, equipped, isMobile])
 
     // Open preview item if specified in URL query (?item=id)
     useEffect(() => {
@@ -501,13 +590,15 @@ export default function CharacterPage() {
         slot: ItemSlot,
         item: GameItem | null,
         slotMeta: { name: string; emoji: string },
-        anatomicalLabel: string
+        anatomicalLabel: string,
+        cardRef?: React.RefObject<HTMLDivElement | null>
     ) {
         const rarity = item ? RARITY_CONFIG[item.rarity] : null
 
         return (
             <div
                 key={slot}
+                ref={cardRef}
                 onClick={() => {
                     if (!item) {
                         setSelectedSlotFilter(slot)
@@ -517,6 +608,7 @@ export default function CharacterPage() {
                         handleOpenPreview(item)
                     }
                 }}
+                className="character-callout-card"
                 title={item ? `${item.name} — Klik untuk penjelasan lengkap` : `Slot ${slotMeta.name} kosong — Klik untuk memilih item`}
                 style={{
                     borderRadius: '12px',
@@ -526,79 +618,59 @@ export default function CharacterPage() {
                     background: item
                         ? 'var(--surface-card)'
                         : 'rgba(255, 255, 255, 0.02)',
-                    boxShadow: item
-                        ? `0 4px 16px -4px rgba(0, 0, 0, 0.06), 0 0 10px -2px ${rarity?.border || 'transparent'}22`
-                        : 'none',
-                    padding: '10px 12px',
+                    padding: '11px 13px',
                     display: 'flex',
                     flexDirection: 'column',
                     gap: '8px',
                     cursor: 'pointer',
-                    transition: 'all 0.2s ease',
                     position: 'relative',
                     boxSizing: 'border-box',
                     minWidth: 0,
                     width: '100%',
                 }}
             >
-                {/* Socket Header: Slot icon + name & Anatomical hint */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '6px' }}>
+                {/* Top Accent Line like user sketch */}
+                <div
+                    style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        height: '3px',
+                        background: item
+                            ? (rarity?.topBeam || rarity?.border || '#f59e0b')
+                            : 'var(--surface-border)',
+                        borderRadius: '12px 12px 0 0',
+                    }}
+                />
+
+                {/* Header: Slot Emoji + Slot Name · Anatomical Label */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                    <span style={{ fontSize: '13px' }}>{slotMeta.emoji}</span>
                     <span
                         style={{
-                            display: 'inline-flex',
-                            alignItems: 'center',
-                            gap: '4px',
-                            fontSize: '11px',
+                            fontFamily: 'var(--font-heading)',
+                            fontSize: '12px',
                             fontWeight: 700,
-                            color: 'var(--text-secondary)',
+                            color: 'var(--text-primary)',
                         }}
                     >
-                        <span>{slotMeta.emoji}</span>
-                        <span>{slotMeta.name}</span>
-                        <span style={{ fontSize: '10px', color: 'var(--color-steel)', fontWeight: 400 }}>
-                            · {anatomicalLabel}
-                        </span>
+                        {slotMeta.name}
                     </span>
-
-                    {item ? (
-                        <span
-                            style={{
-                                fontSize: '9.5px',
-                                fontWeight: 700,
-                                padding: '1px 5px',
-                                borderRadius: '4px',
-                                color: rarity?.badgeColor,
-                                backgroundColor: rarity?.badgeBg,
-                                border: `1px solid ${rarity?.badgeBorder}`,
-                                whiteSpace: 'nowrap',
-                            }}
-                        >
-                            {rarity?.stars}
-                        </span>
-                    ) : (
-                        <span
-                            style={{
-                                fontSize: '9.5px',
-                                color: 'var(--color-steel)',
-                                padding: '1px 5px',
-                                borderRadius: '4px',
-                                backgroundColor: 'var(--surface-elevated)',
-                            }}
-                        >
-                            Kosong
-                        </span>
-                    )}
+                    <span style={{ fontSize: '11px', color: 'var(--color-steel)', fontWeight: 500 }}>
+                        · {anatomicalLabel}
+                    </span>
                 </div>
 
-                {/* Socket Content */}
+                {/* Body */}
                 {item ? (
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', minWidth: 0 }}>
-                        <ItemIcon item={item} slot={slot} size={38} />
+                        <ItemIcon item={item} slot={slot} size={46} />
                         <div style={{ minWidth: 0, flex: 1 }}>
                             <div
                                 style={{
                                     fontFamily: 'var(--font-heading)',
-                                    fontSize: '12.5px',
+                                    fontSize: '13px',
                                     fontWeight: 700,
                                     color: `var(--rarity-title-${item.rarity})`,
                                     lineHeight: 1.25,
@@ -610,19 +682,19 @@ export default function CharacterPage() {
                             >
                                 {item.name}
                             </div>
-                            <div style={{ marginTop: '2px' }}>
+                            <div style={{ marginTop: '4px' }}>
                                 <span
                                     style={{
                                         display: 'inline-flex',
                                         alignItems: 'center',
-                                        gap: '2px',
-                                        fontSize: '10px',
-                                        fontWeight: 600,
-                                        color: rarity?.buffColor,
-                                        backgroundColor: rarity?.buffBg,
-                                        border: `1px solid ${rarity?.buffBorder}`,
-                                        padding: '1px 5px',
-                                        borderRadius: '4px',
+                                        gap: '3px',
+                                        fontSize: '10.5px',
+                                        fontWeight: 700,
+                                        color: rarity?.buffColor || '#f59e0b',
+                                        backgroundColor: rarity?.buffBg || 'rgba(245, 158, 11, 0.1)',
+                                        border: `1.5px solid ${rarity?.buffBorder || 'rgba(245, 158, 11, 0.4)'}`,
+                                        padding: '2px 7px',
+                                        borderRadius: '5px',
                                         whiteSpace: 'nowrap',
                                         maxWidth: '100%',
                                         overflow: 'hidden',
@@ -635,11 +707,11 @@ export default function CharacterPage() {
                         </div>
                     </div>
                 ) : (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '2px 0' }}>
                         <div
                             style={{
-                                width: '38px',
-                                height: '38px',
+                                width: '42px',
+                                height: '42px',
                                 borderRadius: '8px',
                                 border: '1.5px dashed var(--surface-border)',
                                 display: 'flex',
@@ -656,39 +728,10 @@ export default function CharacterPage() {
                             <div style={{ fontSize: '11.5px', fontWeight: 600, color: 'var(--color-steel)' }}>
                                 Belum Terpasang
                             </div>
-                            <div style={{ fontSize: '10px', color: 'var(--color-fog)', marginTop: '1px' }}>
-                                Pilih dari gudang
+                            <div style={{ fontSize: '10px', color: 'var(--accent-gold-text)', marginTop: '2px', fontWeight: 600 }}>
+                                + Pilih dari Gudang
                             </div>
                         </div>
-                    </div>
-                )}
-
-                {/* Socket Footer: Quick Action & Inspect Hint */}
-                {item && (
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '2px' }}>
-                        <span style={{ fontSize: '10px', color: 'var(--color-steel)' }}>
-                            Lihat detail ↗
-                        </span>
-                        <button
-                            type="button"
-                            disabled={actionLoadingId === item.id}
-                            onClick={(e) => {
-                                e.stopPropagation()
-                                handleEquipToggle(item, 'unequip')
-                            }}
-                            style={{
-                                padding: '2px 8px',
-                                borderRadius: '5px',
-                                border: '1px solid var(--accent-red-border)',
-                                backgroundColor: 'var(--accent-red-bg)',
-                                color: 'var(--accent-red)',
-                                fontSize: '10.5px',
-                                fontWeight: 600,
-                                cursor: 'pointer',
-                            }}
-                        >
-                            {actionLoadingId === item.id ? '...' : 'Lepas'}
-                        </button>
                     </div>
                 )}
             </div>
@@ -819,14 +862,14 @@ export default function CharacterPage() {
                 document.body
             )}
 
-            {/* --- SECTION 1: HERO PAPERDOLL STUDIO (NO WHITE FRAME & BIG CHARACTER) --- */}
-            <div className="character-hero-stage">
-                {/* Hero Title & Lore Banner */}
-                <div style={{ textAlign: 'center', marginBottom: '18px' }}>
+            {/* --- SECTION 1: HERO BLUEPRINT STUDIO (EXACT USER SKETCH LAYOUT) --- */}
+            <div className="character-blueprint-canvas">
+                {/* Hero Title & Lore */}
+                <div style={{ textAlign: 'center', marginBottom: isMobile ? '14px' : '4px', position: 'relative', zIndex: 5 }}>
                     <div
                         style={{
                             fontFamily: 'var(--font-heading)',
-                            fontSize: isMobile ? '20px' : '24px',
+                            fontSize: isMobile ? '20px' : '23px',
                             fontWeight: 800,
                             color: 'var(--text-primary)',
                             letterSpacing: '-0.01em',
@@ -834,67 +877,230 @@ export default function CharacterPage() {
                     >
                         {profile?.username || 'Hero'}
                     </div>
-                    <div style={{ fontSize: '12.5px', color: 'var(--color-fog)', marginTop: '2px' }}>
+                    <div style={{ fontSize: '12px', color: 'var(--color-fog)', marginTop: '2px' }}>
                         {roleInfo.title} — {roleInfo.subtitle}
                     </div>
                 </div>
 
-                {/* The Paperdoll Arena (Desktop 3-Column: Head/Torso Left, Big Avatar Center, Weapon/Relic Right) */}
-                <div className="character-paperdoll-grid">
-                    {/* LEFT COLUMN: Kepala (Head) & Zirah (Torso) */}
-                    <div className="character-paperdoll-column character-paperdoll-column-desktop" style={{ justifyContent: 'space-around', minHeight: '300px' }}>
-                        {renderSocketCard('head', headItem, SLOT_LABELS.head, 'Kepala')}
-                        {renderSocketCard('armor', armorItem, SLOT_LABELS.armor, 'Badan')}
-                    </div>
-
-                    {/* CENTER: Free-Standing Big Hero Visual (No Box Frame, Rich Aura, Grounded Pedestal) */}
+                {/* DESKTOP BLUEPRINT ARENA (>= 860px) */}
+                {!isMobile ? (
                     <div
+                        ref={stageRef}
                         style={{
+                            position: 'relative',
+                            width: '100%',
+                            minHeight: '600px',
                             display: 'flex',
-                            flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            position: 'relative',
-                            userSelect: 'none',
                         }}
                     >
-                        <CharacterVisual
-                            role={avatarClass}
-                            equipped={equipped}
-                            size={isMobile ? 260 : 320}
-                            showAura={true}
-                            interactive={true}
-                            showRoleBadge={false}
-                        />
+                        {/* SVG Connecting Callout Lines with Bezier Curves */}
+                        <svg
+                            style={{
+                                position: 'absolute',
+                                inset: 0,
+                                width: '100%',
+                                height: '100%',
+                                pointerEvents: 'none',
+                                zIndex: 12,
+                            }}
+                        >
+                            {/* Head line */}
+                            {linePoints.head && (
+                                <g>
+                                    <path
+                                        d={`M ${linePoints.head.x1} ${linePoints.head.y1} C ${linePoints.head.x1 - (linePoints.head.x1 - linePoints.head.x2) * 0.45} ${linePoints.head.y1 + (linePoints.head.y2 - linePoints.head.y1) * 0.35}, ${linePoints.head.x2 + (linePoints.head.x1 - linePoints.head.x2) * 0.15} ${linePoints.head.y2 - 20}, ${linePoints.head.x2} ${linePoints.head.y2}`}
+                                        fill="none"
+                                        stroke="var(--callout-line)"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        style={{ opacity: 0.85 }}
+                                    />
+                                    <circle cx={linePoints.head.x1} cy={linePoints.head.y1} r="2.5" fill="var(--callout-line)" />
+                                    <circle cx={linePoints.head.x2} cy={linePoints.head.y2} r="3.5" fill="var(--callout-line)" />
+                                </g>
+                            )}
 
-                        {/* 3D Pedestal Base Ground Shadow */}
+                            {/* Accessory line */}
+                            {linePoints.accessory && (
+                                <g>
+                                    <path
+                                        d={`M ${linePoints.accessory.x1} ${linePoints.accessory.y1} C ${linePoints.accessory.x1 + (linePoints.accessory.x2 - linePoints.accessory.x1) * 0.45} ${linePoints.accessory.y1}, ${linePoints.accessory.x1 + (linePoints.accessory.x2 - linePoints.accessory.x1) * 0.55} ${linePoints.accessory.y2}, ${linePoints.accessory.x2} ${linePoints.accessory.y2}`}
+                                        fill="none"
+                                        stroke="var(--callout-line)"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        style={{ opacity: 0.85 }}
+                                    />
+                                    <circle cx={linePoints.accessory.x1} cy={linePoints.accessory.y1} r="2.5" fill="var(--callout-line)" />
+                                    <circle cx={linePoints.accessory.x2} cy={linePoints.accessory.y2} r="3.5" fill="var(--callout-line)" />
+                                </g>
+                            )}
+
+                            {/* Weapon line */}
+                            {linePoints.weapon && (
+                                <g>
+                                    <path
+                                        d={`M ${linePoints.weapon.x1} ${linePoints.weapon.y1} C ${linePoints.weapon.x1 - (linePoints.weapon.x1 - linePoints.weapon.x2) * 0.45} ${linePoints.weapon.y1}, ${linePoints.weapon.x1 - (linePoints.weapon.x1 - linePoints.weapon.x2) * 0.55} ${linePoints.weapon.y2}, ${linePoints.weapon.x2} ${linePoints.weapon.y2}`}
+                                        fill="none"
+                                        stroke="var(--callout-line)"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        style={{ opacity: 0.85 }}
+                                    />
+                                    <circle cx={linePoints.weapon.x1} cy={linePoints.weapon.y1} r="2.5" fill="var(--callout-line)" />
+                                    <circle cx={linePoints.weapon.x2} cy={linePoints.weapon.y2} r="3.5" fill="var(--callout-line)" />
+                                </g>
+                            )}
+
+                            {/* Armor line */}
+                            {linePoints.armor && (
+                                <g>
+                                    <path
+                                        d={`M ${linePoints.armor.x1} ${linePoints.armor.y1} C ${linePoints.armor.x1} ${linePoints.armor.y1 - (linePoints.armor.y1 - linePoints.armor.y2) * 0.45}, ${linePoints.armor.x2} ${linePoints.armor.y2 + (linePoints.armor.y1 - linePoints.armor.y2) * 0.25}, ${linePoints.armor.x2} ${linePoints.armor.y2}`}
+                                        fill="none"
+                                        stroke="var(--callout-line)"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        style={{ opacity: 0.85 }}
+                                    />
+                                    <circle cx={linePoints.armor.x1} cy={linePoints.armor.y1} r="2.5" fill="var(--callout-line)" />
+                                    <circle cx={linePoints.armor.x2} cy={linePoints.armor.y2} r="3.5" fill="var(--callout-line)" />
+                                </g>
+                            )}
+                        </svg>
+
+                        {/* Top-Right: Kepala Card */}
                         <div
                             style={{
-                                width: isMobile ? '160px' : '220px',
-                                height: isMobile ? '18px' : '24px',
-                                borderRadius: '50%',
-                                background: `radial-gradient(circle, ${roleInfo.themeColor}38 0%, rgba(0, 0, 0, 0.28) 55%, transparent 75%)`,
-                                marginTop: isMobile ? '-18px' : '-24px',
-                                filter: 'blur(3px)',
-                                pointerEvents: 'none',
+                                position: 'absolute',
+                                top: '18px',
+                                left: 'calc(50% + 85px)',
+                                width: '255px',
+                                zIndex: 20,
                             }}
-                        />
-                    </div>
+                        >
+                            {renderSocketCard('head', headItem, SLOT_LABELS.head, 'Kepala', headCardRef)}
+                        </div>
 
-                    {/* RIGHT COLUMN: Senjata (Hands) & Aksesoris (Relic/Wings) */}
-                    <div className="character-paperdoll-column character-paperdoll-column-desktop" style={{ justifyContent: 'space-around', minHeight: '300px' }}>
-                        {renderSocketCard('weapon', weaponItem, SLOT_LABELS.weapon, 'Tangan')}
-                        {renderSocketCard('accessory', accessoryItem, SLOT_LABELS.accessory, 'Relik')}
-                    </div>
-                </div>
+                        {/* Center: Free-Standing Big Hero Visual with Blue Dashed Pedestal */}
+                        <div
+                            ref={avatarRef}
+                            style={{
+                                position: 'absolute',
+                                left: '50%',
+                                top: '41%',
+                                transform: 'translate(-50%, -50%)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                userSelect: 'none',
+                                zIndex: 10,
+                            }}
+                        >
+                            <CharacterVisual
+                                role={avatarClass}
+                                equipped={equipped}
+                                size={320}
+                                showAura={true}
+                                interactive={true}
+                                showRoleBadge={false}
+                            />
 
-                {/* MOBILE ONLY: 2x2 Anatomical Sockets Deck */}
-                <div className="character-paperdoll-mobile-grid">
-                    {renderSocketCard('head', headItem, SLOT_LABELS.head, 'Kepala')}
-                    {renderSocketCard('weapon', weaponItem, SLOT_LABELS.weapon, 'Tangan')}
-                    {renderSocketCard('armor', armorItem, SLOT_LABELS.armor, 'Badan')}
-                    {renderSocketCard('accessory', accessoryItem, SLOT_LABELS.accessory, 'Relik')}
-                </div>
+                            {/* Blue Dashed Elliptical Pedestal Ring from user sketch */}
+                            <div
+                                style={{
+                                    width: '185px',
+                                    height: '36px',
+                                    borderRadius: '50%',
+                                    border: '2px dashed #38bdf8',
+                                    backgroundColor: 'rgba(56, 189, 248, 0.04)',
+                                    marginTop: '-24px',
+                                    pointerEvents: 'none',
+                                }}
+                            />
+                        </div>
+
+                        {/* Left: Aksesoris Card */}
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '43%',
+                                transform: 'translateY(-50%)',
+                                left: '20px',
+                                width: '250px',
+                                zIndex: 20,
+                            }}
+                        >
+                            {renderSocketCard('accessory', accessoryItem, SLOT_LABELS.accessory, 'Relik', accessoryCardRef)}
+                        </div>
+
+                        {/* Right: Senjata Card */}
+                        <div
+                            style={{
+                                position: 'absolute',
+                                top: '45%',
+                                transform: 'translateY(-50%)',
+                                right: '20px',
+                                width: '250px',
+                                zIndex: 20,
+                            }}
+                        >
+                            {renderSocketCard('weapon', weaponItem, SLOT_LABELS.weapon, 'Tangan', weaponCardRef)}
+                        </div>
+
+                        {/* Bottom: Zirah Card */}
+                        <div
+                            style={{
+                                position: 'absolute',
+                                bottom: '18px',
+                                left: '50%',
+                                transform: 'translateX(-50%)',
+                                width: '265px',
+                                zIndex: 20,
+                            }}
+                        >
+                            {renderSocketCard('armor', armorItem, SLOT_LABELS.armor, 'Badan', armorCardRef)}
+                        </div>
+                    </div>
+                ) : (
+                    /* MOBILE ARENA (< 860px) */
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '14px', width: '100%' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
+                            <CharacterVisual
+                                role={avatarClass}
+                                equipped={equipped}
+                                size={230}
+                                showAura={true}
+                                interactive={true}
+                                showRoleBadge={false}
+                            />
+                            {/* Blue Dashed Elliptical Pedestal Ring */}
+                            <div
+                                style={{
+                                    width: '145px',
+                                    height: '28px',
+                                    borderRadius: '50%',
+                                    border: '2px dashed #38bdf8',
+                                    backgroundColor: 'rgba(56, 189, 248, 0.06)',
+                                    boxShadow: '0 0 12px rgba(56, 189, 248, 0.22)',
+                                    marginTop: '-18px',
+                                    pointerEvents: 'none',
+                                }}
+                            />
+                        </div>
+
+                        {/* 2x2 Anatomical Sockets Deck on Mobile */}
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px', width: '100%' }}>
+                            {renderSocketCard('head', headItem, SLOT_LABELS.head, 'Kepala')}
+                            {renderSocketCard('weapon', weaponItem, SLOT_LABELS.weapon, 'Tangan')}
+                            {renderSocketCard('armor', armorItem, SLOT_LABELS.armor, 'Badan')}
+                            {renderSocketCard('accessory', accessoryItem, SLOT_LABELS.accessory, 'Relik')}
+                        </div>
+                    </div>
+                )}
 
                 {/* Hero Stage Footer: Passive Perk & 6 Combat Attributes */}
                 <div style={{ marginTop: '22px', display: 'flex', flexDirection: 'column', gap: '12px', width: '100%' }}>
