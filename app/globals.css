@@ -2828,6 +2828,26 @@ input::placeholder, textarea::placeholder {
   transform: translateY(-2px);
 }
 
+/* Redesigned Dashboard Stage Track & Trio Deck */
+@media (max-width: 680px) {
+  .stage-track-grid {
+    grid-template-columns: minmax(70px, 90px) 1fr minmax(70px, 90px) !important;
+    gap: 8px !important;
+  }
+  .stage-track-node {
+    width: 58px !important;
+    height: 86px !important;
+  }
+  .stage-trio-deck {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 12px !important;
+  }
+  .stage-trio-deck-center {
+    grid-column: 1 / -1 !important;
+    order: -1 !important;
+  }
+}
+
 
 
 
