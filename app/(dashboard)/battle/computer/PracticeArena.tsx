@@ -9,6 +9,7 @@ import { calculateCharacterStats, resolveEquippedMap } from '@/lib/game/characte
 import BattleArenaStage, { AttackEvent } from '@/components/battle/BattleArenaStage'
 import { battleSounds } from '@/lib/game/battle-sounds'
 import PostBattleReviewModal, { QuizReviewItem } from '@/components/battle/PostBattleReviewModal'
+import { BOT_DIFFICULTIES, BOT_DIFFICULTY_LIST, BotDifficulty } from '@/lib/game/computer-bot'
 
 type PracticeCategory = 'coding' | 'design' | 'productivity' | 'business' | 'general'
 
@@ -53,12 +54,6 @@ function shuffleQuestionOptions(question: PracticeQuestion): PracticeQuestion {
     }
 }
 
-function botAccuracyByDifficulty(difficulty: string) {
-    if (difficulty === 'hard') return 0.55
-    if (difficulty === 'easy') return 0.8
-    return 0.68
-}
-
 export default function PracticeArena({ questionPool, currentUser }: PracticeArenaProps) {
     const router = useRouter()
     const searchParams = useSearchParams()
@@ -67,6 +62,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     const autoStartedRef = useRef(false)
 
     const categoryParam = searchParams.get('category') as PracticeCategory | null
+    const difficultyParam = searchParams.get('difficulty') as BotDifficulty | null
     const autostartParam = searchParams.get('autostart')
 
     const initialCategory: PracticeCategory = useMemo(() => {
@@ -76,7 +72,20 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         return 'general'
     }, [categoryParam])
 
+    const initialDifficulty: BotDifficulty = useMemo(() => {
+        if (difficultyParam && (difficultyParam === 'easy' || difficultyParam === 'medium' || difficultyParam === 'hard')) {
+            return difficultyParam
+        }
+        return 'medium'
+    }, [difficultyParam])
+
     const [selectedCategory, setSelectedCategory] = useState<PracticeCategory>(initialCategory)
+    const [selectedDifficulty, setSelectedDifficulty] = useState<BotDifficulty>(initialDifficulty)
+
+    const diffCfg = useMemo(() => {
+        return BOT_DIFFICULTIES[selectedDifficulty] || BOT_DIFFICULTIES.medium
+    }, [selectedDifficulty])
+
     const [started, setStarted] = useState(false)
     const [questions, setQuestions] = useState<PracticeQuestion[]>([])
     const [currentQ, setCurrentQ] = useState(0)
@@ -147,10 +156,10 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     }
 
     function startRoundBot(question: PracticeQuestion) {
-        const botDelayMs = (Math.floor(Math.random() * 7) + 2) * 1000 // 2-8s
+        const botDelayMs = (Math.random() * (diffCfg.maxDelaySec - diffCfg.minDelaySec) + diffCfg.minDelaySec) * 1000
         botRef.current = setTimeout(() => {
             setBotAnswered(true)
-            const willBeCorrect = Math.random() < botAccuracyByDifficulty(question.difficulty || 'medium')
+            const willBeCorrect = Math.random() < diffCfg.botAccuracy
             const picked = willBeCorrect
                 ? question.correct_option
                 : Math.floor(Math.random() * question.options.length)
@@ -169,7 +178,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 id: String(Date.now()),
                 direction: 'right-to-left',
                 type: 'bot',
-                damage: 12,
+                damage: diffCfg.baseDamage,
                 weaponId: 'bot',
                 comboCount: 1,
             })
@@ -178,11 +187,11 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                 battleSounds.playHitImpact(false, 1, 'bot')
                 setMeAnimation('hurt')
                 const reduction = myStats.battleBuffs.damageReductionPct || 0
-                const incomingDamage = Math.max(1, Math.round(12 * (1 - reduction / 100)))
+                const incomingDamage = Math.max(1, Math.round(diffCfg.baseDamage * (1 - reduction / 100)))
                 const newHp = Math.max(0, myHp - incomingDamage)
                 setMyHp(newHp)
                 setCombatText({ target: 'me', text: `⚡ -${incomingDamage} HP`, type: 'damage' })
-                setBattleLog(`🤖 AI Sentinel melancarkan serangan pulsa energi kilat (-${incomingDamage} HP)!`)
+                setBattleLog(`🤖 ${diffCfg.botName} melancarkan serangan pulsa energi kilat (-${incomingDamage} HP)!`)
                 setTimeout(() => setMeAnimation('idle'), 500)
                 setTimeout(() => setCombatText(null), 1100)
 
@@ -229,27 +238,52 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         if (categoryParam && CATEGORIES.some(c => c.value === categoryParam)) {
             setSelectedCategory(categoryParam)
         }
-    }, [categoryParam])
+        if (difficultyParam && (difficultyParam === 'easy' || difficultyParam === 'medium' || difficultyParam === 'hard')) {
+            setSelectedDifficulty(difficultyParam)
+        }
+    }, [categoryParam, difficultyParam])
 
     useEffect(() => {
         if (autoStartedRef.current) return
         if (autostartParam === 'true') {
             const cat = categoryParam && CATEGORIES.some(c => c.value === categoryParam) ? categoryParam : 'general'
+            const diff = difficultyParam && (difficultyParam === 'easy' || difficultyParam === 'medium' || difficultyParam === 'hard') ? difficultyParam : 'medium'
             const pool = cat === 'general' ? questionPool : questionPool.filter(q => q.category === cat)
             if (pool.length > 0 && !started) {
                 autoStartedRef.current = true
-                startPractice(cat)
+                startPractice(cat, diff)
             }
         }
-    }, [autostartParam, categoryParam, questionPool, started])
+    }, [autostartParam, categoryParam, difficultyParam, questionPool, started])
 
-    function startPractice(catOverride?: PracticeCategory) {
+    function startPractice(catOverride?: PracticeCategory, diffOverride?: BotDifficulty) {
         const cat = catOverride || selectedCategory
+        const diff = diffOverride || selectedDifficulty
         const pool = cat === 'general' ? questionPool : questionPool.filter(q => q.category === cat)
-        const picked = shuffle(pool)
+        if (pool.length === 0) return
+
+        // Filter and prioritize questions based on chosen difficulty
+        let prioritizedPool: PracticeQuestion[] = []
+        if (diff === 'easy') {
+            const easyQ = shuffle(pool.filter(q => q.difficulty === 'easy'))
+            const medQ = shuffle(pool.filter(q => q.difficulty === 'medium'))
+            const hardQ = shuffle(pool.filter(q => q.difficulty === 'hard'))
+            prioritizedPool = [...easyQ, ...medQ, ...hardQ]
+        } else if (diff === 'hard') {
+            const hardQ = shuffle(pool.filter(q => q.difficulty === 'hard'))
+            const medQ = shuffle(pool.filter(q => q.difficulty === 'medium'))
+            const easyQ = shuffle(pool.filter(q => q.difficulty === 'easy'))
+            prioritizedPool = [...hardQ, ...medQ, ...easyQ]
+        } else {
+            prioritizedPool = shuffle(pool)
+        }
+
+        const picked = prioritizedPool
             .slice(0, BATTLE_QUESTION_COUNT)
             .map((q) => shuffleQuestionOptions(q))
         if (picked.length === 0) return
+
+        const activeDiff = BOT_DIFFICULTIES[diff] || BOT_DIFFICULTIES.medium
         setQuestions(picked)
         setCurrentQ(0)
         setTimeLeft(QUESTION_TIME + (myStats.battleBuffs.extraTimerSec || 0))
@@ -268,7 +302,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         setQuizReviews([])
         setShowReviewModal(false)
         setCombatText(null)
-        setBattleLog('⚡ Arena Latihan RPG aktif. Jawab pertanyaan untuk menyerang AI Sentinel!')
+        setBattleLog(`⚡ Arena Latihan RPG aktif melawan ${activeDiff.botName} (${activeDiff.badge})! Jawab pertanyaan untuk menyerang.`)
         setStarted(true)
         battleSounds.playMatchStart()
         battleSounds.startBattleBGM()
@@ -580,13 +614,56 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                         </div>
                     </div>
 
+                    <div style={{ marginBottom: '20px' }}>
+                        <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 600 }}>
+                            Tingkat Kesulitan AI
+                        </label>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+                            {BOT_DIFFICULTY_LIST.map(diff => {
+                                const isSelected = selectedDifficulty === diff.id
+                                return (
+                                    <button
+                                        key={diff.id}
+                                        type="button"
+                                        onClick={() => setSelectedDifficulty(diff.id)}
+                                        style={{
+                                            padding: '10px 12px',
+                                            borderRadius: '8px',
+                                            cursor: 'pointer',
+                                            backgroundColor: isSelected ? diff.bgColor : 'var(--surface-elevated)',
+                                            border: `1.5px solid ${isSelected ? diff.borderColor : 'var(--surface-border)'}`,
+                                            color: isSelected ? diff.color : 'var(--text-secondary)',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            gap: '4px',
+                                            textAlign: 'left',
+                                            transition: 'all 0.15s ease',
+                                        }}
+                                    >
+                                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                            <span style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
+                                                {diff.icon} {diff.label}
+                                            </span>
+                                            <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent-gold-text)' }}>
+                                                +{diff.xpReward} XP
+                                            </span>
+                                        </div>
+                                        <span style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                                            {diff.sublabel}
+                                        </span>
+                                    </button>
+                                )
+                            })}
+                        </div>
+                    </div>
+
                     {availableQuestions.length === 0 ? (
                         <div style={{ color: 'var(--accent-red)', fontSize: '12px', marginBottom: '16px', padding: '8px 12px', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
                             Soal untuk kategori ini belum tersedia.
                         </div>
                     ) : (
                         <p style={{ color: 'var(--color-fog)', fontSize: '11.5px', marginBottom: '18px' }}>
-                            Soal tersedia di kategori ini: {availableQuestions.length} soal
+                            Soal tersedia di kategori ini: {availableQuestions.length} soal • Target Bot: {diffCfg.botName}
                         </p>
                     )}
 
@@ -603,7 +680,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             type="button"
                             whileHover={{ scale: availableQuestions.length > 0 ? 1.02 : 1 }}
                             whileTap={{ scale: availableQuestions.length > 0 ? 0.98 : 1 }}
-                            onClick={() => startPractice()}
+                            onClick={() => startPractice(selectedCategory, selectedDifficulty)}
                             disabled={availableQuestions.length === 0}
                             className="btn-signal-orange"
                             style={{
@@ -659,9 +736,48 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                     >
                         {title}
                     </h2>
-                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: '0 0 16px 0', lineHeight: 1.4 }}>
-                        {result === 'win' ? 'Luar biasa! Kamu berhasil menaklukkan Computer AI.' : result === 'lose' ? 'Tetap semangat! Coba lagi untuk mengasah ketepatan analisismu.' : 'Pertandingan sengit! Skor kalian seimbang.'}
+                    <p style={{ color: 'var(--color-fog)', fontSize: '13px', margin: '0 0 12px 0', lineHeight: 1.4 }}>
+                        {result === 'win' ? `Luar biasa! Kamu berhasil menaklukkan ${diffCfg.botName}.` : result === 'lose' ? `Tetap semangat! Coba lagi untuk menaklukkan ${diffCfg.botName}.` : 'Pertandingan sengit! Skor kalian seimbang.'}
                     </p>
+
+                    {/* Difficulty Badge & Reward */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '16px', flexWrap: 'wrap' }}>
+                        <span
+                            style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                padding: '3px 9px',
+                                borderRadius: '6px',
+                                backgroundColor: diffCfg.bgColor,
+                                border: `1px solid ${diffCfg.borderColor}`,
+                                color: diffCfg.color,
+                                fontSize: '12px',
+                                fontWeight: 700,
+                            }}
+                        >
+                            {diffCfg.badge}
+                        </span>
+                        {result === 'win' && (
+                            <span
+                                style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '4px',
+                                    padding: '3px 9px',
+                                    borderRadius: '6px',
+                                    backgroundColor: 'var(--accent-gold-bg)',
+                                    border: '1px solid var(--accent-gold-border)',
+                                    color: 'var(--accent-gold-text)',
+                                    fontSize: '12px',
+                                    fontWeight: 700,
+                                }}
+                            >
+                                <span>✨</span>
+                                <span>+{diffCfg.xpReward} XP Latihan</span>
+                            </span>
+                        )}
+                    </div>
 
                     {/* Contestants Final Comparison */}
                     <div
@@ -699,7 +815,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                         {/* Bot */}
                         <div className="battle-versus-col battle-versus-col-right">
                             <div className="battle-versus-info">
-                                <div className="battle-player-name">Computer AI</div>
+                                <div className="battle-player-name">{diffCfg.botName}</div>
                                 <div style={{ fontFamily: 'var(--font-heading)', fontSize: '16px', fontWeight: 800, color: '#00d4ff', lineHeight: 1.2 }}>
                                     {botScore} <span style={{ fontSize: '9.5px', color: 'var(--color-steel)' }}>PTS</span>
                                 </div>
@@ -801,6 +917,19 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             >
                                 Soal {currentQ + 1} dari {questions.length}
                             </span>
+                            <span
+                                style={{
+                                    fontSize: '11px',
+                                    fontWeight: 700,
+                                    padding: '2px 8px',
+                                    borderRadius: '6px',
+                                    color: diffCfg.color,
+                                    backgroundColor: diffCfg.bgColor,
+                                    border: `1px solid ${diffCfg.borderColor}`,
+                                }}
+                            >
+                                {diffCfg.badge}
+                            </span>
 
                             {/* Sound & Music Controls */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -900,15 +1029,15 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             animationState: meAnimation,
                         }}
                         opponent={{
-                            name: 'AI Sentinel',
-                            avatarClass: 'mage',
+                            name: diffCfg.botName,
+                            avatarClass: diffCfg.botClass,
                             equipped: {},
-                            level: 10,
+                            level: diffCfg.botLevel,
                             hp: botHp,
                             maxHp: 100,
                             mp: botMp,
                             score: botScore,
-                            schoolName: 'Cyber Bot Engine',
+                            schoolName: `Mode ${diffCfg.label} • AI Engine`,
                             animationState: botAnimation,
                             isBot: true,
                         }}

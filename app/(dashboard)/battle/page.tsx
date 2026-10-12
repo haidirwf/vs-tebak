@@ -22,6 +22,7 @@ import {
     Play,
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
+import { BOT_DIFFICULTY_LIST, BotDifficulty } from '@/lib/game/computer-bot'
 
 const CATEGORIES = [
     { value: 'coding', label: 'Coding', emoji: '💻' },
@@ -47,6 +48,7 @@ export default function BattlePage() {
     const [mode, setMode] = useState<'select' | 'create' | 'join' | 'matchmaking' | 'computer'>('select')
     const [roomCode, setRoomCode] = useState('')
     const [category, setCategory] = useState('general')
+    const [computerDifficulty, setComputerDifficulty] = useState<BotDifficulty>('medium')
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [pendingBattleId, setPendingBattleId] = useState<string | null>(null)
@@ -1004,6 +1006,49 @@ export default function BattlePage() {
                                 </div>
                             </div>
 
+                            <div style={{ marginBottom: '22px' }}>
+                                <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '10px', fontWeight: 600 }}>
+                                    Tingkat Kesulitan AI
+                                </label>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(130px, 1fr))', gap: '8px' }}>
+                                    {BOT_DIFFICULTY_LIST.map(diff => {
+                                        const isSelected = computerDifficulty === diff.id
+                                        return (
+                                            <button
+                                                key={diff.id}
+                                                type="button"
+                                                onClick={() => setComputerDifficulty(diff.id)}
+                                                style={{
+                                                    padding: '10px 12px',
+                                                    borderRadius: '8px',
+                                                    cursor: 'pointer',
+                                                    backgroundColor: isSelected ? diff.bgColor : 'var(--surface-elevated)',
+                                                    border: `1.5px solid ${isSelected ? diff.borderColor : 'var(--surface-border)'}`,
+                                                    color: isSelected ? diff.color : 'var(--text-secondary)',
+                                                    display: 'flex',
+                                                    flexDirection: 'column',
+                                                    gap: '4px',
+                                                    textAlign: 'left',
+                                                    transition: 'all 0.15s ease',
+                                                }}
+                                            >
+                                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%' }}>
+                                                    <span style={{ fontSize: '13px', fontWeight: 700, fontFamily: 'var(--font-heading)' }}>
+                                                        {diff.icon} {diff.label}
+                                                    </span>
+                                                    <span style={{ fontSize: '10px', fontWeight: 700, color: 'var(--accent-gold-text)' }}>
+                                                        +{diff.xpReward} XP
+                                                    </span>
+                                                </div>
+                                                <span style={{ fontSize: '11px', color: 'var(--text-muted)', lineHeight: 1.3 }}>
+                                                    {diff.sublabel}
+                                                </span>
+                                            </button>
+                                        )
+                                    })}
+                                </div>
+                            </div>
+
                             <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end', flexWrap: 'wrap', marginTop: '22px' }}>
                                 <button
                                     type="button"
@@ -1019,7 +1064,7 @@ export default function BattlePage() {
                                     whileTap={{ scale: 0.98 }}
                                     onClick={() => {
                                         setMode('select')
-                                        router.push(`/battle/computer?category=${category}&autostart=true`)
+                                        router.push(`/battle/computer?category=${category}&difficulty=${computerDifficulty}&autostart=true`)
                                     }}
                                     className="btn-signal-orange"
                                     style={{ padding: '9px 20px', fontSize: '13px', fontWeight: 700 }}
