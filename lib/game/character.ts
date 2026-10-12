@@ -147,13 +147,11 @@ export function resolveEquippedMap(
     equipped?: EquippedItemsMap | null,
     characterCreated: boolean = true
 ): EquippedItemsMap {
-    if (equipped && Object.keys(equipped).length > 0) {
-        return equipped
+    const starters = characterCreated ? getStarterEquippedMap(roleKey) : {}
+    if (!equipped || Object.keys(equipped).length === 0) {
+        return starters
     }
-    if (characterCreated) {
-        return getStarterEquippedMap(roleKey)
-    }
-    return {}
+    return { ...starters, ...equipped }
 }
 
 export interface TotalCharacterStats {
@@ -188,6 +186,7 @@ export function calculateCharacterStats(
     level: number = 1,
     equipped: EquippedItemsMap = {}
 ): TotalCharacterStats {
+    const resolvedEquipped = resolveEquippedMap(roleKey, equipped, true)
     const role = CHARACTER_ROLES[roleKey] || CHARACTER_ROLES.warrior
     const levelScale = Math.max(1, level)
     const levelBonus = (levelScale - 1) * 2
@@ -224,7 +223,7 @@ export function calculateCharacterStats(
 
     // Sum equipped items
     for (const slot of ['weapon', 'head', 'armor', 'accessory'] as ItemSlot[]) {
-        const itemId = equipped[slot]
+        const itemId = resolvedEquipped[slot]
         if (!itemId) continue
         const item = getItemById(itemId)
         if (!item) continue

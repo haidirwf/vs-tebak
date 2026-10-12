@@ -100,12 +100,42 @@ export default function LeaderboardPage() {
 
     if (isLoading && allTimeLeaderboard.length === 0) {
         return (
-            <div className="responsive-page" style={{ padding: '24px', maxWidth: '900px', margin: '0 auto' }}>
-                <div className="sq-skeleton" style={{ height: '36px', width: '220px', marginBottom: '20px' }} />
-                <div className="card" style={{ padding: '20px' }}>
-                    <div className="sq-skeleton" style={{ height: '40px', marginBottom: '16px' }} />
-                    {[1, 2, 3, 4, 5, 6].map((i) => (
-                        <div key={i} className="sq-skeleton" style={{ height: '48px', marginBottom: '8px' }} />
+            <div className="responsive-page" style={{ maxWidth: '880px', margin: '0 auto', paddingBottom: '36px' }}>
+                {/* Header Skeleton */}
+                <div style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '14px', marginBottom: '16px' }}>
+                        <div className="sq-skeleton" style={{ width: '44px', height: '44px', borderRadius: '10px' }} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                            <div className="sq-skeleton" style={{ height: '24px', width: '200px', borderRadius: '6px' }} />
+                            <div className="sq-skeleton" style={{ height: '14px', width: '280px', borderRadius: '4px' }} />
+                        </div>
+                    </div>
+
+                    {/* Stats Strip Skeleton */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '10px' }}>
+                        {[1, 2, 3].map((i) => (
+                            <div key={i} className="sq-skeleton" style={{ height: '60px', borderRadius: '10px' }} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Tabs & Search Skeleton */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', gap: '12px', marginBottom: '22px' }}>
+                    <div className="sq-skeleton" style={{ height: '38px', width: '280px', borderRadius: '10px' }} />
+                    <div className="sq-skeleton" style={{ height: '38px', width: '220px', borderRadius: '8px' }} />
+                </div>
+
+                {/* Podium Skeleton */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', alignItems: 'flex-end', marginBottom: '24px' }}>
+                    <div className="sq-skeleton" style={{ height: '180px', borderRadius: '12px' }} />
+                    <div className="sq-skeleton" style={{ height: '210px', borderRadius: '12px' }} />
+                    <div className="sq-skeleton" style={{ height: '180px', borderRadius: '12px' }} />
+                </div>
+
+                {/* List Skeleton */}
+                <div className="card" style={{ padding: '16px', borderRadius: '12px' }}>
+                    {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className="sq-skeleton" style={{ height: '48px', marginBottom: i < 5 ? '8px' : 0, borderRadius: '8px' }} />
                     ))}
                 </div>
             </div>
