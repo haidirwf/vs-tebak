@@ -297,7 +297,6 @@ export default function SlotPickerModal({
 
                                 {/* Active Stats of Equipped Item */}
                                 <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '4px', paddingTop: '4px', borderTop: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                                    <span style={{ fontSize: '10px', fontWeight: 700, color: '#10b981' }}>Nambah:</span>
                                     {formatItemStatBadges(equippedItem).map((b) => (
                                         <span
                                             key={b.key}

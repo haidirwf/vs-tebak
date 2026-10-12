@@ -454,7 +454,6 @@ export default function ItemDetailModal({
                                     </div>
                                     {itemStatBadges.length > 0 && (
                                         <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '11px', fontWeight: 800, fontFamily: 'var(--font-mono)' }}>
-                                            <span style={{ color: 'var(--text-secondary)', fontWeight: 600 }}>Nambah:</span>
                                             {itemStatBadges.map((badge) => (
                                                 <span key={badge.key} style={{ color: '#34d399', backgroundColor: 'rgba(16, 185, 129, 0.2)', padding: '1px 5px', borderRadius: '4px' }}>
                                                     {badge.icon} {badge.display}
@@ -499,7 +498,7 @@ export default function ItemDetailModal({
                                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                     <div style={{ fontSize: '11px', fontWeight: 700, color: '#10b981', display: 'flex', alignItems: 'center', gap: '5px' }}>
                                         <span>⚡</span>
-                                        <span>Bonus Atribut Stat {isThisEquipped ? '(Aktif Menambah ke Pahlawan)' : '(Jika Dipasang)'}</span>
+                                        <span>Bonus Atribut Stat {isThisEquipped ? '(Aktif pada Pahlawan)' : '(Jika Dipasang)'}</span>
                                     </div>
                                     <span
                                         style={{
@@ -513,7 +512,7 @@ export default function ItemDetailModal({
                                             fontFamily: 'var(--font-mono)',
                                         }}
                                     >
-                                        {isThisEquipped ? 'Sedang Aktif Menambah' : '+ Peningkatan Stat'}
+                                        {isThisEquipped ? 'Sedang Aktif' : '+ Peningkatan Stat'}
                                     </span>
                                 </div>
                                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>

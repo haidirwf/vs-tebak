@@ -764,7 +764,7 @@ export default function CharacterPage() {
                             </div>
                         </div>
 
-                        {/* Dedicated Stat Bonus Row: "Nambah Stat: +X HP, +Y ATK" */}
+                        {/* Dedicated Stat Bonus Row */}
                         <div
                             style={{
                                 display: 'flex',
@@ -777,9 +777,6 @@ export default function CharacterPage() {
                                 border: '1px solid rgba(16, 185, 129, 0.25)',
                             }}
                         >
-                            <span style={{ fontSize: '9.5px', color: '#10b981', fontWeight: 700 }}>
-                                Nambah:
-                            </span>
                             {formatItemStatBadges(item).map((badge) => (
                                 <span
                                     key={badge.key}
@@ -1709,7 +1706,7 @@ export default function CharacterPage() {
                                                                     }}
                                                                 >
                                                                     <span style={{ fontSize: '9.5px', fontWeight: 700, color: isEquipped ? '#10b981' : 'var(--text-secondary)' }}>
-                                                                        {isEquipped ? 'Nambah:' : 'Stat:'}
+                                                                        Stat:
                                                                     </span>
                                                                     {formatItemStatBadges(item).map((badge) => (
                                                                         <span
