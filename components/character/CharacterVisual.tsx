@@ -450,46 +450,49 @@ function CharacterVisual({
 
                     {/* RADIANT ARCHANGEL AURORA HALO — Floating Radiant Ring of Light */}
                     {isArchangelHalo && (
-                        <motion.g
-                            animate={{ scale: [0.98, 1.05, 0.98], opacity: [0.85, 1, 0.85] }}
-                            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
-                            transform="translate(100, 16)"
-                            style={{ filter: 'drop-shadow(0 0 14px #facc15) drop-shadow(0 0 24px #38bdf8)' }}
-                        >
-                            <ellipse cx="0" cy="0" rx="30" ry="8" fill="none" stroke="#fef08a" strokeWidth="3.2" />
-                            <ellipse cx="0" cy="0" rx="38" ry="10" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.8" />
-                            <line x1="0" y1="-12" x2="0" y2="12" stroke="#ffffff" strokeWidth="2.5" />
-                            <line x1="-18" y1="-6" x2="-18" y2="6" stroke="#fef08a" strokeWidth="1.5" opacity="0.75" />
-                            <line x1="18" y1="-6" x2="18" y2="6" stroke="#fef08a" strokeWidth="1.5" opacity="0.75" />
-                        </motion.g>
+                        <g transform="translate(100, 16)">
+                            <motion.g
+                                animate={{ scale: [0.98, 1.05, 0.98], opacity: [0.85, 1, 0.85] }}
+                                transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+                                style={{ filter: 'drop-shadow(0 0 14px #facc15) drop-shadow(0 0 24px #38bdf8)' }}
+                            >
+                                <ellipse cx="0" cy="0" rx="30" ry="8" fill="none" stroke="#fef08a" strokeWidth="3.2" />
+                                <ellipse cx="0" cy="0" rx="38" ry="10" fill="none" stroke="#38bdf8" strokeWidth="1.5" strokeDasharray="4 3" opacity="0.8" />
+                                <line x1="0" y1="-12" x2="0" y2="12" stroke="#ffffff" strokeWidth="2.5" />
+                                <line x1="-18" y1="-6" x2="-18" y2="6" stroke="#fef08a" strokeWidth="1.5" opacity="0.75" />
+                                <line x1="18" y1="-6" x2="18" y2="6" stroke="#fef08a" strokeWidth="1.5" opacity="0.75" />
+                            </motion.g>
+                        </g>
                     )}
 
                     {/* PRISM OF INFINITE TIMELINES — Orbiting Spacetime Crystal */}
                     {isInfinityPrism && (
-                        <motion.g
-                            animate={{ y: [-4, 4, -4], rotate: [0, 8, 0] }}
-                            transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
-                            transform="translate(158, 68)"
-                            style={{ filter: 'drop-shadow(0 0 12px #c084fc)' }}
-                        >
-                            <polygon points="0,-16 12,0 0,16 -12,0" fill="url(#archmageRingsGrad)" stroke="#ffffff" strokeWidth="1.2" opacity="0.9" />
-                            <polygon points="0,-16 0,16 6,0" fill="#ffffff" opacity="0.5" />
-                            <circle cx="0" cy="0" r="3" fill="#ffffff" />
-                        </motion.g>
+                        <g transform="translate(158, 68)">
+                            <motion.g
+                                animate={{ y: [-4, 4, -4], rotate: [0, 8, 0] }}
+                                transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                                style={{ filter: 'drop-shadow(0 0 12px #c084fc)' }}
+                            >
+                                <polygon points="0,-16 12,0 0,16 -12,0" fill="url(#archmageRingsGrad)" stroke="#ffffff" strokeWidth="1.2" opacity="0.9" />
+                                <polygon points="0,-16 0,16 6,0" fill="#ffffff" opacity="0.5" />
+                                <circle cx="0" cy="0" r="3" fill="#ffffff" />
+                            </motion.g>
+                        </g>
                     )}
 
                     {/* SACRED PHOENIX FEATHER — Fiery Trailing Feather Plume on Flank */}
                     {isPhoenixFeather && (
-                        <motion.g
-                            animate={{ rotate: [-4, 6, -4], scale: [0.98, 1.04, 0.98] }}
-                            transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
-                            transform="translate(42, 88)"
-                            style={{ filter: 'drop-shadow(0 0 10px #f97316)' }}
-                        >
-                            <path d="M 0 0 C -12 -18 -18 -32 0 -44 C 6 -30 12 -18 0 0 Z" fill="url(#phoenixPlumeGrad)" stroke="#fef08a" strokeWidth="1.2" />
-                            <path d="M 0 0 C -4 -16 -6 -28 0 -38" stroke="#ffffff" strokeWidth="1.5" />
-                            <circle cx="-6" cy="-24" r="2.2" fill="#fef08a" />
-                        </motion.g>
+                        <g transform="translate(42, 88)">
+                            <motion.g
+                                animate={{ rotate: [-4, 6, -4], scale: [0.98, 1.04, 0.98] }}
+                                transition={{ repeat: Infinity, duration: 2.2, ease: 'easeInOut' }}
+                                style={{ filter: 'drop-shadow(0 0 10px #f97316)' }}
+                            >
+                                <path d="M 0 0 C -12 -18 -18 -32 0 -44 C 6 -30 12 -18 0 0 Z" fill="url(#phoenixPlumeGrad)" stroke="#fef08a" strokeWidth="1.2" />
+                                <path d="M 0 0 C -4 -16 -6 -28 0 -38" stroke="#ffffff" strokeWidth="1.5" />
+                                <circle cx="-6" cy="-24" r="2.2" fill="#fef08a" />
+                            </motion.g>
+                        </g>
                     )}
 
                     {/* ========================================================
@@ -1013,16 +1016,17 @@ function CharacterVisual({
                     {isDraconicHeart && (
                         <g transform="translate(100, 78)">
                             <path d="M -16 -6 Q 0 9 16 -6" fill="none" stroke="#7f1d1d" strokeWidth="2" />
-                            <motion.g
-                                animate={{ scale: [1, 1.15, 1] }}
-                                transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
-                                transform="translate(0, 11)"
-                                style={{ filter: 'drop-shadow(0 0 8px #ef4444)' }}
-                            >
-                                <polygon points="0,9 -9,-2 -5,-8 0,-4 5,-8 9,-2" fill="#ef4444" stroke="#fde047" strokeWidth="1.2" />
-                                <polygon points="0,6 -6,-1 -3,-5 0,-2 3,-5 6,-1" fill="#fef08a" opacity="0.6" />
-                                <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
-                            </motion.g>
+                            <g transform="translate(0, 11)">
+                                <motion.g
+                                    animate={{ scale: [1, 1.15, 1] }}
+                                    transition={{ repeat: Infinity, duration: 1.2, ease: 'easeInOut' }}
+                                    style={{ filter: 'drop-shadow(0 0 8px #ef4444)' }}
+                                >
+                                    <polygon points="0,9 -9,-2 -5,-8 0,-4 5,-8 9,-2" fill="#ef4444" stroke="#fde047" strokeWidth="1.2" />
+                                    <polygon points="0,6 -6,-1 -3,-5 0,-2 3,-5 6,-1" fill="#fef08a" opacity="0.6" />
+                                    <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+                                </motion.g>
+                            </g>
                         </g>
                     )}
 
@@ -1092,31 +1096,32 @@ function CharacterVisual({
 
                         {/* OFF-HAND SHIELD (Matching arm_plate_cuirass.jpg / Heavy Plate Cuirass) */}
                         {hasShield && (
-                            <motion.g
-                                animate={{ rotate: [0, -2, 0] }}
-                                transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
-                                transform="translate(-10, -4)"
-                                style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45))' }}
-                            >
-                                {/* Shield Body (Heater Shield) */}
-                                <path
-                                    d="M -12 -18 L 12 -18 L 14 0 Q 12 18 0 26 Q -12 18 -14 0 Z"
-                                    fill="url(#steelPlateGrad)"
-                                    stroke="#475569"
-                                    strokeWidth="1.8"
-                                />
-                                {/* Shield Gold Rim */}
-                                <path
-                                    d="M -10 -16 L 10 -16 L 11 0 Q 10 16 0 22 Q -10 16 -11 0 Z"
-                                    fill="none"
-                                    stroke="url(#goldTrimGrad)"
-                                    strokeWidth="1.5"
-                                />
-                                {/* Center Emblem Cross / Heraldry */}
-                                <path d="M 0 -12 L 0 16" stroke="#ca8a04" strokeWidth="2.5" />
-                                <path d="M -7 -4 L 7 -4" stroke="#ca8a04" strokeWidth="2.5" />
-                                <circle cx="0" cy="-4" r="2.5" fill="#fef08a" />
-                            </motion.g>
+                            <g transform="translate(-10, -4)">
+                                <motion.g
+                                    animate={{ rotate: [0, -2, 0] }}
+                                    transition={{ repeat: Infinity, duration: 2.4, ease: 'easeInOut' }}
+                                    style={{ filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.45))' }}
+                                >
+                                    {/* Shield Body (Heater Shield) */}
+                                    <path
+                                        d="M -12 -18 L 12 -18 L 14 0 Q 12 18 0 26 Q -12 18 -14 0 Z"
+                                        fill="url(#steelPlateGrad)"
+                                        stroke="#475569"
+                                        strokeWidth="1.8"
+                                    />
+                                    {/* Shield Gold Rim */}
+                                    <path
+                                        d="M -10 -16 L 10 -16 L 11 0 Q 10 16 0 22 Q -10 16 -11 0 Z"
+                                        fill="none"
+                                        stroke="url(#goldTrimGrad)"
+                                        strokeWidth="1.5"
+                                    />
+                                    {/* Center Emblem Cross / Heraldry */}
+                                    <path d="M 0 -12 L 0 16" stroke="#ca8a04" strokeWidth="2.5" />
+                                    <path d="M -7 -4 L 7 -4" stroke="#ca8a04" strokeWidth="2.5" />
+                                    <circle cx="0" cy="-4" r="2.5" fill="#fef08a" />
+                                </motion.g>
+                            </g>
                         )}
 
                         {/* Ring Accessory (acc_luck_ring) */}
