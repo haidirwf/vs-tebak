@@ -492,9 +492,6 @@ export default function SlotPickerModal({
 
                                             {/* Stats & Diff Row */}
                                             <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '5px' }}>
-                                                <span style={{ fontSize: '9.5px', fontWeight: 700, color: 'var(--color-steel)' }}>
-                                                    Stat:
-                                                </span>
                                                 {formatItemStatBadges(item).map((badge) => (
                                                     <span
                                                         key={badge.key}
