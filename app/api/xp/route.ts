@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { calculateLevel, getClassBonusAmount, getClassXpBonus } from '@/lib/game/xp'
+import { calculateCharacterStats } from '@/lib/game/character'
 import { updateQuestProgress } from '@/lib/game/quests'
 import { ensureDailyQuestsAndProgress } from '@/lib/game/dailyQuests'
 import { format } from 'date-fns'
@@ -204,10 +205,10 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Invalid XP config' }, { status: 400 })
     }
 
-    // Get current profile (including avatar_class for bonus calculation)
+    // Get current profile (including avatar_class and equipped_items for bonus calculation)
     const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('xp, level, avatar_class, streak_count, last_active')
+        .select('xp, level, avatar_class, equipped_items, streak_count, last_active')
         .eq('id', user.id)
         .single()
 
@@ -215,10 +216,20 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: 'Profile not found' }, { status: 404 })
     }
 
-    // Calculate class bonus
+    // Calculate class and equipment XP bonuses
     const normalizedCategory = category.toLowerCase().trim()
     const bonusMultiplier = normalizedCategory ? getClassXpBonus(profile.avatar_class, normalizedCategory) : 1
-    const bonusAmount = normalizedCategory ? getClassBonusAmount(profile.avatar_class, normalizedCategory, baseAmount) : 0
+    const classBonusAmount = normalizedCategory ? getClassBonusAmount(profile.avatar_class, normalizedCategory, baseAmount) : 0
+
+    const charStats = calculateCharacterStats(
+        profile.avatar_class,
+        profile.level,
+        (profile.equipped_items as any) || {}
+    )
+    const itemXpPct = charStats.battleBuffs.extraXpPct || 0
+    const itemBonusAmount = itemXpPct > 0 ? Math.round(baseAmount * (itemXpPct / 100)) : 0
+
+    const bonusAmount = classBonusAmount + itemBonusAmount
     const totalAmount = baseAmount + bonusAmount
 
     const newTotalXp = profile.xp + totalAmount

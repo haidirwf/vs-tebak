@@ -68,19 +68,44 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const [iAmFinished, setIAmFinished] = useState(false)
     const [opponentFinished, setOpponentFinished] = useState(false)
 
+    // Helper class info & customization stats
+    const myClassKey = (currentUser.avatar_class || 'warrior').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
+    const myClassInfo = AVATAR_CLASS_STATS[myClassKey] || AVATAR_CLASS_STATS.warrior
+    const oppClassKey = (opponent?.avatar_class || 'mage').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
+    const oppClassInfo = AVATAR_CLASS_STATS[oppClassKey] || AVATAR_CLASS_STATS.mage
+
+    const myStats = useMemo(() => {
+        return calculateCharacterStats(
+            myClassKey as any,
+            currentUser.level || 1,
+            (currentUser.equipped_items as any) || {}
+        )
+    }, [myClassKey, currentUser.level, currentUser.equipped_items])
+
+    const oppStats = useMemo(() => {
+        return calculateCharacterStats(
+            oppClassKey as any,
+            opponent?.level || 1,
+            (opponent?.equipped_items as any) || {}
+        )
+    }, [oppClassKey, opponent?.level, opponent?.equipped_items])
+
+    const myMaxHp = myStats.hp
+    const oppMaxHp = oppStats.hp
+
     // Quiz state (recovered from session if reloaded)
     const [currentQ, setCurrentQ] = useState<number>(() => savedSession?.currentQ ?? 0)
     const [myScore, setMyScore] = useState<number>(() => savedSession?.myScore ?? 0)
     const [opponentScore, setOpponentScore] = useState<number>(() => savedSession?.opponentScore ?? 0)
-    const [timeLeft, setTimeLeft] = useState<number>(15)
+    const [timeLeft, setTimeLeft] = useState<number>(() => 15 + (myStats.battleBuffs.extraTimerSec || 0))
     const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
     const [showAnswer, setShowAnswer] = useState(false)
     const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
     const [xpResult, setXpResult] = useState<{ base: number; bonus: number } | null>(null)
     const [finalOutcome, setFinalOutcome] = useState<BattleOutcome | null>(null)
     const [comboCount, setComboCount] = useState<number>(() => savedSession?.comboCount ?? 0)
-    const [myHp, setMyHp] = useState<number>(() => savedSession?.myHp ?? 100)
-    const [oppHp, setOppHp] = useState<number>(100)
+    const [myHp, setMyHp] = useState<number>(() => savedSession?.myHp ?? myMaxHp)
+    const [oppHp, setOppHp] = useState<number>(() => oppMaxHp)
     const [myMp, setMyMp] = useState<number>(30)
     const [oppMp, setOppMp] = useState<number>(30)
     const [combatText, setCombatText] = useState<{ target: 'me' | 'opp'; text: string; type: 'crit' | 'damage' | 'miss' } | null>(null)
@@ -115,7 +140,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
     const finalizeFallbackRequestedRef = useRef(false)
     const finalizeFallbackTimerRef = useRef<NodeJS.Timeout | null>(null)
     const myHpRef = useRef(myHp)
-    const oppHpRef = useRef(100)
+    const oppHpRef = useRef(oppMaxHp)
     const knockoutHandledRef = useRef(false)
     const phaseRef = useRef<BattlePhase>(phase)
     useEffect(() => {
@@ -526,8 +551,10 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                     setTimeout(() => {
                         battleSounds.playHitImpact(payload.is_crit || payload.is_ultimate, oppCombo, oppWeaponId)
                         setMeAnimation('hurt')
-                        const dmg = payload.damage || 15
-                        const newHp = Math.max(0, myHpRef.current - dmg)
+                        const rawDmg = payload.damage || 15
+                        const reduction = myStats.battleBuffs.damageReductionPct || 0
+                        const mitigatedDmg = Math.max(4, Math.round(rawDmg * (1 - reduction / 100)))
+                        const newHp = Math.max(0, myHpRef.current - mitigatedDmg)
                         setMyHp(newHp)
                         myHpRef.current = newHp
 
@@ -540,7 +567,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
                         setCombatText({
                             target: 'me',
-                            text: payload.is_ultimate ? `🔥 ULTIMATE! -${dmg} HP` : payload.is_crit ? `💥 CRIT! -${dmg} HP` : `⚔️ -${dmg} HP`,
+                            text: payload.is_ultimate ? `🔥 ULTIMATE! -${mitigatedDmg} HP` : payload.is_crit ? `💥 CRIT! -${mitigatedDmg} HP` : `⚔️ -${mitigatedDmg} HP`,
                             type: payload.is_crit || payload.is_ultimate ? 'crit' : 'damage',
                         })
                         if (payload.log) setBattleLog(payload.log)
@@ -821,6 +848,11 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                 battleSounds.playMatchStart()
                 setPhase('playing')
                 setCountdown(null)
+                setTimeLeft(15 + (myStats.battleBuffs.extraTimerSec || 0))
+                setMyHp(myMaxHp)
+                myHpRef.current = myMaxHp
+                setOppHp(oppMaxHp)
+                oppHpRef.current = oppMaxHp
             }
         }
     }, [countdown, phase])
@@ -837,21 +869,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
         }
     }, [phase])
 
-    // Helper class info & customization stats
-    const myClassKey = (currentUser.avatar_class || 'warrior').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
-    const myClassInfo = AVATAR_CLASS_STATS[myClassKey] || AVATAR_CLASS_STATS.warrior
-    const oppClassKey = (opponent?.avatar_class || 'mage').toLowerCase() as keyof typeof AVATAR_CLASS_STATS
-    const oppClassInfo = AVATAR_CLASS_STATS[oppClassKey] || AVATAR_CLASS_STATS.mage
-    const myHpPercent = Math.max(0, Math.min(100, myHp))
-    const oppHpPercent = Math.max(0, Math.min(100, oppHp))
-
-    const myStats = useMemo(() => {
-        return calculateCharacterStats(
-            myClassKey as any,
-            currentUser.level || 1,
-            (currentUser.equipped_items as any) || {}
-        )
-    }, [myClassKey, currentUser.level, currentUser.equipped_items])
+    const myHpPercent = Math.max(0, Math.min(100, (myHp / myMaxHp) * 100))
+    const oppHpPercent = Math.max(0, Math.min(100, (oppHp / oppMaxHp) * 100))
 
     function handleAnswer(idx: number) {
         if (selectedAnswer !== null || showAnswer) return
@@ -892,7 +911,8 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
             setComboCount(nextCombo)
             const isCrit = rollCrit || nextCombo >= 2
             const isUltimate = myMp >= 100
-            const effectiveDamage = isUltimate ? baseHpDamage * 2 : isCrit ? baseHpDamage + 8 : baseHpDamage
+            const totalBaseDamage = baseHpDamage + Math.round(extraAtk * 0.7)
+            const effectiveDamage = isUltimate ? totalBaseDamage * 2 : isCrit ? totalBaseDamage + 8 : totalBaseDamage
 
             if (isUltimate) {
                 battleSounds.playUltimateSkill()
@@ -943,7 +963,7 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
 
             // Shield recovery from healer / accessory buff
             if (myStats.battleBuffs.shieldRegenPoints > 0) {
-                const recovered = Math.min(100, myHpRef.current + myStats.battleBuffs.shieldRegenPoints)
+                const recovered = Math.min(myMaxHp, myHpRef.current + myStats.battleBuffs.shieldRegenPoints)
                 setMyHp(recovered)
                 myHpRef.current = recovered
             }
@@ -1740,11 +1760,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             equipped: (currentUser.equipped_items as any) || {},
                             level: currentUser.level || 1,
                             hp: myHp,
-                            maxHp: 100,
+                            maxHp: myMaxHp,
                             mp: myMp,
                             score: myScore,
                             schoolName: currentUser.school_name || undefined,
                             animationState: meAnimation,
+                            statBuffs: {
+                                atk: myStats.equipmentBonuses.atk,
+                                def: myStats.equipmentBonuses.def,
+                                crit: myStats.equipmentBonuses.crit,
+                                hp: myStats.equipmentBonuses.hp,
+                            },
                         }}
                         opponent={{
                             name: opponent?.username || 'Lawan',
@@ -1752,11 +1778,17 @@ export default function BattleArena({ battle: initialBattle, questions, currentU
                             equipped: (opponent?.equipped_items as any) || {},
                             level: opponent?.level || 1,
                             hp: oppHp,
-                            maxHp: 100,
+                            maxHp: oppMaxHp,
                             mp: oppMp,
                             score: opponentScore,
                             schoolName: opponent?.school_name || undefined,
                             animationState: oppAnimation,
+                            statBuffs: {
+                                atk: oppStats.equipmentBonuses.atk,
+                                def: oppStats.equipmentBonuses.def,
+                                crit: oppStats.equipmentBonuses.crit,
+                                hp: oppStats.equipmentBonuses.hp,
+                            },
                         }}
                         activeAttack={activeAttack}
                         combatText={

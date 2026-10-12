@@ -86,6 +86,14 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         return BOT_DIFFICULTIES[selectedDifficulty] || BOT_DIFFICULTIES.medium
     }, [selectedDifficulty])
 
+    const myStats = useMemo(() => {
+        return calculateCharacterStats(
+            ((currentUser?.avatar_class as AvatarClass) || 'warrior'),
+            currentUser?.level || 1,
+            (currentUser?.equipped_items as any) || {}
+        )
+    }, [currentUser?.avatar_class, currentUser?.level, currentUser?.equipped_items])
+
     const [started, setStarted] = useState(false)
     const [questions, setQuestions] = useState<PracticeQuestion[]>([])
     const [currentQ, setCurrentQ] = useState(0)
@@ -98,7 +106,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     const [finished, setFinished] = useState(false)
     const [result, setResult] = useState<'win' | 'lose' | 'draw' | null>(null)
     const [comboCount, setComboCount] = useState(0)
-    const [myHp, setMyHp] = useState(100)
+    const [myHp, setMyHp] = useState(() => myStats.hp)
     const [botHp, setBotHp] = useState(100)
     const [myMp, setMyMp] = useState(30)
     const [botMp, setBotMp] = useState(20)
@@ -116,14 +124,6 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
     const [quizReviews, setQuizReviews] = useState<QuizReviewItem[]>([])
     const [showReviewModal, setShowReviewModal] = useState(false)
     const [showSurrenderConfirm, setShowSurrenderConfirm] = useState(false)
-
-    const myStats = useMemo(() => {
-        return calculateCharacterStats(
-            ((currentUser?.avatar_class as AvatarClass) || 'warrior'),
-            currentUser?.level || 1,
-            (currentUser?.equipped_items as any) || {}
-        )
-    }, [currentUser?.avatar_class, currentUser?.level, currentUser?.equipped_items])
 
     useEffect(() => {
         return battleSounds.subscribe(() => {
@@ -295,7 +295,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
         setFinished(false)
         setResult(null)
         setComboCount(0)
-        setMyHp(100)
+        setMyHp(myStats.hp)
         setBotHp(100)
         setMyMp(30)
         setBotMp(20)
@@ -458,7 +458,7 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
 
             // Shield recovery from Healer / accessory buff
             if (myStats.battleBuffs.shieldRegenPoints > 0) {
-                setMyHp(hp => Math.min(100, hp + myStats.battleBuffs.shieldRegenPoints))
+                setMyHp(hp => Math.min(myStats.hp, hp + myStats.battleBuffs.shieldRegenPoints))
             }
 
             setBattleLog(
@@ -774,7 +774,10 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                                 }}
                             >
                                 <span>✨</span>
-                                <span>+{diffCfg.xpReward} XP Latihan</span>
+                                <span>
+                                    +{diffCfg.xpReward + Math.round(diffCfg.xpReward * ((myStats.battleBuffs.extraXpPct || 0) / 100))} XP Latihan
+                                    {Boolean(myStats.battleBuffs.extraXpPct) && ` (+${myStats.battleBuffs.extraXpPct}% Gear)`}
+                                </span>
                             </span>
                         )}
                     </div>
@@ -1022,11 +1025,17 @@ export default function PracticeArena({ questionPool, currentUser }: PracticeAre
                             equipped: (currentUser?.equipped_items as any) || {},
                             level: currentUser?.level || 1,
                             hp: myHp,
-                            maxHp: 100,
+                            maxHp: myStats.hp,
                             mp: myMp,
                             score: myScore,
                             schoolName: currentUser?.school_name || 'Pelajar Hebat',
                             animationState: meAnimation,
+                            statBuffs: {
+                                atk: myStats.equipmentBonuses.atk,
+                                def: myStats.equipmentBonuses.def,
+                                crit: myStats.equipmentBonuses.crit,
+                                hp: myStats.equipmentBonuses.hp,
+                            },
                         }}
                         opponent={{
                             name: diffCfg.botName,

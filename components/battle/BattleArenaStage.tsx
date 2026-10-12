@@ -32,6 +32,12 @@ export interface FighterInfo {
     schoolName?: string
     animationState: 'idle' | 'attack' | 'hurt'
     isBot?: boolean
+    statBuffs?: {
+        atk?: number
+        def?: number
+        crit?: number
+        hp?: number
+    }
 }
 
 interface BattleArenaStageProps {
@@ -1623,11 +1629,11 @@ function BattleArenaStage({
                                 fontFamily: 'var(--font-mono)',
                                 fontWeight: 700,
                                 color: playerHpPercent > 25 ? '#e2e8f0' : 'var(--accent-red)',
-                                minWidth: isMobile ? '32px' : '38px',
+                                minWidth: isMobile ? '48px' : '58px',
                                 flexShrink: 0,
                             }}
                         >
-                            {Math.round(player.hp)} HP
+                            {Math.round(player.hp)}/{player.maxHp || 100} HP
                         </span>
                     </div>
 
@@ -1666,6 +1672,32 @@ function BattleArenaStage({
                             {player.mp >= 100 ? (isMobile ? 'MAX 🔥' : 'BURST 🔥') : (isMobile ? `${player.mp}%` : `MP ${player.mp}%`)}
                         </span>
                     </div>
+
+                    {/* Active Equipment Stat Badges */}
+                    {player.statBuffs && (player.statBuffs.atk || player.statBuffs.def || player.statBuffs.crit || player.statBuffs.hp) ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '3px', marginTop: '4px', flexWrap: 'wrap' }}>
+                            {Boolean(player.statBuffs.atk) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)', fontWeight: 600 }}>
+                                    ⚔️ +{player.statBuffs.atk}
+                                </span>
+                            )}
+                            {Boolean(player.statBuffs.def) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontWeight: 600 }}>
+                                    🛡️ +{player.statBuffs.def}
+                                </span>
+                            )}
+                            {Boolean(player.statBuffs.crit) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)', fontWeight: 600 }}>
+                                    💥 +{player.statBuffs.crit}%
+                                </span>
+                            )}
+                            {Boolean(player.statBuffs.hp) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(34, 197, 94, 0.12)', color: '#4ade80', border: '1px solid rgba(34, 197, 94, 0.25)', fontWeight: 600 }}>
+                                    ❤️ +{player.statBuffs.hp}
+                                </span>
+                            )}
+                        </div>
+                    ) : null}
                 </div>
 
                 {/* Center Clash VS Indicator */}
@@ -1734,11 +1766,11 @@ function BattleArenaStage({
                                 fontFamily: 'var(--font-mono)',
                                 fontWeight: 700,
                                 color: opponentHpPercent > 25 ? '#e2e8f0' : 'var(--accent-red)',
-                                minWidth: isMobile ? '32px' : '38px',
+                                minWidth: isMobile ? '48px' : '58px',
                                 flexShrink: 0,
                             }}
                         >
-                            {Math.round(opponent.hp)} HP
+                            {Math.round(opponent.hp)}/{opponent.maxHp || 100} HP
                         </span>
                         <div
                             style={{
@@ -1803,6 +1835,32 @@ function BattleArenaStage({
                             />
                         </div>
                     </div>
+
+                    {/* Opponent Active Equipment Stat Badges */}
+                    {opponent.statBuffs && (opponent.statBuffs.atk || opponent.statBuffs.def || opponent.statBuffs.crit || opponent.statBuffs.hp) ? (
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '3px', marginTop: '4px', flexWrap: 'wrap' }}>
+                            {Boolean(opponent.statBuffs.atk) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(239, 68, 68, 0.12)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.25)', fontWeight: 600 }}>
+                                    ⚔️ +{opponent.statBuffs.atk}
+                                </span>
+                            )}
+                            {Boolean(opponent.statBuffs.def) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(59, 130, 246, 0.12)', color: '#60a5fa', border: '1px solid rgba(59, 130, 246, 0.25)', fontWeight: 600 }}>
+                                    🛡️ +{opponent.statBuffs.def}
+                                </span>
+                            )}
+                            {Boolean(opponent.statBuffs.crit) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(245, 158, 11, 0.12)', color: '#fbbf24', border: '1px solid rgba(245, 158, 11, 0.25)', fontWeight: 600 }}>
+                                    💥 +{opponent.statBuffs.crit}%
+                                </span>
+                            )}
+                            {Boolean(opponent.statBuffs.hp) && (
+                                <span style={{ fontSize: '8.5px', padding: '1px 4px', borderRadius: '4px', backgroundColor: 'rgba(34, 197, 94, 0.12)', color: '#4ade80', border: '1px solid rgba(34, 197, 94, 0.25)', fontWeight: 600 }}>
+                                    ❤️ +{opponent.statBuffs.hp}
+                                </span>
+                            )}
+                        </div>
+                    ) : null}
                 </div>
             </div>
 
@@ -2391,7 +2449,8 @@ function arePropsEqual(prev: BattleArenaStageProps, next: BattleArenaStageProps)
         p1.animationState !== p2.animationState ||
         p1.level !== p2.level ||
         p1.schoolName !== p2.schoolName ||
-        p1.equipped !== p2.equipped
+        p1.equipped !== p2.equipped ||
+        p1.statBuffs !== p2.statBuffs
     ) {
         return false
     }
@@ -2409,7 +2468,8 @@ function arePropsEqual(prev: BattleArenaStageProps, next: BattleArenaStageProps)
         o1.level !== o2.level ||
         o1.isBot !== o2.isBot ||
         o1.schoolName !== o2.schoolName ||
-        o1.equipped !== o2.equipped
+        o1.equipped !== o2.equipped ||
+        o1.statBuffs !== o2.statBuffs
     ) {
         return false
     }
